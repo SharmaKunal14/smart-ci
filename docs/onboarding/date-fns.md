@@ -8,6 +8,37 @@ matrix.
 
 Fork: https://github.com/SharmaKunal14/date-fns
 
+Published review artifacts (all open and unmerged):
+
+- [Smart CI adapter draft PR](https://github.com/SharmaKunal14/smart-ci/pull/1),
+  branch `codex/date-fns-pilot`.
+- [Fork enrollment PR #1](https://github.com/SharmaKunal14/date-fns/pull/1).
+- [Historical regression PR #2](https://github.com/SharmaKunal14/date-fns/pull/2),
+  targeting the enrollment branch; intentionally defective and expected to fail.
+- [Historical fix PR #3](https://github.com/SharmaKunal14/date-fns/pull/3),
+  targeting the regression branch; expected to pass.
+
+Hosted enrollment verified after the owner reopened PR #1:
+[run 44902768202](https://github.com/SharmaKunal14/date-fns/actions/runs/44902768202)
+completed successfully. Both the independent native control and Smart CI ran
+253 files / 3,167 cases: 3,148 passed, 19 reviewed skips and zero failures. All 15
+timezone-script executions passed. The artifacts' file inventory, failure IDs,
+reviewed skip IDs, counts and decision digest were independently checked.
+
+This PR changes only `.github/workflows/smartci-evaluation.yml`; full execution
+with `RISK_PATH` is expected. Smart CI recorded 6.90s planning, 1.23s execution
+and 8.17s total. The complete hosted job took about 34s including installation
+and independent controls. This establishes hosted enrollment and full fallback,
+not hosted subset savings or historical-regression recall. Evidence is recorded
+in `docs/benchmarks/date-fns-enrollment-2026-11-21.json`.
+
+The five inherited PR workflows failed at startup with zero jobs executed.
+After registration, they were disabled through the API under the owner's prior
+approval. The Smart CI pilot remains active. Coverage report is manual-only and
+remains unregistered. Old startup-failure entries remain in Actions history;
+they are separate from the successful pilot. PRs #2 and #3 still await their
+live subset verification. Nothing has been merged.
+
 Pinned upstream revision: `a9739fb3e5384a810e90d7376446f6d84ecc5029`.
 Native dependencies: unchanged `pnpm-lock.yaml`; pnpm 12.21.0 and Node 26.13.1.
 
@@ -39,6 +70,7 @@ three decision digests matched and no observed failures were omitted, but one
 historical defect is weak evidence for universal regression-detection recall.
 Raw measurements and case IDs are in
 [`docs/benchmarks/date-fns-2026-11-21.json`](../benchmarks/date-fns-2026-11-21.json).
+CPU time, billed compute and end-to-end hosted CI savings were not measured.
 Treat the result as an adapter/correctness evaluation and an unsuccessful
 performance hypothesis, not a production efficiency win.
 
