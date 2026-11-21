@@ -1,0 +1,55 @@
+name: Smart CI / precompute trusted base map
+on:
+  push:
+    branches: [codex/smartci-precomputed-base, codex/smartci-precomputed-fix]
+permissions:
+  contents: read
+concurrency:
+  group: smartci-map-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  map:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          path: app
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: TOOL_REPOSITORY
+          ref: TOOL_COMMIT
+          path: control
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '26.13.1'
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        with:
+          version: '0.11.6'
+          enable-cache: false
+      - name: Install frozen native dependencies and pinned map builder
+        run: |
+          npm install --prefix "$RUNNER_TEMP/package-manager" pnpm@12.21.0
+          node "$RUNNER_TEMP/package-manager/node_modules/pnpm/bin/pnpm.mjs" \
+            --dir app install --frozen-lockfile \
+            --store-dir "$RUNNER_TEMP/pnpm-store" --cache-dir "$RUNNER_TEMP/pnpm-cache"
+          uv sync --project control --frozen --no-dev
+      - name: Build complete map with independent inventory checks
+        run: |
+          control/.venv/bin/smartci typescript scan --repo "$GITHUB_WORKSPACE/app" \
+            --config "$GITHUB_WORKSPACE/control/examples/date-fns/typescript.json" \
+            --output "$RUNNER_TEMP/precomputed"
+      - name: Publish immutable base map
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: smartci-typescript-map-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/precomputed/head-map.json
+          if-no-files-found: error
+          retention-days: 7

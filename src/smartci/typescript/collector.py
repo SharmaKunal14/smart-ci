@@ -6,6 +6,8 @@ import platform
 import tempfile
 from pathlib import Path
 
+import pydantic
+
 from smartci.adapters.runners import read_bounded
 from smartci.adapters.suite import current_clean_head
 from smartci.contracts import Inventory, TestUnit
@@ -120,12 +122,16 @@ def collect(runner: NativeVitest, config: TypeScriptConfig) -> TypeScriptSnapsho
         "node": analysis.node,
         "platform": platform.system(),
         "machine": platform.machine(),
+        "python": platform.python_version(),
+        "pydantic": pydantic.__version__,
         "configuration": digest(config.model_dump()),
         "lockfile": hashlib.sha256(read_bounded(root / lockfile)).hexdigest(),
         "implementation": digest(
             {
-                p.name: hashlib.sha256(p.read_bytes()).hexdigest()
-                for p in sorted(helper.parent.iterdir())
+                p.relative_to(helper.parent.parent).as_posix(): hashlib.sha256(
+                    p.read_bytes()
+                ).hexdigest()
+                for p in sorted(helper.parent.parent.rglob("*"))
                 if p.suffix in {".py", ".mjs"}
             }
         ),
