@@ -28,7 +28,7 @@ def test_workflow_has_independent_full_fallback_and_no_deployment_trigger():
     assert "  push:" not in content and "workflow_dispatch" not in content
     assert "id-token:" not in content and "secrets." not in content
     assert "contents: read" in content
-    assert content.count("persist-credentials: false") == 2
+    assert content.count("persist-credentials: false") == 3
     assert '--base "$BASE_SHA"' in content
     assert 'if [[ "$status" -eq 0 || "$status" -eq 1 ]]' in content
     assert (
@@ -37,3 +37,22 @@ def test_workflow_has_independent_full_fallback_and_no_deployment_trigger():
     assert "control/examples/onrecord/typescript.json" in content
     assert "SMARTCI_FORCE_FULL" in content
     assert "TOOL_COMMIT" not in content
+
+
+def test_benchmark_is_opt_in_bounded_and_cannot_disable_normal_execution():
+    content = render("owner/smart-ci", "a" * 40)
+    normal, experiment = content.split("      # Explicit, bounded experiment only;")
+    assert "SMARTCI_BENCHMARK" not in normal
+    assert (
+        "cache: npm" in normal
+        and "cache-dependency-path: app/package-lock.json" in normal
+    )
+    assert "npm ci --ignore-scripts" in normal
+    assert "vars.SMARTCI_BENCHMARK == 'true'" in experiment
+    assert "github.head_ref == 'codex/smartci-subset-probe'" in experiment
+    assert (
+        "github.event.pull_request.head.repo.full_name == github.repository"
+        in experiment
+    )
+    assert "--rounds 3" in experiment
+    assert "ref: e6b35ea089abedfd49b6ca0547a5351058d6b1ed" in experiment

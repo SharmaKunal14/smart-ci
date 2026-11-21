@@ -103,7 +103,7 @@ The complete fresh run at `demo-output/onrecord/verification-v71l1jhg/verificati
 | Independent full suite with that defect | 103 | 440 | Same one failing case identity |
 | Dependency lockfile change | 103 | 440 | Passed, full fallback |
 
-The passing subset omitted 39 files and 160 cases. In that run, planning took 3.66 seconds and selected execution 15.16 seconds, or 18.92 seconds total. The independent full execution took 21.69 seconds, excluding its initial scan. These are single local observations with warm dependencies. Both use a maximum of two Vitest workers and disable file parallelism for bounded execution. They are **not** a benchmark against OnRecord's unmodified parallel `npm test`, a hosted CI speedup claim, or an AWS cost estimate.
+The passing subset omitted 39 files and 160 cases. In that run, planning took 3.66 seconds and selected execution 15.16 seconds, or 18.92 seconds total. The independent full execution took 21.69 seconds, excluding its initial scan. These are single local observations with warm dependencies. That adapter requested two Vitest workers but disabled file parallelism, which made Vitest use one worker. They are **not** a benchmark against OnRecord's unmodified parallel `npm test`, a hosted CI speedup claim, or an AWS cost estimate.
 
 An earlier attempt (`verification-hzl3mozu`) failed one existing `seedSlackIncident` test during the full fallback. The independent native rerun and the subsequent complete fresh pilot both passed. Its cause is unconfirmed; the failed artifact remains available and is not counted as a successful run. The adapter preserved that failure as a failing exit status.
 
@@ -114,9 +114,9 @@ Files changed: `src/smartci/cli.py`; new `src/smartci/typescript/{__init__.py,mo
 
 ## Live GitHub verification on 21 November 2026
 
-Smart CI runtime is published at `e6b35ea089abedfd49b6ca0547a5351058d6b1ed` on
-`codex/onrecord-typescript-selection`. The OnRecord workflow pins that exact commit.
-Later documentation-only commits do not change the pin.
+The first hosted runs used Smart CI runtime `e6b35ea089abedfd49b6ca0547a5351058d6b1ed`
+on `codex/onrecord-typescript-selection`. The workflow pinned that immutable commit.
+See the performance investigation below for the subsequent adapter revision.
 
 | PR and run | Change | Actual execution | Result |
 | --- | --- | --- | --- |
@@ -151,3 +151,56 @@ remained at `cfcb957baee9a6e90b0f156f4458b33994117287`. No deployment workflow w
 triggered by either pilot branch, no AWS resources were deployed, and no model
 credentials or paid model calls were used. Rollback during this pilot is simply
 to close the unmerged PRs; the existing main-branch CI is unchanged.
+
+## Performance investigation and reproducible comparison
+
+The first hosted subset was slower overall: its execution saved only 0.11 seconds,
+while planning took 1.91 seconds longer. Those were different runner instances,
+not a controlled benchmark. Vitest was also forced to run files serially by
+`--no-file-parallelism`, despite the adapter requesting two workers. The selected
+files retain several of the slower tests, and file startup, imports and isolation
+cost time that individual test-body durations do not capture.
+
+The optimization removes the serial override while retaining a two-worker limit
+and Vitest's default file isolation. TypeScript import resolution now uses the
+compiler's cache within one revision/configuration, and graph IDs are computed
+once per file. No graph cache is reused across revisions or CI runs. The workflow
+caches npm downloads by lockfile; it still runs `npm ci --ignore-scripts` to install
+dependencies afresh. A cold cache is not a demonstrated installation saving.
+
+Safety behavior is unchanged: both revision maps are rebuilt, native discovery is
+repeated, opaque relationships broaden selection, uncertain evidence runs the full
+suite, and missing subset results trigger full retry without erasing failures.
+The regression suite includes actual parallel-file global-state isolation and
+guards against `.only`, empty success, missing results and unsupported analysis.
+
+To verify the implementation, use the local verification commands above. For a
+performance comparison, prepare a clean disposable checkout of the eligible PR
+with its locked dependencies installed, then clone the old Smart CI control:
+
+```sh
+git clone https://github.com/SharmaKunal14/smart-ci.git /tmp/smartci-baseline
+git -C /tmp/smartci-baseline checkout --detach e6b35ea089abedfd49b6ca0547a5351058d6b1ed
+uv run --frozen python scripts/benchmark_onrecord.py \
+  --repo /absolute/path/to/disposable-onrecord \
+  --baseline-tool /tmp/smartci-baseline --base FULL_PR_BASE_COMMIT_SHA \
+  --output /tmp/onrecord-benchmark --rounds 3 --offline
+```
+
+Use new output and clone directories; substitute the repository path and complete
+PR base commit. `--offline` requires macOS; it blocks outbound network from native
+tests. The benchmark runs old/new planning plus subset execution and two full-suite
+controls on the same checkout, rotating order across three rounds. One full control
+uses two workers; the other preserves the repository's default worker settings.
+It rejects fallback, retries, changed graphs/selection/reasons, changing counts,
+skips or failures. Repeated plans must have identical digests within each tool
+version. `summary.json` contains medians and `measurements.json` retains every
+sample. Neither includes dependency installation; these are warmed checkout
+measurements, not universal production savings or runner billing estimates.
+
+The hosted equivalent is explicitly opt-in: repository variable
+`SMARTCI_BENCHMARK=true` adds the same bounded experiment only to the same-repository
+`codex/smartci-subset-probe` branch. The ordinary test step runs first and remains
+authoritative. Remove the variable after the experiment; normal PRs then run no
+benchmark controls. Keep the PRs unmerged during this pilot. No AWS deployment or
+model calls are required for either verification path.
