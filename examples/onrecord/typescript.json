@@ -1,0 +1,7 @@
+{
+  "schema_version": "1",
+  "repository": "SharmaKunal14/slack-incidence-evidence",
+  "projects": ["tsconfig.json", "tsconfig.web.json"],
+  "full_paths": ["infrastructure/*", "scripts/*", "website/*", "web/*", "*.config.*"],
+  "must_run": []
+}

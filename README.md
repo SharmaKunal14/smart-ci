@@ -14,6 +14,15 @@ The source is published at [SharmaKunal14/smart-ci](https://github.com/SharmaKun
 The [GitHub pilot walkthrough](docs/onboarding/github-pilot.md) links the packaging
 fork and onboarding PR, with activation and first-PR verification steps.
 
+## OnRecord selective execution
+
+The new TypeScript/Vitest pilot automatically discovers file dependencies and
+runs affected test files on eligible PR revisions. It reconstructs missing maps
+from source; a saved baseline is optional and shadow mode is not mandatory.
+See [the OnRecord handoff](docs/onboarding/onrecord.md) for exact scope, local
+verification, audit artifacts, rollback and the PR-only workflow enrollment steps.
+This adapter has not yet been exercised in hosted GitHub Actions.
+
 ## Setup and verification
 
 Install Python 3.13 or newer and uv, then run:
