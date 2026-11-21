@@ -25,6 +25,8 @@ from .selection import (
     fallback,
     select,
 )
+from .typescript import commands as ts_commands
+from .typescript.models import TypeScriptConfig, TypeScriptSnapshot
 
 CONTRACTS.update(
     {
@@ -40,6 +42,8 @@ CONTRACTS.update(
         "shadow-policy": ShadowPolicy,
         "shadow-comparison": Comparison,
         "baseline": Baseline,
+        "typescript-collector": TypeScriptConfig,
+        "typescript-snapshot": TypeScriptSnapshot,
     }
 )
 
@@ -68,6 +72,7 @@ def main() -> int:
     )
     sub = parser.add_subparsers(dest="command", required=True)
     ci_commands.add_parser(sub)
+    ts_commands.add_parser(sub)
     validate = sub.add_parser(
         "validate", help="validate a manifest; does not run tests"
     )
@@ -124,6 +129,8 @@ def main() -> int:
         if command == "run":
             adapter.add_argument("--decision", type=Path)
     args = parser.parse_args()
+    if args.command == "typescript":
+        return ts_commands.command(args)
     if args.command == "shadow":
         return ci_commands.command(args)
     if args.command == "collect":

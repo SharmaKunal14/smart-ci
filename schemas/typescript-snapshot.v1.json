@@ -1,0 +1,230 @@
+{
+  "$defs": {
+    "Graph": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "commit": {
+          "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+          "title": "Commit",
+          "type": "string"
+        },
+        "complete": {
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "unsupported": {
+          "default": false,
+          "title": "Unsupported",
+          "type": "boolean"
+        },
+        "owners": {
+          "additionalProperties": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+            "type": "string"
+          },
+          "title": "Owners",
+          "type": "object"
+        },
+        "dependencies": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "title": "Dependencies",
+          "type": "object"
+        },
+        "tests": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+              "type": "string"
+            }
+          },
+          "title": "Tests",
+          "type": "object"
+        }
+      },
+      "required": [
+        "schema_version",
+        "repository",
+        "commit",
+        "complete",
+        "owners",
+        "dependencies",
+        "tests"
+      ],
+      "title": "Graph",
+      "type": "object"
+    },
+    "Inventory": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "complete": {
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "environment": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Environment",
+          "type": "string"
+        },
+        "tests": {
+          "items": {
+            "$ref": "#/$defs/TestUnit"
+          },
+          "maxItems": 100000,
+          "title": "Tests",
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "repository",
+        "complete",
+        "environment",
+        "tests"
+      ],
+      "title": "Inventory",
+      "type": "object"
+    },
+    "TestUnit": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "runner": {
+          "enum": [
+            "pytest",
+            "vitest",
+            "maven"
+          ],
+          "title": "Runner",
+          "type": "string"
+        },
+        "granularity": {
+          "enum": [
+            "case",
+            "file",
+            "class"
+          ],
+          "title": "Granularity",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "runner",
+        "granularity",
+        "path"
+      ],
+      "title": "TestUnit",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "graph": {
+      "$ref": "#/$defs/Graph"
+    },
+    "inventory": {
+      "$ref": "#/$defs/Inventory"
+    },
+    "files": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Files",
+      "type": "array"
+    },
+    "widened": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Widened",
+      "type": "array"
+    },
+    "gaps": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Gaps",
+      "type": "array"
+    },
+    "analyzed": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Analyzed",
+      "type": "array"
+    },
+    "provenance": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Provenance",
+      "type": "object"
+    },
+    "digest": {
+      "default": "",
+      "title": "Digest",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "graph",
+    "inventory",
+    "files",
+    "widened",
+    "gaps",
+    "analyzed",
+    "provenance"
+  ],
+  "title": "TypeScriptSnapshot",
+  "type": "object"
+}
