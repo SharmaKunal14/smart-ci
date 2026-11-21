@@ -1,0 +1,48 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "baseline_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Baseline Digest",
+      "type": "string"
+    },
+    "max_calls": {
+      "maximum": 4,
+      "minimum": 1,
+      "title": "Max Calls",
+      "type": "integer"
+    },
+    "max_input_tokens": {
+      "maximum": 20000,
+      "minimum": 1,
+      "title": "Max Input Tokens",
+      "type": "integer"
+    },
+    "max_output_tokens": {
+      "maximum": 3000,
+      "minimum": 1,
+      "title": "Max Output Tokens",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "baseline_digest",
+    "max_calls",
+    "max_input_tokens",
+    "max_output_tokens"
+  ],
+  "title": "Investigation",
+  "type": "object"
+}

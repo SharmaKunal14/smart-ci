@@ -1,0 +1,26 @@
+{
+  "schema_version": "1",
+  "repository": "example/repo",
+  "complete": true,
+  "environment": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "tests": [
+    {
+      "id": "auth",
+      "runner": "pytest",
+      "granularity": "case",
+      "path": "tests/auth.py"
+    },
+    {
+      "id": "checkout",
+      "runner": "pytest",
+      "granularity": "case",
+      "path": "tests/checkout.py"
+    },
+    {
+      "id": "other",
+      "runner": "pytest",
+      "granularity": "case",
+      "path": "tests/other.py"
+    }
+  ]
+}

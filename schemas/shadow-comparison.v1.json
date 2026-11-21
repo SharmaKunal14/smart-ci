@@ -1,0 +1,188 @@
+{
+  "$defs": {
+    "Context": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "default": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "maxLength": 140,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9_][A-Za-z0-9_.-]{0,99}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "event": {
+          "enum": [
+            "pull_request",
+            "push",
+            "workflow_dispatch"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "run_id": {
+          "minimum": 1,
+          "title": "Run Id",
+          "type": "integer"
+        },
+        "run_attempt": {
+          "minimum": 1,
+          "title": "Run Attempt",
+          "type": "integer"
+        },
+        "base": {
+          "pattern": "^[a-f0-9]{40}$",
+          "title": "Base",
+          "type": "string"
+        },
+        "tested": {
+          "pattern": "^[a-f0-9]{40}$",
+          "title": "Tested",
+          "type": "string"
+        },
+        "pr_head": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{40}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pr Head"
+        },
+        "ref": {
+          "maxLength": 256,
+          "title": "Ref",
+          "type": "string"
+        },
+        "default_branch": {
+          "maxLength": 200,
+          "title": "Default Branch",
+          "type": "string"
+        },
+        "protected": {
+          "title": "Protected",
+          "type": "boolean"
+        },
+        "profile": {
+          "default": "linux-py314",
+          "enum": [
+            "linux-py314",
+            "local-py314"
+          ],
+          "title": "Profile",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repository",
+        "event",
+        "run_id",
+        "run_attempt",
+        "base",
+        "tested",
+        "ref",
+        "default_branch",
+        "protected"
+      ],
+      "title": "Context",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "context": {
+      "$ref": "#/$defs/Context"
+    },
+    "snapshot_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Snapshot Digest",
+      "type": "string"
+    },
+    "decision_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Decision Digest",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "complete_with_expected_skips",
+        "failed",
+        "incomplete"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "native_exit": {
+      "title": "Native Exit",
+      "type": "integer"
+    },
+    "native_cases": {
+      "maximum": 100000,
+      "minimum": 0,
+      "title": "Native Cases",
+      "type": "integer"
+    },
+    "failed_cases": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failed Cases",
+      "type": "array"
+    },
+    "known_skips": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Known Skips",
+      "type": "array"
+    },
+    "unexpected_skips": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unexpected Skips",
+      "type": "array"
+    },
+    "missed_failure_files": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missed Failure Files",
+      "type": "array"
+    },
+    "baseline_eligible": {
+      "title": "Baseline Eligible",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "context",
+    "snapshot_digest",
+    "decision_digest",
+    "status",
+    "native_exit",
+    "native_cases",
+    "failed_cases",
+    "known_skips",
+    "unexpected_skips",
+    "missed_failure_files",
+    "baseline_eligible"
+  ],
+  "title": "Comparison",
+  "type": "object"
+}

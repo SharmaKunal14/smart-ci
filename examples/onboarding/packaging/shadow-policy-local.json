@@ -1,0 +1,11 @@
+{
+  "schema_version": "1",
+  "expected_skips": [
+    {
+      "case": "tests/test_manylinux.py::test_is_manylinux_compatible_old",
+      "platform": "Darwin",
+      "reason": "requires a glibc-based Linux",
+      "source_digest": "6741545ee1bcd36160b8ef8caf4232c4a15583adbc22460a2a4815c8eeef3551"
+    }
+  ]
+}

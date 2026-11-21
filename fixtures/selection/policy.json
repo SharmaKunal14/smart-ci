@@ -1,0 +1,10 @@
+{
+  "schema_version": "1",
+  "repository": "example/repo",
+  "mode": "shadow",
+  "must_run": [],
+  "unknown_evidence": "full",
+  "allow_source_excerpts": false,
+  "full_paths": [],
+  "require_coverage": false
+}

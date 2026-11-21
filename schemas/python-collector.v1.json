@@ -1,0 +1,67 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "source_roots": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "title": "Source Roots",
+      "type": "array"
+    },
+    "test_roots": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "title": "Test Roots",
+      "type": "array"
+    },
+    "granularity": {
+      "default": "file",
+      "enum": [
+        "case",
+        "file"
+      ],
+      "title": "Granularity",
+      "type": "string"
+    },
+    "allowed_plugins": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Allowed Plugins",
+      "type": "array"
+    },
+    "external_module_overrides": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "External Module Overrides",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "source_roots",
+    "test_roots"
+  ],
+  "title": "PythonConfig",
+  "type": "object"
+}

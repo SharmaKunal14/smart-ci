@@ -1,0 +1,46 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "incomplete"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "outcome": {
+      "enum": [
+        "passed",
+        "failed",
+        "error"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "decision_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Decision Digest",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "status",
+    "outcome",
+    "decision_digest"
+  ],
+  "title": "Execution",
+  "type": "object"
+}

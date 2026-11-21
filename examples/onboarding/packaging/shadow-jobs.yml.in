@@ -1,0 +1,194 @@
+  smartci-lookup:
+    name: Smart CI / protected baseline lookup
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    continue-on-error: true
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: TOOL_REPOSITORY
+          ref: TOOL_COMMIT
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        with:
+          version: '0.11.6'
+          enable-cache: false
+      - name: Install pinned control tool (no application code)
+        run: uv sync --frozen
+      - name: Identify this run and load pinned policy
+        run: |
+          uv run --frozen smartci shadow context --output "$RUNNER_TEMP/context.json"
+          uv run --frozen python scripts/ci_config.py --context "$RUNNER_TEMP/context.json" --output "$RUNNER_TEMP/policy"
+      - name: Retrieve a protected, matching baseline
+        if: vars.SMARTCI_DISABLE_ANALYSIS != 'true' && vars.SMARTCI_FORCE_FULL != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          uv run --frozen smartci shadow fetch --context "$RUNNER_TEMP/context.json" --policy "$RUNNER_TEMP/policy/policy.json" --shadow-policy "$RUNNER_TEMP/policy/shadow.json" --output "$RUNNER_TEMP/baseline.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        continue-on-error: true
+        with:
+          name: smartci-input-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/baseline.json
+          if-no-files-found: ignore
+          retention-days: 1
+
+  smartci-native:
+    name: Ubuntu / 3.14 (Smart CI shadow)
+    needs: smartci-lookup
+    if: ${{ always() && !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: app
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        continue-on-error: true
+        timeout-minutes: 2
+        with:
+          repository: TOOL_REPOSITORY
+          ref: TOOL_COMMIT
+          path: control
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        with:
+          version: '0.11.6'
+          enable-cache: false
+      - name: Install native packaging test dependencies
+        working-directory: app
+        run: |
+          uv venv --python python "$RUNNER_TEMP/native"
+          uv pip install --python "$RUNNER_TEMP/native/bin/python" --only-binary hypothesis --group test
+          uv pip install --python "$RUNNER_TEMP/native/bin/python" -e .
+      - name: Install optional observer and control tool
+        id: observer
+        if: vars.SMARTCI_DISABLE_ANALYSIS != 'true'
+        continue-on-error: true
+        timeout-minutes: 3
+        working-directory: control
+        run: |
+          uv sync --frozen
+          uv build --wheel
+          uv pip install --python "$RUNNER_TEMP/native/bin/python" --no-deps dist/*.whl
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        if: steps.observer.outcome == 'success'
+        continue-on-error: true
+        timeout-minutes: 1
+        with:
+          name: smartci-input-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/input
+      - name: Save deterministic proposal before executing tests
+        id: prepare
+        if: steps.observer.outcome == 'success'
+        continue-on-error: true
+        timeout-minutes: 5
+        working-directory: control
+        env:
+          FORCE_FULL: ${{ vars.SMARTCI_FORCE_FULL }}
+        run: |
+          uv run --frozen smartci shadow context --output "$RUNNER_TEMP/context.json"
+          uv run --frozen python scripts/ci_config.py --context "$RUNNER_TEMP/context.json" --output "$RUNNER_TEMP/policy"
+          flags=()
+          if [ "$FORCE_FULL" = true ]; then flags+=(--force-full); fi
+          uv run --frozen smartci shadow prepare --context "$RUNNER_TEMP/context.json" --policy "$RUNNER_TEMP/policy/policy.json" --shadow-policy "$RUNNER_TEMP/policy/shadow.json" --config "$RUNNER_TEMP/policy/config.json" --repo "$GITHUB_WORKSPACE/app" --python "$RUNNER_TEMP/native/bin/python" --baseline "$RUNNER_TEMP/input/baseline.json" --output "$RUNNER_TEMP/proposal" "${flags[@]}"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: steps.prepare.outcome == 'success'
+        continue-on-error: true
+        timeout-minutes: 1
+        with:
+          name: smartci-proposal-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/proposal/
+          retention-days: 7
+      - name: Native full suite (authoritative, exactly once)
+        id: native
+        timeout-minutes: 5
+        working-directory: app
+        env:
+          OBSERVER_READY: ${{ steps.observer.outcome }}
+          COVERAGE_CORE: sysmon
+        run: |
+          echo 'Starting the native full suite; shadow planning never filters this command.'
+          if [ "$OBSERVER_READY" = success ]; then
+            export PYTEST_PLUGINS=smartci.adapters.pytest_plugin
+            export SMARTCI_REPORT="$RUNNER_TEMP/native.json"
+          fi
+          set +e
+          "$RUNNER_TEMP/native/bin/python" -m coverage run -m pytest
+          code=$?
+          echo "exit=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" -ne 0 ]; then exit "$code"; fi
+          "$RUNNER_TEMP/native/bin/python" -m coverage report
+      - name: Compare saved proposal against the native result
+        if: ${{ !cancelled() && steps.prepare.outcome == 'success' && steps.native.outputs.exit != '' }}
+        continue-on-error: true
+        timeout-minutes: 2
+        working-directory: control
+        env:
+          NATIVE_EXIT: ${{ steps.native.outputs.exit }}
+        run: |
+          cp "$RUNNER_TEMP/native.json" "$RUNNER_TEMP/proposal/native.json"
+          uv run --frozen smartci shadow compare --context "$RUNNER_TEMP/context.json" --policy "$RUNNER_TEMP/policy/policy.json" --shadow-policy "$RUNNER_TEMP/policy/shadow.json" --snapshot "$RUNNER_TEMP/proposal/snapshot.json" --decision "$RUNNER_TEMP/proposal/selection.json" --repo "$GITHUB_WORKSPACE/app" --native-report "$RUNNER_TEMP/native.json" --native-exit "$NATIVE_EXIT" --output "$RUNNER_TEMP/proposal/comparison.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        timeout-minutes: 1
+        with:
+          name: smartci-result-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/proposal/
+          if-no-files-found: warn
+          retention-days: 7
+
+  smartci-publish:
+    name: Smart CI / protected baseline publication
+    needs: smartci-native
+    if: github.event_name == 'push' && github.ref_protected && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    continue-on-error: true
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: TOOL_REPOSITORY
+          ref: TOOL_COMMIT
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        with:
+          version: '0.11.6'
+          enable-cache: false
+      - run: uv sync --frozen
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: smartci-result-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/result
+      - name: Validate eligibility in an isolated control job
+        run: |
+          uv run --frozen smartci shadow context --output "$RUNNER_TEMP/context.json"
+          uv run --frozen python scripts/ci_config.py --context "$RUNNER_TEMP/context.json" --output "$RUNNER_TEMP/policy"
+          uv run --frozen smartci shadow publish --context "$RUNNER_TEMP/context.json" --policy "$RUNNER_TEMP/policy/policy.json" --shadow-policy "$RUNNER_TEMP/policy/shadow.json" --snapshot "$RUNNER_TEMP/result/snapshot.json" --decision "$RUNNER_TEMP/result/selection.json" --comparison "$RUNNER_TEMP/result/comparison.json" --output "$RUNNER_TEMP/baseline.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: smartci-baseline-linux-py314-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/baseline.json
+          if-no-files-found: error
+          retention-days: 7

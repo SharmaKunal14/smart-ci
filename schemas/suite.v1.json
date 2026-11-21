@@ -1,0 +1,63 @@
+{
+  "$defs": {
+    "SuiteEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "runner": {
+          "enum": [
+            "pytest",
+            "vitest",
+            "maven"
+          ],
+          "title": "Runner",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "runner",
+        "path"
+      ],
+      "title": "SuiteEntry",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "suites": {
+      "items": {
+        "$ref": "#/$defs/SuiteEntry"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "title": "Suites",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "suites"
+  ],
+  "title": "SuiteConfig",
+  "type": "object"
+}

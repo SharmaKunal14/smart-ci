@@ -1,0 +1,50 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "mode": {
+      "default": "shadow",
+      "enum": [
+        "shadow",
+        "selective"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "must_run": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+        "type": "string"
+      },
+      "maxItems": 100000,
+      "title": "Must Run",
+      "type": "array"
+    },
+    "unknown_evidence": {
+      "const": "full",
+      "default": "full",
+      "title": "Unknown Evidence",
+      "type": "string"
+    },
+    "allow_source_excerpts": {
+      "default": false,
+      "title": "Allow Source Excerpts",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository"
+  ],
+  "title": "Policy",
+  "type": "object"
+}

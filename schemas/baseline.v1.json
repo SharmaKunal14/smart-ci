@@ -1,0 +1,819 @@
+{
+  "$defs": {
+    "Comparison": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "default": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "context": {
+          "$ref": "#/$defs/Context"
+        },
+        "snapshot_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Snapshot Digest",
+          "type": "string"
+        },
+        "decision_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Decision Digest",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "complete_with_expected_skips",
+            "failed",
+            "incomplete"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "native_exit": {
+          "title": "Native Exit",
+          "type": "integer"
+        },
+        "native_cases": {
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Native Cases",
+          "type": "integer"
+        },
+        "failed_cases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failed Cases",
+          "type": "array"
+        },
+        "known_skips": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Known Skips",
+          "type": "array"
+        },
+        "unexpected_skips": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unexpected Skips",
+          "type": "array"
+        },
+        "missed_failure_files": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missed Failure Files",
+          "type": "array"
+        },
+        "baseline_eligible": {
+          "title": "Baseline Eligible",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "context",
+        "snapshot_digest",
+        "decision_digest",
+        "status",
+        "native_exit",
+        "native_cases",
+        "failed_cases",
+        "known_skips",
+        "unexpected_skips",
+        "missed_failure_files",
+        "baseline_eligible"
+      ],
+      "title": "Comparison",
+      "type": "object"
+    },
+    "Context": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "default": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "maxLength": 140,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9_][A-Za-z0-9_.-]{0,99}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "event": {
+          "enum": [
+            "pull_request",
+            "push",
+            "workflow_dispatch"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "run_id": {
+          "minimum": 1,
+          "title": "Run Id",
+          "type": "integer"
+        },
+        "run_attempt": {
+          "minimum": 1,
+          "title": "Run Attempt",
+          "type": "integer"
+        },
+        "base": {
+          "pattern": "^[a-f0-9]{40}$",
+          "title": "Base",
+          "type": "string"
+        },
+        "tested": {
+          "pattern": "^[a-f0-9]{40}$",
+          "title": "Tested",
+          "type": "string"
+        },
+        "pr_head": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{40}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pr Head"
+        },
+        "ref": {
+          "maxLength": 256,
+          "title": "Ref",
+          "type": "string"
+        },
+        "default_branch": {
+          "maxLength": 200,
+          "title": "Default Branch",
+          "type": "string"
+        },
+        "protected": {
+          "title": "Protected",
+          "type": "boolean"
+        },
+        "profile": {
+          "default": "linux-py314",
+          "enum": [
+            "linux-py314",
+            "local-py314"
+          ],
+          "title": "Profile",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repository",
+        "event",
+        "run_id",
+        "run_attempt",
+        "base",
+        "tested",
+        "ref",
+        "default_branch",
+        "protected"
+      ],
+      "title": "Context",
+      "type": "object"
+    },
+    "Edge": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "import",
+            "package_init",
+            "fixture",
+            "resource"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "line": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "kind"
+      ],
+      "title": "Edge",
+      "type": "object"
+    },
+    "Environment": {
+      "additionalProperties": false,
+      "properties": {
+        "python": {
+          "title": "Python",
+          "type": "string"
+        },
+        "implementation": {
+          "title": "Implementation",
+          "type": "string"
+        },
+        "platform": {
+          "title": "Platform",
+          "type": "string"
+        },
+        "machine": {
+          "title": "Machine",
+          "type": "string"
+        },
+        "abi": {
+          "title": "Abi",
+          "type": "string"
+        },
+        "observer_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Observer Digest",
+          "type": "string"
+        },
+        "distributions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Distributions",
+          "type": "object"
+        },
+        "external_modules": {
+          "items": {
+            "type": "string"
+          },
+          "title": "External Modules",
+          "type": "array"
+        },
+        "available_modules": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Available Modules",
+          "type": "array"
+        },
+        "stdlib": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Stdlib",
+          "type": "array"
+        },
+        "native_roots": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Native Roots",
+          "type": "object"
+        },
+        "import_hooks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Import Hooks",
+          "type": "array"
+        },
+        "hook_hashes": {
+          "additionalProperties": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "title": "Hook Hashes",
+          "type": "object"
+        },
+        "ambient": {
+          "additionalProperties": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "title": "Ambient",
+          "type": "object"
+        },
+        "configuration": {
+          "additionalProperties": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "title": "Configuration",
+          "type": "object"
+        }
+      },
+      "required": [
+        "python",
+        "implementation",
+        "platform",
+        "machine",
+        "abi",
+        "observer_digest",
+        "distributions",
+        "external_modules",
+        "available_modules",
+        "stdlib",
+        "native_roots",
+        "import_hooks",
+        "hook_hashes",
+        "ambient",
+        "configuration"
+      ],
+      "title": "Environment",
+      "type": "object"
+    },
+    "Gap": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Code",
+          "type": "string"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "line": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Gap",
+      "type": "object"
+    },
+    "Graph": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "commit": {
+          "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+          "title": "Commit",
+          "type": "string"
+        },
+        "complete": {
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "unsupported": {
+          "default": false,
+          "title": "Unsupported",
+          "type": "boolean"
+        },
+        "owners": {
+          "additionalProperties": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+            "type": "string"
+          },
+          "title": "Owners",
+          "type": "object"
+        },
+        "dependencies": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "title": "Dependencies",
+          "type": "object"
+        },
+        "tests": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+              "type": "string"
+            }
+          },
+          "title": "Tests",
+          "type": "object"
+        }
+      },
+      "required": [
+        "schema_version",
+        "repository",
+        "commit",
+        "complete",
+        "owners",
+        "dependencies",
+        "tests"
+      ],
+      "title": "Graph",
+      "type": "object"
+    },
+    "ImportFact": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "module": {
+          "maxLength": 512,
+          "title": "Module",
+          "type": "string"
+        },
+        "resolution": {
+          "enum": [
+            "local",
+            "stdlib",
+            "distribution",
+            "optional_absent",
+            "unresolved",
+            "reviewed_external_override"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "line",
+        "module",
+        "resolution"
+      ],
+      "title": "ImportFact",
+      "type": "object"
+    },
+    "Inventory": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "complete": {
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "environment": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Environment",
+          "type": "string"
+        },
+        "tests": {
+          "items": {
+            "$ref": "#/$defs/TestUnit"
+          },
+          "maxItems": 100000,
+          "title": "Tests",
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "repository",
+        "complete",
+        "environment",
+        "tests"
+      ],
+      "title": "Inventory",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "collector": {
+          "const": "python-ast-1",
+          "default": "python-ast-1",
+          "title": "Collector",
+          "type": "string"
+        },
+        "implementation_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Implementation Digest",
+          "type": "string"
+        },
+        "config": {
+          "$ref": "#/$defs/PythonConfig"
+        },
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "sources": {
+          "additionalProperties": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "title": "Sources",
+          "type": "object"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/Edge"
+          },
+          "maxItems": 1000000,
+          "title": "Edges",
+          "type": "array"
+        },
+        "imports": {
+          "items": {
+            "$ref": "#/$defs/ImportFact"
+          },
+          "maxItems": 1000000,
+          "title": "Imports",
+          "type": "array"
+        },
+        "gaps": {
+          "items": {
+            "$ref": "#/$defs/Gap"
+          },
+          "maxItems": 100000,
+          "title": "Gaps",
+          "type": "array"
+        },
+        "native_targets": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$": {
+              "type": "string"
+            }
+          },
+          "title": "Native Targets",
+          "type": "object"
+        },
+        "native_cases_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Native Cases Digest",
+          "type": "string"
+        },
+        "native_case_count": {
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Native Case Count",
+          "type": "integer"
+        },
+        "plugins": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Plugins",
+          "type": "array"
+        }
+      },
+      "required": [
+        "implementation_digest",
+        "config",
+        "environment",
+        "sources",
+        "edges",
+        "imports",
+        "gaps",
+        "native_targets",
+        "native_cases_digest",
+        "native_case_count",
+        "plugins"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "PythonConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "source_roots": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Source Roots",
+          "type": "array"
+        },
+        "test_roots": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Test Roots",
+          "type": "array"
+        },
+        "granularity": {
+          "default": "file",
+          "enum": [
+            "case",
+            "file"
+          ],
+          "title": "Granularity",
+          "type": "string"
+        },
+        "allowed_plugins": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Allowed Plugins",
+          "type": "array"
+        },
+        "external_module_overrides": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "External Module Overrides",
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "repository",
+        "source_roots",
+        "test_roots"
+      ],
+      "title": "PythonConfig",
+      "type": "object"
+    },
+    "Snapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "graph": {
+          "$ref": "#/$defs/Graph"
+        },
+        "inventory": {
+          "$ref": "#/$defs/Inventory"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Digest",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "repository",
+        "graph",
+        "inventory",
+        "provenance",
+        "digest"
+      ],
+      "title": "Snapshot",
+      "type": "object"
+    },
+    "TestUnit": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "runner": {
+          "enum": [
+            "pytest",
+            "vitest",
+            "maven"
+          ],
+          "title": "Runner",
+          "type": "string"
+        },
+        "granularity": {
+          "enum": [
+            "case",
+            "file",
+            "class"
+          ],
+          "title": "Granularity",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "runner",
+        "granularity",
+        "path"
+      ],
+      "title": "TestUnit",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "context": {
+      "$ref": "#/$defs/Context"
+    },
+    "snapshot": {
+      "$ref": "#/$defs/Snapshot"
+    },
+    "comparison": {
+      "$ref": "#/$defs/Comparison"
+    },
+    "policy_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Policy Digest",
+      "type": "string"
+    },
+    "created_at": {
+      "minimum": 1,
+      "title": "Created At",
+      "type": "integer"
+    },
+    "expires_at": {
+      "minimum": 1,
+      "title": "Expires At",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "context",
+    "snapshot",
+    "comparison",
+    "policy_digest",
+    "created_at",
+    "expires_at"
+  ],
+  "title": "Baseline",
+  "type": "object"
+}

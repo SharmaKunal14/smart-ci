@@ -1,0 +1,9 @@
+{
+  "schema_version": "1",
+  "repository": "pypa/packaging",
+  "source_roots": ["src"],
+  "test_roots": ["tests"],
+  "granularity": "file",
+  "allowed_plugins": ["hypothesis"],
+  "external_module_overrides": ["_manylinux", "ctypes"]
+}

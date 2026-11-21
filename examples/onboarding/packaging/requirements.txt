@@ -1,0 +1,15 @@
+# Harness pins for the upstream 26.3 test dependency group on CPython 3.14.
+# Upstream dependency files are preserved. The application is installed editable
+# from the Git revision recorded by scripts/packaging_pilot.py, after these tools.
+coverage==7.17.3
+flit-core==3.12.0
+hypothesis==6.170.16
+iniconfig==2.3.1
+packaging==26.3
+pip==26.3
+pluggy==1.7.0
+pretend==1.0.9
+pygments==2.21.0
+pytest==9.2.0
+sortedcontainers==2.4.0
+tomli-w==1.2.0

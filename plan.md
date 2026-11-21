@@ -1,0 +1,779 @@
+# Smart CI: implementation and deployment plan
+
+Updated: 21 November 2026
+
+Status: Phases 1–5 implemented and verified locally, including automatic Python dependency discovery and deterministic shadow planning. GitHub enrollment is in progress; the live Phase 5 exit gate remains pending. No AWS resources or paid model calls.
+
+Current priority: verify automatic deterministic planning in live shadow CI (Phase 5), measure detection/savings (Phase 6), then enable guarded selective execution (Phase 7).
+
+Workspace: `/Users/kunalsharma/Fun/project/smart-ci`
+
+## 1. Objective and starting point
+
+Build a Test Impact Analysis (TIA) tool that integrates with an existing codebase, identifies the tests relevant to a pull request or code change, and allows the existing CI pipeline to run those tests when the available evidence and policy justify selection. GitHub Actions is the first CI integration; the core remains independent of language and CI provider. Language and build-system support require verified adapters.
+
+**The immediate product goal is automatic, deterministic test planning for every PR in an enrolled existing repository, followed by subset execution on eligible changes.** The local selector, polyglot example and automatic Python collector are implemented. The next milestones are automatic deterministic shadow CI, measured validation, and guarded selective execution. None requires an agent, paid model access, or AWS hosting. Existing tests, build configuration, dependency installation, service setup, and full-suite commands should be preserved. Routine PRs must not require a person to assemble a dependency graph or choose tests.
+
+The user previously requested an agentic workflow and serverless AWS deployment through CloudFormation. Those preferences are retained as **deferred extensions**, not requirements for delivering the immediate goal. A later agent may investigate missing evidence and broaden selection; a later AWS service may share evidence and audit records. Custom training, probabilistic test exclusions, a dashboard, cross-repository orchestration, and a multi-tenant SaaS platform are outside the immediate scope.
+
+### Immediate product contract
+
+- **Input:** an existing repository, the PR comparison and actual tested revision, its native test inventory, versioned dependency evidence, and protected selection policy.
+- **Automation:** after initial onboarding, automatically discover supported dependency relationships, refresh test ownership/inventory and generate the plan on PR creation and subsequent code updates. A handwritten graph like the Phase 3 fixture cannot satisfy this requirement.
+- **Determinism:** identical complete input snapshots produce identical selected IDs, reasons, fallback decisions and canonical decision digests. Inputs include revisions, inventory, graph/coverage evidence, environment, protected policy and collector/selector versions; the diff alone is not the complete input. No LLM decides exclusions.
+- **Output:** selected test IDs at the adapter's supported granularity, reasons, omissions, and an explicit `full` fallback when evidence is insufficient. Selecting a test file or class must not be described as individual-case selection.
+- **Integration:** reuse the repository's existing runners and environment. Add bounded discovery/analysis and result reporting; keep an independent native full-suite path.
+- **Success:** demonstrate that relevant regression-detecting tests are retained on the enrolled repository, with reported uncertainty, and that guarded selection gives worthwhile measured CI savings after overhead.
+- **Limit:** no system can infer every runtime dependency from a diff alone. Apparently complete graphs can still miss dependencies. Mandatory tests, conservative fallback, shadow evaluation and full-run auditing remain necessary; perfect safety is not promised.
+
+The workspace was initially empty. Phase 1 now provides a Git repository, offline CLI, validated contracts, schemas, fixtures, and development checks. The referenced [Test Impact Analysis Tools conversation](chatgpt-conversation://6aff3a0a-4154-83ec-970f-8a482430625c) was retrieved, including the three user/assistant exchanges available through the conversation reader. Its decisions and the user's subsequent request for an agentic workflow are recorded below. Implementation has now reached Phase 3. No live agent or hosted infrastructure has been implemented, and no paid model has been invoked.
+
+### Decisions carried forward
+
+- Target enterprise polyglot repositories, beginning with one repository and one organisation.
+- Keep the selection engine and data contracts independent of CI provider and programming language. Language and build-system support still require adapters.
+- Keep immediate selection deterministic: changed files, dependency relationships, test inventory, optional validated coverage, and explicit policies. No ML or LLM is required in the initial repository integration or selective pilot.
+- Defer the previously requested single investigation agent until deterministic adoption is evaluated. If pursued, it may propose additional tests, collect evidence, or request full execution. It cannot remove baseline or mandatory tests, override full-run triggers, alter policy, or dismiss failures.
+- Preserve selection reasons, evidence provenance, fallback reasons, and execution results.
+- Include must-run tests and conservative handling of authentication, configuration, dependency, schema, reflection, and indirect dependency changes.
+- Validate against complete test runs, measuring regression detection as well as cost and time.
+- Retain cross-service/cross-repository impact, policy-as-code, vendor neutrality, and auditability as intended differentiators. Their commercial value remains unproven.
+- The earlier discussion considered Datadog TIA, CloudBees Smart Tests/Launchable, Harness Test Intelligence, Develocity, bazel-diff, Nx, pytest-testmon, and related tools. This is a record of that discussion, not a fresh verification of their current features. Basic test selection is already an established capability.
+
+### Known, assumed, and unproven
+
+| Item | Status and consequence |
+| --- | --- |
+| Existing-codebase PR test selection | The user's clarified immediate objective; prioritise integration and evidence of useful selection. |
+| GitHub Actions first | First planned CI integration; no live repository workflow has yet been integrated. |
+| Serverless AWS; CloudFormation; cost sensitivity | Retained future deployment preferences. AWS is not a prerequisite for onboarding, shadow CI or selective execution. |
+| Language-agnostic core | A design choice we can implement. Universal language coverage is not implied. |
+| Agentic workflow | Previously requested, now deferred behind the immediate objective. Better impact discovery or lower total cost has not been demonstrated. |
+| Pilot repository | User selected PyPA packaging; release 26.3 is pinned to `929fd4b1410ac7ef61ef3f45b2f5d7e87711a9b5` in a disposable local checkout. Its macOS/CPython 3.14.7 default pytest profile is the enrolled scope. |
+| Adapter compatibility | Phase 4 adds a native pytest profile preserving upstream configuration, reviewed plugins and file-level native reconciliation. Other upstream matrix variants, the coverage/Nox gate and separate property/downstream jobs remain outside this profile. A known platform skip remains incomplete under Smart CI execution rules. |
+| Automatic dependency discovery | Implemented for the documented Python profile, with native inventory, import/package/fixture/resource relationships, provenance, gaps and revision-bound plans. The polyglot demonstration still uses a declared cross-language graph. Universal discovery remains unproven. |
+| Automatic PR planning | Required in Phase 5 for every PR and code update in the enrolled repository, subject to CI execution permissions. Initial configuration is allowed; routine manual graph edits or per-PR test choices are not. |
+| Execution mode lifecycle | Shadow is a temporary validation/revalidation stage for each scope. Selective execution is the intended validated steady state, with full fallbacks and explicit audits retained. |
+| Complete dependency knowledge | Cannot be assumed. Dynamic loading, runtime configuration, shared databases, and external services can hide dependencies. |
+| Fallback behaviour | We can test that missing or invalid evidence causes full execution. This does not prove that apparently valid evidence is complete. |
+| Immediate deployment | Install the versioned tool on existing CI runners; retain reports as CI artifacts. No new hosted service or model endpoint. |
+| Deferred AWS deployment | Proposed: one organisation, one AWS account, one region, no public signup or dashboard, only after a measured need for shared state. |
+| Region | Use `us-east-1` for the worked cost estimate and provisional sandbox configuration. Reprice and select a different region if residency or latency requires it. Do not infer a residency requirement from the user's timezone. |
+| Budget | Phases 4–7 require no new AWS service or paid model calls; existing CI compute/artifacts can still cost money. Retain the previous **US$10/month AWS target** and US$4 inference allowance solely as deferred planning assumptions. The historical US$7.09 worked example is not a billing cap or a refreshed quote; the user has not supplied a spending ceiling. |
+| Workload | Cost example assumes 1,000 CI runs/month and at most 100 agent investigations, compact metadata, and bounded model/tool calls. No real repository measurements exist yet. |
+| Model | Claude Haiku 4.5 via a U.S. geographic Bedrock profile is a costing/evaluation candidate, not a demonstrated quality choice. Verify availability, lifecycle, pricing, and permitted routing before use. |
+| Agent benefit | Initially the agent can only broaden execution. It cannot reduce test count below the deterministic baseline on the same revision. Potential discovery/onboarding benefits must be measured separately. |
+| Safety and savings | Controlled Phase 3 scenarios passed; real-repository recall and net savings remain unmeasured. Fixtures alone do not establish enterprise readiness or a zero-miss guarantee. |
+
+## 2. Architecture and stack
+
+### Immediate execution boundary
+
+Repository checkout, Git analysis, native test discovery, dependency collection and test execution stay on the existing CI runners. The repository continues to own its installation steps, containers, databases, services, environment matrix and full-suite command. Smart CI should not require rewriting tests, upgrading the repository to the example's tool versions, or reorganising source directories to resemble `examples/polyglot/`.
+
+Onboarding records the existing full command and runner configuration before adding selection. Adapters translate stable selected IDs into validated native runner arguments; remote manifests and future model output cannot supply executable commands. If preserving native behaviour requires an adapter extension, verify that extension first. Unsupported suites continue through their native full-suite path. Repository-wide fallback remains the default unless independent suite boundaries have been explicitly verified.
+
+The first integration stores bounded inventory, graph, selection and result artifacts using the existing CI artifact mechanism. Trusted baselines originate from complete runs on protected revisions; PR-produced evidence is provisional. Validate repository/run/revision identity, completeness, environment and artifact digests before reuse. No available or compatible baseline means a full run, not an empty selection. Artifact expiry or download failure also causes full execution. No shared database is needed to prove the immediate use case.
+
+```mermaid
+flowchart TD
+    PR[PR or code change] --> SETUP[Existing checkout and environment setup]
+    SETUP --> INPUT[Native inventory, diff and versioned dependency evidence]
+    INPUT --> CORE[Deterministic selector and protected policy]
+    CORE --> DECISION[Recorded selection proposal and reasons]
+    DECISION --> MODE{Enrolled execution mode}
+    MODE -->|Shadow or full fallback| FULL[Existing independent full-suite workflow]
+    MODE -->|Validated selective pilot| SUBSET[Native runners with selected test units]
+    SUBSET --> CHECK[Reconcile expected and executed units]
+    CHECK -->|Incomplete or mismatched| FULL
+    FULL --> RESULT[Native full-suite result and completeness checks]
+    CHECK -->|Complete| RESULT2[Selected result with failure status preserved]
+    RESULT --> ARTIFACTS[CI status, audit and versioned artifacts]
+    RESULT2 --> ARTIFACTS
+```
+
+The diagram describes the intended decision flow, not GitHub job dependency wiring. In shadow mode the existing full-suite job runs even if analysis never produces a decision. Failure, cancellation or skipping of an analysis job must not suppress the required full-suite job or manufacture a green result. The proposal used for evaluation is fixed before that run's full-suite outcomes are ingested.
+
+### Automatic graph-building procedure
+
+This is the implementation approach for Phases 4–5, not functionality already delivered by the manually declared Phase 3 graph. Start with the collector needed by the first real repository; do not attempt universal language support in one step. The selector remains language-independent because each collector translates native evidence into the same validated graph representation.
+
+**1. Establish the repository's supported analysis scope.** Record source/package roots, build targets, test configuration, installed tool versions and environment variants. Initial configuration may identify roots, native commands, policy and exceptional service relationships. It must not require a manually maintained file-by-file dependency graph or per-PR test list. Document supported features and unresolved cases before allowing exclusions. Repository code, discovery hooks and build plugins execute only in the normal isolated CI environment, without privileged publication or cloud credentials.
+
+**2. Collect native relationships with language-aware tools.** Prefer resolved build metadata where it supplies reliable boundaries, and parsers/resolvers for source dependencies. A text search can locate evidence for inspection but cannot establish a complete dependency graph. The proposed collectors are:
+
+| Collector | Procedure and initial granularity | Limits and verification requirement |
+| --- | --- | --- |
+| Python | Parse source and test/helper modules using the [Python AST](https://docs.python.org/3.14/library/ast.html), collect `import`/`from` statements, and resolve them against the supported package roots and relative-import rules. Start with file/module nodes. | AST parsing identifies syntax; it does not resolve imports by itself. Do not import application modules merely to resolve names. Verify package initialisers and relative imports; unresolved names, unsupported import hooks and dynamic loading remain explicit gaps. |
+| TypeScript | Use the [TypeScript compiler API](https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API) for parsing and module resolution with the repository's project configuration. Include supported imports, re-exports and workspace relationships. Start with file/package nodes. | Verify compiler resolution against the actual runner/bundler, including aliases and package resolution. [Compiler path mappings alone do not establish runtime resolution](https://www.typescriptlang.org/docs/handbook/modules/reference.html). Unsupported loaders or computed imports cannot be treated as absent dependencies. |
+| Java/Maven | Use the effective build configuration and [Maven reactor relationships](https://maven.apache.org/guides/mini/guide-multiple-modules.html) to identify projects, source/test ownership and project dependencies. Initially map native JUnit execution units to Maven module/build-target nodes. | Module membership is not itself a dependency edge. This is conservative module-level analysis, not a complete Java class/function call graph. Verify the enrolled wrapper, profiles, plugins and generated-source behaviour before claiming support; unsupported configurations remain full-run cases. |
+
+Include resolvable conditional dependencies conservatively. Distinguish resolved in-repository dependencies, resolved external/standard-library references tied to the pinned dependency environment, and genuinely unresolved references. Do not classify a shadowed or ambiguous name as a known external dependency merely by its spelling. The first collector need not recursively parse every third-party package; dependency/toolchain changes retain full-run rules. Track test helpers, supported fixture/setup relationships and resources where native evidence establishes them. Do not silently discard an import or file because it is awkward to resolve. Changes to unmapped assets, configuration, shared setup or build/dependency files retain the deterministic full-run rules. Existing validated coverage may add dependency/test relationships; historical non-coverage cannot justify a new exclusion.
+
+**3. Normalize graph nodes, ownership and provenance.** Use stable repository-qualified IDs for files/modules/build targets and preserve native test IDs separately. `A → B` means **A depends on B**; it is evidence of possible impact, not proof that every execution of A calls B. The existing graph model has three useful maps:
+
+| Map | Meaning |
+| --- | --- |
+| `owners[path] → node` | Which represented file/module/build target owns a repository-relative path. |
+| `dependencies[node] → dependencies` | The nodes that the owner relies on; construct the reverse index for impact traversal. |
+| `tests[test_id] → owner_node` | Where an executable test unit belongs. That owner's dependencies determine what can affect it. |
+
+A test module/target can itself be a node with dependencies on several application modules. Thus a test does not need to be assigned to a single guessed production file. Shared resources must be represented with the appropriate consumer edges or remain unresolved. Record edge origin, source path/build declaration, revision, input digest and collector version; distinguish automatically collected evidence from reviewed declarations. Phase 4 implements provenance, typed relationships and gap details in a versioned companion snapshot contract. The existing strict graph schema is preserved; further collectors must keep version compatibility.
+
+Validate path containment, unique IDs, known ownership, edge endpoints, input size and graph limits. Use sorted, deduplicated adjacency maps and versioned JSON artifacts initially; no graph database is required. Parsing successfully or passing schema validation is not proof of complete dependency knowledge. Report the analysed scope, unsupported features and gaps; missing or ambiguous evidence must not become a claim of independence.
+
+**4. Map discovered execution units to this graph.** Obtain test inventory through the native runner/build adapter, preserving the repository's configuration. Map each unit to its containing test module or build target, then connect that owner through the collected relationships. For Python this may mean all parameterised case IDs in an impacted test module; Vitest initially executes whole files; Maven initially executes classes belonging to affected modules. Do not infer coverage from similar test/source filenames. Integration tests with several dependencies need a corresponding test target and evidenced edges, not an arbitrary single owner chosen by naming convention.
+
+For example, a supported repository may produce the following relationships automatically from imports or native build declarations. Arrows consistently mean “depends on”:
+
+```mermaid
+flowchart LR
+    AT[Auth test module] --> A[Auth module]
+    CT[Checkout test module] --> C[Checkout module]
+    C --> A
+    RT[Reporting test module] --> R[Reporting module]
+```
+
+An Auth change reaches Checkout and both relevant test modules by reverse traversal; Reporting remains outside that closure under the represented evidence. All current native units mapped to those test modules are candidates. This deliberately permits extra tests within an affected file/module; function-level or per-case exclusions require separate evidence and evaluation.
+
+**5. Collect and version both comparison snapshots.** Resolve merge base and actual tested revision, then load compatible baseline evidence and generate head evidence automatically. If a trusted compatible baseline cannot be obtained or safely regenerated, use the independent full-suite path. Analyse both ownership maps and conservatively combine dependency edges for selection so a deleted file, renamed module or removed import does not erase impact. Select only executable IDs in the current inventory, while using baseline relationships to establish impact.
+
+Initially perform a complete collection of the enrolled scope for each uncached snapshot. This scans metadata/source and discovers names; it does not require executing the full test suite on every PR. Discovery may still load code and has measurable overhead. Add incremental collection only after correctness is established. Cache by repository/revisions, source and configuration digests, environment, collector/tool versions and applicable policy; never reuse a stale or partial snapshot merely to avoid a full run. PR-produced artifacts do not automatically become trusted protected-branch baselines.
+
+**6. Generate a deterministic plan and execute it through native runners.** Apply the policy and traversal order in Section 3: risk/unknown-evidence checks; ownership of changed old/new paths; reverse dependency traversal over baseline/head evidence; current test mapping; changed/new and mandatory tests; additive valid coverage. Traverse with a bounded work queue and visited set so cycles terminate. Emit stable IDs and reasons, including a supported dependency path such as `auth changed → checkout depends on auth → checkout test unit belongs to the affected target`.
+
+Identical complete input snapshots must reproduce canonical graph contents, selected IDs, fallback decisions, explanations and decision digests. Exclude timestamps, attempt IDs and durations from that comparison; sort traversal and explanation tie-breaks explicitly. Do not depend on an LLM response, network-result ordering or fresh randomness. Unstable inventory or unresolved inputs cause conservative execution instead of guessed exclusions. Publish the proposal before ingesting that run's test outcomes, execute according to shadow/selective policy, and reconcile expected versus observed units. Native test failures may be nondeterministic; the planning requirement does not claim to eliminate flaky tests.
+
+**7. Preserve the boundary of what can be inferred.** A TypeScript process invoking Python, an HTTP service call, reflection, a plugin registry or runtime configuration is not automatically understood by ordinary import collectors. A verified additional collector, versioned contract/build evidence or reviewed supplementary declaration is required to represent such a relationship. Otherwise it remains an explicit gap and triggers full execution for the affected scope, repository-wide until narrower fallback boundaries are verified. Similar names, co-location and a successful previous run are not evidence that a hidden dependency is absent.
+
+### Graph-building verification matrix
+
+These are acceptance demonstrations to implement on the enrolled repository and small targeted fixtures. They are not tests added or run by this plan revision.
+
+| Case | Required observation | Phase |
+| --- | --- | --- |
+| Clean checkout and native baseline | Automatically generate ownership, graph and inventory; reconcile actual test identities/outcomes with the independent full command. No handwritten graph stands in for the collector. | 4 |
+| Direct and transitive dependencies | Native metadata/source references explain edges; changing the upstream module selects direct and indirect consumer tests while a supported unrelated component can be omitted from the proposal. | 4 |
+| Add a dependency in an existing PR | Refresh evidence and include newly affected downstream tests without editing Smart CI graph entries or test lists. | 4–5 |
+| Delete/rename a file or remove an edge | Both snapshots participate; old relationships are not silently lost, and only current executable test IDs are dispatched. | 4–5 |
+| Test mapping and shared setup | Parameterised cases, test helpers, fixtures and multi-module ownership reconcile at the declared granularity; unsupported shared setup triggers full execution. | 4 |
+| Native resolver differences | Relative imports, aliases/re-exports or Maven project relationships relevant to the pilot match native behaviour; unsupported resolution is reported, not dropped. | 4 |
+| Deterministic replay and cycles | Repeated pinned inputs, including varied collection order, give the same canonical graph and plan; cycles terminate and resource limits cannot yield truncated successful evidence. | 4–5 |
+| Missing or stale evidence | Expired baseline, changed tool/configuration versions, unresolved dynamic relationships, collection failure or malformed artifacts cause visible full fallback or incomplete failure. | 4–5 |
+| Regression detection | Inject a defect on a discovered dependency path; verify that the independent full suite detects it and the proposed/selected tests retain a detecting unit. Label injected evidence separately from historical regressions. | 5–6 |
+| Real PR automation | Creation, updated revisions and reruns trigger collection and planning automatically; publish a revision-bound proposal before full-run outcomes are consumed. | 5 |
+| Validated subset execution | An eligible non-audit PR runs selected units plus mandatory tests without an additional full suite; missing results trigger full fallback or failure and an observed failure survives any retry. | 7 |
+
+### Execution modes and leaving shadow validation
+
+The product is intended to reduce test execution. **Running the full suite on every PR indefinitely is not the delivery goal.** Shadow remains an available mode throughout the product's life, but an enrolled, validated scope should normally use selective execution after the Phase 6 gate and Phase 7 rollout.
+
+| Mode or full-run reason | When it applies | What actually runs |
+| --- | --- | --- |
+| Shadow validation | Initial onboarding, a new suite/adapter, or revalidation after a material change or detected miss | Generate the candidate subset automatically, but run the existing full suite to measure what the proposal would miss. |
+| Selective execution | The scope has passed evaluation and is enabled by protected rollout policy | Run the selected units plus mandatory tests; do not also run an undisclosed full suite on every normal PR. |
+| Full fallback or force-full | Broad/risky changes, missing or stale evidence, unsupported analysis, execution mismatch, or an explicit override | Run the independent native full-suite path and report the reason. |
+| Full audit | A declared scheduled run or sampled PR after selective rollout | Run the full suite to check for selection misses; report this separately from fallback and include its cost in savings. |
+
+Shadow is therefore not limited to developing Smart CI itself: each newly enrolled repository or suite needs its own evidence. It is also not a permanent requirement for every PR. Phase 6 produces an explicit readiness decision and remaining gaps; Phase 7 enables the validated scope. The transition is evidence-based, not an arbitrary number of days or a claim of zero future misses. If validation fails, keep that scope full and disclose why instead of reporting nonexistent savings.
+
+Audit sampling must be reproducible for a fixed repository, tested revision and protected audit-policy version, with the result recorded in the run metadata. Do not resample on each retry or use freshly random choices to change the plan. Scheduled audit runs are a separate declared execution context. A proposed initial 20% PR audit sample is a pilot setting to evaluate, not a permanent product-wide rate or a promise of 80% savings. A genuine change affecting everything may correctly select the full suite even in selective mode.
+
+### Deferred extensions — outside the immediate execution path
+
+The proposed CI integration, like the existing local CLI, must work without AWS or a model. A later AWS service may reuse the same selection rules and provide shared storage, central policy and audit records. It receives bounded metadata, not source archives or executable build instructions. Filenames and test identifiers can still be sensitive. Failure of a required cloud evidence request causes full execution; explicit local mode remains supported.
+
+A later investigation agent starts with approved metadata and evidence references. `allow_source_excerpts` defaults to false for private repositories. Enabling approved excerpts requires repository-owner data policy, bounded access, secret filtering, permitted routing and retention rules. No whole-repository upload is planned. The agent's benefit must be measured against the deterministic baseline rather than assumed from the presence of an LLM.
+
+If cloud investigation is eventually enabled, it is asynchronous: an API returns a job ID, a worker executes one bounded model step, and durable state records progress. Approved probes execute on isolated CI runners. An isolated trusted publication job bridges validated artifacts to AWS without executing PR code or supplying credentials to the PR test job. The model has neither AWS credentials nor a general shell. Optional advisory investigations cannot weaken the deterministic outcome; required unresolved-risk investigations preserve full fallback. The detailed deferred design and cost worksheet remain in Sections 6–7.
+
+### Implementation choices and deferred options
+
+| Area | Choice | Reason and trade-off |
+| --- | --- | --- |
+| Core and CLI | Python 3.13+, strict types, standard-library `argparse` | Versioned local package; keep runner installation separate from the target application environment. Phase 3 was exercised on Python 3.14.7. Recheck [Lambda runtime support](https://docs.aws.amazon.com/lambda/latest/dg/lambda-python.html) only if cloud packaging is later pursued. |
+| Validation and contracts | Pydantic models exporting versioned JSON Schema | Consistent validation at file, CLI, and API boundaries. JSON policy initially avoids executable configuration and YAML-specific parsing hazards. |
+| Dependency management | `pyproject.toml` and a committed `uv.lock` | Reproducible development and packaging. The installed CLI should not require `uv` at runtime. |
+| Quality tools | Ruff, mypy, pytest; property tests where they test safety invariants | Verify deterministic rules and failure paths, with meaningful integration tests for adapters. |
+| Graph implementation | Explicit adjacency maps and bounded traversal | No graph database or specialised graph dependency until measured scale justifies it. |
+| Investigation agent — deferred | One explicit, bounded tool-use loop behind a provider interface | An agent chooses its next tool from observations. Fixed rules still validate every action and determine exclusions; no agent team is needed initially. |
+| Model access — deferred | Bedrock Converse with application-executed tools; model/profile pinned per run | Keeps tool authority in application code. Use a small evaluation candidate first and disable automatic escalation to a costlier model. [Bedrock tool use](https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html) supports this execution boundary. |
+| Sample ecosystems | Python/pytest; TypeScript/Vitest; Java/JUnit through Maven | Demonstrate three ecosystems while documenting the actual supported selection granularity. |
+| Cloud compute — deferred | On-demand Lambda, initially ARM64 after packaging verification | No idle provisioned compute. CPU, memory, and native package compatibility must be measured. |
+| Cloud storage — deferred | S3 for versioned evidence blobs; DynamoDB on-demand for small indexed metadata | Avoid one DynamoDB record per coverage edge and avoid loading entire histories on each request. |
+| Infrastructure — deferred | Plain CloudFormation YAML, packaged Lambda ZIPs | Directly follows the CloudFormation preference. SAM may be adopted later for tooling convenience; it is a [CloudFormation transform](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/transform-aws-serverless.html), not a separate infrastructure owner. |
+| AWS SDK — deferred | Pinned Boto3 dependency in the cloud adapter only | Core logic must not depend on AWS. Use approved AWS SDK conventions when implementing this adapter. |
+
+The initial product is enterprise-oriented, not enterprise-proven. Single-organisation isolation reduces the initial security and operational scope; multi-tenant controls arrive in a separate phase.
+
+## 3. Data contracts and safety rules
+
+### Versioned inputs and outputs
+
+This table describes target contracts; it is not a claim that every listed field exists in the Phase 3 schemas. Onboarding may extend contracts with compatibility rules. Investigation/tool/evidence records are reserved for the deferred agent work; the deterministic path must not require them.
+
+| Contract | Required content |
+| --- | --- |
+| Change set | Repository identity; merge-base, head, and actual tested commit; additions, modifications, deletions, renames, and submodule changes. |
+| Test inventory | Stable, repository-qualified IDs; runner; file/target ownership; execution granularity; tags; discovery completeness; environment fingerprint. |
+| Dependency graph | Components, file ownership, test ownership, typed dependency edges, explicit service/contract edges, source commit, adapter version, and known unsupported features. |
+| Coverage, when supplied | Test or execution-unit ID → source files/lines; collection commit, environment, collector version, completeness, and test outcome. Suite-level coverage must not masquerade as per-test coverage. |
+| Policy | Must-run groups; risk paths; full-suite triggers; approved exclusions; freshness rules; input limits; mode; protected revision and digest. |
+| Selection decision | `full` or `subset`; selected IDs and reasons; omitted IDs and evidence-based reasons; fallback codes; evidence hashes; engine/policy versions; deterministic decision digest; separately timestamped run metadata. |
+| Execution result | Expected and executed units, pass/fail/error/skipped status, durations, environment, attempt, actual tested commit, and link to the decision. Missing or truncated results are incomplete, not successful. |
+| Investigation request | Repository and tested commit; baseline decision digest; gap/risk trigger; allowed tools/data classes; model/profile/prompt/tool versions; deadline and call/token/CI budgets. |
+| Tool request/result | Schema-validated operation and arguments; authorised repository scope; tool-call ID; immutable evidence references and hashes; success/error/completeness status. |
+| Evidence proposal | Proposed dependency or additional test IDs; source references; observation versus hypothesis; validator outcome; promotion status. Model confidence cannot certify completeness. |
+| Investigation record | Job/step state, leases, accepted/rejected tool actions, concise evidence-based findings, model token usage, reserved/settled cost, and termination reason. Do not rely on or store private model reasoning as the audit record. |
+
+Do not embed executable shell commands in remotely supplied manifests. Runner adapters construct argument lists from validated identifiers and trusted configuration. Unknown schema versions, duplicate identifiers, dangling graph references, path traversal, out-of-root symlinks, excessive nesting, and oversized payloads must be handled explicitly.
+
+### Deterministic selection order
+
+1. Load protected policy and a trusted baseline. Validate provenance, version compatibility, limits, and current inventory completeness.
+2. Resolve the actual comparison and tested commits. Use NUL-delimited Git output; account for shallow clones, merge commits, force-pushes, renames, deletions, and unavailable history. Inspect both baseline and current ownership where necessary.
+3. Apply full-suite triggers before attempting exclusions. Configuration, lockfiles, shared dependencies, database migrations, build tooling, CI configuration, selector policy changes, and unmapped files default to full execution.
+4. Traverse reverse dependencies from changed components, including declared service contracts. Use conservative baseline/current graph reconciliation so removed edges cannot silently erase impact.
+5. Select all test units owned by affected components and dependants. Add matching coverage evidence, changed/new tests, and must-run tests.
+6. In the MVP, coverage may **add** tests; it cannot subtract tests selected through dependencies or policy. Fine-grained exclusions require a separately evaluated later policy.
+7. Emit stable ordering and explanations. An omission means “no impact found under these recorded inputs,” not “cannot fail.” Retain an explicit reason for every inventory unit.
+8. Reconcile planned and actual execution. Discovery or runner mismatches trigger full execution where possible; otherwise fail the CI check as incomplete.
+
+Missing optional coverage alone does not force full execution if the supported static graph and inventory satisfy policy. A stale optional coverage file can be ignored with an audit reason; if policy requires it, its absence or staleness forces full execution. Freshness checks must include commit ancestry and graph/toolchain changes, not just elapsed time.
+
+**Fail open refers to test execution, not access control or CI success.** If the selector crashes, times out, returns malformed output, cannot establish a comparison, or cannot justify an exclusion, the wrapper invokes the repository's independently configured full-suite command. It must not define “full suite” using an incomplete selector inventory. Authentication remains deny-by-default. If the full suite itself cannot run, the pipeline fails rather than reporting success.
+
+An empty selection is invalid by default. Explicit docs-only exclusions can be introduced after validation, while still respecting must-run policy. Time budgets never remove mandatory tests. Dependency cycles are handled through bounded traversal; unresolved references and unsupported behaviour remain reasons to broaden execution.
+
+### Deferred agent authority and evidence lifecycle
+
+For the same tested revision, let `S_base` be the immutable deterministic baseline, `S_add` validated agent-requested additions, and `S_final` the executed selection. Enforce `S_final ⊇ S_base` and include every mandatory unit. If baseline policy requires full execution, `S_final` stays full regardless of the agent's conclusion. The original baseline record is never overwritten by an investigation.
+
+| Proposed tool | Allowed behaviour | Enforced boundary |
+| --- | --- | --- |
+| `inspect_change` | Read the approved change manifest and optional allowed excerpts | Fixed commit; size/path/data-policy limits; no arbitrary filesystem access. |
+| `search_repository` | Search scoped indexed metadata or approved source excerpts | Repository allowlist; bounded queries/results; no arbitrary URLs or shell commands. |
+| `query_dependencies` | Retrieve graph neighbours and contract evidence | Read-only, versioned graph; unknown/stale relationships remain explicit. |
+| `lookup_test_history` | Read relevant complete-run outcomes and durations | No future-result leakage; no automatic flaky-test quarantine. |
+| `request_validation` | Request an existing test group or approved coverage probe | Runner-side allowlist, fixed revision, no arbitrary commands; initially one probe job per investigation, at most five runner-minutes. |
+| `submit_evidence` | Propose an edge, test addition, or full-run escalation | Validate IDs/references independently; cannot publish policy or trusted baseline changes. |
+
+The agent chooses tools and follow-up searches from their results. A validator checks schema, authorisation, referenced artifact existence, revision match, and the supported factual relationship; valid JSON alone is not factual verification. Unsupported claims stay hypotheses. Tool failure, missing evidence, or a passed probe cannot establish that excluded tests are harmless.
+
+New graph edges remain provisional until a trusted collector or reviewer verifies them. Promotion is a separate versioned operation on a protected revision, with provenance and rollback. The first agent may propose only additions, not edge deletion, policy weakening, or baseline replacement. Better validated inputs may reduce fallback on future revisions under ordinary policy, but an agent cannot use its own confidence to narrow the current run.
+
+Repository files, comments, test output, and documentation are untrusted observations, including text that asks the agent to ignore rules. Tool permissions, input validation, output redaction, and policy checks must sit outside prompts. Test prompt-injection attempts, fabricated evidence, cross-repository access, and attempts to turn a failing test into a successful check. Cache only versioned observations keyed by commit, evidence, policy, and tool versions; cached model conclusions are not trusted facts.
+
+An optional advisory investigation can be omitted when its allowance is exhausted without changing a valid baseline. If a missing-evidence or risk trigger requires investigation, record full-suite fallback before admission: lack of budget must not silently restore a narrower selection. An investigation cannot turn an incomplete or failing CI result green.
+
+### Deferred first agent demonstration
+
+An authentication change alters a token claim. The agent inspects approved change evidence, searches for consumers, finds checkout outside the recorded dependency graph, requests an existing contract test, and submits a proposed auth → checkout relationship with source/result references. The test result determines its next investigation step. The policy gate adds the affected units or preserves full execution. Repeat with no checkout consumer and with missing/injected evidence to show adaptive behaviour, rejection, and fallback rather than a hard-coded demonstration.
+
+### Acceptance scenarios to carry through the phases
+
+Repository/selector cases apply to Phases 4–7. Cloud and agent cases apply only if those deferred extensions are implemented; they are not gates for deterministic onboarding.
+
+| Change or failure | Required observable outcome |
+| --- | --- |
+| Change an isolated, fully mapped module | Its tests and declared dependants are selected; unrelated omissions have recorded reasons. |
+| Change authentication used by checkout | Checkout integration tests are selected through an explicit dependency; globally sensitive auth paths can force full execution. |
+| Change lockfile, shared config, DB migration, or build/test tooling | Full suite by default, with a specific trigger code. |
+| Add/change a test, rename/delete a source file, or remove a dependency edge | Update inventory and consider baseline ownership; no silent loss of affected tests. |
+| Reflection, plugin loading, generated code, shared fixtures, or an unknown service dependency | Run the declared wider group or full suite; unsupported analysis is visible. |
+| Missing merge base, graph, inventory, or required baseline | Full suite; if full execution is unavailable, fail CI. |
+| Malformed policy, untrusted policy weakening, oversized input, or invalid paths | Reject unsafe input and fall back safely; do not execute embedded instructions. |
+| Cloud timeout, throttling, exhausted quota, or unavailable evidence | Full suite; emit a visible fallback reason. |
+| An interrupted run, incomplete results, or duplicate feedback | Do not publish a successful complete baseline; duplicate effects are suppressed. |
+| Agent requests fewer tests than the baseline or overrides a full-run trigger | Reject the action; preserve baseline/must-run selection and the original audit record. |
+| PR content asks the agent to disclose secrets, change policy, or run arbitrary commands | Tool broker denies the action; no credential/source leakage or policy change. |
+| Agent cites a nonexistent file, wrong commit, or unrelated test result | Reject the proposal and retain the unresolved-risk/full-run status. |
+| Agent job is duplicated, times out, or reaches its token/tool/spend allowance | No duplicate probe or unchecked model retry; required investigations fall back to full execution. |
+
+## 4. Phase-by-phase delivery
+
+Phases 0–4 provide the local foundations and one existing-repository pilot, with the limitations recorded in the README and onboarding report. **The remaining immediate delivery sequence is Phase 5 → Phase 6 → Phase 7.** Agent and AWS work are deferred beyond that sequence and are not prerequisites for its exit gates. Phase numbering after 3 replaces the previous ordering; the old agent-first Phase 4 and cloud-dependent selective pilot are superseded.
+
+Each phase states its starting point, deliverables and verification gate. Phase 1–3 commands remain available, and Phase 4 adds `collect`, `plan`, `make onboarding-setup` and `make onboarding-demo`. Commands and artifacts for Phase 5 onward remain planned. The local pilot does not authorize upstream publication, deployment or paid model calls.
+
+### Phase 0 — Agree the scope and preserve the design
+
+**Starting point:** the empty workspace and the retrieved conversation.
+
+**Build:** this plan, the MVP boundary, explicit assumptions, safety rules, architecture, and cost model.
+
+**Expected output:** `plan.md` with enough detail to implement and review one phase at a time.
+
+**How to verify:** check that each phase below identifies its inputs, artifacts, and a concrete acceptance demonstration. Check that no deployment or benchmark result is presented as completed.
+
+**Exit gate:** a coherent plan exists. Budget, account, and residency assumptions must be resolved before provisioning, but do not block local development. No AWS spend in this phase.
+
+### Phase 1 — Repository scaffold and executable contracts
+
+**Starting point:** Phase 0; no application code yet.
+
+**Build:** initialise Git when implementation begins; create the Python package, CLI entry point, strict schemas, error types, dependency lock, formatter/type-checker/test configuration, and contributor README. Define identifiers, schema migration rules, policy precedence, and complete/full/incomplete execution semantics before selection logic. Include investigation/tool/evidence schemas and a provider interface, with fixture responses so core tests never require a paid model.
+
+**Expected output:** installable `smartci` CLI, JSON Schemas, valid and invalid example manifests, and a passing development check command. Do not add empty framework layers for future features.
+
+**How to verify:** install from a clean checkout; run `smartci --help` and `make check`; validate a good manifest; reject unknown versions, duplicate IDs, bad paths, excessive sizes, and malformed policies with predictable errors. Confirm core imports do not require AWS credentials or network access.
+
+**Exit gate:** a contributor can reproduce setup and validation from the README. AWS cost: zero.
+
+### Phase 2 — Conservative selector and audit report
+
+**Starting point:** validated contracts and a working CLI.
+
+**Build:** Git diff ingestion, static graph traversal, policy evaluation, optional normalised coverage ingestion, deterministic selection, and JSON/Markdown reporting. Use synthetic fixtures first, including auth → checkout and unrelated components. Provide `smartci validate`, `smartci select`, and `smartci explain`.
+
+**Expected output:** `selection.json`, `audit.md`, and a fixture suite covering the acceptance scenarios in Section 3. A report shows both why tests run and what evidence justified omissions.
+
+**How to verify:** `make demo` demonstrates a narrow change and a broad fallback. `make check` verifies all must-run tests are retained, repeated inputs produce the same decision digest, adding edges to an already valid graph with fixed policy/inventory never shrinks selection, graph cycles terminate, and selector failures cannot become empty successful decisions. Exercise real temporary Git histories for merge bases, renames, deletions, and shallow history.
+
+**Exit gate:** deterministic behaviour and fallback invariants pass. These tests establish implementation behaviour on represented inputs, not completeness of real dependency graphs. AWS cost: zero.
+
+### Phase 3 — Real polyglot example and adapter contracts
+
+**Starting point:** a selector proven against structured fixtures.
+
+**Build:** a runnable example with Python, TypeScript, and Java components, an authentication dependency used by checkout, an unrelated component, and integration tests. Start with an explicit reviewed component graph; add native build-graph extraction only where supported. Implement inventory, execution, and results adapters.
+
+| Adapter | Initial execution unit | Coverage scope |
+| --- | --- | --- |
+| pytest | Stable test node ID, including parameterisation | Add a tested per-test context collector if feasible; otherwise use static mapping. |
+| Vitest | Test file initially | Aggregate coverage remains aggregate. Per-test attribution requires a separate collector and verification. |
+| Maven/JUnit | Test class initially | Standard aggregate JaCoCo output is not per-test attribution. Use class/target mapping until a validated collector exists. |
+
+**Expected output:** `examples/polyglot/`, adapter compatibility documentation, an end-to-end demonstration, and expected-versus-executed reconciliation. Stable IDs identify the actual unit being selected; a file or class is not reported as an individual test case.
+
+**How to verify:** run the full example in all three ecosystems; introduce an isolated defect and observe the affected unit being selected; introduce an auth/checkout regression and observe the integration test failing; change a migration or lockfile and observe a full run. Test parameterised cases, shared setup files, missing discovery output, and runner errors. Compare adapter results with native runner reports.
+
+**Exit gate:** actual tests execute, rather than only producing plausible manifests. Unsupported build features are documented and trigger conservative behaviour. AWS cost: zero; CI runner usage is separate.
+
+**Phase 3 implementation handoff:** `README.md` contains setup, native-runner diagnostics, supported adapter profiles and limitations. `make polyglot-demo` verifies a passing full baseline plus six real Git scenarios in a disposable copy. `smartci discover` emits inventory; `smartci run` defaults to unfiltered full execution and reconciles native results. Static graph mapping is explicit; no per-test coverage collector or automatic cross-language graph extraction is claimed.
+
+### Phase 4 — Existing-repository onboarding and automatic dependency discovery
+
+**Starting point:** the completed local selector and Phase 3 adapters; no existing production repository has been enrolled. Select an accessible existing repository with working tests and CI when implementation is requested. Start with one useful suite or component; do not require all languages or build systems to be supported at once.
+
+**Build and deliverables:**
+
+1. Record the repository's current workflow, full-suite command, working directories, runtime/build versions, test configuration/plugins, matrices, service dependencies, discovery output and native result format in an onboarding report. Measure an unchanged full-run baseline. Choose the supported execution granularity explicitly: case, file, class or build target.
+2. Add a small repository configuration and protected policy template describing suite roots, runner adapters, mandatory tests and risk paths, plus references to existing trusted full commands. Preserve tests and environment setup. Package/install a pinned Smart CI version without replacing the application's dependency lockfiles or requiring every sample ecosystem to be installed.
+3. Extend only the adapters needed by this repository. Preserve native plugins, custom configs, wrappers, module selection, fixtures and matrix semantics. Do not treat the Phase 3 plugin/config restrictions as acceptable silent behaviour changes in an existing project. Document unsupported features and keep those suites on native full execution.
+4. **Implement automatic dependency discovery for the enrolled scope using the procedure in Section 2.** Build the pilot's Python AST/package resolver, TypeScript compiler resolver or Maven module collector as appropriate; do not require all three for the first enrolment. Collect supported native build/workspace dependency metadata and language-aware import/module relationships; derive file/component ownership and map native test units through their containing test module/target. Include supported helpers and shared resources, verify native resolution, and record unresolved gaps and provenance. Use existing validated coverage as additive evidence. Produce the graph from repository inputs rather than hand-maintaining a file-by-file or test-by-test graph. Validate schema compatibility if provenance or richer graph fields require a contract extension.
+5. Automatically generate or load compatible, revision-bound baseline and head evidence, and refresh it when source, imports, test inventory or relevant configuration changes. Incremental collection is optional; correctness comes before caching speed. Cache only by the recorded revisions, source/configuration digests, environment and collector version; rebuild or fall back on mismatch. Initial suite roots, trusted native commands, policy and reviewed exceptional relationships may be configured during onboarding. Declared exceptions supplement automatic discovery and have separate provenance; they cannot substitute for its acceptance demonstration or require routine manual PR maintenance.
+6. Define the complete protected-branch baseline artifact bundle, its repository/commit/environment identity, expiry and refresh procedure. First use and absent/incompatible evidence require full execution. Produce a compatibility checklist, local verification instructions and a reversible integration patch for the chosen repository; no actual test skipping yet.
+
+**Expected output:** a repository-specific onboarding report, configuration/policy proposal, tested runner adapters and automatic dependency collector, reproducible native inventory and generated graph snapshots with provenance, full-run baseline results, and a documented fallback command. The evidence bundle includes `inventory.json`, `base-graph.json`, `head-graph.json` and versioned collector provenance/gap records; these are planned artifacts for the enrolled repository. Proposed documentation location: `docs/onboarding/<repository>.md`; snapshots and results use ignored local output or CI artifacts, not committed secrets/source dumps. Any proposed `onboard` or `doctor` command is optional tooling, not a dependency for this phase.
+
+**How to verify:**
+
+- Run the Phase 4 cases in the graph-building verification matrix in Section 2, including resolver agreement, test ownership, provenance, cycles and explicit unsupported gaps. The unchanged graph/selection engine and native runner checks remain part of the acceptance gate.
+- On the same revision and environment, run the repository's existing full command independently and compare its discovery/results with the adapter's full run. Reconcile identities and outcomes at the declared granularity; matching only a test count is insufficient. Disclose nondeterministic/flaky differences and resolve unexplained mismatches before enabling selection.
+- Exercise actual parameterised tests, shared fixtures, custom runner configuration/plugins, wrapper/module behaviour and each enrolled CI matrix variant. Confirm no required tests or services disappear through changed defaults.
+- From a clean checkout, generate inventory and dependency evidence without a handwritten graph. Inspect native metadata/source references for representative direct and transitive edges and test ownership. A collector that only copies the demo's hard-coded mappings does not pass.
+- Add an ordinary supported import/module dependency that makes a previously unrelated component depend on a changed component. Refresh evidence and confirm that downstream tests enter the candidate plan **without editing Smart CI graph entries or test lists**. Remove/rename dependencies and tests and verify automatic refresh plus conservative baseline/head reconciliation. Broad configuration changes still trigger full execution.
+- Repeat collection and selection from identical pinned revisions, environment, policy and evidence. Compare canonical graphs, selected IDs, reasons and decision digests; incidental filesystem enumeration order must not change them. Keep timestamps, run IDs and measured durations outside the deterministic comparison. Changed input versions may legitimately change the plan.
+- Analyse isolated and indirect code changes using the generated graph while still running the full suite. Exercise newly discovered tests, shared fixtures and config/lockfile changes. An unstable discovery result or an unresolved relationship must remain visible and trigger conservative full execution, not a guessed narrow plan.
+- Remove the inventory/baseline, make evidence stale, and present an unsupported feature. Confirm full execution or an explicit incomplete failure when the native full suite cannot run; never accept an empty green result.
+- Verify uninstall/rollback: the repository's original commands and workflow still work without Smart CI. Record the exact commands, versions, outcomes and remaining compatibility limitations.
+
+**Exit gate:** one existing repository has a reproducible native full-run baseline, automatically generated dependency/ownership evidence for its documented supported scope, and no unexplained discovery/result mismatch. Ordinary supported code/test/dependency changes update the plan without manual graph edits or test selection. Repeatability and unknown-evidence fallback checks pass. Unsupported suites remain full. No agent, new AWS service or paid model is required. Local and existing CI usage are separate costs.
+
+**Phase 4 implementation handoff:** `docs/onboarding/packaging.md` records the pinned repository, native profile, commands, artifact contract, reviewed exceptions, reversible configuration patch and limitations. `smartci collect` produces canonical inventory/graph/provenance snapshots; `smartci plan` validates compatibility and emits deterministic dependency-path explanations. `make onboarding-demo` compares all native case identities/outcomes and exercises source/dependency/test changes against full-run ground truth in a disposable clone. Core checks cover unsupported imports, reflection patterns, ambiguous resolution, fixture/resource impact, cycles, tampering, stale environments and missing evidence. The macOS baseline has a known glibc-only skip: it matches native pytest but remains incomplete under the existing execution contract. No trusted CI baseline, automatic PR trigger, production skipping or AWS deployment is claimed. Phase 5 must address that skip explicitly before any trusted baseline publication; other upstream CI variants/jobs remain unenrolled and authoritative.
+
+### Phase 5 — Automatic deterministic planning for every PR in shadow CI
+
+**Starting point:** Phase 4 native compatibility, automatic dependency discovery and repeatability checks pass for the chosen repository. The existing full-suite workflow remains authoritative during this temporary validation stage. An agent and AWS are not prerequisites.
+
+**Build and deliverables:**
+
+1. **Automatically start planning on every PR creation and new pushed revision**, including force-pushes, and on reopening/reruns in the enrolled repository. Do not rely on a developer running the CLI or choosing tests manually. Do not use path filters to silently bypass planning for changes assumed to be irrelevant. Platform permission/approval restrictions and cancelled runs remain visibly pending/incomplete; absent analysis must never authorise a skip or a green check.
+2. Add a reusable action/workflow and a minimal integration patch that automatically resolves the diff, invokes Phase 4 inventory/dependency collectors, validates compatible baseline/head evidence and applies the deterministic reverse-dependency selection procedure in Sections 2–3 using the repository's existing environment. Preserve dependency-path explanations and current native unit mappings through to execution/result reconciliation. Pin the Smart CI release and action dependencies. Resolve merge base, PR head and the actual tested revision correctly, including merge-test checkouts and matrix variants. No routine manual graph updates are part of this pipeline.
+3. Produce a deterministic proposal and audit, then compare it with the ordinary full-suite results. Persist the proposal before reading those results; do not use failures or coverage learned from the same run to improve the proposal being scored. Run the existing full suite once per normal workflow execution, not a second full suite for every analysis.
+4. Publish selected/omitted IDs, reasons, fallback codes, evidence hashes, expected/executed units and full-suite outcomes as bounded CI artifacts and a job summary. Validate artifact origin and run/revision/environment identity. Only eligible complete runs on protected revisions may publish trusted baseline snapshots; missing or expired snapshots keep execution full.
+5. Provide force-full and analysis-disable controls. Separate optional analysis status from the required full-suite status. Arrange job dependencies and final checks so a crash, timeout, skip or cancellation of the analysis step cannot suppress native full execution or create a green check without test evidence.
+6. Load policy and selector versions from protected configuration; a PR cannot weaken its own checks. Use least-privilege repository permissions and isolated PR execution. Fork/untrusted jobs receive no publication or cloud credentials. Do not execute PR code in a privileged `pull_request_target` job. Artifact text is data, not executable instructions.
+
+**Expected output:** an automatically triggered shadow integration and integration PR/patch for the enrolled repository, a reusable enrollment template, a compatibility/permissions guide, and revision-bound deterministic test plans for each completed PR analysis. Each plan contains selected IDs, reasons and an explicit subset/full decision, plus the evidence bundle needed for replay. Report analysis failure/full fallback when a valid proposal cannot be produced; missing output is never an empty successful plan. Include full-suite comparison artifacts and the configured mode/full-execution reason. The packaging pilot generates a replacement `test.yml` so one existing matrix cell is instrumented without duplicating its full test execution.
+
+**How to verify:**
+
+- Run the Phase 5 cases in the Section 2 verification matrix. Open a PR and push multiple revisions, including a dependency change, without invoking Smart CI manually or editing graph/test manifests. Each runnable event must automatically refresh evidence and publish a plan bound to the actual tested revision, including an evidenced path from the change to selected tests. Reopening and rerunning must not reuse another revision's artifacts.
+- Rerun the same complete input snapshot and compare selected IDs, reasons, fallback decision and canonical digest. Separately change a policy/evidence/tool version and confirm the run records the changed input rather than silently reusing an incompatible cached plan. Do not confuse nondeterministic test outcomes or timings with selection determinism.
+- Cover an isolated module, a shared dependency, new/changed tests, lockfiles, policy/workflow changes and missing history. Confirm a newly discovered dependency changes the relevant selection automatically. Subset proposals must be observable, but **every normal full-suite job still runs during this phase** so the proposal can be evaluated independently.
+- Force a collector/selector crash or timeout, malformed/missing output, failed artifact retrieval and incomplete discovery. The original full command must still execute and control its required status. Verify that manual force-full and analysis-disable controls preserve the native path.
+- Test forks, permissions, superseded commits, cancellation and matrix changes; stale/mismatched artifacts cannot satisfy a required check. Make the native tests fail and confirm analysis success cannot make CI green. Disable Smart CI and confirm the original workflow remains usable.
+
+**Exit gate:** every runnable PR creation/update automatically discovers supported relationships and produces an auditable, reproducible test plan or an explicit full-fallback outcome, without routine human test selection or graph maintenance. Full-suite execution remains independent and authoritative during this validation stage. No tests are skipped yet; the next gates are Phase 6 readiness evaluation and Phase 7 subset execution, not permanent shadow operation. No AWS deployment, model credential or model call is needed. Shadow mode adds analysis/artifact overhead and does not yet save test-execution cost.
+
+**Phase 5 local implementation handoff:** `docs/onboarding/shadow-ci.md` documents `smartci shadow context/fetch/prepare/compare/publish`, the versioned schemas, exact reviewed macOS skip handling, isolated protected baseline checks, native-first failure behavior and the generated GitHub workflow. `make shadow-demo` checks real packaging repeatability and native outcome reconciliation; `make onboarding-demo` now prints before long operations. `scripts/render_ci.py` generates a reviewable workflow from the pinned upstream version, preserving other matrix/jobs. Local tests and YAML validation do not satisfy the live exit gate. Publishing the Smart CI source, enrolling a user-controlled packaging fork, configuring workflow governance and verifying real PR/push/fork/rerun events remain pending. No AWS or paid model calls are involved.
+
+### Phase 6 — Measure deterministic detection, compatibility and net savings
+
+**Starting point:** Phase 5 provides complete full-suite results and versioned pre-result proposals from the existing repository. Declare the evaluation window, cases, environments and rollout thresholds before inspecting outcomes.
+
+**Build and deliverables:** a reproducible replay/shadow evaluation comparing the native full suite, a simple changed-component baseline, and the graph-plus-policy selector. Include historical regressions where available and clearly labelled injected defects for indirect dependencies, shared fixtures, auth, configuration, schema changes, generated/reflection behaviour and incomplete evidence. Preserve negative/irrelevant changes and difficult cases; do not score only successful demonstrations. Add a bounded set of paired full/selected runs in disposable environments to measure actual execution overhead and end-to-end time without changing required CI checks.
+
+**Expected output:** `benchmarks/`, a documented case manifest, an explicit scope-by-scope decision to enable selection or remain in validation with listed gaps, and a generated repository-specific report with regression-bearing denominators, change/test-level recall, unsafe omissions, unresolved failures, fallback reasons, uncertainty, adapter limitations, discovery/selection overhead, runner-seconds and wall-clock savings. Include installation/setup, matrix, instrumentation, retry and audit-run costs. State when measurements are only estimates. A large synthetic stress test may follow measured pilot needs; it is not an entry gate for enrolling one repository.
+
+**How to verify:** `make benchmark` (planned) reproduces the deterministic report from saved, revision-bound inputs. Freeze each proposal before consuming its full-run ground truth. Run the same revisions under comparable runner/cache/matrix conditions for paired measurements. Verify that injected regressions are detected by the full suite before scoring selection; separate test failures, flakes, infrastructure errors and incomplete runs. Deliberately omit a dependency or corrupt evidence and confirm the evaluation exposes any resulting miss rather than silently excluding the case. Report recall as undefined if there are no regression-bearing cases.
+
+**Exit gate:** all deterministic safety/fallback cases pass; there is no unresolved confirmed selection miss in the evaluated scope; sample composition and uncertainty are disclosed; and measured net value supports a limited selective pilot. Proposed usefulness targets remain at least 20% median runner-compute reduction and selector p95 below 5 seconds on the pilot repository, with total pipeline overhead reported separately. These are provisional targets, not observed results. Zero observed misses alone is not sufficient evidence of safety. If evidence or value is inadequate, remain in shadow/full mode and fix the adapter/graph; do not weaken policy to improve the score. No agent evaluation or AWS work is needed to pass this phase.
+
+### Phase 7 — Guarded selective execution in the existing CI workflow
+
+**Starting point:** Phase 6 evidence supports a documented, limited scope on the enrolled repository. The protected rollout policy identifies eligible suites/changes, mandatory tests, audit frequency and rollback conditions. Neither agent functionality nor AWS operational checks are required.
+
+**Build and deliverables:** enable native selected execution for one low-risk supported suite/component, preserving the independent full-suite path and existing required checks. Keep must-run security/auth/integration groups, full execution for unsupported suites and risk triggers, scheduled full runs and a predeclared, deterministically sampled set of full PR audits keyed to repository, tested revision and protected audit-policy version. Proposed initial audit sample: 20%, separate from triggered fallback; account for its cost and reassess from measured evidence. Do not resample on retries. Use a protected force-full switch. A confirmed miss, incompatible evidence or sustained execution/reconciliation failure returns the scope to shadow/full mode. Missing results are incomplete; failure of the fallback command cannot pass CI. A passing full retry cannot erase an observed failure from an earlier selected attempt.
+
+**Expected output:** the first existing-repository pilot that normally executes a relevant subset for eligible PRs, reports selected/native results with reasons, measures net savings, and has an exercised rollback runbook. Every full run has a recorded cause: selection of all tests, risk/unknown-evidence fallback, explicit override, declared audit or temporary revalidation. There is no hidden full-suite run on every selected PR. No new hosted service or investigation agent is part of this deliverable.
+
+**How to verify:** run a narrow eligible non-audit PR and confirm native execution matches the selected IDs and mandatory tests across the required matrix, and that no additional full-suite job executes for that PR. Rerun it under the same evidence and policy and verify the same selection/audit decision. Exercise a declared full audit and distinguish its reason and cost from fallback. Compare against independent full-run ground truth on the audit sample. Exercise a broad dependency/configuration change and confirm full execution. Remove evidence, corrupt a decision, crash the selector, omit native results and fail the full command; each must broaden execution or fail as incomplete, never produce an empty green check. Demonstrate rollback after a seeded miss and confirm disabling Smart CI restores the original workflow. Measure actual net runner usage and wall time, including full audits and fallback, rather than counting selected tests as savings.
+
+**Exit gate:** useful selective execution works in the enrolled existing codebase with auditable evidence, declared uncertainty and tested fallback/rollback. Expand only after per-repository/suite compatibility and evaluation. Full audits may detect a miss after a merge; they cannot prevent every unsafe merge, so critical scopes may remain full permanently. This is the immediate product milestone. Agent and cloud work may remain deferred indefinitely without blocking it.
+
+### Phase 8 — Optional bounded investigation agent, after deterministic validation
+
+**Starting point:** Phases 4–7 have established real-repository integration and exposed a specific evidence-discovery or maintenance problem worth investigating. Reconfirm that an agent addresses that problem before implementation. Resolve permitted data/routing and an inference allowance before any future live call; no hosted application is required.
+
+**Build:** one tool-use agent implementing the six scoped tools in Section 3, independent validation, immutable baseline decisions, provisional evidence storage, termination rules and a usage ledger. Start with recorded fixtures for repeatable failure tests, then evaluate a pretrained model choosing tools from observations if live evaluation is authorised. Proposed interfaces: `smartci investigate`, `make agent-demo` and `make agent-check`. Metadata-only and approved-excerpt modes must be explicit. The deterministic product continues to work with the agent off.
+
+**Expected output:** an investigation/evidence report, validated proposed graph/test additions, a baseline-versus-additions audit, and a separate evaluation of incremental value. No model training or automatic graph promotion. Compare with fixed investigation workflows using the same available evidence, tools and probe budget; a fixed LLM workflow, if used, shares the model and token ceilings. Report extra execution caused by the agent, not invented same-revision test savings.
+
+**How to verify:** demonstrate adaptive tool paths, rejection of fabricated evidence and prompt injection, repository/path isolation, bounded probes/calls/tokens and immutable baseline/must-run/full-run rules. Include model errors and exhausted budgets. Assess a declared varied set of cases, provisionally at least 20 with three live trials each if the allowance permits; this is a small evaluation, not enterprise proof. Confirm findings independently and report denominators, rejected/unverified proposals, variability, latency and costs. Demonstrate normal deterministic CI with the agent disabled.
+
+**Exit gate:** authority and failure tests pass, findings add measurable value beyond fixed investigation, and usage fits a revalidated allowance. Proposed quality targets are at least 95% verified precision and at least one independently confirmed additional gap beyond the fixed workflow; these are not established results. If it adds no useful value, leave it off. Fixture replay alone does not establish live-agent quality. Paid evaluation shares the deferred allowance and is not authorised by this plan update.
+
+### Phase 9 — Deferred CloudFormation foundation and cost controls
+
+**Starting point:** the Phase 7 deterministic pilot is useful, stable schemas exist, and measured multi-run/repository needs justify shared cloud state. The optional Phase 8 agent is not required. If it has not been implemented and evaluated, keep `AgentEnabled=false` and omit model resources.
+
+**Build:** implement thin API and feedback handlers around the existing core, with local contract tests for authentication context, validation and storage boundaries. Add investigation-step handlers only if Phase 8 has separately passed. Create CloudFormation templates for an artifact-bucket bootstrap and the application stack; scoped IAM roles; HTTP API; Lambda functions; DynamoDB job/evidence/usage state; S3; separate feedback and investigation queues/DLQs; bounded logs; essential alarms; budget notifications; and deployment/shutdown scripts. Add an `AgentEnabled` condition, model/profile allowlist, invocation/token quotas, and an atomic inference reservation ledger. Provision agent resources only when enabled and their code path exists.
+
+Package deterministic Lambda ZIPs from locked dependencies, version artifacts, and record their digests. Use a separate deployment identity and CloudFormation execution role; application functions do not receive infrastructure-management permissions. Avoid custom resources unless unavoidable.
+
+**Expected output:** `infra/bootstrap.yaml`, `infra/template.yaml`, `infra/guard/`, `infra/parameters/pilot.json`, a cost worksheet, and an operations runbook. Document every IAM wildcard and why resource-level scoping is unavailable, or scope it to the exact bucket prefix/log streams. No blanket `Action: '*'` or administrator policy.
+
+**How to verify:** `make infra-check` runs CloudFormation linting and Guard rules for encryption, public-access blocks, scoped IAM, authentication, retention, concurrency, timeouts, budgets, and state retention. With the agent disabled, verify that no model invocation permissions or resources are provisioned. If enabled after Phase 8, verify that only the investigation worker can invoke the allowed model/profile and cannot mutate protected policy/baselines or execute arbitrary CI jobs; test concurrent spending reservations and duplicate job admission. Build the Lambda artifact for the chosen architecture. Prepare the agent-disabled change set; inspect IAM/stateful replacements and pre-deployment validation results before execution. An agent-enabled change set is tested only when Phase 8 is separately complete. Artifact storage/bootstrap requests remain inside the pilot allowance.
+
+**Exit gate:** account, region, data classification, budget target, alert recipient, GitHub repository/environment identity, quota availability and retention settings are concrete; model access/lifecycle and permitted inference geography are required only if the agent is enabled. Refresh service prices, and model prices only if enabled, and review the complete change set before provisioning. Do not enable cross-region/global inference to bypass a residency policy. No production deployment is implied by this plan.
+
+### Phase 10 — Deferred serverless service deployment and verification
+
+**Starting point:** Phase 9 infrastructure and handlers pass validation, deployment inputs are resolved, and a sandbox deployment has been explicitly requested. The local selective pilot already works; this phase adds optional shared services.
+
+**Build:** deploy one sandbox stack; add authenticated retrieval/publication of evidence and policy; run bounded selection requests with the same core; record decisions and process feedback idempotently. Planned deterministic endpoints: `POST /v1/selections`, `POST /v1/results` and `GET /v1/snapshots/{id}`. Only if the Phase 8 agent is enabled, add `POST /v1/investigations` and `GET /v1/investigations/{id}`. Investigation creation then returns `202` with a job ID; do not fit the agent loop into the synchronous selection endpoint. In that optional path, checkpoint between model steps and approved runner probes, authenticate callbacks and settle usage after each attempt. Large blobs use constrained S3 grants.
+
+Only isolated trusted CI jobs use OIDC credentials. They must not execute PR code, load PR-supplied plugins, or interpret artifacts as instructions. Validate artifact origin, run ID, commit, repository, size, schema, and hashes. Treat PR-produced evidence as provisional; only approved complete runs on protected revisions can advance a trusted baseline. Results from selected runs never erase previously known coverage just because omitted tests did not run.
+
+**Expected output:** an AWS endpoint, deployed resource inventory, cloud-assisted shadow validation, CI/local/cloud parity cases and measured total costs/latency. Observable investigation jobs and per-investigation costs are included only when the deferred agent is enabled. Cloud assistance must pass these checks before it is used in the enrolled selective workflow.
+
+**How to verify:** `make cloud-smoke` tests unauthenticated and unauthorised requests, repository-scope mismatch, stale evidence, duplicate and reordered events, worker crashes, partial batches, retry exhaustion, DLQ recovery, throttling, and service unavailability. Always test agent-off operation. If enabled, also test crashes before/after a model response, ambiguous billed requests, forged probe callbacks, repeated probe dispatch, prompt injection and monthly allowance exhaustion. Compare deterministic local/cloud digests; for agents, replay the same recorded proposals through both policy gates rather than expecting independent model calls to match. Run a bounded load test and shutdown rehearsal; confirm required investigations fall back to full tests. Observe at least seven days of actual usage and extrapolate, checking model-provider/Marketplace charges as well as Lambda and storage.
+
+**Exit gate:** authentication, idempotency, fallback, rollback, and shutdown tests pass; actual usage supports the provisional budget; and cloud overhead has not eliminated CI value. An emulator alone does not verify IAM or managed-service behaviour.
+
+### Phase 11 — Deferred cross-repository impact and enterprise operation
+
+**Starting point:** the existing-repository selective pilot is useful, and actual consumer/service relationships justify cross-repository scope. Shared services, if used, must have passed Phase 10; agent tools are included only if Phase 8 demonstrated value. Neither feature is required to satisfy the original single-repository objective.
+
+**Build:** versioned service/contract relationships, downstream test ownership, deployment/version metadata and explicit policy inheritance. Add a second CI provider to test portability. Extend scoped cross-repository tools and investigation budgets only if the optional agent is in use; no agent team is required. Expand to organisational RBAC, tenant isolation if needed, signed releases, stronger audit retention, recovery procedures and customer-managed deployment.
+
+Cross-repository analysis must identify the consumer revision/environment being tested. Unknown consumer versions, inaccessible repositories, or stale service relationships cannot produce an “unaffected” claim. Trigger full downstream validation where possible; otherwise report unresolved impact and withhold a success assertion for that scope.
+
+**Expected output:** a two-repository demonstration in which an auth/service-contract change selects downstream checkout validation, plus an access-control and isolation test suite. Each new adapter has a compatibility matrix and its own conservative fallback.
+
+**How to verify:** change an upstream contract, observe downstream impact, and trace the explanation through both repositories. Test revoked permissions, stale graphs, concurrent updates, out-of-order events, cyclic service dependencies, version skew, tenant boundaries, and backup restoration.
+
+**Exit gate:** measurable improvement over within-repository selection, credible tenant/repository isolation, and a revised load/cost model. Compliance controls and higher availability may exceed the US$10 pilot target; they must be separately priced.
+
+### Phase 12 — Optional statistical ranking
+
+**Starting point:** substantial representative history and a strong deterministic baseline. This phase is optional and is not scheduled simply because the earlier phases finish.
+
+**Build:** start with simple duration/failure-history ranking, then compare a lightweight statistical model only if justified. Initially rank the already selected tests to improve time-to-first-failure; do not remove graph-selected or mandatory tests.
+
+**Expected output:** a reproducible temporal holdout evaluation with fixed information and compute budgets, calibration/drift analysis, and an on/off comparison against the deterministic system.
+
+**How to verify:** prove that ranking preserves the selected set and mandatory rules; measure earlier failure discovery and added overhead. Any future probabilistic exclusions need a distinct policy, shadow validation, and explicit risk acceptance.
+
+**Exit gate:** keep the feature only if it improves measured outcomes after training and operational costs. This is separate from the optional pretrained investigation agent in Phase 8. Custom training, SageMaker, and GPU infrastructure remain outside the initial plan; Bedrock inference for any separately enabled investigation remains a deferred, metered option.
+
+## 5. Benchmark definitions and evidence standard
+
+Let `F_i` be the reproducible regression-detecting test units in a complete run for change `i`, and `S_i` the proposed selection. Keep infrastructure errors and flaky failures visible in separate categories; do not silently remove difficult cases from the denominator.
+
+| Metric | Definition and interpretation |
+| --- | --- |
+| Change-level regression recall | Among changes with `F_i` nonempty, fraction where `S_i` intersects `F_i`. This measures whether at least one detecting test would run. |
+| Test-level regression recall | Sum of detected failing units `count(S_i ∩ F_i)` divided by all regression-detecting failing units `count(F_i)`. This can be lower even if change-level recall is perfect. |
+| Unsafe-green rate | Regression-bearing changes with no detecting test selected, divided by all regression-bearing evaluated changes. Report an additional all-changes rate with its different denominator clearly labelled. |
+| Unsafe omission rate | Omitted regression-detecting units divided by all regression-detecting units. A change can still be caught by another test while containing an unsafe omission. |
+| Compute reduction | `1 - selected-mode runner-seconds / full-suite runner-seconds`, including discovery, instrumentation, selection, setup, retries, and required full-run sampling. Convert to money using the actual runner plan. |
+| Wall-clock reduction | Paired difference in end-to-end CI duration for comparable commits, runner classes, caches, and parallelism. Summing test durations does not measure critical-path savings. |
+| Overhead | Discovery, evidence collection/transfer, selection latency, feedback processing, and storage; report p50/p95 and cold/warm cases. |
+| Fallback frequency | Full-fallback decisions divided by all attempted decisions, broken down by reason. Intentional full-audit sampling is reported separately. |
+| Net financial value | Avoided CI charges minus added CI work, AWS costs, and any paid tooling. Developer-time benefits should be reported separately from cash savings. |
+
+The following metrics apply only to the deferred Phase 8 agent evaluation; they do not gate Phases 4–7.
+
+| Deferred metric | Definition and interpretation |
+| --- | --- |
+| Verified discovery precision/recall | Independently verified proposed dependency additions divided by all proposals; known missing dependencies found divided by ground-truth missing dependencies in labelled cases. Distinguish an unverified proposal from a false one and disclose both. |
+| Incremental agent value | Additional verified gaps found or measured onboarding effort saved versus the fixed investigation workflow using equal evidence/tool budgets. Also report extra tests and full-suite escalations caused by the agent. |
+| Agent reliability and overhead | Completion/abstention/error rates, rejected unsafe actions, budget terminations, trial-to-trial variation, p50/p95 investigation delay, model tokens, probe runner-minutes, and total cost per investigation. |
+
+Pure shadow mode does not save test execution cost because it still runs the full suite. It provides counterfactual selection and duration estimates. Extra paired executions and coverage collection can increase the bill; bound the sample and avoid running a second complete suite for every PR.
+
+For a fixed revision the initial agent only adds tests, so do not attribute fewer selected tests to it. Measure future graph maintenance benefits on a subsequent held-out time window, after validated promotion, with the deterministic baseline receiving the same promoted evidence. The direct comparison then measures adaptive discovery versus fixed discovery, not privileged access to better inputs. Repeat live-agent trials and retain versioned tool/action traces; offline replay checks the validator, while live reruns assess model variability. This follows the need to evaluate both outcomes and tool interactions in [agent evaluations](https://www.anthropic.com/research/demystifying-evals-for-ai-agents).
+
+Zero misses on a small sample is weak evidence. For example, zero misses in 100 independent regression-bearing cases still permits an approximately 2.95% miss probability at a one-sided 95% confidence bound; at 300 such cases the bound is approximately 0.994%. These values use `1 - 0.05 ** (1/n)`. Independence and representativeness are assumptions, and injected defects often violate them. Report case composition and confidence intervals instead of claiming perfect safety. If no regression-bearing cases exist, recall is undefined.
+
+## 6. Deferred AWS deployment design and operating limits
+
+This design is retained for Phases 9–10, not for the immediate repository integration. Do not provision these resources during Phases 4–7. Agent-specific resources are conditional on separately completing Phase 8 and enabling it; the deterministic cloud option must work without them. Service limits and account requirements below must be rechecked before infrastructure implementation or deployment.
+
+### Initial resource set
+
+| Resource | Purpose | Pilot defaults and limits |
+| --- | --- | --- |
+| API Gateway HTTP API | Authenticated metadata and decision endpoints | `AWS_IAM` on every sensitive route; provisional throttle 2 requests/second, burst 5; small JSON envelopes. |
+| API Lambda | Validate requests, authorise repository scope, select tests, issue bounded artifact grants | 512 MiB, ARM64, 5-second timeout, reserved concurrency 2. Measure before changing. |
+| Feedback Lambda | Validate results, aggregate history, and publish eligible snapshots | 512 MiB, ARM64, 30-second timeout, reserved concurrency 2. No execution of uploaded code. |
+| Investigation Lambda | One bounded model step and validated metadata-tool execution | Conditional on `AgentEnabled`; 512 MiB, ARM64, 60-second timeout, reserved concurrency 2; no waiting for CI jobs. |
+| Bedrock on-demand inference | Pretrained model proposes tool actions/findings | Explicit model/profile allowlist; U.S. geographic routing in the worked example; no provisioned throughput or automatic model upgrades. |
+| DynamoDB on-demand | Run/job state, leases, policy pointers, upload allowances, inference reservations | Small indexed items; no request-path scans; provisional maximum 10 read and 10 write request units/second; TTL plus application expiry checks. |
+| S3 | Evidence, decisions, reports, deployment ZIPs | Private; encrypted; versioned; bounded object grants; checksums; lifecycle expiration including noncurrent versions and abandoned uploads. |
+| SQS and DLQ | Feedback processing and failed-message retention | Small messages containing approved object references; batch size 1 initially; maximum worker concurrency 2; visibility timeout at least 180 seconds for the 30-second worker; five receives before DLQ; finite retention. |
+| Investigation SQS and DLQ | Durable agent steps and retries, isolated from feedback | Batch size 1, maximum concurrency 2; visibility at least 360 seconds for the 60-second worker; finite receives/retention. Expired investigations cannot resume billable work. |
+| CloudWatch and notifications | Logs and essential operational/budget alerts | 7-day operational logs initially; no prompt/payload logging; eight baseline plus three agent metric alarms; no paid dashboard initially. |
+| AWS Budgets | Monthly actual and forecast cost notifications | Provisional US$10 total, actual alerts at US$5/8/10, and forecast warning. Use an account-wide view in a dedicated sandbox so model-provider/Marketplace charges are included; tags are supplementary. |
+
+These are initial configuration targets, not measured capacity requirements or exact billing caps. Check account quotas before deployment; small/new accounts can have restricted Lambda concurrency. Tune SQS polling/concurrency together rather than allowing worker throttles to create retries.
+
+The API uses [IAM/SigV4 authorisation](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-access-control-iam.html). Server-side repository authorisation still maps the authenticated principal to allowed repository IDs; a caller cannot choose its tenant by changing the request body. GitHub uses [OIDC federation](https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-aws), with exact audience and subject restrictions for the actual repository/environment. Verify its current subject format, including immutable IDs where applicable, rather than copying an old trust policy.
+
+Synchronous selection must fit the short application timeout, not merely AWS's maximum. Recheck the [HTTP API integration limits](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-quotas.html) and [Lambda invocation limits](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html) when this phase is pursued. Full builds and tests stay on CI runners regardless of those limits.
+
+The model worker uses a separate asynchronous route and a shorter per-call network deadline than its function timeout. Persist `queued → running → waiting_for_probe → completed/abstained/failed/expired` with conditional transitions, an overall five-minute investigation deadline, and commit-bound authenticated callbacks. Probe execution is limited by the remaining deadline. CI can run baseline tests concurrently, but a required final check cannot pass before the investigation completes or the full-suite fallback finishes. Late results cannot change an already finalised selection.
+
+Before a model call, reserve its worst-case priced input/output allowance atomically; reconcile against returned usage afterward. Count all SDK/service retries and replayed SQS steps against the same investigation and monthly counters. Persist the step/tool-call ID before dispatch and suppress duplicate probe side effects. A crash after model billing but before persistence cannot guarantee exactly-once inference: retain the uncertain reservation, avoid automatic re-invocation, and terminate/fall back when billing or completion is ambiguous. Do not treat expired leases or TTL deletion as permission to forget spending.
+
+### Initial agent budgets
+
+| Limit | Proposed pilot value | Behaviour when reached |
+| --- | --- | --- |
+| Investigations | 100/month across live demos, evaluations, retries of whole investigations, and pilot use; 10/day | Decline new admission. Preserve full execution for unresolved-risk triggers. |
+| Model calls | At most 4 per investigation, including retries | Stop; no recursive agent delegation or hidden framework retries. |
+| Tokens | At most 20,000 cumulative billed input tokens and 3,000 output tokens per investigation; explicit per-call `maxTokens` bounded by the remaining total | Count repeated history, tool definitions/results, and all billed output; no unmetered extended reasoning. Stop before a request would exceed the reservation. |
+| Tools and probes | At most 8 tool calls; 1 approved probe job, at most 5 runner-minutes and remaining deadline | Stop extra work; never remove baseline tests to recover the budget. |
+| Inference spend | US$4/month application allowance at the pinned price schedule | Atomic pre-call reservations; uncertain charges remain reserved. No automatic switch to a cheaper/stronger model without revalidation. |
+| Time | 5 minutes total; 60 seconds per worker step | Expire/checkpoint, then full execution if the investigation was required. |
+
+All application limits are controls we intend to implement and test, not currently existing protections. Use provider-compatible input-token counting or a verified conservative upper bound before admission, including provider tool-use overhead; price or routing changes require repricing. A manual replay consumes the same counters. Reset monthly spending in a defined UTC billing period, retaining a ledger across retries and process restarts. These controls do not cap unrelated AWS charges. Before the hosted ledger exists, local live evaluations use a single serial process and a durable local allowance file; concurrent/shared-account evaluations remain disabled until central reservations are available.
+
+### Payload, retry, and storage controls
+
+- Start with at most 1,000 accepted cloud-assisted runs/month per pilot repository and 100/day, enforced with atomic counters. Include retries in request accounting and make repeated run IDs idempotent. Exceeding the allowance stops cloud work and causes full tests; it does not grant a successful skip.
+- Keep API envelopes under 256 KiB. Initial artifact ceiling: 5 MiB compressed and 25 MiB decompressed, with limits on entries, edges, strings, and nesting. Never trust compressed length alone.
+- Large enterprise graphs use the runner path. The pilot limits are intentionally not an enterprise capacity claim; do not truncate evidence to squeeze it into Lambda.
+- Bound upload grants to one repository/run/type/key, a short expiry, and a validated content-length range. Verify checksum and object version before ingestion. Do not accept arbitrary S3 bucket names, external URLs, or writable baseline keys from clients.
+- Publication is idempotent and conditional. Use a run/attempt/artifact digest key, processing leases, conditional state transitions, and compare-and-swap snapshot pointers. A stale run cannot overwrite a newer trusted baseline.
+- DynamoDB and SQS writes are not one transaction. For feedback ingestion, use deterministic IDs, durable pending state, and retry-safe enqueueing; acknowledge acceptance only after enqueue succeeds. A retry must resume a pending record rather than treating its existence as completed work. Preserve unsuccessful uploads as CI artifacts and provide an explicit bounded replay command; no always-running reconciliation service is needed initially.
+- Use short client timeouts and at most two application retries with jitter for retryable failures. Honour the overall selection deadline. Use SQS partial-batch responses if batching grows; do not repeatedly process successful records. Follow the [Lambda/SQS visibility and retry guidance](https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html).
+- For model calls, the stricter investigation counters and cost reservations above take precedence over generic retries. Do not re-invoke a model on every queue delivery. A CI probe gets a stable idempotency key and must not be duplicated by a delayed callback.
+- Retain detailed pilot evidence/audits for 30 days initially; manage baseline refresh within this window. Missing expired evidence forces full execution. Application expiry checks are required because TTL/lifecycle deletion is asynchronous.
+- S3 versioning is not an immutable compliance audit. Stronger retention and Object Lock require a later data-governance decision with deletion and cost consequences.
+
+### Security and infrastructure lifecycle
+
+Encrypt S3, DynamoDB, queues, and logs at rest using service-managed encryption initially; require TLS in transit and block public object access. Customer-managed KMS keys are added when the customer's control requirements justify their recurring cost. Keep repository code, tokens, credentials, and raw test output out of logs and normal metadata uploads.
+
+Use separate least-privilege roles for API, worker, trusted CI publication, deployment, and emergency operations. No long-lived AWS keys are needed. If later GitHub App integration requires a private key or webhook secret, store it in Secrets Manager, retrieve it at runtime, and never place it in CloudFormation parameters, source, logs, or Lambda environment variables. Nonsecret configuration can use environment variables.
+
+Give the investigation worker only the approved inference-profile/model resources, its own queue/state, and scoped read tools. Enumerate permitted destination-model ARNs for geographic inference wherever supported; document unavoidable wildcard resource patterns. No `bedrock:*`, general Marketplace subscription authority, policy-write authority, or access to PR execution credentials. Keep full model invocation logging off initially; record token counts, tool names, redacted summaries, validators, and evidence hashes rather than full prompts or private model reasoning. The [Haiku model card](https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-4-5.html) documents its tool/API support and model-provider billing, which must be checked before adopting this costing candidate.
+
+CloudFormation owns infrastructure state, so no Terraform state backend is needed. Serialise deployments per stack, inspect change sets, preserve compatible readers during schema upgrades, and use conditional writes for application state. Keep persistent resources under `DeletionPolicy: Retain` and `UpdateReplacePolicy: Retain`. This protects data but means deleting a stack does not remove every charge. The runbook must inventory retained buckets, object versions, tables, backups, logs, and deployment artifacts, and provide an explicit destructive teardown procedure.
+
+Do not provision NAT Gateways, an ALB, EC2, EKS, RDS/Aurora, OpenSearch, a managed graph database, Redis, provisioned Lambda concurrency, Step Functions, AgentCore hosting, a vector knowledge base, a custom domain, or a frontend for the initial pilot. Bedrock model inference does not require those agent-hosting/retrieval services. Use a small explicit application loop and existing evidence lookups first. No function needs a VPC merely to access S3/DynamoDB. Add a service only when a measured requirement warrants its operational and cost footprint. Private networking or compliance requirements may later change this choice.
+
+## 7. Immediate costs and deferred AWS cost model
+
+### Immediate repository integration
+
+Phases 4–7 provision no new AWS resources and make no paid model calls. This is not a claim of zero total cost: existing CI runner time, dependency setup, artifact retention and any test services still cost what the repository's environment charges. Shadow analysis and bounded paired benchmark runs can increase that cost. Use existing CI artifacts initially, limit retention and evaluation volume, and measure these incremental costs in Phase 6 before claiming savings.
+
+The AWS and model worksheet below is retained as deferred context only. Its prices and arithmetic are not refreshed by this planning-only revision. Reprice it from measured workload and current service/model terms before any future paid evaluation or deployment; do not treat it as the cost of the immediate product.
+
+### Deterministic service baseline
+
+This is a planning model, **not a quote or a measured bill**. The earlier plan recorded a pricing check against official AWS sources dated 20 November 2026 and programmatic arithmetic; neither was repeated for this reprioritisation. Values are USD for an assumed `us-east-1` deployment, before tax, with no Free Tier credits, discounts or Savings Plans deducted. Reprice before deployment, especially if using Sydney or another region.
+
+Assume 1,000 CI runs/month; 6 small API calls/run; 6,000 API Lambda invocations averaging 0.2 seconds at 512 MiB; 1,000 feedback invocations averaging 2 seconds at 512 MiB; 5 GB-month of total S3 storage including versions; and modest result/history volumes. These averages have not been benchmarked. DynamoDB usage below is in billable units, including an allowance for size and transactional amplification, rather than assuming every API operation costs one unit.
+
+| Component | Calculation or explicit allowance | Estimated USD/month |
+| --- | --- | ---: |
+| HTTP API | 6,000 calls × US$1.00/million; [API Gateway pricing](https://aws.amazon.com/api-gateway/pricing/) | 0.0060 |
+| Lambda | `(6,000 × 0.5 GB × 0.2 s + 1,000 × 0.5 GB × 2 s) × 0.0000133334 + 7,000 × 0.20/million`; [Lambda pricing](https://aws.amazon.com/lambda/pricing/) | 0.0227 |
+| DynamoDB | 40,000 WRUs × US$0.625/million + 40,000 RRUs × US$0.125/million + 0.25 GB × US$0.25; [DynamoDB pricing](https://aws.amazon.com/dynamodb/pricing/) | 0.0925 |
+| S3 | 5 GB × US$0.023 + 5,000 PUTs × US$0.005/1,000 + 10,000 GETs × US$0.0004/1,000; [S3 pricing](https://aws.amazon.com/s3/pricing/) and [AWS storage pricing example](https://aws.amazon.com/blogs/storage/run-spark-31-faster-and-optimize-compute-costs-with-amazon-s3-express-one-zone-on-amazon-emr/) | 0.1440 |
+| SQS | Allow 1 million billable requests at US$0.40/million, including empty polling; [SQS pricing](https://aws.amazon.com/sqs/pricing/) and [AWS cost example](https://docs.aws.amazon.com/solutions/latest/automated-security-response-on-aws/cost.html) | 0.4000 |
+| Logs | 0.25 GB ingest × US$0.50 + 0.10 GB-month storage × US$0.03; [CloudWatch pricing](https://aws.amazon.com/cloudwatch/pricing/) | 0.1280 |
+| Alarms | 8 standard metric alarms × US$0.10, using built-in service metrics; [CloudWatch pricing](https://aws.amazon.com/cloudwatch/pricing/) | 0.8000 |
+| Transfer and ancillary usage | **US$1.50 allowance**, not a quoted rate: small external transfers, notifications, artifacts, and incidental requests. Validate against actual usage. | 1.5000 |
+| **Deterministic service subtotal** | Rounded from the programmatic sum; agent resources and inference excluded | **3.09** |
+
+A fully idle deployment still has alarm/storage/polling costs. Logs, repeated artifact downloads, retained versions, or accidental high-frequency requests can dominate a tiny Lambda compute bill. No paid custom metrics, tracing subscription, WAF, premium support, customer-managed KMS keys, Secrets Manager secrets, or backups are included in this baseline; enabling them requires updating the estimate. Agent usage is added below rather than folded into the original estimate invisibly.
+
+### Model pricing and investigation assumptions
+
+Use standard on-demand inference with no prompt-cache, batch, Free Tier, or negotiated discount assumed. These are costing candidates, not claims about which model will perform best. Account access, lifecycle, exact inference profile, current price, and permitted destinations must be checked before any live evaluation/deployment.
+
+| Candidate and routing | USD per 1 million input tokens | USD per 1 million output tokens | Role in this estimate |
+| --- | ---: | ---: | --- |
+| Claude Haiku 4.5, U.S. geographic inference | 1.10 | 5.50 | Initial lower-cost evaluation candidate. |
+| Claude Sonnet 4.6, U.S. geographic inference | 3.30 | 16.50 | More expensive comparison only; not an automatic fallback. |
+
+The Haiku geographic rates and the lower global rates are distinguished in [AWS's Claude 4.5 geographic-inference pricing table](https://aws.amazon.com/jp/blogs/news/amazon-bedrock-now-supports-japan-cross-region-inference/); an [AWS implementation cost example](https://aws.amazon.com/blogs/machine-learning/live-meeting-assistant-with-amazon-transcribe-amazon-bedrock-and-strands-agents/) also lists US$1.10/5.50. The Sonnet U.S.-profile rates appear in [AWS's ETL agent cost example](https://aws.amazon.com/blogs/big-data/automate-etl-pipeline-creation-with-amazon-bedrock-agentcore-and-aws-glue/). Recheck the [Bedrock pricing page](https://aws.amazon.com/bedrock/pricing/) before use: its dynamic table was not available in the text extraction, so these are sourced published examples, not an account-specific price quote. Geographic inference may route outside `us-east-1` within the approved U.S. geography; global routing must not be enabled merely to obtain a lower rate.
+
+For **100 investigations/month**, assume up to four model requests per investigation and **12,000 total input plus 2,000 total output tokens across the whole investigation**, before a 20% retry/usage allowance. Input totals include repeated conversation history, system/tool schemas, and tool results on each call; do not price only the PR text or only the final turn. No extended reasoning or paid external search is budgeted. These token counts are unmeasured and may be insufficient for difficult repositories; exceeding limits must lead to abstention/fallback, not hidden extra calls.
+
+Inference formula: `investigations × (total_input_tokens × input_rate + total_output_tokens × output_rate) / 1,000,000`. At the Haiku rates this is **US$2.42/month**, or **US$2.904 with the 20% allowance**. The allowance is an estimate, not permission to exceed the hard application call/token counters; retries count toward those counters.
+
+### Incremental agent hosting and revised total
+
+Assume four investigation-worker invocations per investigation, averaging 60 billed seconds in aggregate at 512 MiB, including model-network wait. CI probe waiting is checkpointed and unbilled in Lambda. The extra queue allowance includes empty polling even at low traffic.
+
+| Incremental component for 100 investigations | Calculation or allowance | USD/month |
+| --- | --- | ---: |
+| Investigation Lambda | `100 × 0.5 GB × 60 s × 0.0000133334 + 400 × 0.20/million` | 0.0401 |
+| Investigation queue | 1 million request/polling allowance × US$0.40/million | 0.4000 |
+| Additional logs | 0.10 GB ingest × US$0.50 + 0.05 GB-month × US$0.03 | 0.0515 |
+| Additional S3 evidence | 1 GB × US$0.023 + 1,000 PUTs × US$0.005/1,000 + 2,000 GETs × US$0.0004/1,000 | 0.0288 |
+| Additional DynamoDB state/ledger | 10,000 WRUs × US$0.625/million + 10,000 RRUs × US$0.125/million + 0.05 GB × US$0.25 | 0.0200 |
+| Three agent alarms | US$0.10 each; worker errors, investigation queue age, and DLQ depth | 0.3000 |
+| Extra transfer/notifications/requests | Explicit allowance, not a quoted rate | 0.2500 |
+| **Additional hosting subtotal** | Uses the same sourced service rates as the baseline table | **1.0904** |
+| Haiku model inference | Includes the 20% retry/usage allowance | 2.9040 |
+| Existing deterministic service | Unrounded subtotal used in the total | 3.0932 |
+| **Revised AWS total** | Programmatic sum, rounded | **7.09** |
+
+Retain **US$10/month as a provisional total target**; plan roughly US$8–10 for this narrow configuration, including some headroom beyond the worked US$7.09. The US$4 inference allowance and investigation/token limits are necessary to make that target plausible. They are not yet implemented and do not guarantee a final bill. Paid evaluation runs consume the same 100-investigation/month allowance: the proposed 20-case, three-trial evaluation uses 60 investigations, leaving fewer for demos and live PRs that month.
+
+At the per-investigation ceilings of 20,000 input and 3,000 output tokens, 100 Haiku investigations would use **US$3.85 in inference**, including all retries within those totals. The application must reserve priced capacity before calls and stop admission at US$4. Reprice rather than silently raising limits if the model requires more context or a different routing profile.
+
+### Sensitivity cases
+
+All cases below retain 1,000 baseline CI runs/month. Invocation/token limits would have to be changed to permit the larger cases; these are scenarios to avoid accidental cost expansion, not enabled configurations. Variable agent hosting usage scales with investigation count; the queue polling allowance and three alarms remain fixed within this small range.
+
+| Scenario | Investigations/month | Inference incl. 20% allowance | Total AWS estimate |
+| --- | ---: | ---: | ---: |
+| Deterministic service only; agent resources disabled | 0 | US$0 | US$3.09 |
+| Proposed Haiku pilot | 100 | US$2.90 | **US$7.09** |
+| Haiku on every CI run | 1,000 | US$29.04 | **US$36.74** |
+| Sonnet at the pilot volume | 100 | US$8.71 | **US$12.90** |
+| Sonnet on every CI run | 1,000 | US$87.12 | **US$94.82** |
+
+At 100 Haiku investigations with ten times the assumed input/output tokens, inference alone would be **US$29.04** including the allowance; this also violates the proposed per-investigation ceilings. Total hosting would need remeasurement because model latency and stored evidence can grow. More than four calls, longer histories, repeated probes, model/provider price changes, and adversarial retry loops are further failure modes. If the cheaper candidate cannot achieve useful discovery under the limits, reduce live usage, revise the budget explicitly, or leave the agent advisory/off. Do not claim equivalent quality merely because it is cheaper.
+
+GitHub Actions minutes, artifact storage, test instrumentation, and any self-hosted runners are **additional**. Shadow mode can increase those costs. For private repositories or large suites, CI charges may be much larger than the AWS service. Do not use public-repository free minutes to claim universal financial savings.
+
+Before increasing limits, calculate monthly model tokens by direction/profile, billed compute GB-seconds, request counts, stored GB-months, and egress from measured data; then include retry amplification, peak traffic, and retention. Rebuild the worksheet for 10× CI-run volume, 10× artifact size, and sustained errors instead of scaling either total blindly. Any cloud-hosted probe runner or managed agent runtime would be a new cost category; neither is included here.
+
+### Guardrails and what they cannot guarantee
+
+1. **Restrict access and workload:** repository-scoped IAM/OIDC, atomic run/upload/investigation quotas, pre-call inference reservations, small payloads, short deadlines, finite retries, and no arbitrary code execution in the AWS service. Include evaluation/demo calls in the same allowance; prompts cannot change it.
+2. **Limit scaling:** low reserved concurrency, queue worker limits, HTTP throttles, and DynamoDB maximum on-demand throughput. These constrain exposure; [DynamoDB maximum throughput is best-effort and can burst](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/on-demand-capacity-mode-max-throughput.html), so it is not a dollar ceiling.
+3. **Detect usage and failures quickly:** alarms for Lambda errors/throttles/duration, queue age/DLQ depth, and table throttling. Avoid per-test or per-commit custom metric dimensions, which can create large monitoring costs.
+4. **Track actual and forecast spend:** create AWS Budgets notifications through CloudFormation. Include all account charges in the sandbox; a filter only for Amazon Bedrock may miss model-provider/Marketplace billing. Record model token usage and priced reservations in the application ledger without logging prompts. [Budget updates can lag by hours](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html); standard cost alerts do not guarantee that spending stops at the threshold.
+5. **Provide a tested shutdown:** disable agent admission and model-invoke permissions, disable cloud use in CI, disable both queue event-source mappings, set application Lambda reserved concurrency to zero, and revoke new API/upload access. Stop producers before consumers to avoid a retry storm. In-flight model work may still be billed. Preserve logs, ledger, and data; inventory their continuing storage charges. Verify CI runs the full suite after shutdown.
+6. **Check eligibility for a stronger AWS-managed limit:** AWS's newer Settings project experience offers [project spend limits](https://docs.aws.amazon.com/accounts/latest/reference/create-spend-limit.html), with a minimum of at least US$20 or a higher estimated amount, that pause resources. Account eligibility, service/residency constraints, and IaC support must be checked; this plan does not assume the existing account qualifies. The documented deletion risk after a prolonged pause also needs an operational reminder. Treat this as an optional account-level safeguard, not a feature of standard budget alerts.
+
+Even two 512 MiB workers running continuously for 30 days would cost approximately **US$34.56 in ARM compute alone**, before requests and other services. Low concurrency therefore does not make the US$10 target a hard cap. API rejection traffic and already granted uploads may also incur charges. If a strict bill ceiling is mandatory and a suitable AWS-managed spend limit is unavailable, keep the system local until an acceptable account-level arrangement is established.
+
+## 8. Existing files and proposed additions
+
+Keep the existing Phase 1–3 package layout unless a later change actually requires a refactor. The tree below distinguishes implemented files from proposed additions. It is a planning map, not a request to create scaffolding now. Onboarding configuration and workflow patches also belong in the enrolled repository; do not copy its private source, secrets or raw output into this repository.
+
+```text
+smart-ci/
+  plan.md
+  README.md
+  pyproject.toml
+  uv.lock
+  Makefile
+  src/smartci/
+    cli.py
+    contracts.py
+    selection.py
+    git_changes.py
+    reports.py
+    provider.py          # Existing fixture/provider interface; no live agent
+    adapters/
+      runners.py
+      suite.py
+      results.py
+      pytest_plugin.py
+      github_actions/    # Proposed Phase 5; only if an adapter module is useful
+    collectors/          # Proposed Phase 4; native dependency/ownership evidence for the pilot
+    agent/               # Deferred Phase 8
+    storage/             # Deferred shared-state implementation, if needed
+    cloud/               # Deferred Phases 9–10
+  schemas/
+  tests/
+    test_contracts.py
+    test_selection.py
+    test_adapters.py
+    integration/         # Proposed real-repository/CI compatibility cases
+    agent/               # Deferred authority/injection/budget cases
+  fixtures/
+  examples/polyglot/
+  benchmarks/            # Proposed Phase 6; versioned evaluation case metadata
+  infra/                 # Deferred Phase 9; CloudFormation, validation and parameters
+  scripts/
+    demo.py
+    polyglot_demo.py
+  docs/                  # Proposed as each deliverable needs it
+    onboarding/          # Phase 4 repository-specific baseline and compatibility report
+    github-actions.md    # Phase 5 integration and required-check behaviour
+    benchmark-method.md  # Phase 6 case selection, measurement and uncertainty
+    selective-rollout.md # Phase 7 enable/disable/fallback/rollback runbook
+    agent-evaluation.md  # Deferred Phase 8
+    aws-operations.md    # Deferred Phases 9–10
+    cost-model.md        # Deferred cloud worksheet refresh
+  .github/workflows/     # Proposed; not created by this revision
+    checks.yml
+    smartci-shadow.yml
+    deploy-pilot.yml     # Deferred cloud deployment
+```
+
+## 9. Milestones and definition of done
+
+| Milestone | Required phases | What the user can see and verify |
+| --- | --- | --- |
+| Local foundation — complete | 1–3 | A real polyglot demonstration executes selected units and explains deterministic decisions and full-suite fallbacks; compatibility is limited to documented profiles. |
+| Existing-repository onboarding — next | 4 | Automatic dependency/ownership discovery and test inventory refresh on real code changes, native compatibility, reproducible evidence and no routine handwritten graph maintenance. |
+| Automatic deterministic shadow CI | 4–5 | Every runnable PR creation/update automatically produces a reproducible test plan or full fallback; full-suite validation remains independent of analysis failure during this stage. |
+| Repository-specific evaluation | 4–6 | Reproducible detection, fallback, uncertainty and paired cost/time measurements justify or reject selective rollout. |
+| Immediate product milestone: selective CI | 4–7 | Validated eligible PRs normally run a relevant subset plus mandatory tests. Full runs are explained exceptions/audits or revalidation, not a hidden permanent shadow requirement. No agent or new AWS service is required. |
+| Optional agent value | 8, after the immediate sequence | A bounded investigation adds verified evidence beyond fixed methods without weakening baseline or mandatory selection. |
+| Optional AWS shared service | 9–10, after the immediate sequence | CloudFormation-managed shared evidence and audit, local/cloud parity, measured costs and shutdown. The agent is optional. |
+| Deferred enterprise expansion | 11 | Version-aware cross-repository impact, isolation and a revised capacity/cost model if demand warrants it. |
+| Optional ranking | 12 | Additional measured value while preserving the selected set. |
+
+Do not promise calendar dates before adapter complexity and real-repository access are known. Phases 1–3 are implemented. The next implementation task, **only when requested**, is **Phase 4: onboard an existing repository with automatic dependency discovery and verified native compatibility**. First identify the pilot repository and inspect its normal tests/workflow; its identity is unresolved and does not block this plan update. This revision changes `plan.md` only and does not begin implementation, modify another repository, deploy infrastructure or invoke a paid model.
+
+The immediate definition of done is automatic dependency discovery and deterministic PR test planning that leads to useful, auditable subset execution in an existing codebase, with native runner compatibility, measured detection and savings, mandatory tests, conservative fallback and rollback. An agent demonstration or an AWS deployment cannot substitute for that outcome.
+
+For each completed phase, record the files changed, commands actually run, observed results, security/reliability limitations, and remaining configuration. A phase is complete only when its acceptance demonstration succeeds. Publishing a report, deploying Lambda, or observing zero misses in fixtures is not by itself proof that unsafe skips cannot occur.
+
+
+## Phase handoff convention
+
+At the end of every phase, provide a brief overview of the starting state, what
+was built, expected observable behaviour, exact verification commands/results,
+and deployment/configuration steps. Say explicitly when deployment is unnecessary
+or unavailable; never provide commands for infrastructure that does not exist.
+
+Phases 1–3 handoff: see `README.md` for the implemented CLI, local verification, polyglot execution and supported adapter profiles. Native runner execution exists; automatic universal dependency extraction and production CI onboarding do not. Phase 4 onward must state what a repository owner needs to configure, exact native/Smart CI verification commands and expected outcomes, and any unresolved compatibility or evidence gaps. Phases 4–7 need no AWS deployment steps; do not offer commands for infrastructure that does not exist.

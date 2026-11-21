@@ -1,0 +1,25 @@
+--- /dev/null
++++ b/.smartci/collector.json
+@@ -0,0 +1,9 @@
++{
++  "schema_version": "1",
++  "repository": "pypa/packaging",
++  "source_roots": ["src"],
++  "test_roots": ["tests"],
++  "granularity": "file",
++  "allowed_plugins": ["hypothesis"],
++  "external_module_overrides": ["_manylinux", "ctypes"]
++}
+--- /dev/null
++++ b/.smartci/policy.json
+@@ -0,0 +1,10 @@
++{
++  "schema_version": "1",
++  "repository": "pypa/packaging",
++  "mode": "shadow",
++  "must_run": [],
++  "unknown_evidence": "full",
++  "allow_source_excerpts": false,
++  "full_paths": ["tests/test_manylinux.py", "tests/test_tags.py", "tests/test_musllinux.py"],
++  "require_coverage": false
++}

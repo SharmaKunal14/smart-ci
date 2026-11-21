@@ -1,0 +1,49 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "commit": {
+      "title": "Commit",
+      "type": "string"
+    },
+    "environment": {
+      "title": "Environment",
+      "type": "string"
+    },
+    "complete": {
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "files": {
+      "patternProperties": {
+        "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "title": "Files",
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "commit",
+    "environment",
+    "complete",
+    "files"
+  ],
+  "title": "Coverage",
+  "type": "object"
+}

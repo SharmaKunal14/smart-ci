@@ -1,0 +1,42 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "base": {
+      "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+      "title": "Base",
+      "type": "string"
+    },
+    "head": {
+      "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+      "title": "Head",
+      "type": "string"
+    },
+    "paths": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 100000,
+      "title": "Paths",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "base",
+    "head",
+    "paths"
+  ],
+  "title": "Changes",
+  "type": "object"
+}

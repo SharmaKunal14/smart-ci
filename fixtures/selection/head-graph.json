@@ -1,0 +1,24 @@
+{
+  "schema_version": "1",
+  "repository": "example/repo",
+  "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "complete": true,
+  "unsupported": false,
+  "owners": {
+    "auth.py": "auth",
+    "checkout.py": "checkout",
+    "other.py": "other"
+  },
+  "dependencies": {
+    "auth": [],
+    "checkout": [
+      "auth"
+    ],
+    "other": []
+  },
+  "tests": {
+    "auth": "auth",
+    "checkout": "checkout",
+    "other": "other"
+  }
+}

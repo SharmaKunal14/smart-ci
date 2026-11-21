@@ -1,0 +1,15 @@
+{
+  "name": "smartci-checkout-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "vitest": "4.1.12",
+    "typescript": "5.9.3",
+    "@types/node": "22.14.0",
+    "vite": "7.3.8"
+  }
+}

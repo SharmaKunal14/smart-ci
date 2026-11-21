@@ -1,0 +1,71 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "commit": {
+      "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+      "title": "Commit",
+      "type": "string"
+    },
+    "complete": {
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "unsupported": {
+      "default": false,
+      "title": "Unsupported",
+      "type": "boolean"
+    },
+    "owners": {
+      "additionalProperties": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+        "type": "string"
+      },
+      "title": "Owners",
+      "type": "object"
+    },
+    "dependencies": {
+      "patternProperties": {
+        "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "title": "Dependencies",
+      "type": "object"
+    },
+    "tests": {
+      "patternProperties": {
+        "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "type": "string"
+        }
+      },
+      "title": "Tests",
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "commit",
+    "complete",
+    "owners",
+    "dependencies",
+    "tests"
+  ],
+  "title": "Graph",
+  "type": "object"
+}

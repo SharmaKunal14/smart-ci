@@ -1,0 +1,46 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "tool": {
+      "enum": [
+        "inspect_change",
+        "search_repository",
+        "query_dependencies",
+        "lookup_test_history",
+        "request_validation",
+        "submit_evidence"
+      ],
+      "title": "Tool",
+      "type": "string"
+    },
+    "target": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Target",
+      "type": "string"
+    },
+    "call_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Call Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "tool",
+    "target",
+    "call_id"
+  ],
+  "title": "ToolRequest",
+  "type": "object"
+}

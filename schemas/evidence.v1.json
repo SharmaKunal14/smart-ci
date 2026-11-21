@@ -1,0 +1,54 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "baseline_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Baseline Digest",
+      "type": "string"
+    },
+    "additions": {
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+        "type": "string"
+      },
+      "maxItems": 100000,
+      "title": "Additions",
+      "type": "array"
+    },
+    "source_digests": {
+      "items": {
+        "pattern": "^[a-f0-9]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1000,
+      "minItems": 1,
+      "title": "Source Digests",
+      "type": "array"
+    },
+    "status": {
+      "const": "provisional",
+      "default": "provisional",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "baseline_digest",
+    "additions",
+    "source_digests"
+  ],
+  "title": "Evidence",
+  "type": "object"
+}

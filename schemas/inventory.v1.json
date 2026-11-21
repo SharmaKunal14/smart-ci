@@ -1,0 +1,85 @@
+{
+  "$defs": {
+    "TestUnit": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "runner": {
+          "enum": [
+            "pytest",
+            "vitest",
+            "maven"
+          ],
+          "title": "Runner",
+          "type": "string"
+        },
+        "granularity": {
+          "enum": [
+            "case",
+            "file",
+            "class"
+          ],
+          "title": "Granularity",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "runner",
+        "granularity",
+        "path"
+      ],
+      "title": "TestUnit",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "complete": {
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "environment": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Environment",
+      "type": "string"
+    },
+    "tests": {
+      "items": {
+        "$ref": "#/$defs/TestUnit"
+      },
+      "maxItems": 100000,
+      "title": "Tests",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "complete",
+    "environment",
+    "tests"
+  ],
+  "title": "Inventory",
+  "type": "object"
+}

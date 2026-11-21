@@ -1,0 +1,68 @@
+{
+  "$defs": {
+    "ExpectedSkip": {
+      "additionalProperties": false,
+      "properties": {
+        "case": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Case",
+          "type": "string"
+        },
+        "platform": {
+          "enum": [
+            "Darwin",
+            "Linux"
+          ],
+          "title": "Platform",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "source_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Source Digest",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case",
+        "platform",
+        "reason",
+        "source_digest"
+      ],
+      "title": "ExpectedSkip",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "expected_skips": {
+      "items": {
+        "$ref": "#/$defs/ExpectedSkip"
+      },
+      "maxItems": 100,
+      "title": "Expected Skips",
+      "type": "array"
+    },
+    "max_baseline_age_seconds": {
+      "default": 604800,
+      "maximum": 604800,
+      "minimum": 60,
+      "title": "Max Baseline Age Seconds",
+      "type": "integer"
+    }
+  },
+  "title": "ShadowPolicy",
+  "type": "object"
+}

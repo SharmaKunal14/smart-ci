@@ -1,0 +1,161 @@
+{
+  "$defs": {
+    "Attempt": {
+      "additionalProperties": false,
+      "properties": {
+        "suite": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Suite",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "full",
+            "subset"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "incomplete"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "expected": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+            "type": "string"
+          },
+          "maxItems": 100000,
+          "minItems": 1,
+          "title": "Expected",
+          "type": "array"
+        },
+        "observed": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$": {
+              "enum": [
+                "passed",
+                "failed",
+                "skipped"
+              ],
+              "type": "string"
+            }
+          },
+          "title": "Observed",
+          "type": "object"
+        },
+        "targets": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$": {
+              "type": "string"
+            }
+          },
+          "title": "Targets",
+          "type": "object"
+        },
+        "returncode": {
+          "title": "Returncode",
+          "type": "integer"
+        },
+        "duration": {
+          "minimum": 0,
+          "title": "Duration",
+          "type": "number"
+        }
+      },
+      "required": [
+        "suite",
+        "mode",
+        "status",
+        "expected",
+        "observed",
+        "targets",
+        "returncode",
+        "duration"
+      ],
+      "title": "Attempt",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed",
+        "incomplete"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "execution": {
+      "enum": [
+        "full",
+        "subset"
+      ],
+      "title": "Execution",
+      "type": "string"
+    },
+    "fallback": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10,
+      "title": "Fallback",
+      "type": "array"
+    },
+    "inventory_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Inventory Digest",
+      "type": "string"
+    },
+    "decision_digest": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Decision Digest"
+    },
+    "attempts": {
+      "items": {
+        "$ref": "#/$defs/Attempt"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Attempts",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "status",
+    "execution",
+    "fallback",
+    "inventory_digest",
+    "decision_digest",
+    "attempts"
+  ],
+  "title": "RunReport",
+  "type": "object"
+}

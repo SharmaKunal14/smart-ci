@@ -1,0 +1,9 @@
+{
+  "schema_version": "1",
+  "repository": "polyglot",
+  "suites": [
+    {"name": "auth", "runner": "pytest", "path": "python"},
+    {"name": "checkout", "runner": "vitest", "path": "ts"},
+    {"name": "pricing", "runner": "maven", "path": "java"}
+  ]
+}

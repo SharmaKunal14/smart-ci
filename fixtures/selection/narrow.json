@@ -1,0 +1,9 @@
+{
+  "schema_version": "1",
+  "repository": "example/repo",
+  "base": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "head": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "paths": [
+    "auth.py"
+  ]
+}
