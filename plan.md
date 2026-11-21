@@ -2,7 +2,7 @@
 
 Updated: 21 November 2026
 
-Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Selective execution and trusted baseline reuse have not been verified in live CI. The OnRecord pilot now has a TypeScript/Vitest adapter and on-demand map rebuilding; hosted OnRecord verification remains pending. No AWS resources or paid model calls.
+Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Packaging selective execution and trusted baseline reuse remain unverified. The OnRecord TypeScript/Vitest pilot passed live GitHub PRs #29 (103 files / 440 cases, full fallback) and #30 (64 files / 280 cases, actual subset without fallback), with on-demand map rebuilding. Both remain unmerged; broader correctness and performance evaluation remain outstanding. No AWS resources or paid model calls.
 
 Current priority: deliver initial repository scanning followed by deterministic selective execution on the next eligible PR, starting with OnRecord. This requires TypeScript/Vitest support, on-demand base/head analysis and verified native subset execution. Shadow runs are development/optional evaluation tools, not a mandatory waiting period for every new repository.
 
@@ -24,7 +24,7 @@ Build a Test Impact Analysis (TIA) tool that integrates with an existing codebas
 
 **Required demonstration:** after one initial scan of a supported repository, submit a narrow source-change PR and observe a strict subset actually execute, with recorded dependency-path reasons and reconciled native results. Repeat the same inputs and obtain the same plan. Delete the cached base map and reproduce that plan by rebuilding from source. Exercise removed dependencies, a seeded regression and an unsupported/configuration change; affected current tests remain selected and uncertain changes broaden to full. Full-suite comparison runs used to evaluate the implementation are identified separately from normal selective execution, with their cost recorded.
 
-**Current implementation:** the existing Python GitHub workflow remains shadow-only and requires an eligible saved baseline to narrow its proposal. The new OnRecord TypeScript/Vitest path rebuilds base/head maps from source and executes eligible subsets locally. It selects whole test files, runs every case inside selected files, and falls back to full execution when evidence is insufficient. The generated PR-only OnRecord workflow still requires publication and hosted verification; universal language support and production-wide safety are not established.
+**Current implementation:** the existing Python GitHub workflow remains shadow-only and requires an eligible saved baseline to narrow its proposal. The new OnRecord TypeScript/Vitest path rebuilds base/head maps from source and executes eligible subsets locally. It selects whole test files, runs every case inside selected files, and falls back to full execution when evidence is insufficient. The generated PR-only OnRecord workflow is published on a feature branch and passed both hosted pilot runs; universal language support and production-wide safety are not established.
 
 The user previously requested an agentic workflow and serverless AWS deployment through CloudFormation. Those preferences are retained as **deferred extensions**, not requirements for delivering the immediate goal. A later agent may investigate missing evidence and broaden selection; a later AWS service may share evidence and audit records. Custom training, probabilistic test exclusions, a dashboard, cross-repository orchestration, and a multi-tenant SaaS platform are outside the immediate scope.
 
@@ -807,8 +807,10 @@ verification, reproducible pilot script and enrollment procedure. Dependency or
 configuration changes, unsupported source and analysis failures still require
 full tests. Whole-file selection does not imply perfect regression detection.
 
-Remaining gates: publish the adapter on a review branch, enroll a PR-only workflow
-in OnRecord, verify an eligible dependent PR without merging, and expand evaluation
-across real changes/platforms. No AWS service or paid model is needed. Keep the
+Completed live gates: published the adapter branch, opened OnRecord enrollment PR #29
+and dependent subset PR #30, and verified both successful Actions runs without merging.
+Remaining gates: expand evaluation across real changes/platforms and establish net CI savings.
+The measured Smart CI step was 27.96 seconds for the subset versus 26.15 seconds for full
+execution in this one hosted comparison, so no speedup claim is justified. No AWS service or paid model is needed. Keep the
 existing deployment workflows unchanged. This handoff supersedes older roadmap
 text that described the TypeScript pilot as unimplemented.

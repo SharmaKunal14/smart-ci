@@ -4,7 +4,7 @@ Phases 1–4 provide a local CLI, versioned contracts, conservative selection,
 read-only Git analysis, audit reports, pytest/Vitest/Maven adapters, and automatic
 Python dependency discovery with revision-bound deterministic planning.
 Phase 5 adds local shadow-CI contracts and a generated GitHub Actions enrollment;
-live GitHub verification remains pending. Agent orchestration and AWS hosting remain planned.
+OnRecord now has verified live full-suite and subset PR runs. Broader rollout, agent orchestration and AWS hosting remain planned.
 See [plan.md](plan.md) for subsequent phases.
 
 For progress reporting, explicit platform-skip handling, local verification and
@@ -21,7 +21,7 @@ runs affected test files on eligible PR revisions. It reconstructs missing maps
 from source; a saved baseline is optional and shadow mode is not mandatory.
 See [the OnRecord handoff](docs/onboarding/onrecord.md) for exact scope, local
 verification, audit artifacts, rollback and the PR-only workflow enrollment steps.
-This adapter has not yet been exercised in hosted GitHub Actions.
+The [live subset PR](https://github.com/SharmaKunal14/slack-incidence-evidence/pull/30) passed with 64 of 103 files executed and no fallback. Both pilot PRs remain unmerged. This sample demonstrates test reduction, not a CI speedup.
 
 ## Setup and verification
 

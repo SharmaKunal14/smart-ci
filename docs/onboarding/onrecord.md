@@ -88,7 +88,7 @@ The PR-only workflow template is `examples/onrecord/pull-request.yml.in`. It che
 4. To verify a subset **without merging**, open a second PR whose base is that enrollment branch, changing only eligible application source. Check that its Smart CI job reports `execution: subset`, a nonempty omission list, and matching executed files. An intentional-defect PR should fail; a lockfile-change PR should run everything.
 5. Download the audit artifact and inspect the exact head/base commits, selection digest, fallback reason, executed files/cases and result. No failed job should be described as a passing workflow.
 
-The template has local validation, not a completed hosted Actions run. Publishing the tool and opening these PRs are separate enrollment steps. Nothing in this change enables AWS access, creates CloudFormation resources, merges OnRecord code or makes model calls. GitHub runner usage still consumes time; check your account's billing policy before enabling repeated runs.
+The template has now passed the two hosted pilot runs recorded below. Both pilot PRs remain open and unmerged; the workflow is not installed on OnRecord main. Nothing in this change enables AWS access, creates CloudFormation resources, merges OnRecord code or makes model calls. GitHub runner usage still consumes time; check your account's billing policy before enabling repeated runs.
 
 ## Verification recorded on 21 November 2026
 
@@ -107,6 +107,47 @@ The passing subset omitted 39 files and 160 cases. In that run, planning took 3.
 
 An earlier attempt (`verification-hzl3mozu`) failed one existing `seedSlackIncident` test during the full fallback. The independent native rerun and the subsequent complete fresh pilot both passed. Its cause is unconfirmed; the failed artifact remains available and is not counted as a successful run. The adapter preserved that failure as a failing exit status.
 
-The final `make check` passed formatting, lint, strict typing and all **199 tests**, with the native TypeScript/Vitest integration tests enabled. The workflow was rendered and its YAML parsed locally, with focused tests for immutable references, permissions, PR-only triggers and independent full fallback. No hosted OnRecord workflow run was performed. The wheel and source distribution built successfully, and the wheel contains the JavaScript compiler bridge.
+The final `make check` passed formatting, lint, strict typing and all **199 tests**, with the native TypeScript/Vitest integration tests enabled. The workflow was rendered and its YAML parsed locally, with focused tests for immutable references, permissions, PR-only triggers and independent full fallback. Those local checks preceded the hosted verification recorded below. The wheel and source distribution built successfully, and the wheel contains the JavaScript compiler bridge.
 
 Files changed: `src/smartci/cli.py`; new `src/smartci/typescript/{__init__.py,models.py,collector.py,inspect.mjs,native.py,commands.py}`; `schemas/typescript-{collector,snapshot}.v1.json`; `examples/onrecord/{typescript.json,pull-request.yml.in}`; `scripts/{onrecord_pilot,render_onrecord_ci}.py`; `tests/{test_typescript,test_onrecord_workflow}.py`; this guide, `README.md`, and `plan.md`. Existing plan edits were preserved. No Python-selector or existing adapter behavior was intentionally changed.
+
+
+## Live GitHub verification on 21 November 2026
+
+Smart CI runtime is published at `e6b35ea089abedfd49b6ca0547a5351058d6b1ed` on
+`codex/onrecord-typescript-selection`. The OnRecord workflow pins that exact commit.
+Later documentation-only commits do not change the pin.
+
+| PR and run | Change | Actual execution | Result |
+| --- | --- | --- | --- |
+| [Enrollment PR #29](https://github.com/SharmaKunal14/slack-incidence-evidence/pull/29), [run 44887119368](https://github.com/SharmaKunal14/slack-incidence-evidence/actions/runs/44887119368) | Adds only `.github/workflows/smartci-tests.yml` | Full: 103 files / 440 cases, `RISK_PATH` | Passed |
+| [Subset PR #30](https://github.com/SharmaKunal14/slack-incidence-evidence/pull/30), [run 44887147786](https://github.com/SharmaKunal14/slack-incidence-evidence/actions/runs/44887147786) | Adds only a blank line and `// Smart CI live subset verification.` to `src/domain/incident.ts` | Subset: 64 files / 280 cases, no fallback | Passed |
+
+Both runs had one execution attempt, zero failed cases and zero skipped cases.
+The downloaded reports were checked for plan digest integrity, execution-to-plan
+binding, selected IDs matching executed paths, and a proper subset of the inventory.
+The reported tested revisions match the PR merge commits and their expected parents:
+
+- Enrollment: base `cfcb957baee9a6e90b0f156f4458b33994117287`, tested merge `ab39fb3f8dc20d9ed550797278b34bc761b072c7`.
+- Subset: base `cb649e81b6941e0d603e9edf39925d17695e69e9`, tested merge `7c5af76178658642af95ab3f63d21171f9d0053b`.
+
+Artifacts and the checked receipt are retained locally under
+`demo-output/github/onrecord-live/`, including `verified-results.json` and each
+run's `selection.json`, `run.json` and `audit.md`. GitHub artifacts have three-day
+retention, so the run links and this committed record outlive their download window.
+
+This proves automatic PR-triggered test-file reduction for this supported change.
+The comment does not alter behavior and therefore does not measure regression recall.
+The separate local lifecycle-version defect (`+1` changed to `+2`) was caught by
+both subset and full execution; it was not introduced in either live PR.
+
+Hosted timing does not establish savings: full planning/execution took 3.62/22.51
+seconds (26.15 total); subset planning/execution took 5.53/22.41 seconds (27.96 total).
+These totals exclude dependency installation and other workflow steps. Repeated,
+paired measurements across representative changes are still needed.
+
+Both PRs remained OPEN with no merge timestamp after verification. OnRecord main
+remained at `cfcb957baee9a6e90b0f156f4458b33994117287`. No deployment workflow was
+triggered by either pilot branch, no AWS resources were deployed, and no model
+credentials or paid model calls were used. Rollback during this pilot is simply
+to close the unmerged PRs; the existing main-branch CI is unchanged.
