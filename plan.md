@@ -871,3 +871,23 @@ recall, enterprise compatibility or net-savings gates. The exact hosted evidence
 is in `docs/benchmarks/date-fns-{enrollment,regression,fix}-2026-11-21.json`; the
 onboarding guide links each workflow run. No further date-fns changes are needed
 to make this bounded experiment pass, and the full evaluation control remains.
+
+### Hosted planning optimization follow-up — 22 November 2026
+
+Completed bounded compiler-query batching, overlapping independent map builds,
+and removal of a redundant third native-inventory pass. Two independent passes,
+old/new graphs, revision validation, private base dependencies and full fallback
+remain. GitHub safety verification passed all 245 tests and the package build.
+
+Three real PR #5 hosted repetitions measured 6.26s → 3.99s median planning, but
+complete jobs took 21s native, 34s previous Smart CI and 35s optimized Smart CI.
+The net-savings gate remains unmet. PR #6 retained exactly the same six observed
+historical-defect failures in four selected files as the full 253-file suite;
+old/new implementation graph hashes and selections matched. Evidence and run
+links are in `docs/benchmarks/date-fns-optimized-2026-11-22.json` and the date-fns
+guide. No merge, AWS deployment or paid model call occurred.
+
+Trusted precomputed base maps and feature-push planning remain future work.
+Reuse must validate exact revisions, implementation/configuration/dependency and
+runtime provenance, plus evidence trust. Stale or untrusted evidence must trigger
+reconstruction or full execution; precomputation cannot know a future diff.

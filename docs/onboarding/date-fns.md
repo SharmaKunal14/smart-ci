@@ -74,6 +74,80 @@ All PRs remain unmerged. No AWS deployment or paid model calls were used.
 
 Fork: https://github.com/SharmaKunal14/date-fns
 
+## Planning optimization — hosted verification, 22 November 2026
+
+[Optimization PR](https://github.com/SharmaKunal14/smart-ci/pull/2) batches
+TypeScript symbol queries within each compiler project, overlaps the two map
+builds with at most two workers, and uses the native helper's inventory as the
+first discovery pass. A separate Vitest CLI process must independently produce
+the same inventory. This removes a redundant third pass, while preserving
+configuration validation, conservative widening, separate base dependencies,
+both graph versions, full fallback and failure retention. Revision changes
+during discovery invalidate planning. The optimized CI installation excludes
+unused development packages. No persistent graph cache was introduced.
+
+[date-fns PR #5](https://github.com/SharmaKunal14/date-fns/pull/5) contains only
+the real three-file month-parsing fix. The workflow is already on its base,
+and checks out the actual PR merge revision. Three separate jobs run native
+full tests, previous Smart CI (`456ddca`) and optimized Smart CI (`dba776a`).
+Each retains native test settings and all 15 timezone-script executions.
+
+Three-attempt medians from
+[the hosted comparison](https://github.com/SharmaKunal14/date-fns/actions/runs/44912659497):
+
+| Measurement | Native full | Previous Smart CI | Optimized Smart CI |
+| --- | ---: | ---: | ---: |
+| Planning | — | 6.26s | 3.99s |
+| Test command including planning/startup where applicable | 2.88s | 9.34s | 6.85s |
+| Complete job | **21s** | **34s** | **35s** |
+| Trigger to job result, including dispatch/queue | 24s | 36s | 38s |
+| Test files / cases | 253 / 3,167 | 4 / 19 | 4 / 19 |
+
+**Planning improved by about 36%; end-to-end performance did not improve.**
+The original baseline was 20s native / 36s Smart CI. Comparing the optimized
+35s only with that older 36s would conceal runner/setup variation: the previous
+version in the same new experiment took 34s. The optimized system remains
+slower than native full execution. Three runs cannot establish a precise
+one-second difference, but they show no demonstrated whole-job speedup.
+
+All passing-run selections were identical, with no fallback or retry. Old and
+new base/head graph hashes matched exactly on the same PR revision; provenance
+digests differ because the implementation changed. The full inventory partition
+and audit digests validate. Full runs retained 19 reviewed skips; subsets had
+none. Parallel discovery may increase instantaneous CPU usage; no compute or
+billing savings were measured.
+
+The [GitHub safety run](https://github.com/SharmaKunal14/smart-ci/actions/runs/44912630487)
+passed all 245 tests, formatting, lint and type checks, and built the source
+distribution and wheel. New tests cover partial-worker failure, revision changes,
+independent inventory disagreement, and project-dependent compiler resolution.
+The first safety run correctly rejected a newer Vite dependency in the test
+fixture; pinning that fixture to date-fns' Vite 7.0.6 resolved it without changing
+the unsupported-plugin rule.
+
+[Defect PR #6](https://github.com/SharmaKunal14/date-fns/pull/6) then restored
+the historical bug in the same three production files. Its
+[GitHub run](https://github.com/SharmaKunal14/date-fns/actions/runs/44912928950)
+correctly failed: native full execution observed six failures among 3,167 cases;
+both Smart CI versions observed the exact same six case IDs among 19 cases in
+four files. No observed failure was omitted, and no fallback or retry occurred.
+Graph hashes and selections matched across versions. All timezone checks passed,
+and the final failure gate remained red. This is one historical defect, not a
+universal safety guarantee.
+
+The exact comparison workflow is `examples/date-fns/optimized-timing.yml`.
+Raw hosted timing summaries, including the initial candidate's two trials, are
+in [`docs/benchmarks/date-fns-optimized-2026-11-22.json`](../benchmarks/date-fns-optimized-2026-11-22.json).
+All experiment PRs remain unmerged. No AWS deployment or paid models were used.
+
+Precomputation is possible: build a trusted map after a base-branch push, then
+validate its exact commit, implementation, configuration and dependency/runtime
+provenance before reuse. A feature-branch push can also prepare a plan before a
+PR opens, but its head/base must still match when CI uses it. The exact selected
+tests cannot be known before the incoming change exists. Cache trust, invalidation
+and incremental dependency discovery remain future work; this optimization does
+not claim to implement them.
+
 Published review artifacts (all open and unmerged):
 
 - [Smart CI adapter draft PR](https://github.com/SharmaKunal14/smart-ci/pull/1),

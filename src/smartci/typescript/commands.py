@@ -1,4 +1,4 @@
-"""Reconstruct both revisions before planning; map files are audit outputs only."""
+"""Plan with validated base evidence, rebuilding on cache misses or invalidity."""
 
 import argparse
 import html
@@ -18,6 +18,7 @@ from smartci.selection import Report, SelectionPolicy, fallback, finish, select
 from .collector import collect, test_id
 from .models import NativeResult, TypeScriptConfig, TypeScriptSnapshot
 from .native import NativeVitest
+from .precomputed import load_base_map
 from .workspace import check_environment
 
 
@@ -59,6 +60,11 @@ def add_parser(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None
                 help="full Git commit ID; merge base is reconstructed",
             )
             action.add_argument("--shadow", action="store_true")
+            action.add_argument("--base-map", type=Path)
+            action.add_argument(
+                "--base-map-sha256",
+                help="map payload digest from trusted CI provenance verification",
+            )
 
 
 def rebuild_base(
@@ -159,13 +165,39 @@ def planning(
     base: str,
     shadow: bool,
     output: Path,
+    base_map: Path | None = None,
+    base_map_sha256: str | None = None,
+    cache_info: dict[str, str] | None = None,
 ) -> tuple[Report, TypeScriptSnapshot | None]:
     head: TypeScriptSnapshot | None = None
+    cache = cache_info if cache_info is not None else {}
+    cache.update(status="not_requested")
     try:
         revision = current_clean_head(runner.root)
         if revision is None:
             raise ValueError("clean committed checkout required")
         changes = changes_from_git(runner.root, base, revision, config.repository)
+
+        def base_evidence() -> TypeScriptSnapshot:
+            if base_map is not None or base_map_sha256 is not None:
+                cache.update(status="miss", reason="INVALID_OR_UNAVAILABLE_MAP")
+                try:
+                    if base_map is None or base_map_sha256 is None:
+                        raise ValueError("map and trusted digest required together")
+                    saved = load_base_map(
+                        runner.root,
+                        changes.base,
+                        revision,
+                        config,
+                        base_map,
+                        base_map_sha256,
+                    )
+                    cache.update(status="candidate", reason="PENDING_ENVIRONMENT_CHECK")
+                    return saved
+                except (OSError, ValueError, RecursionError):
+                    progress("base map rejected or missing; reconstructing from source")
+            return rebuild_base(runner, config, changes.base)
+
         progress(
             "building head and merge-base maps concurrently in separate environments"
         )
@@ -173,9 +205,16 @@ def planning(
         # including private-checkout cleanup on failure; partial maps never select.
         with ThreadPoolExecutor(max_workers=2) as executor:
             head_future = executor.submit(collect, runner, config)
-            base_future = executor.submit(rebuild_base, runner, config, changes.base)
+            base_future = executor.submit(base_evidence)
             head = head_future.result()
             before = base_future.result()
+        if cache["status"] == "candidate":
+            if before.provenance != head.provenance:
+                cache.update(status="miss", reason="PROVENANCE_MISMATCH")
+                progress("base map environment changed; reconstructing from source")
+                before = rebuild_base(runner, config, changes.base)
+            else:
+                cache.update(status="hit", reason="VALIDATED_BASE_MAP")
         if (
             head.graph.commit != revision
             or before.graph.commit != changes.base
@@ -226,6 +265,8 @@ def planning(
         )
         return finish(decision), head
     except (OSError, ValueError, RecursionError):
+        if cache["status"] in {"candidate", "hit"}:
+            cache.update(status="miss", reason="ANALYSIS_INCOMPLETE")
         progress(
             "analysis unavailable: falling back to the independent full Vitest suite"
         )
@@ -287,6 +328,7 @@ def command(args: argparse.Namespace) -> int:
         )
         output.mkdir(parents=True)
         snapshot: TypeScriptSnapshot | None
+        cache_info: dict[str, str] = {"status": "not_requested"}
         if args.ts_action == "scan":
             progress("scanning tracked code and collecting native Vitest tests twice")
             snapshot = collect(runner, config)
@@ -298,7 +340,16 @@ def command(args: argparse.Namespace) -> int:
                 return 0 if snapshot.graph.complete else 2
             report = fallback("INITIAL_FULL_VERIFICATION", snapshot.inventory)
         else:
-            report, snapshot = planning(runner, config, args.base, args.shadow, output)
+            report, snapshot = planning(
+                runner,
+                config,
+                args.base,
+                args.shadow,
+                output,
+                getattr(args, "base_map", None),
+                getattr(args, "base_map_sha256", None),
+                cache_info,
+            )
         write_json(output / "selection.json", report.model_dump())
         readable = ""
         if snapshot:
@@ -311,7 +362,13 @@ def command(args: argparse.Namespace) -> int:
                 f"\n\n{len(selected_paths)}/{len(snapshot.files)} files proposed. "
             )
             readable += "Selection is conditional on the supported static-analysis profile, not a safety guarantee.\n"
-        atomic_write(output / "audit.md", markdown(report) + readable)
+        atomic_write(
+            output / "audit.md",
+            markdown(report)
+            + readable
+            + "\n\nBase map: "
+            + html.escape(json.dumps(cache_info)),
+        )
         planning_seconds = time.monotonic() - start
         attempts, mode, reasons = execute(runner, report, snapshot)
         status = (
@@ -327,6 +384,7 @@ def command(args: argparse.Namespace) -> int:
             "fallback": reasons,
             "decision_digest": report.digest,
             "planning_seconds": planning_seconds,
+            "base_map": cache_info,
             "total_seconds": time.monotonic() - start,
             "selected_files": sorted(
                 t.path for t in snapshot.inventory.tests if t.id in report.selected
