@@ -36,8 +36,32 @@ The five inherited PR workflows failed at startup with zero jobs executed.
 After registration, they were disabled through the API under the owner's prior
 approval. The Smart CI pilot remains active. Coverage report is manual-only and
 remains unregistered. Old startup-failure entries remain in Actions history;
-they are separate from the successful pilot. PRs #2 and #3 still await their
-live subset verification. Nothing has been merged.
+they are separate from the successful pilot. Nothing has been merged.
+
+Hosted regression verified after explicitly closing and reopening PR #2:
+[run 44903676285](https://github.com/SharmaKunal14/date-fns/actions/runs/44903676285)
+correctly ended in failure. The independent full suite ran 253 files / 3,167
+cases, with 3,142 passes, six failures and 19 reviewed skips. Smart CI ran a
+four-file subset / 19 cases, with 13 passes, the same six failures and no skips.
+There was one subset attempt, no fallback and no full-suite retry by Smart CI.
+The workflow also ran the independent full control, as required for evaluation.
+
+The six failure IDs matched exactly, including their multiplicities, with zero
+omitted observed failures and zero additional subset failures. They cover October
+parsing and distinct November/December parsing in `zh-CN`, `zh-HK` and `zh-TW`.
+The fourth selected file is the conservatively widened `convertToFP` test.
+The selected four and omitted 249 file IDs partition the full native inventory,
+and the decision digest validates. Only the three historical production files
+changed; current upstream tests and native configuration were unchanged. The 15
+timezone-script executions passed. The final workflow gate retained both native
+and Smart CI failures even though their steps continue to collect evidence.
+
+Smart CI recorded 6.15s planning, 0.92s execution and 7.09s total; the complete
+evaluation job took 40s. This confirms hosted subset execution and detection of
+this one historical bug, not universal recall or a net speedup. Case identities,
+assertion messages and exact counts are in
+`docs/benchmarks/date-fns-regression-2026-11-21.json`. PR #2 remains open and
+unmerged; PR #3 still awaits its hosted passing-fix verification.
 
 Pinned upstream revision: `a9739fb3e5384a810e90d7376446f6d84ecc5029`.
 Native dependencies: unchanged `pnpm-lock.yaml`; pnpm 12.21.0 and Node 26.13.1.

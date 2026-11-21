@@ -1,0 +1,134 @@
+{
+  "run_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44903676285",
+  "workflow": "Smart CI / date-fns evaluation",
+  "pr": 2,
+  "pr_head": "f953bd6ba07c01b2456808d4ae3df90bcfeeddd2",
+  "tool_commit": "456ddca0b02ec4c7ad34bafd8a6310d9cdf83d29",
+  "comparison": {
+    "base": "c56fc76415852489c82f3094b536163c8483dcaa",
+    "head": "6f156c0141c978630fe3731cbf959903fc64fbc9"
+  },
+  "native": {
+    "files": 253,
+    "cases": 3167,
+    "outcomes": {
+      "passed": 3142,
+      "skipped": 19,
+      "failed": 6
+    }
+  },
+  "smartci": {
+    "files": [
+      "pkgs/core/src/fp/_lib/convertToFP/test.ts",
+      "pkgs/core/src/locale/zh-CN/test.ts",
+      "pkgs/core/src/locale/zh-HK/test.ts",
+      "pkgs/core/src/locale/zh-TW/test.ts"
+    ],
+    "cases": 19,
+    "failed": 6,
+    "skipped": 0,
+    "execution": "subset",
+    "fallback": [],
+    "planning_seconds": 6.147886632999999,
+    "execution_seconds": 0.9156916430000024,
+    "total_seconds": 7.086806663999994
+  },
+  "native_failed_cases": [
+    {
+      "path": "pkgs/core/src/locale/zh-CN/test.ts",
+      "ancestors": [
+        "zh-CN locale"
+      ],
+      "title": "parses October with localized month tokens",
+      "id": "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+      "message": [
+        "AssertionError: expected Invalid Date to deeply equal 2022-10-27T00:00:00.000Z"
+      ]
+    },
+    {
+      "path": "pkgs/core/src/locale/zh-CN/test.ts",
+      "ancestors": [
+        "zh-CN locale"
+      ],
+      "title": "parses November and December as distinct months",
+      "id": "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+      "message": [
+        "AssertionError: expected 2022-01-27T00:00:00.000Z to deeply equal 2022-11-27T00:00:00.000Z"
+      ]
+    },
+    {
+      "path": "pkgs/core/src/locale/zh-HK/test.ts",
+      "ancestors": [
+        "zh-HK locale"
+      ],
+      "title": "parses October with localized month tokens",
+      "id": "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+      "message": [
+        "AssertionError: expected Invalid Date to deeply equal 2022-10-27T00:00:00.000Z"
+      ]
+    },
+    {
+      "path": "pkgs/core/src/locale/zh-HK/test.ts",
+      "ancestors": [
+        "zh-HK locale"
+      ],
+      "title": "parses November and December as distinct months",
+      "id": "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773",
+      "message": [
+        "AssertionError: expected 2022-01-27T00:00:00.000Z to deeply equal 2022-11-27T00:00:00.000Z"
+      ]
+    },
+    {
+      "path": "pkgs/core/src/locale/zh-TW/test.ts",
+      "ancestors": [
+        "zh-TW locale"
+      ],
+      "title": "parses October with localized month tokens",
+      "id": "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+      "message": [
+        "AssertionError: expected Invalid Date to deeply equal 2022-10-27T00:00:00.000Z"
+      ]
+    },
+    {
+      "path": "pkgs/core/src/locale/zh-TW/test.ts",
+      "ancestors": [
+        "zh-TW locale"
+      ],
+      "title": "parses November and December as distinct months",
+      "id": "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+      "message": [
+        "AssertionError: expected 2022-01-27T00:00:00.000Z to deeply equal 2022-11-27T00:00:00.000Z"
+      ]
+    }
+  ],
+  "smartci_failed_case_ids": [
+    "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+    "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+    "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+    "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+    "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+    "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+  ],
+  "omitted_files": 249,
+  "missed_observed_failures": 0,
+  "unexpected_subset_failures": 0,
+  "failed_case_id_multisets_equal": true,
+  "audit_digest_valid": true,
+  "selected_and_omitted_partition_full_file_inventory": true,
+  "timezone_script_executions_passed": 15,
+  "workflow_conclusion": "failure",
+  "failure_is_expected": true,
+  "limitations": [
+    "One historical bug produced six failing cases; this does not establish universal regression-detection safety.",
+    "The evaluation runs a full native control as well as the subset and is not a CI savings demonstration."
+  ],
+  "changed_production_files": [
+    "pkgs/core/src/locale/zh-CN/_lib/match/index.ts",
+    "pkgs/core/src/locale/zh-HK/_lib/match/index.ts",
+    "pkgs/core/src/locale/zh-TW/_lib/match/index.ts"
+  ],
+  "upstream_tests_unchanged": true,
+  "pr_state": "OPEN",
+  "merged": false,
+  "job_seconds": 40
+}
