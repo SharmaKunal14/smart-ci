@@ -1,4 +1,90 @@
 {
+  "$defs": {
+    "NativeProject": {
+      "additionalProperties": false,
+      "description": "Explicit native project scope; never replace the repository's test config.",
+      "properties": {
+        "kind": {
+          "const": "vitest5-typescript7",
+          "title": "Kind",
+          "type": "string"
+        },
+        "directory": {
+          "title": "Directory",
+          "type": "string"
+        },
+        "configuration": {
+          "title": "Configuration",
+          "type": "string"
+        },
+        "project": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$",
+          "title": "Project",
+          "type": "string"
+        },
+        "lockfile": {
+          "const": "pnpm-lock.yaml",
+          "title": "Lockfile",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "reviewed_skips": {
+          "items": {
+            "$ref": "#/$defs/ReviewedSkip"
+          },
+          "maxItems": 1000,
+          "title": "Reviewed Skips",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "directory",
+        "configuration",
+        "project",
+        "lockfile"
+      ],
+      "title": "NativeProject",
+      "type": "object"
+    },
+    "ReviewedSkip": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "case": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Case",
+          "type": "string"
+        },
+        "source_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Source Digest",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "case",
+        "source_digest",
+        "reason"
+      ],
+      "title": "ReviewedSkip",
+      "type": "object"
+    }
+  },
   "additionalProperties": false,
   "properties": {
     "schema_version": {
@@ -35,6 +121,17 @@
       "maxItems": 1000,
       "title": "Must Run",
       "type": "array"
+    },
+    "native_project": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NativeProject"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "required": [

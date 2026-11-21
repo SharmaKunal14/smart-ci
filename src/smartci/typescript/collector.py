@@ -15,6 +15,7 @@ from smartci.selection import Graph, digest
 
 from .models import Analysis, TypeScriptConfig, TypeScriptSnapshot
 from .native import NativeVitest
+from .workspace import manifests
 
 
 def node_id(path: str) -> str:
@@ -51,10 +52,12 @@ def collect(runner: NativeVitest, config: TypeScriptConfig) -> TypeScriptSnapsho
     if commit is None:
         raise ValueError("clean committed checkout required")
     files = tracked_files(root, commit)
+    profile = config.native_project
+    lockfile = profile.lockfile if profile else "package-lock.json"
     required = {
         "package.json",
-        "package-lock.json",
-        "vitest.config.ts",
+        lockfile,
+        profile.configuration if profile else "vitest.config.ts",
         *config.projects,
     }
     if not required <= set(files):
@@ -62,8 +65,10 @@ def collect(runner: NativeVitest, config: TypeScriptConfig) -> TypeScriptSnapsho
     vitest = json.loads(read_bounded(root / "node_modules/vitest/package.json"))[
         "version"
     ]
-    if not isinstance(vitest, str) or not vitest.startswith("3."):
-        raise ValueError("supported native profile requires Vitest 3")
+    if not isinstance(vitest, str) or not vitest.startswith(
+        "5.0." if profile else "3."
+    ):
+        raise ValueError("unsupported native Vitest version")
     print("smartci: collecting native Vitest inventory (1/2)", flush=True)
     tests = runner.collect()
     print("smartci: checking native collection repeatability (2/2)", flush=True)
@@ -71,13 +76,20 @@ def collect(runner: NativeVitest, config: TypeScriptConfig) -> TypeScriptSnapsho
         raise ValueError("nondeterministic test collection")
     if not set(tests) <= set(files):
         raise ValueError("untracked native tests")
-    helper = Path(__file__).with_name("inspect.mjs")
+    helper = Path(__file__).with_name(
+        "inspect-native.mjs" if profile else "inspect.mjs"
+    )
     with tempfile.TemporaryDirectory(prefix="smartci-analysis-") as temporary:
         request = Path(temporary) / "request.json"
         result = Path(temporary) / "result.json"
         write_json(
             request,
-            {"files": files, "tests": sorted(tests), "projects": config.projects},
+            {
+                "files": files,
+                "tests": sorted(tests),
+                "projects": config.projects,
+                "native_project": profile.model_dump() if profile else None,
+            },
         )
         if runner.invoke([str(helper), str(root), str(request), str(result)]) != 0:
             raise ValueError("TypeScript analysis failed")
@@ -94,9 +106,7 @@ def collect(runner: NativeVitest, config: TypeScriptConfig) -> TypeScriptSnapsho
         "platform": platform.system(),
         "machine": platform.machine(),
         "configuration": digest(config.model_dump()),
-        "lockfile": hashlib.sha256(
-            read_bounded(root / "package-lock.json")
-        ).hexdigest(),
+        "lockfile": hashlib.sha256(read_bounded(root / lockfile)).hexdigest(),
         "implementation": digest(
             {
                 p.name: hashlib.sha256(p.read_bytes()).hexdigest()
@@ -105,6 +115,13 @@ def collect(runner: NativeVitest, config: TypeScriptConfig) -> TypeScriptSnapsho
             }
         ),
     }
+    if profile:
+        provenance["manifests"] = digest(
+            {
+                p: hashlib.sha256(read_bounded(root / p)).hexdigest()
+                for p in manifests(files, lockfile)
+            }
+        )
     inventory = Inventory(
         schema_version="1",
         repository=config.repository,
@@ -139,6 +156,7 @@ def collect(runner: NativeVitest, config: TypeScriptConfig) -> TypeScriptSnapsho
         gaps=analysis.gaps,
         analyzed=analysis.analyzed,
         provenance=provenance,
+        warnings=analysis.warnings,
     )
     snapshot.digest = digest(snapshot.model_dump(exclude={"digest"}))
     return snapshot
