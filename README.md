@@ -362,7 +362,10 @@ No AWS deployment, new hosted service or paid model access is needed.
 The [date-fns guide](docs/onboarding/date-fns.md) covers the TypeScript 7 / Vitest 5
 adapter, pnpm workspace reconstruction, reviewed native skips, real historical
 regression replay and paired native/Smart CI benchmark. It preserves upstream
-test configuration and reports total planning overhead. Initial results show
+test configuration and reports total planning overhead. The bounded experiment
+is complete locally and on GitHub: enrollment correctly runs everything, the
+historical regression's subset catches the same six failures as the full suite,
+and the real fix passes that same subset. All PRs remain unmerged. Results show
 that fewer executed files do **not** imply a faster run on this already fast
 native suite. This profile does not replace the repository's browser, Temporal,
 other package or multi-environment checks.

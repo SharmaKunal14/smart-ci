@@ -1,0 +1,111 @@
+{
+  "run_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44904044858",
+  "workflow": "Smart CI / date-fns evaluation",
+  "pr": 3,
+  "pr_head": "53b644aa2bbf50007fbeab83e6d92477867012cb",
+  "tool_commit": "456ddca0b02ec4c7ad34bafd8a6310d9cdf83d29",
+  "comparison": {
+    "base": "f953bd6ba07c01b2456808d4ae3df90bcfeeddd2",
+    "head": "818d589bfc8c4737d3fa17eb4638964cb837ffd8"
+  },
+  "native": {
+    "files": 253,
+    "cases": 3167,
+    "outcomes": {
+      "passed": 3148,
+      "skipped": 19
+    }
+  },
+  "smartci": {
+    "files": [
+      "pkgs/core/src/fp/_lib/convertToFP/test.ts",
+      "pkgs/core/src/locale/zh-CN/test.ts",
+      "pkgs/core/src/locale/zh-HK/test.ts",
+      "pkgs/core/src/locale/zh-TW/test.ts"
+    ],
+    "cases": 19,
+    "failed": 0,
+    "skipped": 0,
+    "execution": "subset",
+    "fallback": [],
+    "planning_seconds": 6.458543418999994,
+    "execution_seconds": 0.9664086270000212,
+    "total_seconds": 7.449757812000001
+  },
+  "resolved_regression_cases": [
+    {
+      "id": "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+      "path": "pkgs/core/src/locale/zh-CN/test.ts",
+      "ancestors": [
+        "zh-CN locale"
+      ],
+      "title": "parses October with localized month tokens",
+      "native_status": "passed",
+      "included_in_subset_file": true
+    },
+    {
+      "id": "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+      "path": "pkgs/core/src/locale/zh-CN/test.ts",
+      "ancestors": [
+        "zh-CN locale"
+      ],
+      "title": "parses November and December as distinct months",
+      "native_status": "passed",
+      "included_in_subset_file": true
+    },
+    {
+      "id": "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+      "path": "pkgs/core/src/locale/zh-HK/test.ts",
+      "ancestors": [
+        "zh-HK locale"
+      ],
+      "title": "parses October with localized month tokens",
+      "native_status": "passed",
+      "included_in_subset_file": true
+    },
+    {
+      "id": "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773",
+      "path": "pkgs/core/src/locale/zh-HK/test.ts",
+      "ancestors": [
+        "zh-HK locale"
+      ],
+      "title": "parses November and December as distinct months",
+      "native_status": "passed",
+      "included_in_subset_file": true
+    },
+    {
+      "id": "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+      "path": "pkgs/core/src/locale/zh-TW/test.ts",
+      "ancestors": [
+        "zh-TW locale"
+      ],
+      "title": "parses October with localized month tokens",
+      "native_status": "passed",
+      "included_in_subset_file": true
+    },
+    {
+      "id": "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+      "path": "pkgs/core/src/locale/zh-TW/test.ts",
+      "ancestors": [
+        "zh-TW locale"
+      ],
+      "title": "parses November and December as distinct months",
+      "native_status": "passed",
+      "included_in_subset_file": true
+    }
+  ],
+  "same_native_case_identity_multiset_as_regression": true,
+  "same_selected_files_as_regression": true,
+  "audit_digest_valid": true,
+  "selected_and_omitted_partition_full_file_inventory": true,
+  "timezone_script_executions_passed": 15,
+  "workflow_conclusion": "success",
+  "job_seconds": 36.0,
+  "source_restored_to_upstream_except_evaluation_workflow": true,
+  "pr_state": "OPEN",
+  "merged": false,
+  "limitations": [
+    "One historical defect and one declared Node project/environment; no claim of universal safety or whole-repository support.",
+    "Independent full control is retained for evaluation; no hosted net CI savings claim."
+  ]
+}

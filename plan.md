@@ -825,7 +825,7 @@ text that described the TypeScript pilot as unimplemented.
 
 ## date-fns native workspace evaluation
 
-The next pilot is the public `SharmaKunal14/date-fns` fork at upstream revision
+The completed bounded pilot uses the public `SharmaKunal14/date-fns` fork at upstream revision
 `a9739fb3e5384a810e90d7376446f6d84ecc5029`. The added profile uses the installed
 TypeScript 7 compiler API, native Vitest 5 named-project discovery, and pnpm
 workspace dependency reconstruction. Base installs are offline and frozen, with
@@ -855,3 +855,19 @@ reconstruction costs. Do not manufacture savings by slowing native tests, droppi
 unknown dependencies or claiming the entire enterprise repository is supported.
 The evaluation workflow preserves native full-test failures. No AWS or paid
 model work is required or authorized.
+
+Hosted verification is complete for the declared profile. Enrollment PR #1
+passed with a full `RISK_PATH` fallback; regression PR #2 selected four files and
+failed exactly the same six case IDs as the independent full suite; fix PR #3
+selected the same files and passed all 19 cases on its first attempt. Its native
+full control passed 3,148 cases with 19 reviewed skips. The native case-identity
+multiset is unchanged between regression and fix, and all 15 timezone-script
+executions passed. No tests, native settings or safety rules were weakened.
+All PRs remain open and unmerged.
+
+The experiment is complete, with **positive compatibility/correctness evidence
+and no demonstrated net performance benefit**. This does not complete broader
+recall, enterprise compatibility or net-savings gates. The exact hosted evidence
+is in `docs/benchmarks/date-fns-{enrollment,regression,fix}-2026-11-21.json`; the
+onboarding guide links each workflow run. No further date-fns changes are needed
+to make this bounded experiment pass, and the full evaluation control remains.

@@ -6,6 +6,22 @@ Vitest configuration, default worker count, isolation and filesystem cache. It
 does not claim support for every TypeScript repository or the entire date-fns CI
 matrix.
 
+**Experiment status: complete for the declared core/main Node 26 UTC profile.**
+The bounded correctness checks passed; the performance hypothesis did not show
+a benefit. This is not completion of universal repository support or promotion
+to production selective CI.
+
+| Hosted experiment | Smart CI execution | Verified outcome |
+| --- | --- | --- |
+| PR #1: workflow enrollment | Full, 253 files / 3,167 cases | Passed; configuration change correctly triggers `RISK_PATH` |
+| PR #2: historical regression | Subset, 4 files / 19 cases | Expected failure; exactly the same six failures as full execution |
+| PR #3: actual upstream fix | Subset, same 4 files / 19 cases | Passed; all six previously failing cases resolved |
+
+Each hosted experiment also ran an independent native full control and all 15
+timezone-script executions. The three-round local comparison, including native
+Vitest `related`, remains the performance evidence; these single hosted runs
+are correctness checks, not a statistically meaningful timing comparison.
+
 Fork: https://github.com/SharmaKunal14/date-fns
 
 Published review artifacts (all open and unmerged):
@@ -16,7 +32,7 @@ Published review artifacts (all open and unmerged):
 - [Historical regression PR #2](https://github.com/SharmaKunal14/date-fns/pull/2),
   targeting the enrollment branch; intentionally defective and expected to fail.
 - [Historical fix PR #3](https://github.com/SharmaKunal14/date-fns/pull/3),
-  targeting the regression branch; expected to pass.
+  targeting the regression branch; verified passing.
 
 Hosted enrollment verified after the owner reopened PR #1:
 [run 44902768202](https://github.com/SharmaKunal14/date-fns/actions/runs/44902768202)
@@ -61,7 +77,29 @@ evaluation job took 40s. This confirms hosted subset execution and detection of
 this one historical bug, not universal recall or a net speedup. Case identities,
 assertion messages and exact counts are in
 `docs/benchmarks/date-fns-regression-2026-11-21.json`. PR #2 remains open and
-unmerged; PR #3 still awaits its hosted passing-fix verification.
+unmerged.
+
+Hosted fix verified after closing and reopening PR #3:
+[run 44904044858](https://github.com/SharmaKunal14/date-fns/actions/runs/44904044858)
+passed on its first attempt. The native full suite ran 253 files / 3,167 cases:
+3,148 passed, 19 reviewed skips and no failures. Smart CI selected the same four
+files as PR #2, and all 19 cases passed with no skips, fallback or retry. All 15
+timezone-script executions and the final failure-preservation gate passed.
+
+The native case-identity multiset is unchanged from the regression run, including
+repeated titles: no test disappeared to make the result green. Each of the six
+previously failing case IDs is now passed and its file is included in the subset.
+The decision digest and full-inventory partition validate. Comparing against
+pinned upstream confirms the fixed source, tests, dependency manifests and
+native configuration are identical; only the added evaluation workflow differs.
+No functional patch or policy relaxation was necessary for this run.
+
+Smart CI recorded 6.46s planning, 0.97s execution and 7.45s total. The complete
+evaluation job took 36s. Exact evidence is in
+`docs/benchmarks/date-fns-fix-2026-11-21.json`. All three date-fns PRs remain open
+and unmerged, and the Smart CI implementation PR remains a draft. No AWS resources
+or paid models were used. The evaluation workflow remains available with its full
+control; it has not been promoted to a replacement for native production CI.
 
 Pinned upstream revision: `a9739fb3e5384a810e90d7376446f6d84ecc5029`.
 Native dependencies: unchanged `pnpm-lock.yaml`; pnpm 12.21.0 and Node 26.13.1.
