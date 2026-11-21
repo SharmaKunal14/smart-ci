@@ -1,0 +1,39 @@
+name: Smart CI safety checks
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+permissions:
+  contents: read
+concurrency:
+  group: smartci-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '26.13.1'
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        with:
+          version: '0.11.6'
+          enable-cache: false
+      - name: Install test toolchains
+        run: |
+          uv sync --frozen
+          npm install --prefix "$RUNNER_TEMP/legacy" --ignore-scripts typescript@5.9.3 vitest@3.2.7
+          npm install --prefix "$RUNNER_TEMP/native" --ignore-scripts typescript@7.0.2 vitest@5.0.1 vite@7.0.6
+          echo "SMARTCI_TYPESCRIPT_NODE_MODULES=$RUNNER_TEMP/legacy/node_modules" >> "$GITHUB_ENV"
+          echo "SMARTCI_TS7_NODE_MODULES=$RUNNER_TEMP/native/node_modules" >> "$GITHUB_ENV"
+          echo "SMARTCI_TS7_NODE=$(command -v node)" >> "$GITHUB_ENV"
+      - name: Verify safety, formatting and types
+        run: make check
+      - name: Build distributable
+        run: uv build

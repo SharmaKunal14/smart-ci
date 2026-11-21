@@ -235,6 +235,49 @@ def test_native_compiler_resolves_transitive_dependencies_repeatably(compiler_pr
     assert result.status == "passed" and result.cases == 2
 
 
+def test_batched_imports_keep_owners_and_each_project_resolution(compiler_project):
+    runner, config = compiler_project
+    for name in ("a", "b"):
+        (runner.root / f"lib/{name}.ts").write_text(f"export const value='{name}';")
+    (runner.root / "lib/consumer.ts").write_text("export {value} from '@service';")
+    for name, target in (("app", "a"), ("second", "b")):
+        folder = runner.root / name
+        folder.mkdir(exist_ok=True)
+        (folder / "tsconfig.json").write_text(
+            json.dumps(
+                {
+                    "compilerOptions": {
+                        "module": "NodeNext",
+                        "moduleResolution": "NodeNext",
+                        "paths": {"@service": [f"../lib/{target}.ts"]},
+                    },
+                    "include": ["../app/**/*.ts", "../lib/**/*.ts"],
+                }
+            )
+        )
+    config.projects.append("second/tsconfig.json")
+    commit(runner.root)
+    snapshot = collect(runner, config)
+    assert not snapshot.gaps and "lib/consumer.ts" not in snapshot.widened
+    assert set(snapshot.graph.dependencies[node_id("lib/consumer.ts")]) == {
+        node_id("lib/a.ts"),
+        node_id("lib/b.ts"),
+    }
+    assert snapshot.graph.dependencies[node_id("app/auth.ts")] == [
+        node_id("lib/shared.ts")
+    ]
+
+
+def test_native_helper_and_independent_cli_inventory_must_agree(
+    compiler_project, monkeypatch
+):
+    runner, config = compiler_project
+    original = runner.collect
+    monkeypatch.setattr(runner, "collect", lambda: original()[:-1])
+    with pytest.raises(ValueError, match="nondeterministic test collection"):
+        collect(runner, config)
+
+
 @pytest.mark.parametrize("kind", ["computed_import", "custom_plugin", "focused_test"])
 def test_native_unknowns_widen_or_invalidate(compiler_project, kind):
     runner, config = compiler_project

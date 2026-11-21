@@ -17,10 +17,60 @@ to production selective CI.
 | PR #2: historical regression | Subset, 4 files / 19 cases | Expected failure; exactly the same six failures as full execution |
 | PR #3: actual upstream fix | Subset, same 4 files / 19 cases | Passed; all six previously failing cases resolved |
 
-Each hosted experiment also ran an independent native full control and all 15
-timezone-script executions. The three-round local comparison, including native
-Vitest `related`, remains the performance evidence; these single hosted runs
-are correctness checks, not a statistically meaningful timing comparison.
+Each correctness experiment also ran an independent native full control and all
+15 timezone-script executions. Those combined jobs cannot measure the savings
+of replacing full execution with Smart CI. The separate hosted comparison below
+now establishes that baseline.
+
+## Actual GitHub PR timing baseline — 22 November 2026
+
+[Timing PR #4](https://github.com/SharmaKunal14/date-fns/pull/4) ran separate
+native-full-only and Smart-CI-only jobs three times on standard Ubuntu 24.04
+runners. Both jobs checked out the exact real fix from
+[PR #3](https://github.com/SharmaKunal14/date-fns/pull/3), commit
+`53b644aa2bbf50007fbeab83e6d92477867012cb`. Smart CI compared it with the real
+regression revision `f953bd6ba07c01b2456808d4ae3df90bcfeeddd2`.
+
+| Hosted measurement | Native full | Smart CI |
+| --- | ---: | ---: |
+| Complete job, attempt 1 | 18s | 32s |
+| Complete job, attempt 2 | 26s | 39s |
+| Complete job, attempt 3 | 20s | 36s |
+| Median complete job | **20s** | **36s** |
+| Median workflow trigger to that job's result, including queue | **23s** | **39s** |
+| Files / cases per run | 253 / 3,167 | 4 / 19 |
+
+**Result: no speedup. Smart CI added 16 seconds to the median observed latency.**
+Both variants passed; the full suite retained its 19 reviewed skips and the
+subset had none. All 15 native timezone-script executions passed in each job.
+The three decisions matched, partitioned the full inventory, and used one
+subset attempt without fallback. The earlier real defect PR #2, using the same
+Smart CI runtime, caught the same six failures as the full suite. This verifies
+selection for that defect; it does not establish universal safety.
+
+The complete job includes checkout, Node/package installation, any Smart CI
+installation, planning, tests, timezone scripts, artifact upload and cleanup.
+The first attempt took 24s from PR creation to the native job result and 38s to
+the Smart CI result. Repeats use their own workflow-attempt start, not the old
+PR creation time. The comparison workflow itself waits for both jobs; these are
+the individual job completion latencies. Its parallel jobs do not share caches.
+No optional Actions cache was configured; native filesystem cache settings were
+preserved. Native execution does not install Smart CI tooling.
+
+This harness deliberately tests the fixed application revision from PR #3,
+not PR #4's workflow edit. It does not bypass the production rule requiring full
+execution for workflow changes. It measures the enrolled core/main Node 26 UTC
+profile plus timezone scripts, not the entire upstream CI matrix. Three repeats
+show runner variation, not a precise forecast for every future PR. No planner
+optimization was included in this baseline.
+
+Verify in [the GitHub run](https://github.com/SharmaKunal14/date-fns/actions/runs/44910653932):
+select attempts 1–3, compare `timing (native)` and `timing (smartci)`, and inspect
+`Run measured test command` and the uploaded reports. The immutable workflow is
+saved in `examples/date-fns/timing.yml`. Exact timestamps, per-step durations and
+verified counts are preserved in
+[`docs/benchmarks/date-fns-e2e-2026-11-22.json`](../benchmarks/date-fns-e2e-2026-11-22.json).
+All PRs remain unmerged. No AWS deployment or paid model calls were used.
 
 Fork: https://github.com/SharmaKunal14/date-fns
 
@@ -132,7 +182,8 @@ three decision digests matched and no observed failures were omitted, but one
 historical defect is weak evidence for universal regression-detection recall.
 Raw measurements and case IDs are in
 [`docs/benchmarks/date-fns-2026-11-21.json`](../benchmarks/date-fns-2026-11-21.json).
-CPU time, billed compute and end-to-end hosted CI savings were not measured.
+CPU time and billed compute were not measured. The later hosted comparison
+above also found no end-to-end savings.
 Treat the result as an adapter/correctness evaluation and an unsuccessful
 performance hypothesis, not a production efficiency win.
 
