@@ -7,10 +7,15 @@ const req = createRequire(path.join(root, 'package.json'));
 const ts = req('typescript');
 const request = JSON.parse(fs.readFileSync(input, 'utf8'));
 const tracked = new Set(request.files);
+const testFiles = new Set(request.tests);
+const installedRoot = fs.realpathSync(path.join(root, 'node_modules'));
 const dependencies = Object.fromEntries(request.files.map(p => [p, []]));
 const widened = new Set();
 const gaps = new Set();
 const options = new Map();
+// Caches are scoped to one immutable checkout and compiler configuration. They
+// are never persisted or shared between base/head revisions.
+const resolutionCaches = new Map();
 const relative = p => path.relative(root, p).split(path.sep).join('/');
 if (!/^5\./.test(ts.version)) gaps.add('UNSUPPORTED_TYPESCRIPT_VERSION');
 for (const project of request.projects) {
@@ -21,6 +26,8 @@ for (const project of request.projects) {
   }
   const config = ts.parseJsonConfigFileContent(parsed.config, ts.sys, path.dirname(file));
   if (config.errors.length) gaps.add('INVALID_PROJECT_CONFIGURATION');
+  resolutionCaches.set(config.options, ts.createModuleResolutionCache(root,
+    p => ts.sys.useCaseSensitiveFileNames ? p : p.toLowerCase(), config.options));
   for (const p of config.fileNames) {
     const name = relative(p);
     if (options.has(name)) gaps.add('OVERLAPPING_PROJECTS');
@@ -73,10 +80,10 @@ function edge(from, spec, opts) {
     if (/^(fs|child_process|worker_threads|vm|module)(\/|$)/.test(bare)) widened.add(from);
     return;
   }
-  const resolved = ts.resolveModuleName(spec, path.join(root, from), opts, ts.sys).resolvedModule;
+  const resolved = ts.resolveModuleName(spec, path.join(root, from), opts, ts.sys, resolutionCaches.get(opts)).resolvedModule;
   if (!resolved) { widened.add(from); return; }
   const real = fs.realpathSync(resolved.resolvedFileName);
-  const installed = path.relative(fs.realpathSync(path.join(root, 'node_modules')), real);
+  const installed = path.relative(installedRoot, real);
   if (installed && !installed.startsWith('..' + path.sep) && !path.isAbsolute(installed)) return;
   const target = relative(real);
   if (!tracked.has(target) || !options.has(target) && /\.[cm]?[jt]sx?$/.test(target)) { widened.add(from); return; }
@@ -88,7 +95,7 @@ for (const [name, opts] of [...options.entries()].sort()) {
   const file = ts.createSourceFile(name, code, ts.ScriptTarget.Latest, true);
   if (file.parseDiagnostics.length) gaps.add('PARSE_ERROR');
   function visit(n) {
-    if (request.tests.includes(name) && (
+    if (testFiles.has(name) && (
         ts.isPropertyAccessExpression(n) && n.name.text === 'only' ||
         ts.isElementAccessExpression(n) && ts.isStringLiteral(n.argumentExpression) && n.argumentExpression.text === 'only' ||
         ts.isCallExpression(n) && ts.isIdentifier(n.expression) && n.expression.text === 'only')) gaps.add('FOCUSED_TESTS_UNSUPPORTED');

@@ -84,6 +84,9 @@ def collect(runner: NativeVitest, config: TypeScriptConfig) -> TypeScriptSnapsho
         analysis = Analysis.model_validate_json(read_bounded(result))
     if set(analysis.dependencies) != set(files):
         raise ValueError("graph is missing tracked files")
+    node_ids = {p: node_id(p) for p in files}
+    if any(d not in node_ids for deps in analysis.dependencies.values() for d in deps):
+        raise ValueError("graph contains unknown dependencies")
     provenance = {
         "typescript": analysis.typescript,
         "vitest": vitest,
@@ -117,12 +120,12 @@ def collect(runner: NativeVitest, config: TypeScriptConfig) -> TypeScriptSnapsho
         repository=config.repository,
         commit=commit,
         complete=not analysis.gaps,
-        owners={p: node_id(p) for p in files},
+        owners=node_ids,
         dependencies={
-            node_id(p): sorted(node_id(d) for d in deps)
+            node_ids[p]: sorted(node_ids[d] for d in deps)
             for p, deps in sorted(analysis.dependencies.items())
         },
-        tests={test_id(p): node_id(p) for p in tests},
+        tests={test_id(p): node_ids[p] for p in tests},
     )
     if current_clean_head(root) != commit:
         raise ValueError("workspace changed during collection")

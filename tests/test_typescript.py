@@ -111,6 +111,23 @@ def test_invocation_removes_credentials_and_node_injection(tmp_path, monkeypatch
     assert env["HOME"] != os.environ["HOME"]
 
 
+def test_native_runner_preserves_default_isolation_and_bounds_workers(
+    tmp_path, monkeypatch
+):
+    runner = object.__new__(NativeVitest)
+    runner.root = tmp_path
+    calls = []
+    monkeypatch.setattr(
+        runner, "invoke", lambda args, timeout: calls.append((args, timeout)) or 0
+    )
+    runner.vitest(["run"])
+    args, timeout = calls[0]
+    assert "--maxWorkers=2" in args and timeout == 600
+    assert "--no-file-parallelism" not in args
+    assert "--no-isolate" not in args and not any("pool" in arg for arg in args)
+    assert "--allowOnly=false" in args and "--passWithNoTests=false" in args
+
+
 def commit(root, message):
     for args in (
         ["add", "."],
@@ -205,6 +222,20 @@ def test_real_nodenext_graph_rebuild_and_defect(native_project, tmp_path):
     assert attempts[0].status == "failed" and attempts[0].failed == 2
     full = runner.run(snapshot.files, subset=False)
     assert full.status == "failed" and full.failed == 2
+
+
+def test_real_parallel_files_keep_isolated_globals(native_project):
+    runner, _, _ = native_project
+    for index in range(4):
+        (runner.root / f"tests/isolation-{index}.test.ts").write_text(
+            "import {it,expect} from 'vitest';\n"
+            "const state = globalThis as typeof globalThis & {smartciLeak?: boolean};\n"
+            "it('isolates files',()=>{expect(state.smartciLeak).toBeUndefined();state.smartciLeak=true;});\n"
+        )
+    commit(runner.root, "isolation probes")
+    files = runner.collect()
+    result = runner.run(files, subset=False)
+    assert result.status == "passed" and result.cases == 7 and len(result.files) == 7
 
 
 def test_removed_dependency_survives_in_union(native_project, tmp_path):

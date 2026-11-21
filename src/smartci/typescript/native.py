@@ -58,7 +58,6 @@ class NativeVitest:
                 "--config",
                 "vitest.config.ts",
                 "--maxWorkers=2",
-                "--no-file-parallelism",
                 "--allowOnly=false",
                 "--passWithNoTests=false",
             ],
