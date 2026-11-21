@@ -1,0 +1,531 @@
+{
+  "pr_url": "https://github.com/SharmaKunal14/date-fns/pull/7",
+  "run_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036",
+  "tool_commit": "fa7cb1994b98f0c2ddd0e83dd603eb9d127f6f41",
+  "scope": "Actual PR merge revision; core/main Node 26 UTC plus 15 native timezone-script executions; separate fresh Ubuntu 24.04 jobs",
+  "original_baseline_job_medians": {
+    "native": 20,
+    "cached": 36
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "variants": {
+        "native": {
+          "job_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036/job/136879334052",
+          "started_at": "2026-11-21T14:41:38Z",
+          "completed_at": "2026-11-21T14:42:02Z",
+          "job_seconds": 24.0,
+          "trigger_to_result_seconds": 27.0,
+          "command_seconds": 2.8758986229999977,
+          "files": 253,
+          "cases": 3167,
+          "failed": 0,
+          "skipped": 19,
+          "timezone_script_executions_passed": 15,
+          "step_seconds": {
+            "Set up job": 2.0,
+            "Check out actual PR revision": 5.0,
+            "Set up Node": 4.0,
+            "Install pinned package manager and native dependencies": 4.0,
+            "Run measured test command": 2.0,
+            "Unchanged native timezone regression scripts": 1.0,
+            "Preserve every observed failure": 0.0,
+            "Upload bounded timing evidence": 2.0,
+            "Post Set up Node": 0.0,
+            "Post Check out actual PR revision": 0.0,
+            "Complete job": 0.0
+          }
+        },
+        "rebuild": {
+          "job_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036/job/136879334267",
+          "started_at": "2026-11-21T14:41:37Z",
+          "completed_at": "2026-11-21T14:42:14Z",
+          "job_seconds": 37.0,
+          "trigger_to_result_seconds": 39.0,
+          "command_seconds": 10.882506993,
+          "files": 4,
+          "cases": 19,
+          "failed": 0,
+          "skipped": 0,
+          "timezone_script_executions_passed": 15,
+          "step_seconds": {
+            "Set up job": 1.0,
+            "Check out actual PR revision": 4.0,
+            "Set up Node": 4.0,
+            "Install pinned package manager and native dependencies": 5.0,
+            "Check out pinned Smart CI": 1.0,
+            "Set up Python": 0.0,
+            "Set up uv": 2.0,
+            "Install pinned Smart CI": 1.0,
+            "Run measured test command": 11.0,
+            "Unchanged native timezone regression scripts": 2.0,
+            "Preserve every observed failure": 0.0,
+            "Upload bounded timing evidence": 1.0,
+            "Post Set up uv": 0.0,
+            "Post Set up Python": 0.0,
+            "Post Check out pinned Smart CI": 1.0,
+            "Post Set up Node": 0.0,
+            "Post Check out actual PR revision": 0.0,
+            "Complete job": 0.0
+          },
+          "base_map": {
+            "status": "not_requested"
+          },
+          "execution": "subset",
+          "fallback": [],
+          "planning_seconds": 6.415839171999998,
+          "test_seconds": 2.824000782000006,
+          "decision_digest": "94e03be8d0bf8e1021aafa852e35ca7796ec03ab9e5c10cb8e1608ae9585a68d"
+        },
+        "cached": {
+          "job_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036/job/136879423558",
+          "started_at": "2026-11-21T14:41:59Z",
+          "completed_at": "2026-11-21T14:42:33Z",
+          "job_seconds": 34.0,
+          "trigger_to_result_seconds": 58.0,
+          "command_seconds": 5.537683152,
+          "files": 4,
+          "cases": 19,
+          "failed": 0,
+          "skipped": 0,
+          "timezone_script_executions_passed": 15,
+          "step_seconds": {
+            "Set up job": 2.0,
+            "Download authenticated map": 4.0,
+            "Check out actual PR revision": 3.0,
+            "Set up Node": 4.0,
+            "Install pinned package manager and native dependencies": 3.0,
+            "Check out pinned Smart CI": 1.0,
+            "Set up Python": 0.0,
+            "Set up uv": 2.0,
+            "Install pinned Smart CI": 1.0,
+            "Run measured test command": 5.0,
+            "Unchanged native timezone regression scripts": 1.0,
+            "Preserve every observed failure": 1.0,
+            "Upload bounded timing evidence": 1.0,
+            "Post Set up uv": 0.0,
+            "Post Set up Python": 0.0,
+            "Post Check out pinned Smart CI": 0.0,
+            "Post Set up Node": 1.0,
+            "Post Check out actual PR revision": 0.0,
+            "Complete job": 0.0
+          },
+          "base_map": {
+            "reason": "VALIDATED_BASE_MAP",
+            "status": "hit"
+          },
+          "execution": "subset",
+          "fallback": [],
+          "planning_seconds": 2.5724647700000105,
+          "test_seconds": 2.1715348779999886,
+          "decision_digest": "94e03be8d0bf8e1021aafa852e35ca7796ec03ab9e5c10cb8e1608ae9585a68d"
+        }
+      },
+      "fetch": {
+        "job_seconds": 18.0,
+        "started_at": "2026-11-21T14:41:38Z",
+        "completed_at": "2026-11-21T14:41:56Z",
+        "job_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036/job/136879334319",
+        "receipt": {
+          "artifact_id": 14711093931,
+          "attempt": 1,
+          "commit": "3b32e8d62eda893f8cc5489f105a34b19d425415",
+          "run_id": 44915151237,
+          "sha256": "f4ff625c3cd235525211edd70efac54d1d474f54d11e1b98424740c3a134952d"
+        }
+      },
+      "cached_path_runner_seconds": 52.0,
+      "comparison": {
+        "base": "3b32e8d62eda893f8cc5489f105a34b19d425415",
+        "head": "cf02bb0699d7854eee8be90083fdcab021ed26f8"
+      },
+      "identical_old_new_graph_hashes": true,
+      "identical_old_new_decisions_except_provenance": true
+    },
+    {
+      "attempt": 2,
+      "variants": {
+        "native": {
+          "job_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036/job/136879703493",
+          "started_at": "2026-11-21T14:43:04Z",
+          "completed_at": "2026-11-21T14:43:27Z",
+          "job_seconds": 23.0,
+          "trigger_to_result_seconds": 27.0,
+          "command_seconds": 2.928931051999996,
+          "files": 253,
+          "cases": 3167,
+          "failed": 0,
+          "skipped": 19,
+          "timezone_script_executions_passed": 15,
+          "step_seconds": {
+            "Set up job": 2.0,
+            "Check out actual PR revision": 4.0,
+            "Set up Node": 4.0,
+            "Install pinned package manager and native dependencies": 4.0,
+            "Run measured test command": 3.0,
+            "Unchanged native timezone regression scripts": 1.0,
+            "Preserve every observed failure": 0.0,
+            "Upload bounded timing evidence": 1.0,
+            "Post Set up Node": 0.0,
+            "Post Check out actual PR revision": 1.0,
+            "Complete job": 0.0
+          }
+        },
+        "rebuild": {
+          "job_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036/job/136879703900",
+          "started_at": "2026-11-21T14:43:04Z",
+          "completed_at": "2026-11-21T14:43:41Z",
+          "job_seconds": 37.0,
+          "trigger_to_result_seconds": 41.0,
+          "command_seconds": 7.003999152999995,
+          "files": 4,
+          "cases": 19,
+          "failed": 0,
+          "skipped": 0,
+          "timezone_script_executions_passed": 15,
+          "step_seconds": {
+            "Set up job": 3.0,
+            "Check out actual PR revision": 7.0,
+            "Set up Node": 4.0,
+            "Install pinned package manager and native dependencies": 4.0,
+            "Check out pinned Smart CI": 0.0,
+            "Set up Python": 0.0,
+            "Set up uv": 2.0,
+            "Install pinned Smart CI": 1.0,
+            "Run measured test command": 7.0,
+            "Unchanged native timezone regression scripts": 1.0,
+            "Preserve every observed failure": 0.0,
+            "Upload bounded timing evidence": 2.0,
+            "Post Set up uv": 0.0,
+            "Post Set up Python": 0.0,
+            "Post Check out pinned Smart CI": 0.0,
+            "Post Set up Node": 1.0,
+            "Post Check out actual PR revision": 0.0,
+            "Complete job": 0.0
+          },
+          "base_map": {
+            "status": "not_requested"
+          },
+          "execution": "subset",
+          "fallback": [],
+          "planning_seconds": 4.124190994000003,
+          "test_seconds": 2.01987683699997,
+          "decision_digest": "94e03be8d0bf8e1021aafa852e35ca7796ec03ab9e5c10cb8e1608ae9585a68d"
+        },
+        "cached": {
+          "job_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036/job/136879764628",
+          "started_at": "2026-11-21T14:43:18Z",
+          "completed_at": "2026-11-21T14:43:50Z",
+          "job_seconds": 32.0,
+          "trigger_to_result_seconds": 50.0,
+          "command_seconds": 7.0914846179999955,
+          "files": 4,
+          "cases": 19,
+          "failed": 0,
+          "skipped": 0,
+          "timezone_script_executions_passed": 15,
+          "step_seconds": {
+            "Set up job": 1.0,
+            "Download authenticated map": 1.0,
+            "Check out actual PR revision": 3.0,
+            "Set up Node": 6.0,
+            "Install pinned package manager and native dependencies": 5.0,
+            "Check out pinned Smart CI": 1.0,
+            "Set up Python": 0.0,
+            "Set up uv": 1.0,
+            "Install pinned Smart CI": 1.0,
+            "Run measured test command": 7.0,
+            "Unchanged native timezone regression scripts": 2.0,
+            "Preserve every observed failure": 0.0,
+            "Upload bounded timing evidence": 1.0,
+            "Post Set up uv": 0.0,
+            "Post Set up Python": 0.0,
+            "Post Check out pinned Smart CI": 0.0,
+            "Post Set up Node": 0.0,
+            "Post Check out actual PR revision": 0.0,
+            "Complete job": 0.0
+          },
+          "base_map": {
+            "reason": "VALIDATED_BASE_MAP",
+            "status": "hit"
+          },
+          "execution": "subset",
+          "fallback": [],
+          "planning_seconds": 3.666786979000001,
+          "test_seconds": 2.772038905999999,
+          "decision_digest": "94e03be8d0bf8e1021aafa852e35ca7796ec03ab9e5c10cb8e1608ae9585a68d"
+        }
+      },
+      "fetch": {
+        "job_seconds": 11.0,
+        "started_at": "2026-11-21T14:43:05Z",
+        "completed_at": "2026-11-21T14:43:16Z",
+        "job_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036/job/136879703956",
+        "receipt": {
+          "artifact_id": 14711093931,
+          "attempt": 1,
+          "commit": "3b32e8d62eda893f8cc5489f105a34b19d425415",
+          "run_id": 44915151237,
+          "sha256": "f4ff625c3cd235525211edd70efac54d1d474f54d11e1b98424740c3a134952d"
+        }
+      },
+      "cached_path_runner_seconds": 43.0,
+      "comparison": {
+        "base": "3b32e8d62eda893f8cc5489f105a34b19d425415",
+        "head": "cf02bb0699d7854eee8be90083fdcab021ed26f8"
+      },
+      "identical_old_new_graph_hashes": true,
+      "identical_old_new_decisions_except_provenance": true
+    },
+    {
+      "attempt": 3,
+      "variants": {
+        "native": {
+          "job_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036/job/136880161892",
+          "started_at": "2026-11-21T14:44:52Z",
+          "completed_at": "2026-11-21T14:45:15Z",
+          "job_seconds": 23.0,
+          "trigger_to_result_seconds": 27.0,
+          "command_seconds": 2.8261059270000146,
+          "files": 253,
+          "cases": 3167,
+          "failed": 0,
+          "skipped": 19,
+          "timezone_script_executions_passed": 15,
+          "step_seconds": {
+            "Set up job": 3.0,
+            "Check out actual PR revision": 3.0,
+            "Set up Node": 4.0,
+            "Install pinned package manager and native dependencies": 4.0,
+            "Run measured test command": 3.0,
+            "Unchanged native timezone regression scripts": 1.0,
+            "Preserve every observed failure": 0.0,
+            "Upload bounded timing evidence": 1.0,
+            "Post Set up Node": 0.0,
+            "Post Check out actual PR revision": 0.0,
+            "Complete job": 0.0
+          }
+        },
+        "rebuild": {
+          "job_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036/job/136880161932",
+          "started_at": "2026-11-21T14:44:51Z",
+          "completed_at": "2026-11-21T14:45:24Z",
+          "job_seconds": 33.0,
+          "trigger_to_result_seconds": 36.0,
+          "command_seconds": 10.127051727000008,
+          "files": 4,
+          "cases": 19,
+          "failed": 0,
+          "skipped": 0,
+          "timezone_script_executions_passed": 15,
+          "step_seconds": {
+            "Set up job": 1.0,
+            "Check out actual PR revision": 3.0,
+            "Set up Node": 5.0,
+            "Install pinned package manager and native dependencies": 5.0,
+            "Check out pinned Smart CI": 1.0,
+            "Set up Python": 0.0,
+            "Set up uv": 1.0,
+            "Install pinned Smart CI": 1.0,
+            "Run measured test command": 10.0,
+            "Unchanged native timezone regression scripts": 1.0,
+            "Preserve every observed failure": 1.0,
+            "Upload bounded timing evidence": 0.0,
+            "Post Set up uv": 0.0,
+            "Post Set up Python": 1.0,
+            "Post Check out pinned Smart CI": 0.0,
+            "Post Set up Node": 0.0,
+            "Post Check out actual PR revision": 0.0,
+            "Complete job": 0.0
+          },
+          "base_map": {
+            "status": "not_requested"
+          },
+          "execution": "subset",
+          "fallback": [],
+          "planning_seconds": 6.586879638999989,
+          "test_seconds": 2.824219486000004,
+          "decision_digest": "94e03be8d0bf8e1021aafa852e35ca7796ec03ab9e5c10cb8e1608ae9585a68d"
+        },
+        "cached": {
+          "job_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036/job/136880264503",
+          "started_at": "2026-11-21T14:45:15Z",
+          "completed_at": "2026-11-21T14:45:51Z",
+          "job_seconds": 36.0,
+          "trigger_to_result_seconds": 63.0,
+          "command_seconds": 5.4274713490000295,
+          "files": 4,
+          "cases": 19,
+          "failed": 0,
+          "skipped": 0,
+          "timezone_script_executions_passed": 15,
+          "step_seconds": {
+            "Set up job": 3.0,
+            "Download authenticated map": 5.0,
+            "Check out actual PR revision": 3.0,
+            "Set up Node": 4.0,
+            "Install pinned package manager and native dependencies": 3.0,
+            "Check out pinned Smart CI": 1.0,
+            "Set up Python": 0.0,
+            "Set up uv": 2.0,
+            "Install pinned Smart CI": 1.0,
+            "Run measured test command": 6.0,
+            "Unchanged native timezone regression scripts": 1.0,
+            "Preserve every observed failure": 0.0,
+            "Upload bounded timing evidence": 1.0,
+            "Post Set up uv": 1.0,
+            "Post Set up Python": 0.0,
+            "Post Check out pinned Smart CI": 0.0,
+            "Post Set up Node": 0.0,
+            "Post Check out actual PR revision": 0.0,
+            "Complete job": 0.0
+          },
+          "base_map": {
+            "reason": "VALIDATED_BASE_MAP",
+            "status": "hit"
+          },
+          "execution": "subset",
+          "fallback": [],
+          "planning_seconds": 2.5012006590000055,
+          "test_seconds": 2.0185957280000366,
+          "decision_digest": "94e03be8d0bf8e1021aafa852e35ca7796ec03ab9e5c10cb8e1608ae9585a68d"
+        }
+      },
+      "fetch": {
+        "job_seconds": 20.0,
+        "started_at": "2026-11-21T14:44:52Z",
+        "completed_at": "2026-11-21T14:45:12Z",
+        "job_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915242036/job/136880161720",
+        "receipt": {
+          "artifact_id": 14711093931,
+          "attempt": 1,
+          "commit": "3b32e8d62eda893f8cc5489f105a34b19d425415",
+          "run_id": 44915151237,
+          "sha256": "f4ff625c3cd235525211edd70efac54d1d474f54d11e1b98424740c3a134952d"
+        }
+      },
+      "cached_path_runner_seconds": 56.0,
+      "comparison": {
+        "base": "3b32e8d62eda893f8cc5489f105a34b19d425415",
+        "head": "cf02bb0699d7854eee8be90083fdcab021ed26f8"
+      },
+      "identical_old_new_graph_hashes": true,
+      "identical_old_new_decisions_except_provenance": true
+    }
+  ],
+  "medians": {
+    "native": {
+      "job_seconds": 23.0,
+      "trigger_to_result_seconds": 27.0,
+      "command_seconds": 2.8758986229999977
+    },
+    "rebuild": {
+      "job_seconds": 37.0,
+      "trigger_to_result_seconds": 39.0,
+      "command_seconds": 10.127051727000008,
+      "planning_seconds": 6.415839171999998,
+      "test_seconds": 2.824000782000006
+    },
+    "cached": {
+      "job_seconds": 34.0,
+      "trigger_to_result_seconds": 58.0,
+      "command_seconds": 5.537683152,
+      "planning_seconds": 2.5724647700000105,
+      "test_seconds": 2.1715348779999886
+    }
+  },
+  "limitations": [
+    "Three runs on independent standard hosted runners; setup and runner variation remain visible.",
+    "Parallel discovery overlaps work rather than proving lower CPU or billed compute.",
+    "Cached PR latency includes the separate authentication/transfer job and its dependency wait. Precomputation cost is reported separately.",
+    "The enrolled test profile is not the entire upstream date-fns CI matrix.",
+    "Only the base map is precomputed; PR head discovery remains fresh. Producer jobs cost 30s and 33s separately; no CPU or billing savings were measured."
+  ],
+  "defect_verification": {
+    "pr_url": "https://github.com/SharmaKunal14/date-fns/pull/8",
+    "run_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915524573",
+    "outcome": "expected failure; all observed failures retained with validated cache hit",
+    "full": {
+      "files": 253,
+      "cases": 3167,
+      "failed": 6,
+      "skipped": 19
+    },
+    "cached": {
+      "files": 4,
+      "cases": 19,
+      "failed": 6,
+      "skipped": 0,
+      "fallback": [],
+      "attempts": 1,
+      "base_map": "hit"
+    },
+    "native_failure_ids": [
+      "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+      "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+      "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+      "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+      "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+      "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+    ],
+    "identical_fresh_cached_selection_and_graphs": true,
+    "observed_failures_missed": 0,
+    "timezone_script_executions_passed_per_job": 15,
+    "failure_gate_preserved": true,
+    "comparison": {
+      "base": "962270e9124f674d4d6c399632ce5a79b7983d22",
+      "head": "982b9771fe0a90c894af1b0de6a9ecea19533ffb"
+    }
+  },
+  "safety_checks": {
+    "url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/44915105514",
+    "tests_passed": 289,
+    "format_lint_types_passed": true,
+    "sdist_and_wheel_built": true
+  },
+  "precomputation": {
+    "base": {
+      "url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915151237",
+      "commit": "3b32e8d62eda893f8cc5489f105a34b19d425415",
+      "job_seconds": 30.0,
+      "trigger_to_result_seconds": 33.0
+    },
+    "fix": {
+      "url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44915153795",
+      "commit": "962270e9124f674d4d6c399632ce5a79b7983d22",
+      "job_seconds": 33.0,
+      "trigger_to_result_seconds": 36.0
+    }
+  },
+  "fetch_job_median_seconds": 18.0,
+  "cached_path_median_runner_seconds": 52.0,
+  "conclusion": "Validated cache reuse reduced median planning from 6.42s to 2.57s, but trigger-to-result latency increased from 39s rebuilding to 58s cached, versus 27s native. No end-to-end speedup.",
+  "trust_boundary": "Approved publisher definition bytes at the exact base commit; successful push from the same repository and configured base branch; artifact attempt/age/archive validation in a no-application job; payload digest via trusted job output; structural and current-environment validation in the CLI. Maintainers must control the trusted branch and control workflow. A compromised trusted publisher or runner is outside this boundary.",
+  "fix_pr": {
+    "baseRefOid": "3b32e8d62eda893f8cc5489f105a34b19d425415",
+    "files": [
+      {
+        "path": "pkgs/core/src/locale/zh-CN/_lib/match/index.ts",
+        "additions": 15,
+        "deletions": 15,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "pkgs/core/src/locale/zh-HK/_lib/match/index.ts",
+        "additions": 15,
+        "deletions": 15,
+        "changeType": "MODIFIED"
+      },
+      {
+        "path": "pkgs/core/src/locale/zh-TW/_lib/match/index.ts",
+        "additions": 15,
+        "deletions": 15,
+        "changeType": "MODIFIED"
+      }
+    ],
+    "headRefOid": "962270e9124f674d4d6c399632ce5a79b7983d22",
+    "mergedAt": null,
+    "state": "OPEN"
+  }
+}
