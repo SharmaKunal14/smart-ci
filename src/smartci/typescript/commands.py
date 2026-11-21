@@ -5,6 +5,7 @@ import html
 import json
 import tempfile
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from smartci.adapters.runners import invoke, read_bounded
@@ -161,16 +162,27 @@ def planning(
 ) -> tuple[Report, TypeScriptSnapshot | None]:
     head: TypeScriptSnapshot | None = None
     try:
-        progress("discovering PR tests and building the head dependency map")
-        head = collect(runner, config)
-        write_json(output / "head-map.json", head.model_dump())
-        changes = changes_from_git(
-            runner.root, base, head.graph.commit, config.repository
-        )
+        revision = current_clean_head(runner.root)
+        if revision is None:
+            raise ValueError("clean committed checkout required")
+        changes = changes_from_git(runner.root, base, revision, config.repository)
         progress(
-            "rebuilding the merge-base map from source; no saved baseline required"
+            "building head and merge-base maps concurrently in separate environments"
         )
-        before = rebuild_base(runner, config, changes.base)
+        # Exactly two independent analyses. Exiting the executor waits for both,
+        # including private-checkout cleanup on failure; partial maps never select.
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            head_future = executor.submit(collect, runner, config)
+            base_future = executor.submit(rebuild_base, runner, config, changes.base)
+            head = head_future.result()
+            before = base_future.result()
+        if (
+            head.graph.commit != revision
+            or before.graph.commit != changes.base
+            or current_clean_head(runner.root) != revision
+        ):
+            raise ValueError("workspace changed during planning")
+        write_json(output / "head-map.json", head.model_dump())
         write_json(output / "base-map.json", before.model_dump())
         if before.provenance != head.provenance:
             return fallback("ENVIRONMENT_MISMATCH", head.inventory), head

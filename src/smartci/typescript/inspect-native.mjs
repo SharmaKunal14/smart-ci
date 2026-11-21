@@ -64,6 +64,7 @@ try {
       sources.set(name, source);
       analyzed.add(name);
     }
+    const pendingImports = [];
     for (const [name, source] of sources) {
       const imports = [];
       function edge(node) {
@@ -95,19 +96,27 @@ try {
         n.forEachChild(visit);
       }
       visit(source);
-      const symbols = imports.length ? project.checker.getSymbolAtLocation(imports) : [];
-      for (const symbol of symbols) {
+      pendingImports.push(...imports.map(node => ({ name, node })));
+      for (const reference of source.referencedFiles) {
+        const target = relative(path.resolve(path.dirname(source.fileName), reference.fileName));
+        if (tracked.has(target)) deps[name].add(target);
+        else widened.add(name);
+      }
+    }
+    // Bound IPC batches and keep each import's owner and compiler project.
+    // The same source can resolve differently under another project configuration.
+    for (let offset = 0; offset < pendingImports.length; offset += 512) {
+      const batch = pendingImports.slice(offset, offset + 512);
+      const symbols = project.checker.getSymbolAtLocation(batch.map(entry => entry.node));
+      if (symbols.length !== batch.length) throw Error('incomplete compiler response');
+      for (let index = 0; index < batch.length; index++) {
+        const { name } = batch[index], symbol = symbols[index];
         if (!symbol || !symbol.declarations.length) { widened.add(name); continue; }
         for (const declaration of symbol.declarations) {
           const target = canonical.get(declaration.path);
           if (target) deps[name].add(target);
           else if (!declaration.path.includes('/node_modules/')) widened.add(name);
         }
-      }
-      for (const reference of source.referencedFiles) {
-        const target = relative(path.resolve(path.dirname(source.fileName), reference.fileName));
-        if (tracked.has(target)) deps[name].add(target);
-        else widened.add(name);
       }
     }
   }
