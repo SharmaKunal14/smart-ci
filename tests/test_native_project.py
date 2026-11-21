@@ -268,6 +268,16 @@ def test_batched_imports_keep_owners_and_each_project_resolution(compiler_projec
     ]
 
 
+def test_native_helper_and_independent_cli_inventory_must_agree(
+    compiler_project, monkeypatch
+):
+    runner, config = compiler_project
+    original = runner.collect
+    monkeypatch.setattr(runner, "collect", lambda: original()[:-1])
+    with pytest.raises(ValueError, match="nondeterministic test collection"):
+        collect(runner, config)
+
+
 @pytest.mark.parametrize("kind", ["computed_import", "custom_plugin", "focused_test"])
 def test_native_unknowns_widen_or_invalidate(compiler_project, kind):
     runner, config = compiler_project

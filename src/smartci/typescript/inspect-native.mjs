@@ -14,7 +14,7 @@ const { API } = await import(pathToFileURL(req.resolve('typescript/unstable/sync
 const ts = await import(pathToFileURL(req.resolve('typescript/unstable/ast')));
 const { createVitest } = await import(pathToFileURL(req.resolve('vitest/node')));
 const tracked = new Set(request.files);
-const tests = new Set(request.tests);
+const tests = new Set();
 const deps = Object.fromEntries(request.files.map(p => [p, new Set()]));
 const gaps = new Set(), widened = new Set(), analyzed = new Set(), warnings = new Set();
 const relative = p => path.relative(root, p).split(path.sep).join('/');
@@ -31,7 +31,9 @@ try {
   const project = vitest.projects[0];
   const config = project.config;
   const files = (await vitest.globTestSpecifications()).map(s => relative(s.moduleId)).sort();
-  if (JSON.stringify(files) !== JSON.stringify([...tests].sort())) gaps.add('NATIVE_INVENTORY_MISMATCH');
+  if (!files.length || files.length > 100000 || new Set(files).size !== files.length ||
+      files.some(p => !tracked.has(p))) throw Error('invalid native inventory');
+  for (const file of files) tests.add(file);
   if (config.environment !== 'node' || config.browser?.enabled || config.typecheck.enabled ||
       config.testNamePattern || config.shard || config.runner || config.globalSetup.length ||
       config.includeSource?.length || !['forks', 'threads'].includes(config.pool)) gaps.add('UNSUPPORTED_NATIVE_PROJECT');
@@ -130,4 +132,5 @@ fs.writeFileSync(output, JSON.stringify({
   dependencies: Object.fromEntries(Object.entries(deps).map(([p, edges]) => [p, [...edges].sort()])),
   widened: [...widened].sort(), gaps: [...gaps].sort(), analyzed: [...analyzed].sort(),
   warnings: [...warnings].sort(), typescript: version, node: process.version,
+  native_tests: [...tests].sort(),
 }));

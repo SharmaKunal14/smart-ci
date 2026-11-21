@@ -69,13 +69,17 @@ def collect(runner: NativeVitest, config: TypeScriptConfig) -> TypeScriptSnapsho
         "5.0." if profile else "3."
     ):
         raise ValueError("unsupported native Vitest version")
-    print("smartci: collecting native Vitest inventory (1/2)", flush=True)
-    tests = runner.collect()
-    print("smartci: checking native collection repeatability (2/2)", flush=True)
-    if runner.collect() != tests:
-        raise ValueError("nondeterministic test collection")
-    if not set(tests) <= set(files):
-        raise ValueError("untracked native tests")
+    tests: list[str] = []
+    if not profile:
+        print("smartci: collecting native Vitest inventory (1/2)", flush=True)
+        tests = runner.collect()
+        print("smartci: checking native collection repeatability (2/2)", flush=True)
+        if runner.collect() != tests:
+            raise ValueError("nondeterministic test collection")
+    else:
+        print(
+            "smartci: collecting inventory and compiler map together (1/2)", flush=True
+        )
     helper = Path(__file__).with_name(
         "inspect-native.mjs" if profile else "inspect.mjs"
     )
@@ -94,6 +98,17 @@ def collect(runner: NativeVitest, config: TypeScriptConfig) -> TypeScriptSnapsho
         if runner.invoke([str(helper), str(root), str(request), str(result)]) != 0:
             raise ValueError("TypeScript analysis failed")
         analysis = Analysis.model_validate_json(read_bounded(result))
+    if profile:
+        # The helper resolves native configuration and discovers files once.
+        # A separate CLI process must independently discover exactly that set.
+        if not analysis.native_tests:
+            raise ValueError("missing native inventory")
+        tests = analysis.native_tests
+        print("smartci: checking independent native collection (2/2)", flush=True)
+        if runner.collect() != tests:
+            raise ValueError("nondeterministic test collection")
+    if not set(tests) <= set(files):
+        raise ValueError("untracked native tests")
     if set(analysis.dependencies) != set(files):
         raise ValueError("graph is missing tracked files")
     node_ids = {p: node_id(p) for p in files}

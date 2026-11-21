@@ -29,7 +29,7 @@ jobs:
         run: |
           uv sync --frozen
           npm install --prefix "$RUNNER_TEMP/legacy" --ignore-scripts typescript@5.9.3 vitest@3.2.7
-          npm install --prefix "$RUNNER_TEMP/native" --ignore-scripts typescript@7.0.2 vitest@5.0.1
+          npm install --prefix "$RUNNER_TEMP/native" --ignore-scripts typescript@7.0.2 vitest@5.0.1 vite@7.0.6
           echo "SMARTCI_TYPESCRIPT_NODE_MODULES=$RUNNER_TEMP/legacy/node_modules" >> "$GITHUB_ENV"
           echo "SMARTCI_TS7_NODE_MODULES=$RUNNER_TEMP/native/node_modules" >> "$GITHUB_ENV"
           echo "SMARTCI_TS7_NODE=$(command -v node)" >> "$GITHUB_ENV"

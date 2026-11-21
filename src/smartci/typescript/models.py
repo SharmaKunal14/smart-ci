@@ -71,6 +71,7 @@ class Analysis(BaseModel):
     warnings: list[str] = Field(default_factory=list)
     typescript: str
     node: str
+    native_tests: list[str] | None = Field(default=None, max_length=100_000)
 
 
 class TypeScriptSnapshot(Contract):
