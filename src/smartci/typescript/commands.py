@@ -12,11 +12,12 @@ from smartci.adapters.suite import current_clean_head
 from smartci.discovery.commands import write_json
 from smartci.git_changes import changes_from_git, git
 from smartci.reports import atomic_write, markdown
-from smartci.selection import Report, SelectionPolicy, fallback, select
+from smartci.selection import Report, SelectionPolicy, fallback, finish, select
 
 from .collector import collect, test_id
 from .models import NativeResult, TypeScriptConfig, TypeScriptSnapshot
 from .native import NativeVitest
+from .workspace import check_environment
 
 
 def progress(message: str) -> None:
@@ -24,7 +25,7 @@ def progress(message: str) -> None:
 
 
 def add_parser(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
-    parser = sub.add_parser("typescript", help="native TypeScript 5 / Vitest 3 pilot")
+    parser = sub.add_parser("typescript", help="compiler-backed native Vitest planning")
     actions = parser.add_subparsers(dest="ts_action", required=True)
     for name in ("scan", "run"):
         action = actions.add_parser(name)
@@ -32,6 +33,17 @@ def add_parser(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None
         action.add_argument("--config", required=True, type=Path)
         action.add_argument("--output", required=True, type=Path)
         action.add_argument("--node")
+        action.add_argument(
+            "--pnpm", help="absolute path to pnpm's JavaScript entry point"
+        )
+        action.add_argument(
+            "--dependency-store", type=Path, help="populated pnpm content store"
+        )
+        action.add_argument(
+            "--dependency-cache",
+            type=Path,
+            help="populated pnpm registry metadata cache",
+        )
         action.add_argument(
             "--offline",
             action="store_true",
@@ -51,12 +63,18 @@ def add_parser(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None
 def rebuild_base(
     runner: NativeVitest, config: TypeScriptConfig, base: str
 ) -> TypeScriptSnapshot:
-    # Reusing head's installed dependencies is allowed only for identical manifests.
-    for path in ("package.json", "package-lock.json"):
-        if git(runner.root, "show", f"{base}:{path}") != read_bounded(
-            runner.root / path
-        ):
-            raise ValueError("dependency environment changed")
+    # Every workspace manifest must match before sharing external dependencies.
+    head = current_clean_head(runner.root)
+    if head is None:
+        raise ValueError("dirty head during reconstruction")
+    check_environment(
+        runner.root,
+        base,
+        head,
+        config.native_project.lockfile
+        if config.native_project
+        else "package-lock.json",
+    )
     with tempfile.TemporaryDirectory(prefix="smartci-base-") as temporary:
         root = Path(temporary) / "repository"
         if (
@@ -82,10 +100,55 @@ def rebuild_base(
             raise ValueError("tracked dependencies unsupported")
         with (root / ".git/info/exclude").open("a") as ignore:
             ignore.write("\n/node_modules\n")
-        (root / "node_modules").symlink_to(
-            runner.root / "node_modules", target_is_directory=True
+        if not config.native_project:
+            (root / "node_modules").symlink_to(
+                runner.root / "node_modules", target_is_directory=True
+            )
+        base_runner = NativeVitest(
+            root,
+            runner.node,
+            offline=bool(runner.prefix),
+            project=config.native_project,
+            pnpm=runner.pnpm,
+            dependency_store=runner.dependency_store,
+            dependency_cache=runner.dependency_cache,
         )
-        base_runner = NativeVitest(root, runner.node, offline=bool(runner.prefix))
+        if config.native_project:
+            # Reinstall offline into a private virtual store. Sharing head's
+            # node_modules can silently resolve old imports to NEW workspace code.
+            if (
+                not runner.pnpm
+                or not runner.dependency_store
+                or not runner.dependency_cache
+            ):
+                raise ValueError("pnpm and populated dependency store/cache required")
+            if any(root.rglob(".pnpmfile.*")) or any(
+                b"pnpmfile" in read_bounded(root / p).lower()
+                for p in (".npmrc", "pnpm-workspace.yaml", "package.json")
+                if (root / p).is_file()
+            ):
+                raise ValueError("pnpm hooks require a separate environment adapter")
+            if (
+                base_runner.invoke(
+                    [
+                        str(Path(runner.pnpm).resolve(strict=True)),
+                        "--dir",
+                        str(root),
+                        "install",
+                        "--offline",
+                        "--frozen-lockfile",
+                        "--ignore-scripts",
+                        "--ignore-pnpmfile",
+                        "--store-dir",
+                        str(runner.dependency_store.resolve(strict=True)),
+                        "--cache-dir",
+                        str(runner.dependency_cache.resolve(strict=True)),
+                    ],
+                    timeout=300,
+                )
+                != 0
+            ):
+                raise ValueError("offline base dependency reconstruction failed")
         return collect(base_runner, config)
 
 
@@ -137,11 +200,19 @@ def planning(
                 "**/vite.config.*",
                 "vite.config.*",
                 "vitest.workspace.*",
+                "pnpm-workspace.yaml",
+                "**/mise.toml",
+                "mise.toml",
+                "**/.npmrc",
+                ".npmrc",
                 *config.full_paths,
             ],
         )
         decision = select(changes, head.inventory, before.graph, head.graph, policy)
-        return decision, head
+        decision.warnings = sorted(
+            {*decision.warnings, *head.warnings, *before.warnings}
+        )
+        return finish(decision), head
     except (OSError, ValueError, RecursionError):
         progress(
             "analysis unavailable: falling back to the independent full Vitest suite"
@@ -193,7 +264,15 @@ def command(args: argparse.Namespace) -> int:
         ):
             raise ValueError("new output directory outside target checkout required")
         config = TypeScriptConfig.model_validate_json(read_bounded(args.config))
-        runner = NativeVitest(root, args.node, args.offline)
+        runner = NativeVitest(
+            root,
+            args.node,
+            args.offline,
+            project=config.native_project,
+            pnpm=getattr(args, "pnpm", None),
+            dependency_store=getattr(args, "dependency_store", None),
+            dependency_cache=getattr(args, "dependency_cache", None),
+        )
         output.mkdir(parents=True)
         snapshot: TypeScriptSnapshot | None
         if args.ts_action == "scan":

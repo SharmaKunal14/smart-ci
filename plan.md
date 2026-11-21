@@ -822,3 +822,52 @@ open gate. The optional hosted benchmark flag was removed after verification.
 No AWS service or paid model is needed. Keep the
 existing deployment workflows unchanged. This handoff supersedes older roadmap
 text that described the TypeScript pilot as unimplemented.
+
+## date-fns native workspace evaluation
+
+The completed bounded pilot uses the public `SharmaKunal14/date-fns` fork at upstream revision
+`a9739fb3e5384a810e90d7376446f6d84ecc5029`. The added profile uses the installed
+TypeScript 7 compiler API, native Vitest 5 named-project discovery, and pnpm
+workspace dependency reconstruction. Base installs are offline and frozen, with
+separate package/metadata caches and no lifecycle scripts. Native worker count,
+isolation, configuration and caches remain unchanged. Expected upstream skips
+require exact case/source-bound reviews; unknown skips remain incomplete.
+
+The declared scope is core/main under Node 26 in UTC. Other package projects,
+browser/Temporal tests and the full Node/timezone matrices are not covered by
+this selective profile. The 15 native timezone regression script executions
+remain a full independent check. See `docs/onboarding/date-fns.md` for setup,
+replay commands, scope, assumptions and workflow integration.
+
+Local evaluation uses a real historical Chinese month-parsing regression and
+its fix, retaining current upstream tests, plus an actual package-export change.
+All six observed failures were retained in a four-file subset of 253 files;
+plans repeated deterministically. However, three-round wall-clock medians were
+about 12 seconds including planning versus about one second for native full
+execution. Native Vitest related-test selection also caught the failures in
+about 1.2 seconds. Broad changes correctly ran everything. Raw evidence is in
+`docs/benchmarks/date-fns-2026-11-21.json`.
+
+This advances adapter compatibility and evidence collection; it does **not**
+satisfy the net-savings or broad-safety exit gates. Next work should measure
+representative, genuinely expensive suites and reduce validated graph/environment
+reconstruction costs. Do not manufacture savings by slowing native tests, dropping
+unknown dependencies or claiming the entire enterprise repository is supported.
+The evaluation workflow preserves native full-test failures. No AWS or paid
+model work is required or authorized.
+
+Hosted verification is complete for the declared profile. Enrollment PR #1
+passed with a full `RISK_PATH` fallback; regression PR #2 selected four files and
+failed exactly the same six case IDs as the independent full suite; fix PR #3
+selected the same files and passed all 19 cases on its first attempt. Its native
+full control passed 3,148 cases with 19 reviewed skips. The native case-identity
+multiset is unchanged between regression and fix, and all 15 timezone-script
+executions passed. No tests, native settings or safety rules were weakened.
+All PRs remain open and unmerged.
+
+The experiment is complete, with **positive compatibility/correctness evidence
+and no demonstrated net performance benefit**. This does not complete broader
+recall, enterprise compatibility or net-savings gates. The exact hosted evidence
+is in `docs/benchmarks/date-fns-{enrollment,regression,fix}-2026-11-21.json`; the
+onboarding guide links each workflow run. No further date-fns changes are needed
+to make this bounded experiment pass, and the full evaluation control remains.

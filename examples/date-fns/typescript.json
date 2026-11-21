@@ -1,0 +1,142 @@
+{
+  "schema_version": "1",
+  "repository": "SharmaKunal14/date-fns",
+  "projects": [
+    "pkgs/core/tsconfig.json",
+    "pkgs/tz/tsconfig.json",
+    "pkgs/utc/tsconfig.json",
+    "pkgs/docs/tsconfig.json",
+    "pkgs/dev/tsconfig.json"
+  ],
+  "full_paths": [
+    "pkgs/dev/*",
+    ".github/*",
+    "**/scripts/*",
+    "**/mise.toml"
+  ],
+  "must_run": [],
+  "native_project": {
+    "kind": "vitest5-typescript7",
+    "directory": "pkgs/core",
+    "configuration": "pkgs/core/vitest.config.ts",
+    "project": "main",
+    "lockfile": "pnpm-lock.yaml",
+    "timezone": "UTC",
+    "reviewed_skips": [
+      {
+        "path": "pkgs/core/src/add/test.ts",
+        "case": "f80ac1ec7ed492052eaa5b47f5c4e29debe2fab1e5c3ea6ae42742de607d9d19",
+        "source_digest": "97f1e005144664d6f6d27ddc1671301d22f1a537a364895a0ede165895512261",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addBusinessDays/test.ts",
+        "case": "09d2a4a83a3e8ce7987874ae62128ef38014d96b2ba655f6c8b4043e51737b89",
+        "source_digest": "92912a9d15b853f6beb9d967c5da5be5e74e4f30af34d17b93cd0ec11966fce9",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addDays/test.ts",
+        "case": "c5a0b290831269fb172a9a1b5a1d81c9a168384789ada393055ebb668df94749",
+        "source_digest": "d35b08b2b817f21ecdfc57acc0903021b0993ae78b043e051706be86ba5f09e5",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addDays/test.ts",
+        "case": "1b0418e7ca4b2cb1c52aa4d91e7df96dca7807b309628013e5e11f116432c183",
+        "source_digest": "d35b08b2b817f21ecdfc57acc0903021b0993ae78b043e051706be86ba5f09e5",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addDays/test.ts",
+        "case": "a2e49d9698f96d900d338c52da978b9a03f2121236d7c475e4614752be02d70a",
+        "source_digest": "d35b08b2b817f21ecdfc57acc0903021b0993ae78b043e051706be86ba5f09e5",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addDays/test.ts",
+        "case": "bc1bc20def40b764a3678e9690314f126b0800d3cf8b2159c77c939f294a45e6",
+        "source_digest": "d35b08b2b817f21ecdfc57acc0903021b0993ae78b043e051706be86ba5f09e5",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addDays/test.ts",
+        "case": "4eca3f3414469aea631e5cb018caf0643956e0277b28eb1c61ee98b38016efa6",
+        "source_digest": "d35b08b2b817f21ecdfc57acc0903021b0993ae78b043e051706be86ba5f09e5",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addDays/test.ts",
+        "case": "7feb524ff9bac94aaaf1e9d2c77919e9988a4e831b03773132351165b3383778",
+        "source_digest": "d35b08b2b817f21ecdfc57acc0903021b0993ae78b043e051706be86ba5f09e5",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addDays/test.ts",
+        "case": "043ca19ae96a9ec61c927767b3f4bdf0a6c180928848bb2be52215333b1d886e",
+        "source_digest": "d35b08b2b817f21ecdfc57acc0903021b0993ae78b043e051706be86ba5f09e5",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addMonths/test.ts",
+        "case": "91bf86396807779426976f1895adc31eef711c2074c031443c9699b4f2c7f52c",
+        "source_digest": "81b72fbf71af1c1c0ec30f712a8e63bb381ab072ea6dc56f088dab133564dff2",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addMonths/test.ts",
+        "case": "7006a74c700f1cbe94451d495512676893f7ac92dacd76074af43d04b23b5e4e",
+        "source_digest": "81b72fbf71af1c1c0ec30f712a8e63bb381ab072ea6dc56f088dab133564dff2",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addMonths/test.ts",
+        "case": "228c7f97771fb5bb08603196b7b4638c6cb4a86104e3c0d23340c4c7eb3cc208",
+        "source_digest": "81b72fbf71af1c1c0ec30f712a8e63bb381ab072ea6dc56f088dab133564dff2",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addMonths/test.ts",
+        "case": "ca4aa86c0c12780469355c377bdd5d1b185822737c6de2413e50f877b8cfcea2",
+        "source_digest": "81b72fbf71af1c1c0ec30f712a8e63bb381ab072ea6dc56f088dab133564dff2",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addMonths/test.ts",
+        "case": "c037d5a340cabb9341a720049e896647c856afe7579490332e422fa4aa66815b",
+        "source_digest": "81b72fbf71af1c1c0ec30f712a8e63bb381ab072ea6dc56f088dab133564dff2",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addMonths/test.ts",
+        "case": "7321539dd5e85352a5b18a6e29fc410541b42de0a5dffc73a09fe3a9d84b81bb",
+        "source_digest": "81b72fbf71af1c1c0ec30f712a8e63bb381ab072ea6dc56f088dab133564dff2",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/addMonths/test.ts",
+        "case": "94c1d9236a295d394797656ca9cf7bef4dfe330beff54997a7879d1b1cc3dbe6",
+        "source_digest": "81b72fbf71af1c1c0ec30f712a8e63bb381ab072ea6dc56f088dab133564dff2",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/differenceInCalendarDays/test.ts",
+        "case": "8a072322208bc3526e57beac12f1bde510f2f0e507ff5326a1450553a8701a9a",
+        "source_digest": "0ae3fb15b369d1d16ab8d76d0389802936cac7cd385cbae340c13084e63822f5",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/differenceInDays/test.ts",
+        "case": "d82e6231aee6226972447ae8b8c27d43d2b3c1cb268b0ddb0b45905ae4b198f3",
+        "source_digest": "1973f60e8cd8412575f5a1d2476d286c3cde588e1b34002bda4c52e46dc9a850",
+        "reason": "Upstream skips DST boundary assertions in UTC, which has no daylight saving transitions."
+      },
+      {
+        "path": "pkgs/core/src/isDate/test.ts",
+        "case": "3342b06f5de1c1835f6233133cc6386d3c0a0297af59fee635577fba0485696d",
+        "source_digest": "8cf3594ec3950db79502efeaacadc1e4fb2f8a994a65f90aced5259ef7af7f2f",
+        "reason": "Upstream skips iframe case in the Node environment."
+      }
+    ]
+  }
+}

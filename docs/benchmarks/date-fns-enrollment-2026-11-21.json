@@ -1,0 +1,65 @@
+{
+  "run_url": "https://github.com/SharmaKunal14/date-fns/actions/runs/44902768202",
+  "pr_head": "c56fc76415852489c82f3094b536163c8483dcaa",
+  "comparison": {
+    "base": "a9739fb3e5384a810e90d7376446f6d84ecc5029",
+    "head": "6171c584ecf5c9b1e932f4a07a77eb936bf63fc3"
+  },
+  "native": {
+    "files": 253,
+    "cases": 3167,
+    "outcomes": {
+      "passed": 3148,
+      "skipped": 19
+    },
+    "unique_case_title_hashes": 3161
+  },
+  "smartci": {
+    "files": 253,
+    "cases": 3167,
+    "skipped": 19,
+    "execution": "full",
+    "fallback": [
+      "RISK_PATH"
+    ],
+    "planning_seconds": 6.903055041000016,
+    "execution_seconds": 1.2250156369999559,
+    "total_seconds": 8.171708892999959
+  },
+  "audit_digest_valid": true,
+  "native_file_inventory_matches": true,
+  "native_failure_and_reviewed_skip_ids_match": true,
+  "timezone_script_executions": 15,
+  "limits": [
+    "Whole-file selection: upstream has repeated case titles; no unique per-case inventory is claimed.",
+    "This configuration PR requires full execution and does not demonstrate hosted subset savings."
+  ],
+  "workflow": "Smart CI / date-fns evaluation",
+  "job_seconds": 34,
+  "tool_commit": "456ddca0b02ec4c7ad34bafd8a6310d9cdf83d29",
+  "inherited_startup_failures": [
+    {
+      "run_id": 44902772084,
+      "jobs": 0
+    },
+    {
+      "run_id": 44902771284,
+      "jobs": 0
+    },
+    {
+      "run_id": 44902770473,
+      "jobs": 0
+    },
+    {
+      "run_id": 44902769701,
+      "jobs": 0
+    },
+    {
+      "run_id": 44902768972,
+      "jobs": 0
+    }
+  ],
+  "registered_inherited_workflows_disabled": true,
+  "pr_state": "OPEN",
+  "merged": false
+}

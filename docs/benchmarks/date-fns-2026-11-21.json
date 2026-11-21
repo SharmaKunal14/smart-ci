@@ -1,0 +1,658 @@
+{
+  "native_baseline": [
+    {
+      "round": 1,
+      "wall_seconds": 2.7043664999946486,
+      "returncode": 0,
+      "success": true,
+      "files": 253,
+      "cases": 3167,
+      "passed": 3148,
+      "failed": 0,
+      "skipped": 19
+    },
+    {
+      "round": 2,
+      "wall_seconds": 1.1599476670089643,
+      "returncode": 0,
+      "success": true,
+      "files": 253,
+      "cases": 3167,
+      "passed": 3148,
+      "failed": 0,
+      "skipped": 19
+    },
+    {
+      "round": 3,
+      "wall_seconds": 0.9696763329848181,
+      "returncode": 0,
+      "success": true,
+      "files": 253,
+      "cases": 3167,
+      "passed": 3148,
+      "failed": 0,
+      "skipped": 19
+    }
+  ],
+  "scenarios": {
+    "regression": {
+      "base": "a9739fb3e5384a810e90d7376446f6d84ecc5029",
+      "changes": [
+        "pkgs/core/src/locale/zh-CN/_lib/match/index.ts",
+        "pkgs/core/src/locale/zh-HK/_lib/match/index.ts",
+        "pkgs/core/src/locale/zh-TW/_lib/match/index.ts"
+      ],
+      "deterministic": true,
+      "head": "8ab8b09e660cac4bf9e5899ab4f8ffe3674edb86",
+      "limits": [
+        "One native Node project and timezone, not the entire upstream CI matrix.",
+        "Native cache retained; installation and runner provisioning excluded from paired timings.",
+        "Smart CI includes map reconstruction and CLI startup; native related uses its own head graph.",
+        "No safety guarantee follows from a finite set of observed failures."
+      ],
+      "median_wall_seconds": {
+        "native_full": 1.0511057500261813,
+        "native_related": 1.1940474580042064,
+        "smartci": 12.019663624989334
+      },
+      "profile": {
+        "configuration": "pkgs/core/vitest.config.ts",
+        "directory": "pkgs/core",
+        "kind": "vitest5-typescript7",
+        "lockfile": "pnpm-lock.yaml",
+        "project": "main",
+        "timezone": "UTC"
+      },
+      "repository": "SharmaKunal14/date-fns",
+      "rounds": 3,
+      "rows": [
+        {
+          "cases": 3167,
+          "failed": 6,
+          "failure_ids": [
+            "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+            "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+            "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+            "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+            "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+            "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+          ],
+          "files": 253,
+          "missed_failure_ids": [],
+          "round": 1,
+          "skipped": 19,
+          "status": "failed",
+          "variant": "native_full",
+          "wall_seconds": 1.5888369159947615
+        },
+        {
+          "all_attempt_failure_ids": [
+            "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+            "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+            "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+            "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+            "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+            "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+          ],
+          "cases": 19,
+          "decision_digest": "d4ff79fdbd2c32836b076027c7976d943cd29ca64f1dade8644b455321acff16",
+          "execution": "subset",
+          "failed": 6,
+          "failure_ids": [
+            "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+            "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+            "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+            "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+            "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+            "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+          ],
+          "fallback": [],
+          "files": 4,
+          "missed_failure_ids": [],
+          "planning_seconds": 11.156754333002027,
+          "round": 1,
+          "skipped": 0,
+          "status": "failed",
+          "variant": "smartci",
+          "wall_seconds": 12.293152541999007,
+          "collector_implementation_digest": "35895bdf567902a4b558b26b345e43c0fd36bcfacb36df1fd127c5df16009a44",
+          "graph_gaps": [],
+          "warnings": [
+            "NATIVE_SHARED_CONTEXT_REQUIRES_TEST_INDEPENDENCE"
+          ]
+        },
+        {
+          "cases": 6,
+          "failed": 6,
+          "failure_ids": [
+            "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+            "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+            "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+            "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+            "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+            "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+          ],
+          "files": 3,
+          "missed_failure_ids": [],
+          "round": 1,
+          "skipped": 0,
+          "status": "failed",
+          "variant": "native_related",
+          "wall_seconds": 1.1987010839802679
+        },
+        {
+          "all_attempt_failure_ids": [
+            "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+            "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+            "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+            "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+            "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+            "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+          ],
+          "cases": 19,
+          "decision_digest": "d4ff79fdbd2c32836b076027c7976d943cd29ca64f1dade8644b455321acff16",
+          "execution": "subset",
+          "failed": 6,
+          "failure_ids": [
+            "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+            "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+            "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+            "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+            "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+            "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+          ],
+          "fallback": [],
+          "files": 4,
+          "missed_failure_ids": [],
+          "planning_seconds": 10.718455958005507,
+          "round": 2,
+          "skipped": 0,
+          "status": "failed",
+          "variant": "smartci",
+          "wall_seconds": 11.836957791994791,
+          "collector_implementation_digest": "35895bdf567902a4b558b26b345e43c0fd36bcfacb36df1fd127c5df16009a44",
+          "graph_gaps": [],
+          "warnings": [
+            "NATIVE_SHARED_CONTEXT_REQUIRES_TEST_INDEPENDENCE"
+          ]
+        },
+        {
+          "cases": 6,
+          "failed": 6,
+          "failure_ids": [
+            "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+            "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+            "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+            "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+            "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+            "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+          ],
+          "files": 3,
+          "missed_failure_ids": [],
+          "round": 2,
+          "skipped": 0,
+          "status": "failed",
+          "variant": "native_related",
+          "wall_seconds": 1.1940474580042064
+        },
+        {
+          "cases": 3167,
+          "failed": 6,
+          "failure_ids": [
+            "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+            "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+            "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+            "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+            "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+            "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+          ],
+          "files": 253,
+          "missed_failure_ids": [],
+          "round": 2,
+          "skipped": 19,
+          "status": "failed",
+          "variant": "native_full",
+          "wall_seconds": 1.0511057500261813
+        },
+        {
+          "cases": 6,
+          "failed": 6,
+          "failure_ids": [
+            "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+            "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+            "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+            "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+            "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+            "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+          ],
+          "files": 3,
+          "missed_failure_ids": [],
+          "round": 3,
+          "skipped": 0,
+          "status": "failed",
+          "variant": "native_related",
+          "wall_seconds": 1.1726383750210516
+        },
+        {
+          "cases": 3167,
+          "failed": 6,
+          "failure_ids": [
+            "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+            "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+            "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+            "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+            "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+            "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+          ],
+          "files": 253,
+          "missed_failure_ids": [],
+          "round": 3,
+          "skipped": 19,
+          "status": "failed",
+          "variant": "native_full",
+          "wall_seconds": 0.9985158330237027
+        },
+        {
+          "all_attempt_failure_ids": [
+            "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+            "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+            "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+            "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+            "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+            "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+          ],
+          "cases": 19,
+          "decision_digest": "d4ff79fdbd2c32836b076027c7976d943cd29ca64f1dade8644b455321acff16",
+          "execution": "subset",
+          "failed": 6,
+          "failure_ids": [
+            "69149ce29722145198a22367b99fdec679ff5b62d82cd297281c3af5dfcd4ebc",
+            "bc852b826e16994ce2dc8dc86a8de0da7c7eda384682079b40b1296b97d49c76",
+            "bed093b339a11b8e3741cce2930b76b9d483bc6583ad12239c33a416d33ab8b9",
+            "bf747e2693482342c28c2ea390bee0eed45c8bba436610ef79465d6bf403198c",
+            "d796585639235abcb667fe1c51693a3287b22e9541909d26a38ae9f7923fc872",
+            "fa8c9c3388d87200d24c150601031a76b5d94f5f780f043fb7ec25f89b7af773"
+          ],
+          "fallback": [],
+          "files": 4,
+          "missed_failure_ids": [],
+          "planning_seconds": 10.882934708002722,
+          "round": 3,
+          "skipped": 0,
+          "status": "failed",
+          "variant": "smartci",
+          "wall_seconds": 12.019663624989334,
+          "collector_implementation_digest": "35895bdf567902a4b558b26b345e43c0fd36bcfacb36df1fd127c5df16009a44",
+          "graph_gaps": [],
+          "warnings": [
+            "NATIVE_SHARED_CONTEXT_REQUIRES_TEST_INDEPENDENCE"
+          ]
+        }
+      ],
+      "smartci_net_wall_savings_fraction": -10.435256276249982
+    },
+    "fix": {
+      "base": "8ab8b09e660cac4bf9e5899ab4f8ffe3674edb86",
+      "changes": [
+        "pkgs/core/src/locale/zh-CN/_lib/match/index.ts",
+        "pkgs/core/src/locale/zh-HK/_lib/match/index.ts",
+        "pkgs/core/src/locale/zh-TW/_lib/match/index.ts"
+      ],
+      "deterministic": true,
+      "head": "0426d6fd7ac9ec675dbd33e2fa9cb28f3f0f708e",
+      "limits": [
+        "One native Node project and timezone, not the entire upstream CI matrix.",
+        "Native cache retained; installation and runner provisioning excluded from paired timings.",
+        "Smart CI includes map reconstruction and CLI startup; native related uses its own head graph.",
+        "No safety guarantee follows from a finite set of observed failures."
+      ],
+      "median_wall_seconds": {
+        "native_full": 1.0419325410039164,
+        "native_related": 1.1949797499983106,
+        "smartci": 12.483290791977197
+      },
+      "profile": {
+        "configuration": "pkgs/core/vitest.config.ts",
+        "directory": "pkgs/core",
+        "kind": "vitest5-typescript7",
+        "lockfile": "pnpm-lock.yaml",
+        "project": "main",
+        "timezone": "UTC"
+      },
+      "repository": "SharmaKunal14/date-fns",
+      "rounds": 3,
+      "rows": [
+        {
+          "cases": 3167,
+          "failed": 0,
+          "failure_ids": [],
+          "files": 253,
+          "missed_failure_ids": [],
+          "round": 1,
+          "skipped": 19,
+          "status": "passed",
+          "variant": "native_full",
+          "wall_seconds": 1.4781783749931492
+        },
+        {
+          "all_attempt_failure_ids": [],
+          "cases": 19,
+          "decision_digest": "134d9eca7f3194db49e3098e7856f7ebd3047402b05a39327f75ee0642f573bd",
+          "execution": "subset",
+          "failed": 0,
+          "failure_ids": [],
+          "fallback": [],
+          "files": 4,
+          "missed_failure_ids": [],
+          "planning_seconds": 11.882091125007719,
+          "round": 1,
+          "skipped": 0,
+          "status": "passed",
+          "variant": "smartci",
+          "wall_seconds": 13.079628416977357,
+          "collector_implementation_digest": "7c9b02c0a7b858408c973a9db6bba31bd66ef31adfffa122fb25b4083e1e6afc",
+          "graph_gaps": [],
+          "warnings": [
+            "NATIVE_SHARED_CONTEXT_REQUIRES_TEST_INDEPENDENCE"
+          ]
+        },
+        {
+          "cases": 6,
+          "failed": 0,
+          "failure_ids": [],
+          "files": 3,
+          "missed_failure_ids": [],
+          "round": 1,
+          "skipped": 0,
+          "status": "passed",
+          "variant": "native_related",
+          "wall_seconds": 1.2424720830167644
+        },
+        {
+          "all_attempt_failure_ids": [],
+          "cases": 19,
+          "decision_digest": "134d9eca7f3194db49e3098e7856f7ebd3047402b05a39327f75ee0642f573bd",
+          "execution": "subset",
+          "failed": 0,
+          "failure_ids": [],
+          "fallback": [],
+          "files": 4,
+          "missed_failure_ids": [],
+          "planning_seconds": 11.34815541698481,
+          "round": 2,
+          "skipped": 0,
+          "status": "passed",
+          "variant": "smartci",
+          "wall_seconds": 12.483290791977197,
+          "collector_implementation_digest": "7c9b02c0a7b858408c973a9db6bba31bd66ef31adfffa122fb25b4083e1e6afc",
+          "graph_gaps": [],
+          "warnings": [
+            "NATIVE_SHARED_CONTEXT_REQUIRES_TEST_INDEPENDENCE"
+          ]
+        },
+        {
+          "cases": 6,
+          "failed": 0,
+          "failure_ids": [],
+          "files": 3,
+          "missed_failure_ids": [],
+          "round": 2,
+          "skipped": 0,
+          "status": "passed",
+          "variant": "native_related",
+          "wall_seconds": 1.185231457988266
+        },
+        {
+          "cases": 3167,
+          "failed": 0,
+          "failure_ids": [],
+          "files": 253,
+          "missed_failure_ids": [],
+          "round": 2,
+          "skipped": 19,
+          "status": "passed",
+          "variant": "native_full",
+          "wall_seconds": 1.0048532499931753
+        },
+        {
+          "cases": 6,
+          "failed": 0,
+          "failure_ids": [],
+          "files": 3,
+          "missed_failure_ids": [],
+          "round": 3,
+          "skipped": 0,
+          "status": "passed",
+          "variant": "native_related",
+          "wall_seconds": 1.1949797499983106
+        },
+        {
+          "cases": 3167,
+          "failed": 0,
+          "failure_ids": [],
+          "files": 253,
+          "missed_failure_ids": [],
+          "round": 3,
+          "skipped": 19,
+          "status": "passed",
+          "variant": "native_full",
+          "wall_seconds": 1.0419325410039164
+        },
+        {
+          "all_attempt_failure_ids": [],
+          "cases": 19,
+          "decision_digest": "134d9eca7f3194db49e3098e7856f7ebd3047402b05a39327f75ee0642f573bd",
+          "execution": "subset",
+          "failed": 0,
+          "failure_ids": [],
+          "fallback": [],
+          "files": 4,
+          "missed_failure_ids": [],
+          "planning_seconds": 10.970479458017508,
+          "round": 3,
+          "skipped": 0,
+          "status": "passed",
+          "variant": "smartci",
+          "wall_seconds": 12.083032416005153,
+          "collector_implementation_digest": "7c9b02c0a7b858408c973a9db6bba31bd66ef31adfffa122fb25b4083e1e6afc",
+          "graph_gaps": [],
+          "warnings": [
+            "NATIVE_SHARED_CONTEXT_REQUIRES_TEST_INDEPENDENCE"
+          ]
+        }
+      ],
+      "smartci_net_wall_savings_fraction": -10.98090116270807
+    },
+    "exports": {
+      "base": "df2af046e45f0cca0f592fff5b36dc70d00d0f10",
+      "changes": [
+        "pkgs/core/package.json",
+        "pkgs/core/scripts/build/indices.ts",
+        "pkgs/core/typedoc.json"
+      ],
+      "deterministic": true,
+      "head": "a9739fb3e5384a810e90d7376446f6d84ecc5029",
+      "limits": [
+        "One native Node project and timezone, not the entire upstream CI matrix.",
+        "Native cache retained; installation and runner provisioning excluded from paired timings.",
+        "Smart CI includes map reconstruction and CLI startup; native related uses its own head graph.",
+        "No safety guarantee follows from a finite set of observed failures."
+      ],
+      "median_wall_seconds": {
+        "native_full": 1.0014106669987086,
+        "native_related": 1.0192237909941468,
+        "smartci": 4.140084917016793
+      },
+      "profile": {
+        "configuration": "pkgs/core/vitest.config.ts",
+        "directory": "pkgs/core",
+        "kind": "vitest5-typescript7",
+        "lockfile": "pnpm-lock.yaml",
+        "project": "main",
+        "timezone": "UTC"
+      },
+      "repository": "SharmaKunal14/date-fns",
+      "rounds": 3,
+      "rows": [
+        {
+          "cases": 3167,
+          "failed": 0,
+          "failure_ids": [],
+          "files": 253,
+          "missed_failure_ids": [],
+          "round": 1,
+          "skipped": 19,
+          "status": "passed",
+          "variant": "native_full",
+          "wall_seconds": 1.4060755830141716
+        },
+        {
+          "all_attempt_failure_ids": [],
+          "cases": 3167,
+          "decision_digest": "2c2dfc5989ecc822616e8816a3625cc5a3f78326b128c5b605c939a15d3ef681",
+          "execution": "full",
+          "failed": 0,
+          "failure_ids": [],
+          "fallback": [
+            "MAP_REBUILD_OR_DISCOVERY_FAILED"
+          ],
+          "files": 253,
+          "missed_failure_ids": [],
+          "planning_seconds": 2.8425380830012728,
+          "round": 1,
+          "skipped": 19,
+          "status": "passed",
+          "variant": "smartci",
+          "wall_seconds": 4.165537624998251,
+          "collector_implementation_digest": "979cfd4a7ce27f3361bdf30852c2cc56edc93a7285ec5fe66438147dd6bfe77b",
+          "graph_gaps": [],
+          "warnings": [
+            "NATIVE_SHARED_CONTEXT_REQUIRES_TEST_INDEPENDENCE"
+          ]
+        },
+        {
+          "cases": 3167,
+          "failed": 0,
+          "failure_ids": [],
+          "files": 253,
+          "missed_failure_ids": [],
+          "round": 1,
+          "skipped": 19,
+          "status": "passed",
+          "variant": "native_related",
+          "wall_seconds": 1.0284910410118755
+        },
+        {
+          "all_attempt_failure_ids": [],
+          "cases": 3167,
+          "decision_digest": "2c2dfc5989ecc822616e8816a3625cc5a3f78326b128c5b605c939a15d3ef681",
+          "execution": "full",
+          "failed": 0,
+          "failure_ids": [],
+          "fallback": [
+            "MAP_REBUILD_OR_DISCOVERY_FAILED"
+          ],
+          "files": 253,
+          "missed_failure_ids": [],
+          "planning_seconds": 2.78330941699096,
+          "round": 2,
+          "skipped": 19,
+          "status": "passed",
+          "variant": "smartci",
+          "wall_seconds": 4.0893373749859165,
+          "collector_implementation_digest": "979cfd4a7ce27f3361bdf30852c2cc56edc93a7285ec5fe66438147dd6bfe77b",
+          "graph_gaps": [],
+          "warnings": [
+            "NATIVE_SHARED_CONTEXT_REQUIRES_TEST_INDEPENDENCE"
+          ]
+        },
+        {
+          "cases": 3167,
+          "failed": 0,
+          "failure_ids": [],
+          "files": 253,
+          "missed_failure_ids": [],
+          "round": 2,
+          "skipped": 19,
+          "status": "passed",
+          "variant": "native_related",
+          "wall_seconds": 1.0192237909941468
+        },
+        {
+          "cases": 3167,
+          "failed": 0,
+          "failure_ids": [],
+          "files": 253,
+          "missed_failure_ids": [],
+          "round": 2,
+          "skipped": 19,
+          "status": "passed",
+          "variant": "native_full",
+          "wall_seconds": 1.0014106669987086
+        },
+        {
+          "cases": 3167,
+          "failed": 0,
+          "failure_ids": [],
+          "files": 253,
+          "missed_failure_ids": [],
+          "round": 3,
+          "skipped": 19,
+          "status": "passed",
+          "variant": "native_related",
+          "wall_seconds": 1.0162136250000913
+        },
+        {
+          "cases": 3167,
+          "failed": 0,
+          "failure_ids": [],
+          "files": 253,
+          "missed_failure_ids": [],
+          "round": 3,
+          "skipped": 19,
+          "status": "passed",
+          "variant": "native_full",
+          "wall_seconds": 0.999453333002748
+        },
+        {
+          "all_attempt_failure_ids": [],
+          "cases": 3167,
+          "decision_digest": "2c2dfc5989ecc822616e8816a3625cc5a3f78326b128c5b605c939a15d3ef681",
+          "execution": "full",
+          "failed": 0,
+          "failure_ids": [],
+          "fallback": [
+            "MAP_REBUILD_OR_DISCOVERY_FAILED"
+          ],
+          "files": 253,
+          "missed_failure_ids": [],
+          "planning_seconds": 2.8053681250021327,
+          "round": 3,
+          "skipped": 19,
+          "status": "passed",
+          "variant": "smartci",
+          "wall_seconds": 4.140084917016793,
+          "collector_implementation_digest": "979cfd4a7ce27f3361bdf30852c2cc56edc93a7285ec5fe66438147dd6bfe77b",
+          "graph_gaps": [],
+          "warnings": [
+            "NATIVE_SHARED_CONTEXT_REQUIRES_TEST_INDEPENDENCE"
+          ]
+        }
+      ],
+      "smartci_net_wall_savings_fraction": -3.1342528629387285
+    }
+  },
+  "timezone_scripts": {
+    "command": "bash pkgs/core/scripts/test/tz.sh (cwd pkgs/core, Node 26.13.1)",
+    "executions": 15,
+    "returncode": 0,
+    "network": "denied"
+  },
+  "environment": {
+    "os": "macOS",
+    "node": "26.13.1",
+    "pnpm": "12.21.0",
+    "typescript": "7.0.2",
+    "vitest": "5.0.1"
+  }
+}
