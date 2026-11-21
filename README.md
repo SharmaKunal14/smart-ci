@@ -10,6 +10,10 @@ See [plan.md](plan.md) for subsequent phases.
 For progress reporting, explicit platform-skip handling, local verification and
 GitHub setup, see [the Phase 5 handoff](docs/onboarding/shadow-ci.md).
 
+The source is published at [SharmaKunal14/smart-ci](https://github.com/SharmaKunal14/smart-ci).
+The [GitHub pilot walkthrough](docs/onboarding/github-pilot.md) links the packaging
+fork and onboarding PR, with activation and first-PR verification steps.
+
 ## Setup and verification
 
 Install Python 3.13 or newer and uv, then run:

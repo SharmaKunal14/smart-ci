@@ -1,5 +1,9 @@
 # Phase 5: deterministic shadow CI
 
+This records the local Phase 5 handoff. Subsequent source publication and fork
+setup are recorded in [the GitHub pilot walkthrough](github-pilot.md); its live
+activation steps remain pending.
+
 Phase 4 supplied local Python discovery and deterministic selection. Phase 5 adds
 run identity, protected-baseline retrieval/publication, a shadow comparison, a
 reviewable GitHub Actions enrollment, and visible progress before long pilot steps.
