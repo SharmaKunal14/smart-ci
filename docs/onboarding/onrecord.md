@@ -204,3 +204,64 @@ The hosted equivalent is explicitly opt-in: repository variable
 authoritative. Remove the variable after the experiment; normal PRs then run no
 benchmark controls. Keep the PRs unmerged during this pilot. No AWS deployment or
 model calls are required for either verification path.
+
+### Measured optimization result, 21 November 2026
+
+Published runtime: `ed12285e97fa8300a2654ad2b111d68d5c3b70ca`. Both updated pilot
+PRs passed and remain unmerged:
+
+- [Enrollment run 44889100750](https://github.com/SharmaKunal14/slack-incidence-evidence/actions/runs/44889100750): 103 files / 440 cases, full execution with `RISK_PATH`, one attempt, no failures/skips. Planning plus execution: 17.84s.
+- [Subset and benchmark run 44889127164](https://github.com/SharmaKunal14/slack-incidence-evidence/actions/runs/44889127164): normal execution 64 files / 280 cases, no fallback/retry/failures/skips. Planning plus execution: 13.47s. The PR still changes only a comment in `src/domain/incident.ts`.
+
+The full suite in the first bullet is on a different runner; use the paired
+benchmark below for comparisons. These are median wall seconds over three rounds
+per variant, including Python startup and planning where applicable:
+
+| Variant | Files / cases | GitHub Ubuntu, 4 CPUs | Local macOS, 8 CPUs |
+| --- | ---: | ---: | ---: |
+| Previous Smart CI subset | 64 / 280 | 18.89 | 19.15 |
+| Optimized Smart CI subset | 64 / 280 | 13.31 | 11.95 |
+| Native full suite, two workers | 103 / 440 | 15.73 | 11.13 |
+| Native full suite, default workers | 103 / 440 | 13.87 | 6.85 |
+
+The optimization reduced hosted adapter latency by 29.6%. The net advantage over
+native full execution was only 0.56s (4.0%), with overlapping observed timing
+ranges. On the Mac, native full execution remained faster. Three rounds of one
+comment-only change provide limited performance evidence; they do not establish
+general savings, billing reduction, or regression recall. Test counts alone are
+not a performance metric. The native-default control uses the repository's worker
+defaults; the adapter retains a fixed two-worker resource limit.
+
+Hosted planning median decreased from 3.62s to 3.10s; subset execution from 15.22s
+to 10.21s. Independent component medians need not sum to the wall median. Both
+native inventories and full dependency graphs, selected IDs and reasons matched
+between tool revisions. Plans repeated deterministically within each revision.
+
+[Raw samples, medians and exact commits](../benchmarks/onrecord-2026-11-21.json)
+are committed so they survive GitHub's three-day artifact retention. The hosted
+subset job took 4m14s **because it included twelve explicit benchmark runs**; its
+ordinary test step took approximately 14s. `SMARTCI_BENCHMARK` was removed after
+completion and its absence verified. Ordinary PRs do not pay for those controls.
+Both npm caches were cold and were saved successfully; cache-hit installation
+savings have not been measured. Each dependency installation took about 34s.
+
+Verification: `make check` passed formatting, lint, strict typing and **211 tests**
+with native integrations enabled; `uv build --offline` passed and the wheel
+contains the current compiler bridge and native runner. The fresh offline pilot
+at `demo-output/onrecord/verification-ko07nz8x/verification.json` passed initial
+full, subset, map repeatability, seeded-defect and lockfile fallback checks. The
+seeded defect produced the same failing case identity in subset and full runs.
+The rendered workflow parsed as YAML, and hosted reports passed digest/execution
+binding, exact file-set and Git merge-parent checks.
+
+Files changed in this optimization: `src/smartci/typescript/{native.py,collector.py,inspect.mjs}`;
+`examples/onrecord/pull-request.yml.in`; `scripts/benchmark_onrecord.py`;
+`tests/{test_typescript.py,test_onrecord_workflow.py,test_benchmark.py}`;
+`README.md`, `plan.md`, this guide and the benchmark JSON. OnRecord PR #29 updates
+only `.github/workflows/smartci-tests.yml`; PR #30 remains comment-only.
+
+Separate follow-up: the existing OnRecord lockfile's npm install audit reports
+20 dependency vulnerabilities (9 moderate, 9 high, 2 critical), and GitHub reports
+Node 20 action-runtime deprecation warnings for existing action pins. This change
+does not update dependencies or suppress those checks. These require their own
+review; passing tests are not a clean dependency-security audit.

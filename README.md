@@ -21,7 +21,7 @@ runs affected test files on eligible PR revisions. It reconstructs missing maps
 from source; a saved baseline is optional and shadow mode is not mandatory.
 See [the OnRecord handoff](docs/onboarding/onrecord.md) for exact scope, local
 verification, audit artifacts, rollback and the PR-only workflow enrollment steps.
-The [live subset PR](https://github.com/SharmaKunal14/slack-incidence-evidence/pull/30) passed with 64 of 103 files executed and no fallback. Both pilot PRs remain unmerged. This sample demonstrates test reduction, not a CI speedup.
+The [live subset PR](https://github.com/SharmaKunal14/slack-incidence-evidence/pull/30) passed with 64 of 103 files executed and no fallback. Both pilot PRs remain unmerged. A three-round hosted comparison reduced the old adapter's median time from 18.89 to 13.31 seconds, including planning; native full execution took 13.87 seconds. That small net advantage is environment-specific: native full execution was faster on the local Mac. See the [measurements and limits](docs/onboarding/onrecord.md#performance-investigation-and-reproducible-comparison).
 
 ## Setup and verification
 

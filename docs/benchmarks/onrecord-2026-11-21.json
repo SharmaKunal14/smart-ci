@@ -1,0 +1,354 @@
+{
+  "github_ubuntu": {
+    "measurements": [
+      {
+        "cases": 280,
+        "execution_seconds": 15.23151647100002,
+        "files": 64,
+        "planning_seconds": 3.623401236999996,
+        "round": 1,
+        "variant": "baseline_subset",
+        "wall_seconds": 19.09428026500001
+      },
+      {
+        "cases": 280,
+        "execution_seconds": 10.250155122000024,
+        "files": 64,
+        "planning_seconds": 3.4088595860000055,
+        "round": 1,
+        "variant": "candidate_subset",
+        "wall_seconds": 13.856589077000024
+      },
+      {
+        "cases": 440,
+        "execution_seconds": 15.582526649000044,
+        "files": 103,
+        "planning_seconds": 0.0,
+        "round": 1,
+        "variant": "native_bounded_full",
+        "wall_seconds": 15.780821946000003
+      },
+      {
+        "cases": 440,
+        "execution_seconds": 13.67317260699997,
+        "files": 103,
+        "planning_seconds": 0.0,
+        "round": 1,
+        "variant": "native_default_full",
+        "wall_seconds": 13.869835677999959
+      },
+      {
+        "cases": 280,
+        "execution_seconds": 10.213445591000038,
+        "files": 64,
+        "planning_seconds": 2.8922543179999707,
+        "round": 2,
+        "variant": "candidate_subset",
+        "wall_seconds": 13.309933718999957
+      },
+      {
+        "cases": 440,
+        "execution_seconds": 15.559476383999993,
+        "files": 103,
+        "planning_seconds": 0.0,
+        "round": 2,
+        "variant": "native_bounded_full",
+        "wall_seconds": 15.732439764000048
+      },
+      {
+        "cases": 440,
+        "execution_seconds": 13.704137307999986,
+        "files": 103,
+        "planning_seconds": 0.0,
+        "round": 2,
+        "variant": "native_default_full",
+        "wall_seconds": 13.911501734000069
+      },
+      {
+        "cases": 280,
+        "execution_seconds": 15.219121659999928,
+        "files": 64,
+        "planning_seconds": 3.483059099000002,
+        "round": 2,
+        "variant": "baseline_subset",
+        "wall_seconds": 18.892895479999993
+      },
+      {
+        "cases": 440,
+        "execution_seconds": 15.499266441000032,
+        "files": 103,
+        "planning_seconds": 0.0,
+        "round": 3,
+        "variant": "native_bounded_full",
+        "wall_seconds": 15.696106972000052
+      },
+      {
+        "cases": 440,
+        "execution_seconds": 13.507059272999982,
+        "files": 103,
+        "planning_seconds": 0.0,
+        "round": 3,
+        "variant": "native_default_full",
+        "wall_seconds": 13.700270914000043
+      },
+      {
+        "cases": 280,
+        "execution_seconds": 14.978287724999973,
+        "files": 64,
+        "planning_seconds": 3.6176614640000935,
+        "round": 3,
+        "variant": "baseline_subset",
+        "wall_seconds": 18.77056311499996
+      },
+      {
+        "cases": 280,
+        "execution_seconds": 9.951040628999976,
+        "files": 64,
+        "planning_seconds": 3.096771461000003,
+        "round": 3,
+        "variant": "candidate_subset",
+        "wall_seconds": 13.260811616000069
+      }
+    ],
+    "summary": {
+      "baseline_commit": "e6b35ea089abedfd49b6ca0547a5351058d6b1ed",
+      "candidate_commit": "ed12285e97fa8300a2654ad2b111d68d5c3b70ca",
+      "cpu_count": 4,
+      "deterministic_per_version": true,
+      "medians": {
+        "baseline_subset": {
+          "cases": 280,
+          "execution_seconds": 15.219121659999928,
+          "files": 64,
+          "planning_seconds": 3.6176614640000935,
+          "wall_seconds": 18.892895479999993
+        },
+        "candidate_subset": {
+          "cases": 280,
+          "execution_seconds": 10.213445591000038,
+          "files": 64,
+          "planning_seconds": 3.096771461000003,
+          "wall_seconds": 13.309933718999957
+        },
+        "native_bounded_full": {
+          "cases": 440,
+          "execution_seconds": 15.559476383999993,
+          "files": 103,
+          "planning_seconds": 0.0,
+          "wall_seconds": 15.732439764000048
+        },
+        "native_default_full": {
+          "cases": 440,
+          "execution_seconds": 13.67317260699997,
+          "files": 103,
+          "planning_seconds": 0.0,
+          "wall_seconds": 13.869835677999959
+        }
+      },
+      "repository_commit": "cbee00660f2a828b605928aaa4bc81cc6bb38c38",
+      "rounds": 3,
+      "same_graphs": true,
+      "same_selection": true
+    }
+  },
+  "local_macos": {
+    "measurements": [
+      {
+        "cases": 280,
+        "execution_seconds": 14.1547750000027,
+        "files": 64,
+        "planning_seconds": 4.55416604198399,
+        "round": 1,
+        "variant": "baseline_subset",
+        "wall_seconds": 19.00615466700401
+      },
+      {
+        "cases": 280,
+        "execution_seconds": 7.4445879999839235,
+        "files": 64,
+        "planning_seconds": 3.593174791021738,
+        "round": 1,
+        "variant": "candidate_subset",
+        "wall_seconds": 11.297237833001418
+      },
+      {
+        "cases": 440,
+        "execution_seconds": 10.614654375007376,
+        "files": 103,
+        "planning_seconds": 0.0,
+        "round": 1,
+        "variant": "native_bounded_full",
+        "wall_seconds": 10.823979542008601
+      },
+      {
+        "cases": 440,
+        "execution_seconds": 5.510900416004006,
+        "files": 103,
+        "planning_seconds": 0.0,
+        "round": 1,
+        "variant": "native_default_full",
+        "wall_seconds": 5.725542999978643
+      },
+      {
+        "cases": 280,
+        "execution_seconds": 7.687573000002885,
+        "files": 64,
+        "planning_seconds": 3.9621588329900987,
+        "round": 2,
+        "variant": "candidate_subset",
+        "wall_seconds": 11.949101583013544
+      },
+      {
+        "cases": 440,
+        "execution_seconds": 11.492509290983435,
+        "files": 103,
+        "planning_seconds": 0.0,
+        "round": 2,
+        "variant": "native_bounded_full",
+        "wall_seconds": 11.743630041979486
+      },
+      {
+        "cases": 440,
+        "execution_seconds": 6.832032332982635,
+        "files": 103,
+        "planning_seconds": 0.0,
+        "round": 2,
+        "variant": "native_default_full",
+        "wall_seconds": 7.056867083010729
+      },
+      {
+        "cases": 280,
+        "execution_seconds": 14.457340082997689,
+        "files": 64,
+        "planning_seconds": 4.404334708000533,
+        "round": 2,
+        "variant": "baseline_subset",
+        "wall_seconds": 19.149150957993697
+      },
+      {
+        "cases": 440,
+        "execution_seconds": 10.93926908398862,
+        "files": 103,
+        "planning_seconds": 0.0,
+        "round": 3,
+        "variant": "native_bounded_full",
+        "wall_seconds": 11.132144375005737
+      },
+      {
+        "cases": 440,
+        "execution_seconds": 6.619456332991831,
+        "files": 103,
+        "planning_seconds": 0.0,
+        "round": 3,
+        "variant": "native_default_full",
+        "wall_seconds": 6.845662582985824
+      },
+      {
+        "cases": 280,
+        "execution_seconds": 14.368754124996485,
+        "files": 64,
+        "planning_seconds": 4.743559624999762,
+        "round": 3,
+        "variant": "baseline_subset",
+        "wall_seconds": 19.430921999999555
+      },
+      {
+        "cases": 280,
+        "execution_seconds": 8.03696574998321,
+        "files": 64,
+        "planning_seconds": 4.5296175419935025,
+        "round": 3,
+        "variant": "candidate_subset",
+        "wall_seconds": 12.899033875000896
+      }
+    ],
+    "summary": {
+      "baseline_commit": "e6b35ea089abedfd49b6ca0547a5351058d6b1ed",
+      "candidate_commit": "ed12285e97fa8300a2654ad2b111d68d5c3b70ca",
+      "cpu_count": 8,
+      "deterministic_per_version": true,
+      "medians": {
+        "baseline_subset": {
+          "cases": 280,
+          "execution_seconds": 14.368754124996485,
+          "files": 64,
+          "planning_seconds": 4.55416604198399,
+          "wall_seconds": 19.149150957993697
+        },
+        "candidate_subset": {
+          "cases": 280,
+          "execution_seconds": 7.687573000002885,
+          "files": 64,
+          "planning_seconds": 3.9621588329900987,
+          "wall_seconds": 11.949101583013544
+        },
+        "native_bounded_full": {
+          "cases": 440,
+          "execution_seconds": 10.93926908398862,
+          "files": 103,
+          "planning_seconds": 0.0,
+          "wall_seconds": 11.132144375005737
+        },
+        "native_default_full": {
+          "cases": 440,
+          "execution_seconds": 6.619456332991831,
+          "files": 103,
+          "planning_seconds": 0.0,
+          "wall_seconds": 6.845662582985824
+        }
+      },
+      "repository_commit": "5268623152fd2d8ae1f8bf401c5510d7679af8d1",
+      "rounds": 3,
+      "same_graphs": true,
+      "same_selection": true
+    }
+  },
+  "method": {
+    "benchmark_flag_removed": true,
+    "date": "2026-11-21",
+    "description": "Sequential same-checkout variants with rotated order; three rounds; dependencies already installed. Subset walls include planning and process startup; full controls do no planning.",
+    "hosted_run": "https://github.com/SharmaKunal14/slack-incidence-evidence/actions/runs/44889127164",
+    "limitations": [
+      "One eligible comment-only change per environment",
+      "No confidence interval or production regression-recall estimate",
+      "Excludes dependency installation, checkout, tool setup and artifact upload",
+      "Local native-default control uses more workers than the two-worker adapter",
+      "No warm npm cache hit was observed in the hosted runs"
+    ],
+    "unit": "seconds"
+  },
+  "normal_hosted_runs": {
+    "enrollment": {
+      "cases": 440,
+      "comparison": {
+        "base": "cfcb957baee9a6e90b0f156f4458b33994117287",
+        "head": "846b687c8359dd0c11e5a8a735a8c93ea2ed1314"
+      },
+      "execution_seconds": 14.534185686,
+      "fallback": [
+        "RISK_PATH"
+      ],
+      "files": 103,
+      "mode": "full",
+      "planning_seconds": 3.2971885059999977,
+      "selection_digest": "9f9b9c0ff3dd2ebbfcb53c2808746f03843baa2d633d43f12b61ac8cfa6dc407",
+      "status": "passed",
+      "total_seconds": 17.84276270700002
+    },
+    "subset": {
+      "cases": 280,
+      "comparison": {
+        "base": "ded8e2f00a49a9e7a32fd9c154d6c0975b3aeed5",
+        "head": "cbee00660f2a828b605928aaa4bc81cc6bb38c38"
+      },
+      "execution_seconds": 10.044405423,
+      "fallback": [],
+      "files": 64,
+      "mode": "subset",
+      "planning_seconds": 3.4144875949999687,
+      "selection_digest": "3a3ec12951a3216311b8082c7a2be3dba591e63c66d06801574268aaa532385b",
+      "status": "passed",
+      "total_seconds": 13.469576082000003
+    }
+  }
+}

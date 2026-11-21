@@ -810,7 +810,15 @@ full tests. Whole-file selection does not imply perfect regression detection.
 Completed live gates: published the adapter branch, opened OnRecord enrollment PR #29
 and dependent subset PR #30, and verified both successful Actions runs without merging.
 Remaining gates: expand evaluation across real changes/platforms and establish net CI savings.
-The measured Smart CI step was 27.96 seconds for the subset versus 26.15 seconds for full
-execution in this one hosted comparison, so no speedup claim is justified. No AWS service or paid model is needed. Keep the
+The first Smart CI comparison was 27.96 seconds for the subset versus 26.15 seconds
+for full execution. A subsequent three-round same-runner benchmark verified a
+two-worker execution and graph-discovery optimization: old subset median 18.89s,
+optimized subset including planning 13.31s, native full suite 13.87s. The 0.56s net
+advantage is small and environment-specific; native full execution was faster on
+the local Mac. Graphs, selections and reasons were unchanged, and repeated plans
+were deterministic. See `docs/benchmarks/onrecord-2026-11-21.json` and the OnRecord
+handoff for raw evidence, verification and limitations. Broader savings remain an
+open gate. The optional hosted benchmark flag was removed after verification.
+No AWS service or paid model is needed. Keep the
 existing deployment workflows unchanged. This handoff supersedes older roadmap
 text that described the TypeScript pilot as unimplemented.
