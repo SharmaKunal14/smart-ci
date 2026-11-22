@@ -31,7 +31,7 @@ def create_plan(
     from smartci.discovery.collector import collect
     from smartci.discovery.models import PythonConfig
     from smartci.discovery.planning import plan
-    from smartci.selection import SelectionPolicy
+    from smartci.selection import SelectionPolicy, digest
 
     config = PythonConfig(
         schema_version="1",
@@ -62,6 +62,16 @@ def create_plan(
                     "complete": snapshot.graph.complete,
                     "files": len(snapshot.inventory.tests),
                     "cases": snapshot.provenance.native_case_count,
+                    "native_cases_digest": snapshot.provenance.native_cases_digest,
+                    "source_digest": digest(snapshot.provenance.sources),
+                    "environment_identity": snapshot.provenance.environment.identity(),
+                    "implementation_digest": snapshot.provenance.implementation_digest,
+                    "edges_digest": digest(
+                        [edge.model_dump() for edge in snapshot.provenance.edges]
+                    ),
+                    "imports_digest": digest(
+                        [item.model_dump() for item in snapshot.provenance.imports]
+                    ),
                     "plugins": snapshot.provenance.plugins,
                     "gaps": [gap.model_dump() for gap in snapshot.provenance.gaps],
                     "snapshot_digest": snapshot.digest,
