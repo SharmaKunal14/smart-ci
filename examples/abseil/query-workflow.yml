@@ -1,0 +1,79 @@
+name: Audit native Bazel dependency discovery
+on:
+  pull_request:
+    branches: [codex/smartci-native-base]
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: abseil-native-query-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  graph:
+    if: github.head_ref == 'codex/native-graph-audit'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: SharmaKunal14/smart-ci
+          ref: REVIEWED_TOOL_COMMIT
+          path: tool
+          persist-credentials: false
+      - name: Verify the independent native reference provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/SharmaKunal14/abseil-cpp/actions/runs/45073921737 > "$RUNNER_TEMP/reference-run.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          value = json.loads((Path(os.environ['RUNNER_TEMP']) / 'reference-run.json').read_text())
+          expected = {
+              'status': 'completed', 'conclusion': 'success', 'event': 'pull_request',
+              'head_sha': '6da46d213f16f99b80f57f9d861792bb793923a9',
+              'path': '.github/workflows/smartci-resource-baseline.yml', 'run_attempt': 1,
+          }
+          if value['repository']['full_name'] != 'SharmaKunal14/abseil-cpp' or any(value.get(k) != v for k, v in expected.items()):
+              raise SystemExit('Native reference provenance mismatch')
+          PY
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          github-token: ${{ github.token }}
+          repository: SharmaKunal14/abseil-cpp
+          run-id: 45073921737
+          name: native-resource-baseline-1
+          path: ${{ runner.temp }}/native-reference
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        with:
+          version: '0.11.6'
+          enable-cache: false
+      - name: Install the pinned audit tool
+        working-directory: tool
+        run: uv sync --frozen
+      - name: Collect graph and reconcile actual native scope
+        working-directory: source
+        run: |
+          uv run --project "$GITHUB_WORKSPACE/tool" --frozen python "$GITHUB_WORKSPACE/tool/examples/abseil/query.py" \
+            --baseline-bep "$RUNNER_TEMP/native-reference/native-resource-baseline/native.bep.json" \
+            --output "$RUNNER_TEMP/native-query"
+      - name: Publish graph audit evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-query-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/native-query
+            ${{ runner.temp }}/reference-run.json
+          retention-days: 7
+          if-no-files-found: error

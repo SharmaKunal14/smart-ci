@@ -256,3 +256,35 @@ passed targets; `native.bep.json` records the native build graph's complete resu
 events. `runner-policy/` contains the installed hook and before/effective/restored
 settings. No model secret, deployment, merge or test omission is required to inspect
 these results. The earlier failed runs remain linked above and are not baselines.
+
+## Native graph audit
+
+The next collector runs `deps(//...)`, `//...` and `buildfiles(deps(//...))` queries
+using the same pinned native container and Bazel 9.1.0. It does not execute tests.
+Query deliberately retains all configuration branches; execution eligibility is
+taken from the independently completed native reference, not inferred from test
+rule names. The collector checks the reference run identity and exact BEP hash,
+requires complete successful native results, and verifies that every observed
+build/test root exists in the parsed graph. Build-only targets, configurations,
+manual/excluded query roots and source witnesses remain separate in the audit.
+
+`examples/abseil/query-workflow.yml` is a template: replace `REVIEWED_TOOL_COMMIT`
+with the reviewed Smart CI commit before installing it on the fork. Its job is
+branch-limited, read-only, bounded to 14 minutes and carries no model credentials.
+The reference download token is scoped to its own workflow step. Native query
+execution receives an explicit minimal environment. Unsupported or partial graph
+evidence fails the audit; it cannot authorize omissions. Production profile and
+runtime-dependency eligibility remain additional requirements.
+
+The following upstream changes were chosen **before** querying graph breadth.
+Counts from this audit are potential impact, not executed PR selections or speed
+measurements. Keep broad and negative cases in the later comparison:
+
+- [Cord suffix comparison optimization](https://github.com/abseil/abseil-cpp/commit/da428eb4893dbb1403634ab0fed96a9a0cab9836): `cord.cc` and `cord.h`.
+- [Const-span regression fix](https://github.com/abseil/abseil-cpp/commit/8380c9eb674392b3a2ac50488a9f0df0e438b24e): `span.h`, retaining its regression tests when replaying faulty production behavior.
+- [Linked hash node insertion fix](https://github.com/abseil/abseil-cpp/commit/745e8f3eb8b5b9342fb658d94994ba349212f107): both public linked-hash container headers, retaining their regression tests.
+- [Shared hash implementation change](https://github.com/abseil/abseil-cpp/commit/82530019412ff77ff99d39ba0ad12e5ea6b89ea4): `hash.cc` and `hash.h`.
+
+A build/dependency-definition change must also retain the independent full native
+path. These four source cases cannot by themselves establish that fallback or
+safe handling of removed dependencies works.
