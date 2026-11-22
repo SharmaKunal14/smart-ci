@@ -9,6 +9,55 @@ from smartci.selection import digest
 from .attribute_hooks import rejecting_attribute_hook
 from .models import Edge, Environment, Gap, ImportFact, PythonConfig
 
+PROCESS_APIS = {
+    f"{module}.{name}"
+    for module, names in {
+        "subprocess": (
+            "Popen",
+            "run",
+            "call",
+            "check_call",
+            "check_output",
+            "getoutput",
+            "getstatusoutput",
+        ),
+        "os": (
+            "system",
+            "popen",
+            "fork",
+            "forkpty",
+            "posix_spawn",
+            "posix_spawnp",
+            "execl",
+            "execle",
+            "execlp",
+            "execlpe",
+            "execv",
+            "execve",
+            "execvp",
+            "execvpe",
+            "spawnl",
+            "spawnle",
+            "spawnlp",
+            "spawnlpe",
+            "spawnv",
+            "spawnve",
+            "spawnvp",
+            "spawnvpe",
+            "startfile",
+        ),
+        "asyncio": ("create_subprocess_exec", "create_subprocess_shell"),
+        "asyncio.subprocess": ("create_subprocess_exec", "create_subprocess_shell"),
+        "multiprocessing": ("Process", "Pool", "Manager", "get_context"),
+        "multiprocessing.pool": ("Pool",),
+        "concurrent.futures": ("ProcessPoolExecutor",),
+        "concurrent.futures.process": ("ProcessPoolExecutor",),
+        "pty": ("spawn", "fork"),
+    }.items()
+    for name in names
+}
+PROCESS_MODULES = {name.rsplit(".", 1)[0] for name in PROCESS_APIS}
+
 
 def inside(path: str, root: str) -> bool:
     return root == "." or path == root or path.startswith(root + "/")
@@ -315,6 +364,8 @@ class ImportVisitor(ast.NodeVisitor):
             prefix = package[: len(package) - node.level + 1]
             name = ".".join([*prefix, *([name] if name else [])])
         self.analysis.resolve(self.path, name, node.lineno, self.optional)
+        if name in PROCESS_MODULES and any(item.name == "*" for item in node.names):
+            self.analysis.gap("DYNAMIC_PROCESS", self.path, node.lineno)
         for item in node.names:
             candidate = f"{name}.{item.name}"
             if candidate in self.analysis.modules:
@@ -379,6 +430,27 @@ class ImportVisitor(ast.NodeVisitor):
 
     def visit_Call(self, node: ast.Call) -> None:
         call = self.qualified(node.func)
+        if call in PROCESS_APIS:
+            # Executable, script, shell, worker and environment inputs are not
+            # represented by Python imports. No process adapter exists yet.
+            self.handled.add(id(node.func))
+            self.analysis.gap("DYNAMIC_PROCESS", self.path, node.lineno)
+        if (
+            node.args
+            and self.qualified(node.args[0]) in PROCESS_MODULES
+            and (
+                call in {"vars", "builtins.vars"}
+                or call in {"getattr", "builtins.getattr"}
+                and len(node.args) >= 2
+                and (
+                    not isinstance(node.args[1], ast.Constant)
+                    or not isinstance(node.args[1].value, str)
+                    or f"{self.qualified(node.args[0])}.{node.args[1].value}"
+                    in PROCESS_APIS
+                )
+            )
+        ):
+            self.analysis.gap("DYNAMIC_PROCESS", self.path, node.lineno)
         if call in {"__import__", "builtins.__import__", "importlib.import_module"}:
             self.handled.add(id(node.func))
             module = None
@@ -472,6 +544,13 @@ class ImportVisitor(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_Attribute(self, node: ast.Attribute) -> None:
+        if (
+            self.qualified(node) in PROCESS_APIS
+            and id(node) not in self.handled
+            or node.attr == "__dict__"
+            and self.qualified(node.value) in PROCESS_MODULES
+        ):
+            self.analysis.gap("DYNAMIC_PROCESS", self.path, node.lineno)
         if self.qualified(node) in {"sys.path", "sys.meta_path", "sys.path_hooks"}:
             self.analysis.gap("CUSTOM_IMPORT_PATH", self.path, node.lineno)
         if node.attr == "__path__":
@@ -503,6 +582,12 @@ class ImportVisitor(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_Name(self, node: ast.Name) -> None:
+        if (
+            isinstance(node.ctx, ast.Load)
+            and self.qualified(node) in PROCESS_APIS
+            and id(node) not in self.handled
+        ):
+            self.analysis.gap("DYNAMIC_PROCESS", self.path, node.lineno)
         if node.id == "__path__":
             self.analysis.gap("CUSTOM_IMPORT_PATH", self.path, node.lineno)
         if node.id == "pytest_plugins" and isinstance(node.ctx, ast.Store):

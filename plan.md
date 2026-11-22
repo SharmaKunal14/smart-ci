@@ -77,6 +77,18 @@ closing the remaining diagnostics alone may still yield an unhelpfully large
 selection. The widget registry's computed targets, path-loaded snapshot apps,
 plugin behavior and runtime inputs remain unsupported.
 
+The [source-only graph-breadth audits](docs/onboarding/known-graph-reachability.md)
+now explain why closing those diagnostics would not establish useful selection:
+the parser change reaches 250 of 251 test files through current recorded edges.
+The one unreached test launches a child application; it is not proven irrelevant.
+The new process-execution guard records that missing dependency scope explicitly,
+bringing the audited gap count to 14 while keeping full fallback. Both hosted
+audits preserved the native 3,467-case inventory and authorized no omissions.
+Do not run further full Textual comparisons solely to chase a lower warning count.
+Keep it as a negative compatibility/safety case and resume native build-graph
+evaluation, first diagnosing the failed Abseil native environment. Neither actual
+time savings nor the required live agentic investigation workflow is complete.
+
 Workspace: `/Users/kunalsharma/Fun/project/smart-ci`
 
 ## 1. Objective and starting point

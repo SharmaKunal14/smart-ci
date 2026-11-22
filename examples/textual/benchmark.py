@@ -26,7 +26,12 @@ def checkout(root: Path, sha: str) -> None:
 
 
 def create_plan(
-    root: Path, base: str, head: str, output: Path, target_python: str
+    root: Path,
+    base: str,
+    head: str,
+    output: Path,
+    target_python: str,
+    diagnose_reachability: bool = False,
 ) -> None:
     from smartci.discovery.collector import collect
     from smartci.discovery.models import PythonConfig
@@ -82,6 +87,16 @@ def create_plan(
         if result != repeated:
             raise ValueError("planning was not deterministic")
         write(output / "selection.json", result.model_dump())
+        if diagnose_reachability:
+            from known_reachability import summarize
+
+            from smartci.git_changes import changes_from_git
+
+            changes = changes_from_git(root, base, head, config.repository)
+            reachability = summarize(changes, snapshots[0], snapshots[1])
+            if reachability != summarize(changes, snapshots[0], snapshots[1]):
+                raise ValueError("reachability diagnostic was not deterministic")
+            write(output / "known-reachability.json", reachability)
         # A full decision always executes the independent native command.
         targets = (
             sorted(snapshots[1].provenance.native_targets[t] for t in result.selected)
@@ -124,14 +139,24 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--planner-python", default=sys.executable)
     parser.add_argument("--target-python", default=sys.executable)
+    parser.add_argument("--diagnose-reachability", action="store_true")
     args = parser.parse_args()
+    if args.diagnose_reachability and args.mode != "plan":
+        parser.error("reachability diagnostics require plan-only mode")
     root = Path.cwd().resolve()
     output = args.output.resolve()
     if output.is_relative_to(root):
         parser.error("output must be outside the repository")
     output.mkdir(parents=True, exist_ok=True)
     if args.mode == "plan":
-        create_plan(root, args.base, args.head, output, args.target_python)
+        create_plan(
+            root,
+            args.base,
+            args.head,
+            output,
+            args.target_python,
+            args.diagnose_reachability,
+        )
         return 0
 
     started = time.monotonic()

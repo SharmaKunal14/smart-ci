@@ -1,0 +1,68 @@
+{
+  "artifact_sha256": {
+    "artifacts/base-compatibility.json": "ea7bdd09068b740f6dccc7f5ab698aa243250298e54a75ead8ae22348c663d56",
+    "artifacts/head-compatibility.json": "b33e02405fd4d1a73e52140d610010bd04096b469dd7c98d1804d3f14178a841",
+    "artifacts/known-reachability.json": "95d7561dbf958afad13de999e42419e9a66b2560be71519d30bf743bcb14a8bd",
+    "artifacts/selection.json": "8896f7760f85f1f1c62e122d4b8b9c64bc73330560fd748be89b8cd71fb0a212",
+    "artifacts/targets.json": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+    "artifacts/verification.json": "2cc39ba2951f76c96ca04d587e12329615024cbc1c81485c5f247daad1777093",
+    "audit.log": "be58f7c57c458abe3300cec123f82a92924c1a936ba89ebcb4437ab71d90c77f",
+    "jobs.json": "d5a3a02ec3e2a1fe49315f482fd13f19dded95ae1aa0530f4fece15a8f1eeb94",
+    "run.json": "a4ce85ff2bde23485a7ca97498a2f055c5c060606eb0c622ae68cc20235cadb9",
+    "safety.log": "946b4c2ac95491b8bf4eb6d9c25fba364e077924324b6164df7ce8836034bcdf"
+  },
+  "child_application_import": "https://github.com/SharmaKunal14/textual/blob/7e0ecf590c7915126e822bf55cc5ff7a4e2a6dc6/tests/deadlock.py#L6",
+  "ci_savings_demonstrated": false,
+  "collected_cases": 3467,
+  "collected_test_files": 251,
+  "comparison": {
+    "base": "36dc74c7a0dceaa8b5b4c0b1bc1112479e98e239",
+    "head": "7e0ecf590c7915126e822bf55cc5ff7a4e2a6dc6"
+  },
+  "example_paths": [
+    {
+      "reasons": [
+        "DEPENDENCY_PATH:src/textual/_xterm_parser.py -> src/textual/drivers/linux_driver.py -> src/textual/app.py -> tests/animations/test_disabling_animations.py"
+      ],
+      "test_file": "tests/animations/test_disabling_animations.py",
+      "test_id": "SharmaKunal14/textual/pytest:ec5cb12344c352f391af48c2122748b499cf6efb5bd1787ed03c034d27cadf24"
+    },
+    {
+      "reasons": [
+        "DEPENDENCY_PATH:src/textual/_xterm_parser.py -> src/textual/drivers/linux_driver.py -> src/textual/app.py -> tests/animations/test_environment_variable.py"
+      ],
+      "test_file": "tests/animations/test_environment_variable.py",
+      "test_id": "SharmaKunal14/textual/pytest:c102678580cbdce41ea09411984b929a89ca43ad5bbc669d0f5c61a413cf10d9"
+    },
+    {
+      "reasons": [
+        "DEPENDENCY_PATH:src/textual/_xterm_parser.py -> src/textual/drivers/linux_driver.py -> src/textual/app.py -> tests/animations/test_loading_indicator_animation.py"
+      ],
+      "test_file": "tests/animations/test_loading_indicator_animation.py",
+      "test_id": "SharmaKunal14/textual/pytest:c30f6e98fea1387fbdb727a5e563a917a553779ed8eb284c82193b407a8443e4"
+    }
+  ],
+  "execution_required": "full",
+  "known_graph_reached_files": 250,
+  "limits": [
+    "Known file-level edges reach almost all tests; clearing gaps alone does not demonstrate useful selection.",
+    "The only unreached test launches a child application; it is not proven irrelevant.",
+    "This diagnostic did not execute native test bodies or measure a selective end-to-end time."
+  ],
+  "recorded_gaps": 13,
+  "run_id": 45051610251,
+  "run_url": "https://github.com/SharmaKunal14/textual/actions/runs/45051610251",
+  "safety_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45051393384",
+  "safety_tests_passed": 444,
+  "schema": "smartci.textual-graph-breadth-evidence.v1",
+  "source_only_change": [
+    "src/textual/_xterm_parser.py"
+  ],
+  "test_execution_performed": false,
+  "textual_pr": "https://github.com/SharmaKunal14/textual/pull/9",
+  "tool_pin": "9c775322984a77a4c1f7fd3c424aa6e5cc9d01c9",
+  "unreached_files": [
+    "tests/test_pipe.py"
+  ],
+  "unreached_process_call": "https://github.com/SharmaKunal14/textual/blob/7e0ecf590c7915126e822bf55cc5ff7a4e2a6dc6/tests/test_pipe.py#L16"
+}

@@ -1,0 +1,54 @@
+{
+  "artifact_sha256": {
+    "artifacts/base-compatibility.json": "b7c2de819f1016e435189667ce0113b632a328e5eed4786e82e992cccd09e1b2",
+    "artifacts/head-compatibility.json": "f032020ceaed5fba2c7e72605087b701a86072e69afc24d2af13d38dbf00396a",
+    "artifacts/known-reachability.json": "9a0675c03e9650c6267abeccd60055af72fa68975c2f71adc7eab56f8544f743",
+    "artifacts/selection.json": "616c5766ac1da0eaff60280ad37ddcde6a22528d0161d8fead2f7d3d32cd75dc",
+    "artifacts/targets.json": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+    "artifacts/verification.json": "bd1ebb5f3988959e1ace6a8838bda1f35c182aa8c8c847e4986c5c0c1fa04c88",
+    "audit.log": "ccbacaef5f860ae2fd1f2686cd7ffb2c780d4f2f96248100d3fd63090b9c8179",
+    "jobs.json": "bcfcecc99b63400ae876099f4d14f0b7a0e914ace8a2b39999d97cebf3927831",
+    "run.json": "4c98075ef041bb3b24dbbf62bee6cf4a71ee5010ef814faf965870ff86418530",
+    "safety.log": "17bc6ab57c46beeaa8e72bd7156b5f7196c6ead7285594363c7261ec7c10e3e2"
+  },
+  "ci_savings_demonstrated": false,
+  "collected_cases": 3467,
+  "collected_test_files": 251,
+  "comparison": {
+    "base": "2ae0f29f20ebbeb8c199d0dde3120f540cffec10",
+    "head": "4d382a35eaae4638db9eb1566f65800bba83ab9b"
+  },
+  "execution_required": "full",
+  "known_graph_reached_files": 250,
+  "limits": [
+    "Recognized launch APIs now retain explicit fallback; arbitrary external behavior remains outside this adapter.",
+    "The file-level graph still reaches 250 of 251 files; warning elimination alone cannot establish useful selection.",
+    "Native test bodies were not executed; this is not a selective performance benchmark."
+  ],
+  "matched_prior_audit_fields": [
+    "source_digest",
+    "edges_digest",
+    "imports_digest",
+    "native_cases_digest",
+    "files",
+    "cases"
+  ],
+  "prior_audit_run": 45051610251,
+  "process_gaps": [
+    {
+      "code": "DYNAMIC_PROCESS",
+      "line": 16,
+      "path": "tests/test_pipe.py"
+    }
+  ],
+  "recorded_gaps": 14,
+  "run_id": 45055835427,
+  "run_url": "https://github.com/SharmaKunal14/textual/actions/runs/45055835427",
+  "safety_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45055635444",
+  "safety_tests_passed": 469,
+  "schema": "smartci.textual-process-gap-evidence.v1",
+  "smartci_pr": "https://github.com/SharmaKunal14/smart-ci/pull/10",
+  "test_execution_performed": false,
+  "textual_pr": "https://github.com/SharmaKunal14/textual/pull/10",
+  "tool_pin": "13b04ab3eaff4244413f1e81fa5c3e0e32eefbe7"
+}
