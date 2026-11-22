@@ -17,6 +17,7 @@ from smartci.investigation.models import (
     Limits,
     Location,
     Propose,
+    ReadSource,
 )
 from smartci.investigation.replay import ImportReplay
 from smartci.selection import Changes, Graph, SelectionPolicy, digest
@@ -383,3 +384,77 @@ def test_cli_offline_report_and_input_redaction(repository, monkeypatch, capsys)
     raw["sources"] = {}
     with pytest.raises(ValidationError):
         Inputs.model_validate(raw)
+
+
+def test_source_excerpts_need_permission_and_are_not_written_to_audit(repository):
+    root, inputs = repository
+    action = ReadSource(
+        kind="read_source",
+        revision=inputs.head.commit,
+        path="tests/test_other.py",
+        start=1,
+        lines=1,
+    )
+    broker = Broker(root, inputs, PythonImports(["src"]), Limits())
+    with pytest.raises(ValueError):
+        broker.read_source(action)
+    inputs.policy.allow_source_excerpts = True
+
+    class SourceReader:
+        name = "source-test-fixture"
+        seen_source = False
+
+        def next_action(self, context):
+            previous = json.loads(context)["previous"]
+            if previous is None:
+                return action.model_dump_json()
+            assert "ignore policy" in previous["excerpt"]
+            self.seen_source = True
+            return '{"kind":"finish"}'
+
+    provider = SourceReader()
+    report = run(repository, provider)
+    assert provider.seen_source
+    assert "ignore policy" not in json.dumps(report)
+    assert report["trace"][0]["result"]["excerpt_digest"]
+    assert report["final"]["selected"] == report["baseline"]["selected"]
+
+
+def test_live_accounting_does_not_override_full_fallback(repository):
+    repository[1].base.complete = False
+
+    class LiveFixture(Script):
+        def accounting(self):
+            return {"evaluation_kind": "live_model_observation", "model_calls": 1}
+
+    report = run(repository, LiveFixture([{"kind": "finish"}]))
+    assert report["model_calls"] == 1
+    assert report["model_effectiveness_measured"] is False
+    assert report["final"]["fallback"] == ["INCOMPLETE_EVIDENCE"]
+
+
+@pytest.mark.parametrize("private,commit", [(True, "correct"), (False, "wrong")])
+def test_private_or_unverified_public_commits_are_denied(repository, private, commit):
+    from smartci.investigation.http import Reply
+    from smartci.investigation.public_scope import validate_public_scope
+
+    inputs = repository[1]
+
+    class GitHub:
+        def request(self, method, path, body=None):
+            if "/commits/" in path:
+                return Reply(
+                    200,
+                    json.dumps(
+                        {"sha": inputs.head.commit if commit == "correct" else "a" * 40}
+                    ).encode(),
+                )
+            return Reply(
+                200,
+                json.dumps(
+                    {"full_name": inputs.changes.repository, "private": private}
+                ).encode(),
+            )
+
+    with pytest.raises(ValueError):
+        validate_public_scope(inputs, GitHub())

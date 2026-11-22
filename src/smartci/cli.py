@@ -15,6 +15,7 @@ from .discovery.commands import collect_command, plan_command
 from .discovery.models import PythonConfig, Snapshot
 from .git_changes import changes_from_git
 from .investigation import commands as investigation_commands
+from .investigation.budget import Campaign as ModelBudget
 from .investigation.models import ActionEnvelope as InvestigationAction
 from .investigation.models import Inputs as InvestigationInputs
 from .investigation.models import Observation as InvestigationObservation
@@ -51,6 +52,7 @@ CONTRACTS.update(
         "investigation-input": InvestigationInputs,
         "investigation-action": InvestigationAction,
         "investigation-observation": InvestigationObservation,
+        "model-budget": ModelBudget,
     }
 )
 

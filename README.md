@@ -66,8 +66,8 @@ selective execution to the current inventory and a clean Git head.
 
 The original provider fixture remains available. The separate `smartci investigate`
 prototype adds a bounded tool loop, revision/source-bound evidence verification and
-additive graph versions. Only offline replay is implemented: it cannot remove
-required tests, clear gaps or override full fallback. See the [agent investigation
+additive graph versions. Replay is the default; a [budgeted live provider](docs/onboarding/live-investigation.md)
+is under verification. Neither can remove required tests, clear gaps or override full fallback. See the [agent investigation
 handoff](docs/onboarding/agent-investigation.md) for supported capabilities,
 verification commands, Textual comparison scope and the approved US$5 ceiling and remaining live-call gates.
 

@@ -12,9 +12,11 @@ from .models import (
     Inputs,
     Inspect,
     Limits,
+    Location,
     Observation,
     Propose,
     Query,
+    ReadSource,
     Search,
 )
 
@@ -39,21 +41,46 @@ class Broker:
             else self.inputs.head
         )
 
-    def inspect(self, action: Inspect) -> Observation:
+    def _read(self, action: Location) -> bytes:
         graph = self.graph(action.revision)
         if action.path not in graph.owners:
             raise ValueError("path outside source catalog")
         obj = f"{action.revision}:{action.path}"
-        size = int(git(self.root, "cat-file", "-s", obj))
+        size = int(git(self.root, "--no-replace-objects", "cat-file", "-s", obj))
         if size > 262_144 or self.bytes_read + size > self.limit:
             raise ValueError("source budget exhausted")
-        raw = git(self.root, "cat-file", "blob", obj)
+        raw = git(self.root, "--no-replace-objects", "cat-file", "blob", obj)
         if len(raw) != size:
             raise ValueError("source size mismatch")
         self.bytes_read += len(raw)
         source_digest = hashlib.sha256(raw).hexdigest()
         if source_digest != self.inputs.sources[action.revision][action.path]:
             raise ValueError("source digest mismatch")
+        return raw
+
+    def read_source(self, action: ReadSource) -> dict[str, object]:
+        if not self.inputs.policy.allow_source_excerpts:
+            raise ValueError("source excerpts not authorized")
+        raw = self._read(action)
+        lines = raw.decode("utf-8").splitlines()
+        if action.start > len(lines):
+            raise ValueError("source line outside file")
+        excerpt = "\n".join(lines[action.start - 1 : action.start - 1 + action.lines])
+        if len(excerpt.encode()) > 8000:
+            raise ValueError("source excerpt exceeds limit")
+        return {
+            "revision": action.revision,
+            "path": action.path,
+            "start": action.start,
+            "source_digest": self.inputs.sources[action.revision][action.path],
+            "excerpt": excerpt,
+            "excerpt_digest": digest(excerpt),
+        }
+
+    def inspect(self, action: Inspect) -> Observation:
+        raw = self._read(action)
+        graph = self.graph(action.revision)
+        source_digest = hashlib.sha256(raw).hexdigest()
         facts = self.adapter.inspect(action.path, raw, set(graph.owners))
         record = {
             "revision": action.revision,

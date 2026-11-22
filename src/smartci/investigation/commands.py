@@ -1,30 +1,66 @@
-"""Offline command only: no endpoint, credential lookup, shell tool or live provider."""
+"""Offline by default; live invocation requires an existing durable budget."""
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 from smartci.adapters.runners import read_bounded
 from smartci.reports import atomic_write
+from smartci.selection import digest
 
 from .adapters import PythonImports
 from .broker import Broker
-from .engine import investigate
+from .budget import Ledger
+from .engine import Provider, investigate
+from .github_budget import GitHubBudget
+from .http import HTTPS
 from .models import Inputs, Limits, Location
+from .openai_provider import OpenAIProvider
+from .public_scope import validate_public_scope
 from .replay import ImportReplay
 
 
 def command(args: argparse.Namespace) -> int:
     try:
-        inputs = Inputs.model_validate_json(read_bounded(args.inputs))
+        # Two complete repository graphs can exceed the small runner manifests.
+        # This bound is local parsing only; the provider receives bounded actions.
+        inputs = Inputs.model_validate_json(read_bounded(args.inputs, 32 * 1024 * 1024))
         locations = [
             Location(revision=inputs.head.commit, path=path) for path in args.focus
         ]
         limits = Limits()
+        provider: Provider = ImportReplay(locations)
+        if args.provider == "openai":
+            if (
+                not all(
+                    (
+                        args.campaign,
+                        args.budget_repository,
+                        args.budget_branch,
+                        args.trial,
+                    )
+                )
+                or args.data_scope != "public-github-global-openai"
+            ):
+                raise ValueError("live campaign and data scope required")
+            if os.environ.get("SMARTCI_DISABLE_MODEL_CALLS") == "1":
+                raise ValueError("model calls disabled")
+            github = HTTPS("api.github.com", os.environ.get("GITHUB_TOKEN", ""))
+            model = HTTPS("api.openai.com", os.environ.get("OPENAI_API_KEY", ""))
+            validate_public_scope(inputs, github)
+            ledger = Ledger(
+                GitHubBudget(github, args.budget_repository, args.budget_branch),
+                args.campaign,
+            )
+            provider = OpenAIProvider(
+                model, ledger, digest({"input": inputs.identity(), "trial": args.trial})
+            )
+            limits = Limits(steps=4, seconds=120)
         report = investigate(
             inputs,
             Broker(args.repo, inputs, PythonImports(args.module_root), limits),
-            ImportReplay(locations),
+            provider,
             limits,
         )
         atomic_write(args.output, json.dumps(report, sort_keys=True, indent=2) + "\n")
@@ -32,8 +68,8 @@ def command(args: argparse.Namespace) -> int:
             json.dumps(
                 {
                     "status": report["status"],
-                    "model_calls": 0,
-                    "evaluation": "offline_plumbing_only",
+                    "model_calls": report["model_calls"],
+                    "evaluation": report["evaluation_kind"],
                 }
             )
         )
@@ -46,10 +82,16 @@ def command(args: argparse.Namespace) -> int:
 def add_parser(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
     parser = sub.add_parser(
         "investigate",
-        help="offline replay of bounded evidence investigation; no test execution",
+        help="bounded evidence investigation; offline by default, no test execution",
     )
     parser.add_argument("--inputs", type=Path, required=True)
     parser.add_argument("--repo", type=Path, required=True)
     parser.add_argument("--module-root", action="append", required=True)
     parser.add_argument("--focus", action="append", default=[])
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--provider", choices=["replay", "openai"], default="replay")
+    parser.add_argument("--campaign")
+    parser.add_argument("--budget-repository")
+    parser.add_argument("--budget-branch")
+    parser.add_argument("--trial", type=int, choices=range(1, 7))
+    parser.add_argument("--data-scope", choices=["public-github-global-openai"])

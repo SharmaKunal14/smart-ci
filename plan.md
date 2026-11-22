@@ -35,10 +35,12 @@ insufficient:
    choose tools based on observations, retain evidence and enforce authority
    outside the agent. Selection remains deterministic; an agent cannot remove
    required tests, waive gaps or promote its confidence to completeness evidence.
-   The existing fixture provider is not a live agent. Paid model calls remain
-   prohibited, so live-provider validation requires a separately authorized route.
+   The existing fixture provider is not a live agent. A separate bounded live
+   evaluation now has a US$5 ceiling, at most 24 calls and six investigations.
+   Admission controls and public-source routing must pass verification first.
 
-No merges, AWS deployment or paid model calls are authorized by this goal.
+No merges or AWS deployment are authorized. Paid calls are authorized only within
+the separately approved ceiling and verified controls, not by this goal alone.
 Agentic investigation is a goal requirement, while cloud hosting remains optional.
 The older sections that defer agents describe implementation order, not permission
 to mark this new goal complete without its agentic component.

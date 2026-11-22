@@ -1,0 +1,41 @@
+name: Model budget controls
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+concurrency:
+  group: smartci-model-budget
+  cancel-in-progress: false
+jobs:
+  disabled-ledger-probe:
+    if: >-
+      github.repository == 'SharmaKunal14/smart-ci' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'codex/live-investigation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        with:
+          version: '0.11.6'
+          enable-cache: false
+      - run: uv sync --frozen
+      - name: Verify stale-write rejection and disabled admission
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: uv run --frozen python scripts/budget_cas_probe.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: model-budget-probe-${{ github.run_attempt }}
+          path: budget-probe.json
+          if-no-files-found: error
+          retention-days: 14
