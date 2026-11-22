@@ -101,13 +101,41 @@ def test_resource_snapshot_never_reads_environment_or_command_line(tmp_path):
     proc = tmp_path / "100"
     proc.mkdir()
     (proc / "comm").write_text("apport\n")
+    (proc / "status").write_text("State:\tR (running)\nVmRSS:\t120 kB\nUid:\t99\n")
     (proc / "environ").write_text("SECRET_MUST_NOT_BE_READ")
     (proc / "cmdline").write_text("SECRET_MUST_NOT_BE_READ")
     result = module.resource_snapshot(tmp_path)
     assert result["helper_process_counts"]["apport"] == 1
+    assert result["helper_process_stats"]["apport"] == {
+        "states": {"R": 1},
+        "rss_kib": 120,
+        "rss_samples": 1,
+        "unavailable_status": 0,
+    }
     assert "SECRET" not in str(result)
+    assert "Uid" not in str(result)
     (tmp_path / "meminfo").write_bytes(b"x" * 16385)
     assert module.resource_snapshot(tmp_path)["meminfo"] is None
+
+
+def test_helper_status_handles_exiting_zombie_malformed_and_oversized_processes(
+    tmp_path,
+):
+    stats = {"states": {}, "rss_kib": 0, "rss_samples": 0, "unavailable_status": 0}
+    path = tmp_path / "status"
+    module.add_helper_status(path, stats)
+    path.write_text("State:\tZ (zombie)\n")
+    module.add_helper_status(path, stats)
+    path.write_text("State:\tS (sleeping)\nVmRSS:\t-1 kB\n")
+    module.add_helper_status(path, stats)
+    path.write_bytes(b"x" * 16385)
+    module.add_helper_status(path, stats)
+    assert stats == {
+        "states": {"Z": 1, "S": 1},
+        "rss_kib": 0,
+        "rss_samples": 0,
+        "unavailable_status": 2,
+    }
 
 
 def test_diagnostic_preserves_process_exit_and_bounds_runtime(tmp_path, monkeypatch):

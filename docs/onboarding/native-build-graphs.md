@@ -130,7 +130,7 @@ must match before derivation; application/build files must match the upstream pi
 The current harness checks the complete tracked tree outside `.smartci/` and
 `.github/workflows/`, disables external diff/text conversion and replacement
 objects, and rejects untracked inputs, including ignored files copied by the
-native script. The already-running full experiment uses the previous path-based
+native script. The first full resource experiment used the previous path-based
 guard; its complete Git diff was independently checked to contain only harness
 and workflow changes. This hardening does not change that experiment's inputs.
 
@@ -182,3 +182,33 @@ full native command. All test targets must pass with a complete event stream;
 flaky, failed or unknown targets prevent accepting the baseline. The native and
 Smart CI comparison arms must use the same runner policy. No model calls or test
 omissions are involved in establishing this baseline.
+
+That [full attempt on PR #3](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45066014954)
+also failed after 1,293 seconds from trigger to completion. Of 252 announced
+targets, 177 passed, one failed, one timed out and one was flaky; 72 outcomes are
+unknown. It reached the native process limit and container cleanup also timed out.
+The runner policy was restored successfully. The [durable record](../benchmarks/abseil-resource-baseline-2026-11-23.json)
+includes partial-result counts, artifact hashes and the complete failure status.
+
+Resource sampling now establishes severe pressure: available memory fell to
+45 MiB, all 3,072 MiB of swap was consumed, and the kernel's OOM-kill counter rose
+by 81. Samples counted up to 413 `apport` processes. This strongly implicates
+crash-report activity but does not attribute memory conclusively: per-process
+resident memory and states were not recorded. Systemd's policy alone was not a
+sufficient intervention. Upstream Apport installs an [OnSuccess hook](https://github.com/canonical/apport/blob/main/data/systemd/systemd-coredump%40.service.d/apport-coredump-hook.conf)
+that starts a [separate crash-report service](https://github.com/canonical/apport/blob/main/data/systemd/apport-coredump-hook%40.service)
+after systemd-coredump. Verify the installed hook before testing its temporary
+suppression on a fresh disposable runner. Retain native signals, assertions,
+test coverage and failure propagation. There is still no accepted full baseline
+and no selection speedup.
+
+The next attempt retains the same native profile and systemd storage policy,
+verifies the runner's installed Apport `OnSuccess` relationship and executable,
+then masks only `apport-coredump-hook@.service` for that disposable runner's
+lifetime. It verifies the mask and restores the unit after execution, including
+failure paths. It does not suppress native signals, assertions or test failures.
+Helper telemetry now also aggregates process states and resident-memory fields;
+missing observations remain explicit, and shared RSS pages can be counted in
+more than one process. No raw status records, arguments, environments or core
+payloads are retained. The complete native run must pass before this runner
+policy can be used on both sides of a benchmark.

@@ -4,12 +4,14 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import signal
 import subprocess
 import tempfile
 import time
 import uuid
 from pathlib import Path
+from typing import TypedDict
 
 from baseline import summarize_events
 
@@ -78,6 +80,33 @@ def targeted_profile(raw: bytes, scope: str = "target") -> bytes:
     return raw.replace(original, b"/usr/local/bin/bazel test " + TARGET.encode())
 
 
+class HelperStats(TypedDict):
+    states: dict[str, int]
+    rss_kib: int
+    rss_samples: int
+    unavailable_status: int
+
+
+def add_helper_status(path: Path, stats: HelperStats) -> None:
+    """Aggregate fixed numeric fields; never retain raw process metadata."""
+    try:
+        with path.open("rb") as stream:
+            raw = stream.read(16_385)
+        if len(raw) > 16_384:
+            raise ValueError("process status exceeds bound")
+        text = raw.decode("ascii")
+    except (OSError, ValueError):
+        stats["unavailable_status"] += 1
+        return
+    state = re.search(r"^State:\s+([RSDZTtXxIKWP])(?:\s|$)", text, re.MULTILINE)
+    state_name = state.group(1) if state else "unknown"
+    stats["states"][state_name] = stats["states"].get(state_name, 0) + 1
+    rss = re.search(r"^VmRSS:\s+([0-9]{1,15})\s+kB$", text, re.MULTILINE)
+    if rss:
+        stats["rss_kib"] += int(rss.group(1))
+        stats["rss_samples"] += 1
+
+
 def resource_snapshot(proc_root: Path = Path("/proc")) -> dict[str, object]:
     values: dict[str, object] = {}
     for name in PROC_FILES:
@@ -89,8 +118,13 @@ def resource_snapshot(proc_root: Path = Path("/proc")) -> dict[str, object]:
             values[name] = raw.decode("ascii")
         except (OSError, ValueError):
             values[name] = None
-    # Process names only: do not collect argv, environment, stacks or core dumps.
+    # Fixed helper names and numeric aggregates only; no argv, environment,
+    # stacks, raw status records or core dumps are retained.
     helpers = {"apport": 0, "systemd-coredum": 0, "addr2line": 0, "llvm-symbolizer": 0}
+    helper_stats: dict[str, HelperStats] = {
+        name: {"states": {}, "rss_kib": 0, "rss_samples": 0, "unavailable_status": 0}
+        for name in helpers
+    }
     for entry in proc_root.iterdir():
         if not entry.name.isdecimal():
             continue
@@ -99,9 +133,11 @@ def resource_snapshot(proc_root: Path = Path("/proc")) -> dict[str, object]:
                 name = stream.read(64).strip()
             if name in helpers:
                 helpers[name] += 1
+                add_helper_status(entry / "status", helper_stats[name])
         except OSError:
             continue  # A process may exit between directory listing and open.
     values["helper_process_counts"] = helpers
+    values["helper_process_stats"] = helper_stats
     return values
 
 
