@@ -133,6 +133,7 @@ def summarize_events(path: Path) -> dict[str, object]:
         "failed_build_target_configuration_count": sum(
             not success for success in build_results.values()
         ),
+        "build_target_results": dict(sorted(build_results.items())),
         "test_target_count": len(summaries),
         "test_targets": dict(sorted(summaries.items())),
     }
