@@ -9,7 +9,7 @@ test files. All performance observations below come from GitHub artifacts.
 | Compiler/import graph with cached base evidence | [date-fns PR #7](https://github.com/SharmaKunal14/date-fns/pull/7) narrowed execution, but setup, fetching and planning exceeded saved test time. | Fast native suites leave little overhead budget. Precomputation alone does not establish net savings. |
 | Conservative Python import graph | [Textual PR #5](https://github.com/SharmaKunal14/textual/pull/5) retained full fallback after resolving some static gaps. | Computed loaders and resources require explicit supported semantics; clearing warnings is not sufficient. |
 | Runtime observation | [Textual PR #6](https://github.com/SharmaKunal14/textual/pull/6): 387s native versus 755s instrumented; same 3,467 outcomes. Observed examples/resources outside the configured roots. | Useful onboarding evidence, expensive in the PR path, and absence of observations cannot justify omissions. |
-| Native build graph | Abseil's unchanged native baseline failed and timed out; graph parsing is implemented, selection and speedup unverified. | A declared graph cannot repair an unreliable native baseline. Native caching, configuration, non-test builds and undeclared inputs remain acceptance gates. |
+| Native build graph | Abseil's original baseline and systemd-only intervention failed. A complete baseline passed after also masking the separate Apport crash-report hook; selection and speedup remain unverified. | Use the documented runner policy on both comparison arms. Native caching, configuration, build-only scope and undeclared inputs remain acceptance gates. |
 
 The existing [Bazel query](https://bazel.build/query/language) graph includes all
 possible `select` branches. This is conservative with respect to declared build
@@ -212,3 +212,47 @@ missing observations remain explicit, and shared RSS pages can be counted in
 more than one process. No raw status records, arguments, environments or core
 payloads are retained. The complete native run must pass before this runner
 policy can be used on both sides of a benchmark.
+
+## Verified full baseline with the Apport hook bounded
+
+[Run 45073921737](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45073921737)
+on [PR #3](https://github.com/SharmaKunal14/abseil-cpp/pull/3), at
+`6da46d213f16f99b80f57f9d861792bb793923a9`, passed **252 of 252 native test
+targets** and all **576 build target/configuration results**. The complete
+announced BEP stream reconciles, native exit is zero, and the generated full
+profile script hash matches the original. No targets are flaky, failed or missing.
+
+| GitHub measurement | Observed value |
+|---|---:|
+| Workflow creation to native job completion | **932 seconds (15m 32s)** |
+| Runner job duration | 930 seconds |
+| Native command, including image setup and build/tests | 922.107 seconds |
+| Lowest sampled available memory | 10,253 MiB |
+| OOM counter increase | 0 |
+| Peak observed Apport helpers | 0 |
+
+The installed hook, runtime mask and restoration were verified on the runner.
+The prior systemd-only attempt observed 413 helpers and 81 OOM kills; this attempt
+removed that observed resource exhaustion while preserving every native test and
+assertion. It does not prove the cause of each earlier individual assertion failure.
+The native compiler flags, image, timeouts, workers, caching and application source
+are unchanged. The systemd and Apport settings are explicit environment changes,
+and both were restored successfully.
+
+This is **one accepted cold-profile baseline**, not a Smart CI speedup or evidence
+of repeated reliability. The [durable record](../benchmarks/abseil-apport-baseline-2026-11-23.json)
+contains hashes, exact timings, all test results and the 324 build-only labels.
+Those labels include six `cc_test` rules built but not executed by native policy;
+do not infer execution eligibility just from a rule's class. Future comparisons
+must retain those build checks and use identical runner policy in both arms.
+The diagnostic implementation passed [554 hosted safety tests](https://github.com/SharmaKunal14/smart-ci/actions/runs/45073891737),
+formatting, lint, typing and distributable builds. The next step is real graph
+collection and automatic planning, followed by paired native/selected PR runs.
+
+To verify this milestone, open the successful run, inspect **Run complete native
+profile with resource telemetry**, then download `native-resource-baseline-1`.
+`native-resource-baseline/diagnostic.json` records zero exit/error and all 252
+passed targets; `native.bep.json` records the native build graph's complete result
+events. `runner-policy/` contains the installed hook and before/effective/restored
+settings. No model secret, deployment, merge or test omission is required to inspect
+these results. The earlier failed runs remain linked above and are not baselines.

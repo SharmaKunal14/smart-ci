@@ -4,7 +4,7 @@ Updated: 23 November 2026
 
 Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Packaging selective execution and trusted baseline reuse remain unverified. The OnRecord TypeScript/Vitest pilot passed live GitHub PRs #29 (103 files / 440 cases, full fallback) and #30 (64 files / 280 cases, actual subset without fallback), with on-demand map rebuilding. Both remain unmerged; broader correctness and performance evaluation remain outstanding. No AWS resources. A separately approved bounded live investigation has now made three paid generation calls; see its evidence below.
 
-Current priority: retain the general-purpose agent-assisted investigation path and resume the native dependency-graph comparison needed for actual end-to-end savings. The agent uses the regular OpenAI Responses API, not Codex authentication; its first hosted trial added zero edges and preserved full fallback. Textual remains the first agent pilot and a negative compatibility case. Diagnose Abseil's incomplete native baseline before claiming a native-graph benefit. Preserve the active goal: automatic deterministic PR selection with demonstrated GitHub time and resource savings. The earlier OnRecord/date-fns/Textual work is evidence, not completion. Shadow runs remain evaluation tools, not permanent product behavior.
+Current priority: retain the general-purpose agent-assisted investigation path and build the native dependency-graph comparison needed for actual end-to-end savings. The agent uses the regular OpenAI Responses API, not Codex authentication; its first hosted trial added zero edges and preserved full fallback. Textual remains the first agent pilot and a negative compatibility case. Abseil now has one complete GitHub native baseline after diagnosing crash-report resource exhaustion; automatic graph collection, selective execution and paired savings remain outstanding. Preserve the active goal: automatic deterministic PR selection with demonstrated GitHub time and resource savings. The earlier OnRecord/date-fns/Textual work is evidence, not completion. Shadow runs remain evaluation tools, not permanent product behavior.
 
 ### Active goal completion gates
 
@@ -58,7 +58,16 @@ failed native timing assertions and timed out with 60 test-target outcomes missi
 It is not an accepted baseline. Preserve this negative result; diagnose the native
 environment before spending more runs or comparing selective execution. See
 [`native-build-graphs.md`](docs/onboarding/native-build-graphs.md) for the artifact
-summary and the evidence required to resume that comparison.
+summary and the evidence required to resume that comparison. A systemd-only crash
+policy also failed with 413 observed Apport helpers and 81 OOM kills. The subsequent
+[full run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45073921737)
+verified and temporarily masked the separate Apport hook: all 252 tests and 576
+build target/configuration results passed in **932 seconds trigger-to-completion**,
+with no observed Apport helpers or OOM kills. Both runner settings were restored.
+This is one cold native baseline, not selection savings. Use that identical runner
+policy in both benchmark arms, preserve all 324 native build-only targets
+(including six cc_test rules not executed by native policy), and reconcile actual
+Bazel graph output before enabling any omissions. Retain all failed attempts.
 
 The [Textual scoped-runtime follow-up](docs/onboarding/runtime-scoped-observation.md)
 preserved all 3,467 case outcomes on a real PR: 350s native versus 570s instrumented
