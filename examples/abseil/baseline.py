@@ -10,9 +10,36 @@ import uuid
 from pathlib import Path
 
 
+def unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate build-event JSON key")
+        result[key] = value
+    return result
+
+
+def event_key(value: object) -> str:
+    if not isinstance(value, dict) or len(value) != 1:
+        raise ValueError("invalid build-event ID")
+    key = json.dumps(value, sort_keys=True, separators=(",", ":"))
+    if len(key) > 4096:
+        raise ValueError("build-event ID exceeds limit")
+    return key
+
+
 def summarize_events(path: Path) -> dict[str, object]:
-    """Read native target results, not an invented count of internal test cases."""
+    """Require the announced native event graph, not just a success marker.
+
+    This remains single-profile baseline evidence. It neither establishes a
+    complete source dependency graph nor authorizes future test omissions.
+    """
     summaries: dict[str, str] = {}
+    received: set[str] = set()
+    announced: set[str] = set()
+    expected_tests: set[str] = set()
+    actual_tests: set[str] = set()
+    build_results: dict[str, bool] = {}
     finished: int | None = None
     last_message = False
     total = 0
@@ -21,11 +48,35 @@ def summarize_events(path: Path) -> dict[str, object]:
             total += len(line)
             if total > 64 * 1024 * 1024 or len(line) > 8 * 1024 * 1024:
                 raise ValueError("build events exceed limit")
-            event = json.loads(line)
+            if last_message:
+                raise ValueError("events after terminal build message")
+            event = json.loads(line, object_pairs_hook=unique_object)
             if not isinstance(event, dict):
                 raise TypeError("invalid build event")
+            identifier = event["id"]
+            key = event_key(identifier)
+            if key in received or len(received) >= 100_000:
+                raise ValueError("duplicate or excessive build events")
+            if not received and (
+                identifier != {"started": {}}
+                or event.get("started", {}).get("command") != "test"
+            ):
+                raise ValueError("native test build start required")
+            received.add(key)
+            children = event.get("children", [])
+            if not isinstance(children, list):
+                raise TypeError("invalid build-event children")
+            for child in children:
+                child_key = event_key(child)
+                announced.add(child_key)
+                if len(announced) > 100_000:
+                    raise ValueError("excessive announced build events")
+                if "testSummary" in child:
+                    expected_tests.add(child_key)
+            if "aborted" in event:
+                raise ValueError("aborted native build evidence")
             if "testSummary" in event:
-                label = event["id"]["testSummary"]["label"]
+                label = identifier["testSummary"]["label"]
                 status = event["testSummary"]["overallStatus"]
                 if (
                     not isinstance(label, str)
@@ -45,21 +96,43 @@ def summarize_events(path: Path) -> dict[str, object]:
                 ):
                     raise ValueError("invalid or duplicate test summary")
                 summaries[label] = status
+                actual_tests.add(key)
+            if "targetCompleted" in identifier:
+                success = event["completed"].get("success", False)
+                if type(success) is not bool:
+                    raise ValueError("invalid native build result")
+                build_results[key] = success
             if "finished" in event:
-                if finished is not None:
+                if finished is not None or identifier != {"buildFinished": {}}:
                     raise ValueError("duplicate build completion")
                 exit_code = event["finished"]["exitCode"]
                 finished = exit_code.get("code")
                 if finished is None and exit_code.get("name") == "SUCCESS":
                     finished = 0
-                if type(finished) is not int:
+                if type(finished) is not int or not 0 <= finished <= 255:
                     raise ValueError("invalid build exit code")
-            last_message = last_message or event.get("lastMessage") is True
-    if finished is None or not last_message or not summaries:
+            last_message = event.get("lastMessage") is True
+    if (
+        finished is None
+        or not last_message
+        or not summaries
+        or not build_results
+        or received != announced | {event_key({"started": {}})}
+        or actual_tests != expected_tests
+    ):
         raise ValueError("incomplete native build evidence")
+    if finished == 0 and (
+        not all(build_results.values())
+        or any(status not in {"PASSED", "FLAKY"} for status in summaries.values())
+    ):
+        raise ValueError("contradictory native success evidence")
     return {
         "complete_stream": True,
         "exit_code": finished,
+        "build_target_configuration_count": len(build_results),
+        "failed_build_target_configuration_count": sum(
+            not success for success in build_results.values()
+        ),
         "test_target_count": len(summaries),
         "test_targets": dict(sorted(summaries.items())),
     }
@@ -125,12 +198,12 @@ def main() -> int:
         try:
             subprocess.run(
                 ["docker", "rm", "--force", container_name],
-                check=False,
+                check=True,
                 timeout=20,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
-        except (OSError, subprocess.TimeoutExpired):
+        except (OSError, subprocess.SubprocessError):
             error = "NATIVE_TIMEOUT_CONTAINER_CLEANUP_FAILED"
     elapsed = time.monotonic() - started
     events = None
@@ -138,7 +211,7 @@ def main() -> int:
         events = summarize_events(output / "native.bep.json")
         if events["exit_code"] != code:
             error = "NATIVE_EVIDENCE_EXIT_MISMATCH"
-    except (OSError, ValueError, KeyError, TypeError):
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, RecursionError):
         error = error or "NATIVE_EVIDENCE_MISSING_OR_INVALID"
     report = {
         "schema_version": "1",

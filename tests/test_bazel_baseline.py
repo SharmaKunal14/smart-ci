@@ -15,15 +15,29 @@ SPEC.loader.exec_module(baseline)
 
 
 def events(path, status="PASSED", code=0, complete=True):
+    configured = {"targetConfigured": {"label": "//lib:test"}}
+    built = {"targetCompleted": {"label": "//lib:test"}}
+    summary = {"testSummary": {"label": "//lib:test"}}
     rows = [
         {
-            "id": {"testSummary": {"label": "//lib:test"}},
+            "id": {"started": {}},
+            "started": {"command": "test"},
+            "children": [configured, {"buildFinished": {}}, {"buildToolLogs": {}}],
+        },
+        {"id": configured, "configured": {"testSize": "SMALL"}, "children": [built]},
+        {
+            "id": built,
+            "completed": {"success": True},
+            "children": [summary],
+        },
+        {
+            "id": summary,
             "testSummary": {"overallStatus": status},
         },
-        {"finished": {"exitCode": {"code": code}}},
+        {"id": {"buildFinished": {}}, "finished": {"exitCode": {"code": code}}},
     ]
     if complete:
-        rows.append({"lastMessage": True})
+        rows.append({"id": {"buildToolLogs": {}}, "lastMessage": True})
     path.write_text("\n".join(json.dumps(r) for r in rows))
 
 
@@ -34,6 +48,7 @@ def test_bazel_summary_preserves_native_failed_target(tmp_path):
     assert result["test_target_count"] == 1
     assert result["test_targets"] == {"//lib:test": "FAILED"}
     assert result["exit_code"] == 3
+    assert result["build_target_configuration_count"] == 1
 
 
 def test_protobuf_default_zero_exit_code_is_supported(tmp_path):
@@ -55,6 +70,65 @@ def test_invalid_build_evidence_is_not_accepted(tmp_path, defect):
         path.write_text(path.read_text() + "\n" + path.read_text())
     with pytest.raises(ValueError):
         baseline.summarize_events(path)
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "missing_announced_test",
+        "missing_build_only_target",
+        "unannounced_result",
+        "aborted_target",
+        "events_after_terminal",
+        "wrong_command",
+        "duplicate_key",
+        "false_success_test",
+        "false_success_build",
+    ],
+)
+def test_completion_marker_cannot_hide_missing_or_contradictory_evidence(
+    tmp_path, defect
+):
+    path = tmp_path / "events.json"
+    events(path)
+    rows = [json.loads(line) for line in path.read_text().splitlines()]
+    other = {"targetCompleted": {"label": "//lib:build_only"}}
+    if defect == "missing_announced_test":
+        rows[2]["children"].append({"testSummary": {"label": "//lib:missing"}})
+    elif defect == "missing_build_only_target":
+        rows[0]["children"].append(other)
+    elif defect == "unannounced_result":
+        rows.insert(-1, {"id": other, "completed": {"success": True}})
+    elif defect == "aborted_target":
+        rows[2].pop("completed")
+        rows[2]["aborted"] = {"reason": "USER_INTERRUPTED"}
+    elif defect == "events_after_terminal":
+        rows.append({"id": other, "completed": {"success": True}})
+    elif defect == "wrong_command":
+        rows[0]["started"]["command"] = "build"
+    elif defect == "false_success_test":
+        rows[3]["testSummary"]["overallStatus"] = "FAILED"
+    elif defect == "false_success_build":
+        rows[2]["completed"]["success"] = False
+    path.write_text("\n".join(json.dumps(row) for row in rows))
+    if defect == "duplicate_key":
+        path.write_text(path.read_text().replace('"code": 0', '"code": 3, "code": 0'))
+    with pytest.raises(ValueError):
+        baseline.summarize_events(path)
+
+
+def test_build_only_failures_remain_visible(tmp_path):
+    path = tmp_path / "events.json"
+    events(path, code=1)
+    rows = [json.loads(line) for line in path.read_text().splitlines()]
+    build = {"targetCompleted": {"label": "//bin:application"}}
+    rows[0]["children"].append(build)
+    rows.insert(-1, {"id": build, "completed": {}})
+    path.write_text("\n".join(json.dumps(row) for row in rows))
+    result = baseline.summarize_events(path)
+    assert result["test_targets"] == {"//lib:test": "PASSED"}
+    assert result["failed_build_target_configuration_count"] == 1
+    assert result["exit_code"] == 1
 
 
 @pytest.mark.parametrize("code", [0, 3, 124])
@@ -98,3 +172,24 @@ def test_native_process_group_is_bounded():
         )
         == 124
     )
+
+
+def test_failed_container_cleanup_is_reported(tmp_path, monkeypatch):
+    root = tmp_path / "repo"
+    root.mkdir()
+    output = tmp_path / "evidence"
+    monkeypatch.chdir(root)
+    monkeypatch.setattr(baseline, "run_native", lambda *args: 124)
+
+    def cleanup(command, **kwargs):
+        assert command[:3] == ["docker", "rm", "--force"]
+        assert command[3].startswith("smartci-baseline-")
+        assert kwargs["check"] is True
+        assert kwargs["timeout"] == 20
+        raise baseline.subprocess.CalledProcessError(1, command)
+
+    monkeypatch.setattr(baseline.subprocess, "run", cleanup)
+    monkeypatch.setattr(sys, "argv", ["baseline", "--output", str(output)])
+    assert baseline.main() == 124
+    report = json.loads((output / "execution.json").read_text())
+    assert report["evidence_error"] == "NATIVE_TIMEOUT_CONTAINER_CLEANUP_FAILED"
