@@ -3,7 +3,7 @@
 import json
 import time
 from collections.abc import Callable
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from smartci.selection import Report, digest, fallback, finish, select
 
@@ -17,17 +17,21 @@ from .models import (
     Limits,
     Propose,
     Query,
+    ReadSource,
     Search,
     Unresolved,
 )
 
 
 class Provider(Protocol):
-    # Only in-process fixtures/replays are supported today. A future remote
-    # provider needs transport deadlines, usage reservation and budget approval.
     name: str
 
     def next_action(self, context: str) -> str: ...
+
+
+@runtime_checkable
+class Accounting(Protocol):
+    def accounting(self) -> dict[str, object]: ...
 
 
 def _apply_evidence(
@@ -91,6 +95,8 @@ def investigate(
                 "comparison": {"base": inputs.base.commit, "head": inputs.head.commit},
                 "changed_paths": inputs.changes.paths[:64],
                 "unresolved_count": len(unresolved),
+                "unresolved": sorted(unresolved)[:32],
+                "unresolved_truncated": len(unresolved) > 32,
                 "previous": previous,
                 "remaining_steps": limits.steps - step,
                 "authority": "propose_additions_only",
@@ -126,6 +132,8 @@ def investigate(
                 status = "finished"
             elif isinstance(action, Inspect):
                 result = broker.inspect(action).model_dump()
+            elif isinstance(action, ReadSource):
+                result = broker.read_source(action)
             elif isinstance(action, Search):
                 result = broker.search(action)
             elif isinstance(action, Query):
@@ -144,7 +152,11 @@ def investigate(
                 status = "budget_exhausted"
                 break
             trace.append(
-                {"action_digest": identity, "kind": action.kind, "result": result}
+                {
+                    "action_digest": identity,
+                    "kind": action.kind,
+                    "result": {k: v for k, v in result.items() if k != "excerpt"},
+                }
             )
             previous = result
             if status == "finished":
@@ -166,11 +178,17 @@ def investigate(
         {"baseline": baseline.digest, "accepted_graph": str(graph["digest"])}
     )
     final = finish(final)
+    accounting = (
+        provider.accounting()
+        if isinstance(provider, Accounting)
+        else {"evaluation_kind": "offline_plumbing_only", "model_calls": 0}
+    )
     report = {
         "schema_version": "smartci.investigation-report.v1",
         "provider": provider.name,
-        "evaluation_kind": "offline_plumbing_only",
-        "model_calls": 0,
+        "evaluation_kind": accounting["evaluation_kind"],
+        "model_calls": accounting["model_calls"],
+        "accounting": accounting,
         "model_effectiveness_measured": False,
         "input_digest": inputs.identity(),
         "status": status,

@@ -1,0 +1,87 @@
+{
+  "artifact_sha256": {
+    "input.json": "fd5a09ec3d744455e854eb72b7c0359c029fb2537447daefd42506f5458a81cd",
+    "live.json": "9c538010808bae3db53d47ce2d7eac9d9503e04e2ac3c4045950ff011be347c5",
+    "replay.json": "84796e9f62ecdea544d65d1a92cfad0785821305ddbd5ccf2c86bb3bb7487efa",
+    "summary.json": "088a944dca6ef0e3c87bb84b6bef56f253f3b37d23308b8105b113b182c81270"
+  },
+  "base": "ae23055a7898901a3aa69229bf9359b110be739e",
+  "estimate_scope": "Reported generation tokens at standard uncached rates; not an invoice or total account bill.",
+  "fallbacks": [
+    "INCOMPLETE_EVIDENCE"
+  ],
+  "full_plan_files": 251,
+  "generation_usage_estimate_micro_usd": 51120,
+  "head": "b99f72e9691c85f18fd773df427cb5e7a493470d",
+  "investigation_digest": "e4a801b3dfa0ba1039b277092892ab21fdb53981fc849532708a0359a3a8fd9c",
+  "jobs": [
+    {
+      "completed_at": "2026-11-22T19:48:07Z",
+      "conclusion": "success",
+      "html_url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45062767011/job/137332145556",
+      "name": "disabled-ledger-probe",
+      "runner_seconds": 17.0,
+      "started_at": "2026-11-22T19:47:50Z"
+    },
+    {
+      "completed_at": "2026-11-22T19:49:11Z",
+      "conclusion": "success",
+      "html_url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45062767011/job/137332238169",
+      "name": "live-public-trial",
+      "runner_seconds": 62.0,
+      "started_at": "2026-11-22T19:48:09Z"
+    }
+  ],
+  "ledger_enabled": false,
+  "limitation": "One three-call investigation using pinned evidence from Textual PR 11. No Textual tests executed in this run; no speedup or broad model effectiveness demonstrated.",
+  "live_accepted": 0,
+  "live_accounting": {
+    "api_error": null,
+    "billing_status": "usage_estimate_not_invoice; reservations_never_released",
+    "evaluation_kind": "live_model_observation",
+    "http_status": 200,
+    "input_tokens": 5835,
+    "last_stage": "action_validated",
+    "model_calls": 3,
+    "output_tokens": 111,
+    "reserved_calls": 3,
+    "reserved_micro_usd": 270000
+  },
+  "live_actions": [
+    "inspect",
+    "query_graph",
+    "finish"
+  ],
+  "live_execution": "full",
+  "live_exit": 0,
+  "live_new_edges": 0,
+  "live_status": "finished",
+  "live_unresolved": 14,
+  "pricing_checked_at": "2026-11-22T19:40:19Z",
+  "pricing_url": "https://developers.openai.com/api/docs/pricing",
+  "replay_accepted": 2,
+  "replay_execution": "full",
+  "replay_new_edges": 0,
+  "replay_status": "finished",
+  "replay_unresolved": 14,
+  "reserved_micro_usd": 270000,
+  "run_attempt": "1",
+  "run_id": "45062767011",
+  "run_url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45062767011",
+  "safety_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45062767010",
+  "safety_tests_passed": 542,
+  "same_baseline_tests": true,
+  "schema_version": "smartci.live-trial.v1",
+  "smartci_head": "b40c51c81c22d1c047ccd1283bc4230fb6cd5339",
+  "smartci_pr": "https://github.com/SharmaKunal14/smart-ci/pull/12",
+  "source_input_sha256": "e8188837095af250f14c13f312c226c745e7f64751a4fb922664d1af034a099b",
+  "source_pr": "https://github.com/SharmaKunal14/textual/pull/11",
+  "source_run": "https://github.com/SharmaKunal14/textual/actions/runs/45058699772",
+  "speedup_demonstrated": false,
+  "test_execution": "none; this measures investigation only",
+  "trial": 1,
+  "trial_input_digest": "3058f31f6e449f1ec33a14a6fd8fcc65d6d78b2d5a327209e3aacf75079f19ab",
+  "workflow_gate": "disabled",
+  "workflow_sha": "cb47aea082d591fd4932fcbfd0296e58a984e942",
+  "workflow_trigger_to_completion_seconds": 85.0
+}

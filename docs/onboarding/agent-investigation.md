@@ -1,9 +1,10 @@
 # Agent-assisted dependency investigation prototype
 
 The product boundary is a reusable investigation engine, not Textual. Textual is
-the first evaluation adapter. This increment implements offline orchestration;
-it does not demonstrate that an LLM understands dependencies or improves selection.
-No remote provider, credential lookup, paid call, AWS resource or merge is enabled.
+the first evaluation adapter. Offline orchestration is verified. The optional
+[budgeted live provider](live-investigation.md) has completed one hosted trial;
+it added no new edges and does not demonstrate improved selection.
+Replay remains the default. No AWS resource or merge is enabled.
 
 ## Flow and authority
 
@@ -17,8 +18,10 @@ No remote provider, credential lookup, paid call, AWS resource or merge is enabl
 3. The broker accepts only paths in the source catalog and exact base/head object
    IDs. It reads Git blobs with bounded commands and verifies content hashes. It
    never executes repository source, model-supplied commands or arbitrary tools.
-   Inspection returns structural facts, not source excerpts; private-source
-   upload is not implemented. Repository comments cannot expand tool authority.
+   Inspection returns structural facts. The optional `read_source` action requires
+   explicit source-excerpt policy permission. The initial live path verifies public
+   GitHub commit availability; private-source upload is unsupported. Repository
+   comments cannot expand tool authority.
 4. An evidence adapter verifies positive claims. The first adapter recognizes
    explicit absolute Python imports resolving to exactly one local module under
    configured roots. Relative/dynamic imports, plugins, subprocesses, resources
@@ -44,8 +47,9 @@ Default limits are 24 actions, 1 MiB of source reads, 256 KiB of responses and a
 60-second loop deadline. Each source blob is at most 256 KiB; facts/search results
 are capped at 64 with explicit truncation. Git operations have 20-second timeouts.
 The loop deadline is checked between operations; it cannot interrupt an arbitrary
-in-process provider. Only offline providers are shipped. Any later network provider
-must implement its own bounded transport deadline and reserve spend before calls.
+in-process provider. The optional live provider uses isolated HTTP workers with
+20-second wall-clock limits per request and persistent spend reservations. The
+loop deadline is checked between operations, not a process-wide hard deadline.
 
 The engine is language-neutral; the first verifier supports a narrow Python scope.
 Further adapters must independently implement and test their evidence semantics.
@@ -80,7 +84,7 @@ same real PR: native, current static Smart CI, and assisted replay. Report their
 complete GitHub timings, case identities/outcomes, failures missed, fallbacks and
 runner-seconds. A single regression and replay do not establish broad performance.
 
-## Approved ceiling — live calls remain disabled
+## Approved ceiling and current live status
 
 The user approved a **US$5 total ceiling**, at most 24 calls and six investigations on
 23 November 2026. This is a ceiling, not a prediction of cost. Start
@@ -97,8 +101,10 @@ precedence over reaching six investigations.
 Before enabling calls: verify provider/model/data routing;
 implement usage reservation, timeouts, error accounting and a kill switch; verify
 rates and run an admission-only test. Token caps and estimated cost alone are not
-a billing cap. The approved ceiling is **US$5**; spend so far is **US$0**. GitHub runner usage
-is separate and must be reported from the completed workflows.
+a billing cap. The approved ceiling is **US$5**. A subsequent live trial made three
+generation calls (US$0.05112 usage estimate, US$0.27 retained reservation); the
+campaign is disabled after that trial. See the [live results](live-investigation.md#first-live-result-23-november-2026).
+GitHub runner usage is separate and is reported from the completed workflows.
 
 ## Real GitHub comparison, 23 November 2026
 

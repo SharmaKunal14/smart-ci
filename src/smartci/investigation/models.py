@@ -88,6 +88,12 @@ class Inspect(Location):
     kind: Literal["inspect"]
 
 
+class ReadSource(Location):
+    kind: Literal["read_source"]
+    start: int = Field(ge=1, le=100_000)
+    lines: int = Field(ge=1, le=80)
+
+
 class Search(Strict):
     kind: Literal["search_paths"]
     query: str = Field(min_length=1, max_length=128)
@@ -121,7 +127,7 @@ class Finish(Strict):
 
 
 type Action = Annotated[
-    Inspect | Search | Query | Propose | Unresolved | Finish,
+    Inspect | ReadSource | Search | Query | Propose | Unresolved | Finish,
     Field(discriminator="kind"),
 ]
 

@@ -4,9 +4,10 @@ Phases 1–4 provide a local CLI, versioned contracts, conservative selection,
 read-only Git analysis, audit reports, pytest/Vitest/Maven adapters, and automatic
 Python dependency discovery with revision-bound deterministic planning.
 Phase 5 adds local shadow-CI contracts and a generated GitHub Actions enrollment;
-OnRecord now has verified live full-suite and subset PR runs. A bounded offline
-investigation prototype adds independently verified dependency evidence; live
-model evaluation, broader rollout and AWS hosting remain pending.
+OnRecord now has verified live full-suite and subset PR runs. A bounded
+investigation prototype accepts independently verified dependency evidence. Its
+first live model trial added no new edges or selective savings; broader evaluation,
+rollout and AWS hosting remain pending.
 See [plan.md](plan.md) for subsequent phases.
 
 For progress reporting, explicit platform-skip handling, local verification and
@@ -66,8 +67,8 @@ selective execution to the current inventory and a clean Git head.
 
 The original provider fixture remains available. The separate `smartci investigate`
 prototype adds a bounded tool loop, revision/source-bound evidence verification and
-additive graph versions. Only offline replay is implemented: it cannot remove
-required tests, clear gaps or override full fallback. See the [agent investigation
+additive graph versions. Replay is the default; a [budgeted live provider](docs/onboarding/live-investigation.md)
+has completed one hosted trial. Neither can remove required tests, clear gaps or override full fallback. See the [agent investigation
 handoff](docs/onboarding/agent-investigation.md) for supported capabilities,
 verification commands, Textual comparison scope and the approved US$5 ceiling and remaining live-call gates.
 

@@ -2,7 +2,7 @@
 
 Updated: 23 November 2026
 
-Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Packaging selective execution and trusted baseline reuse remain unverified. The OnRecord TypeScript/Vitest pilot passed live GitHub PRs #29 (103 files / 440 cases, full fallback) and #30 (64 files / 280 cases, actual subset without fallback), with on-demand map rebuilding. Both remain unmerged; broader correctness and performance evaluation remain outstanding. No AWS resources or paid model calls.
+Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Packaging selective execution and trusted baseline reuse remain unverified. The OnRecord TypeScript/Vitest pilot passed live GitHub PRs #29 (103 files / 440 cases, full fallback) and #30 (64 files / 280 cases, actual subset without fallback), with on-demand map rebuilding. Both remain unmerged; broader correctness and performance evaluation remain outstanding. No AWS resources. A separately approved bounded live investigation has now made three paid generation calls; see its evidence below.
 
 Current priority: build the general-purpose agent-assisted investigation prototype requested in the latest steering, with Textual as the first evaluation repository. Preserve the active end-to-end goal: automatic deterministic PR selection with demonstrated GitHub time and resource savings. The earlier OnRecord/date-fns/Textual work is evidence, not completion. Textual still requires full execution; its runtime observer did not authorize omissions. Native build-graph work is deferred while this alternative is evaluated. Shadow runs remain evaluation tools, not the permanent product behavior.
 
@@ -35,10 +35,12 @@ insufficient:
    choose tools based on observations, retain evidence and enforce authority
    outside the agent. Selection remains deterministic; an agent cannot remove
    required tests, waive gaps or promote its confidence to completeness evidence.
-   The existing fixture provider is not a live agent. Paid model calls remain
-   prohibited, so live-provider validation requires a separately authorized route.
+   The existing fixture provider is not a live agent. A separate bounded live
+   evaluation now has a US$5 ceiling, at most 24 calls and six investigations.
+   Admission controls and public-source routing must pass verification first.
 
-No merges, AWS deployment or paid model calls are authorized by this goal.
+No merges or AWS deployment are authorized. Paid calls are authorized only within
+the separately approved ceiling and verified controls, not by this goal alone.
 Agentic investigation is a goal requirement, while cloud hosting remains optional.
 The older sections that defer agents describe implementation order, not permission
 to mark this new goal complete without its agentic component.
@@ -94,9 +96,12 @@ validate plumbing; they do not satisfy the live-agent gate or demonstrate model
 effectiveness. Compare the current static approach and replay on the same real PR
 and native test profile, reporting misses, fallbacks, repeatability and end-to-end
 GitHub overhead. The user approved a US$5 total ceiling with at most 24 calls and six investigations.
-Live calls remain disabled pending provider pricing, data-routing review and enforced
-spend reservation. Actual model spend is US$0. No AWS work.
-Neither actual time savings nor the required live agentic workflow is complete.
+The optional live provider passed hosted budget and safety checks, then made three calls
+on pinned Textual PR #11 evidence. It added zero edges and preserved all 14 gaps/full
+execution. Reported generation usage estimates US$0.05112; US$0.27 remains reserved.
+The campaign is disabled after this trial. See [live evidence](docs/onboarding/live-investigation.md).
+A working bounded tool loop is demonstrated; useful model assistance and actual
+end-to-end savings remain unproven. No AWS work.
 
 The first [agent prototype comparison](docs/onboarding/agent-investigation.md)
 has now completed on Textual PR #11. Native feedback took 360 seconds, static
@@ -174,7 +179,7 @@ The workspace was initially empty. Phase 1 now provides a Git repository, offlin
 | Immediate deployment | Install the versioned tool on existing CI runners; retain reports as CI artifacts. No new hosted service or model endpoint. |
 | Deferred AWS deployment | Proposed: one organisation, one AWS account, one region, no public signup or dashboard, only after a measured need for shared state. |
 | Region | Use `us-east-1` for the worked cost estimate and provisional sandbox configuration. Reprice and select a different region if residency or latency requires it. Do not infer a residency requirement from the user's timezone. |
-| Budget | Phases 4–7 require no new AWS service or paid model calls; existing CI compute/artifacts can still cost money. Retain the previous **US$10/month AWS target** and US$4 inference allowance solely as deferred planning assumptions. The historical US$7.09 worked example is not a billing cap or a refreshed quote; the user has not supplied a spending ceiling. |
+| Budget | Phases 4–7 require no new AWS service or paid model calls; existing CI compute/artifacts can still cost money. Retain the previous **US$10/month AWS target** and US$4 inference allowance solely as deferred planning assumptions. The historical US$7.09 worked example is not a billing cap or a refreshed quote; the later US$5 total live-model experiment ceiling is separate from this deferred AWS estimate. |
 | Workload | Cost example assumes 1,000 CI runs/month and at most 100 agent investigations, compact metadata, and bounded model/tool calls. No real repository measurements exist yet. |
 | Model | Claude Haiku 4.5 via a U.S. geographic Bedrock profile is a costing/evaluation candidate, not a demonstrated quality choice. Verify availability, lifecycle, pricing, and permitted routing before use. |
 | Agent benefit | Initially the agent can only broaden execution. It cannot reduce test count below the deterministic baseline on the same revision. Potential discovery/onboarding benefits must be measured separately. |
