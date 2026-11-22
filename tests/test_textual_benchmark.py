@@ -72,3 +72,46 @@ def test_planning_failure_executes_independent_full_suite_and_keeps_failure(
 def test_commit_argument_rejects_options():
     with pytest.raises(argparse.ArgumentTypeError):
         benchmark.revision("--upload-pack=bad")
+
+
+@pytest.mark.parametrize("timeout", [False, True])
+def test_observation_runs_full_native_profile_preserves_failure_and_bounds_time(
+    tmp_path, monkeypatch, timeout
+):
+    calls = []
+
+    def run(command, **kwargs):
+        calls.append((command, kwargs))
+        if timeout:
+            raise subprocess.TimeoutExpired(command, kwargs["timeout"])
+        return SimpleNamespace(returncode=1)
+
+    root = tmp_path / "repo"
+    root.mkdir()
+    output = tmp_path / "output"
+    monkeypatch.chdir(root)
+    monkeypatch.setattr(benchmark.subprocess, "run", run)
+    monkeypatch.setattr(
+        benchmark.sys,
+        "argv",
+        [
+            "pilot",
+            "--mode",
+            "observe",
+            "--base",
+            "a" * 40,
+            "--head",
+            "b" * 40,
+            "--output",
+            str(output),
+        ],
+    )
+    assert benchmark.main() == (124 if timeout else 1)
+    assert len(calls) == 1
+    command, options = calls[0]
+    assert command[3:5] == ["tests", "-v"]
+    assert "--cov=./src/textual" in command
+    assert "smartci.adapters.runtime_observer" in command
+    assert options["timeout"] == 900
+    report = json.loads((output / "execution.json").read_text())
+    assert report["execution"] == "full" and report["planning_seconds"] == 0
