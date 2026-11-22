@@ -1,0 +1,560 @@
+{
+  "date": "2026-11-23 Australia/Sydney",
+  "runtime": "d8840222d9bf8d5ef023bf3be30d66c4729c6353",
+  "subset_objective_achieved": false,
+  "outcome": "Static resolver gaps reduced, but full fallback remains mandatory. No end-to-end savings.",
+  "measurement": "GitHub workflow created_at to each job completed_at; entire job duration recorded separately",
+  "scope": "Unchanged Textual native Python 3.14 / Ubuntu 24.04 / Poetry lockfile / syntax extras / coverage",
+  "safety_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45027761419",
+  "tests_passed": 303,
+  "runs": {
+    "markdown": {
+      "run": "https://github.com/SharmaKunal14/textual/actions/runs/45027800929",
+      "head": "6518367d4acda5f92802f6105ede83f7d4ab1543",
+      "attempt": 1,
+      "jobs": {
+        "smart": {
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45027800929/job/137224552020",
+          "conclusion": "failure",
+          "job_seconds": 405.0,
+          "feedback_seconds": 408.0,
+          "steps": [
+            {
+              "name": "Set up job",
+              "seconds": 3.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 29.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Install native Poetry toolchain",
+              "seconds": 7.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Install native locked dependencies and syntax extras",
+              "seconds": 9.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 1.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+              "seconds": 1.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Install locked planner and observer without changing native dependencies",
+              "seconds": 4.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run measured native or Smart CI path",
+              "seconds": 345.0,
+              "conclusion": "failure"
+            },
+            {
+              "name": "Preserve independent test results and audit",
+              "seconds": 2.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+              "seconds": 0.0,
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0,
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "seconds": 0.0,
+              "conclusion": "success"
+            }
+          ],
+          "base": "e6448b4645e8a7c2935a75abbb748ae017c145a7",
+          "command_seconds": 344.659582829,
+          "execution": "full",
+          "exit_code": 1,
+          "head": "6518367d4acda5f92802f6105ede83f7d4ab1543",
+          "mode": "smart",
+          "planning_error": null,
+          "planning_seconds": 35.95358352200002,
+          "targets": null,
+          "test_seconds": 308.70596579899996,
+          "cases": 3467,
+          "failed": [
+            "tests.snapshot_tests.test_snapshots::test_markdown_stream_switch_theme"
+          ],
+          "skipped": [
+            "tests.css.test_inheritance::test_inheritance",
+            "tests.snapshot_tests.test_snapshots::test_select_width_auto",
+            "tests.snapshot_tests.test_snapshots::test_app_resize_order",
+            "tests.test_content_switcher::test_initial_display_unknown_id",
+            "tests.test_gc::test_gc",
+            "tests.test_win_sleep::test_win_sleep_timer_is_cancellable",
+            "tests.test_xterm_parser::test_escape_sequence_resulting_in_multiple_keypresses"
+          ],
+          "selection": {
+            "mode": "full",
+            "execution": "full",
+            "selected_files": 251,
+            "omitted_files": 0,
+            "fallback": [
+              "INCOMPLETE_EVIDENCE"
+            ],
+            "digest": "fb3aa636ad77c2fc2bb2e5f91d8ec237c6b5379eb8176b72320d2f57e10e9c85"
+          },
+          "base_compatibility": {
+            "cases": 3467,
+            "commit": "e6448b4645e8a7c2935a75abbb748ae017c145a7",
+            "complete": false,
+            "files": 251,
+            "plugins": [
+              "anyio",
+              "pytest-asyncio",
+              "pytest-cov",
+              "pytest-textual-snapshot",
+              "pytest-xdist",
+              "syrupy"
+            ],
+            "snapshot_digest": "0c58ea2728c55ade9ce45418d2677676e5af21f5f96d9bf20cf43a1c7242c6f5",
+            "gap_counts": {
+              "CUSTOM_IMPORT_PATH": 2,
+              "DYNAMIC_ATTRIBUTE_HOOK": 2,
+              "DYNAMIC_CODE": 2,
+              "DYNAMIC_IMPORT": 4,
+              "UNRESOLVED_IMPORT": 2,
+              "UNREVIEWED_PYTEST_PLUGIN": 1,
+              "UNSUPPORTED_MODULE_NAME": 1
+            }
+          },
+          "head_compatibility": {
+            "cases": 3467,
+            "commit": "6518367d4acda5f92802f6105ede83f7d4ab1543",
+            "complete": false,
+            "files": 251,
+            "plugins": [
+              "anyio",
+              "pytest-asyncio",
+              "pytest-cov",
+              "pytest-textual-snapshot",
+              "pytest-xdist",
+              "syrupy"
+            ],
+            "snapshot_digest": "7ea3ff77f4b81d8baf14559d785112b8baf4ed26247521a849b33abf9d722dc3",
+            "gap_counts": {
+              "CUSTOM_IMPORT_PATH": 2,
+              "DYNAMIC_ATTRIBUTE_HOOK": 2,
+              "DYNAMIC_CODE": 2,
+              "DYNAMIC_IMPORT": 4,
+              "UNRESOLVED_IMPORT": 2,
+              "UNREVIEWED_PYTEST_PLUGIN": 1,
+              "UNSUPPORTED_MODULE_NAME": 1
+            }
+          }
+        },
+        "native": {
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45027800929/job/137224552246",
+          "conclusion": "failure",
+          "job_seconds": 334.0,
+          "feedback_seconds": 336.0,
+          "steps": [
+            {
+              "name": "Set up job",
+              "seconds": 1.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 19.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Install native Poetry toolchain",
+              "seconds": 6.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Install native locked dependencies and syntax extras",
+              "seconds": 7.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0,
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+              "seconds": 0.0,
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install locked planner and observer without changing native dependencies",
+              "seconds": 0.0,
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run measured native or Smart CI path",
+              "seconds": 297.0,
+              "conclusion": "failure"
+            },
+            {
+              "name": "Preserve independent test results and audit",
+              "seconds": 1.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0,
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "seconds": 0.0,
+              "conclusion": "success"
+            }
+          ],
+          "base": "e6448b4645e8a7c2935a75abbb748ae017c145a7",
+          "command_seconds": 296.569349481,
+          "execution": "full",
+          "exit_code": 1,
+          "head": "6518367d4acda5f92802f6105ede83f7d4ab1543",
+          "mode": "native",
+          "planning_error": null,
+          "planning_seconds": 0.0,
+          "targets": null,
+          "test_seconds": 296.569327868,
+          "cases": 3467,
+          "failed": [
+            "tests.snapshot_tests.test_snapshots::test_markdown_stream_switch_theme"
+          ],
+          "skipped": [
+            "tests.css.test_inheritance::test_inheritance",
+            "tests.snapshot_tests.test_snapshots::test_select_width_auto",
+            "tests.snapshot_tests.test_snapshots::test_app_resize_order",
+            "tests.test_content_switcher::test_initial_display_unknown_id",
+            "tests.test_gc::test_gc",
+            "tests.test_win_sleep::test_win_sleep_timer_is_cancellable",
+            "tests.test_xterm_parser::test_escape_sequence_resulting_in_multiple_keypresses"
+          ]
+        }
+      },
+      "comparison": {
+        "omitted_failures": [],
+        "extra_failures": [],
+        "case_ids_equal": true,
+        "job_savings_seconds": -71.0,
+        "feedback_savings_seconds": -72.0
+      }
+    },
+    "parser": {
+      "run": "https://github.com/SharmaKunal14/textual/actions/runs/45027804406",
+      "head": "2039dea85d9baa2dbc8dffaf13252365a5bd1048",
+      "attempt": 1,
+      "jobs": {
+        "smart": {
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45027804406/job/137224560940",
+          "conclusion": "failure",
+          "job_seconds": 458.0,
+          "feedback_seconds": 460.0,
+          "steps": [
+            {
+              "name": "Set up job",
+              "seconds": 1.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 25.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 1.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Install native Poetry toolchain",
+              "seconds": 5.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Install native locked dependencies and syntax extras",
+              "seconds": 11.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 1.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+              "seconds": 1.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Install locked planner and observer without changing native dependencies",
+              "seconds": 4.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run measured native or Smart CI path",
+              "seconds": 405.0,
+              "conclusion": "failure"
+            },
+            {
+              "name": "Preserve independent test results and audit",
+              "seconds": 1.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+              "seconds": 0.0,
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0,
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "seconds": 0.0,
+              "conclusion": "success"
+            }
+          ],
+          "base": "e6448b4645e8a7c2935a75abbb748ae017c145a7",
+          "command_seconds": 404.282639861,
+          "execution": "full",
+          "exit_code": 1,
+          "head": "2039dea85d9baa2dbc8dffaf13252365a5bd1048",
+          "mode": "smart",
+          "planning_error": null,
+          "planning_seconds": 51.887648373999994,
+          "targets": null,
+          "test_seconds": 352.39496657100005,
+          "cases": 3467,
+          "failed": [
+            "tests.test_xterm_parser::test_extended_keys[\\x1b[58;2;126:47u-~/]"
+          ],
+          "skipped": [
+            "tests.css.test_inheritance::test_inheritance",
+            "tests.snapshot_tests.test_snapshots::test_select_width_auto",
+            "tests.snapshot_tests.test_snapshots::test_app_resize_order",
+            "tests.test_content_switcher::test_initial_display_unknown_id",
+            "tests.test_gc::test_gc",
+            "tests.test_win_sleep::test_win_sleep_timer_is_cancellable",
+            "tests.test_xterm_parser::test_escape_sequence_resulting_in_multiple_keypresses"
+          ],
+          "selection": {
+            "mode": "full",
+            "execution": "full",
+            "selected_files": 251,
+            "omitted_files": 0,
+            "fallback": [
+              "INCOMPLETE_EVIDENCE"
+            ],
+            "digest": "d80e38d17c413d3414728febb91612ef388acd65ea2b5758c3c81a73a1747431"
+          },
+          "base_compatibility": {
+            "cases": 3467,
+            "commit": "e6448b4645e8a7c2935a75abbb748ae017c145a7",
+            "complete": false,
+            "files": 251,
+            "plugins": [
+              "anyio",
+              "pytest-asyncio",
+              "pytest-cov",
+              "pytest-textual-snapshot",
+              "pytest-xdist",
+              "syrupy"
+            ],
+            "snapshot_digest": "0c58ea2728c55ade9ce45418d2677676e5af21f5f96d9bf20cf43a1c7242c6f5",
+            "gap_counts": {
+              "CUSTOM_IMPORT_PATH": 2,
+              "DYNAMIC_ATTRIBUTE_HOOK": 2,
+              "DYNAMIC_CODE": 2,
+              "DYNAMIC_IMPORT": 4,
+              "UNRESOLVED_IMPORT": 2,
+              "UNREVIEWED_PYTEST_PLUGIN": 1,
+              "UNSUPPORTED_MODULE_NAME": 1
+            }
+          },
+          "head_compatibility": {
+            "cases": 3467,
+            "commit": "2039dea85d9baa2dbc8dffaf13252365a5bd1048",
+            "complete": false,
+            "files": 251,
+            "plugins": [
+              "anyio",
+              "pytest-asyncio",
+              "pytest-cov",
+              "pytest-textual-snapshot",
+              "pytest-xdist",
+              "syrupy"
+            ],
+            "snapshot_digest": "3046adabb1057af82c415a603c7cd6860b631e371ecb65b12f11d7897e56835e",
+            "gap_counts": {
+              "CUSTOM_IMPORT_PATH": 2,
+              "DYNAMIC_ATTRIBUTE_HOOK": 2,
+              "DYNAMIC_CODE": 2,
+              "DYNAMIC_IMPORT": 4,
+              "UNRESOLVED_IMPORT": 2,
+              "UNREVIEWED_PYTEST_PLUGIN": 1,
+              "UNSUPPORTED_MODULE_NAME": 1
+            }
+          }
+        },
+        "native": {
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45027804406/job/137224561234",
+          "conclusion": "failure",
+          "job_seconds": 355.0,
+          "feedback_seconds": 358.0,
+          "steps": [
+            {
+              "name": "Set up job",
+              "seconds": 2.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 27.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Install native Poetry toolchain",
+              "seconds": 7.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Install native locked dependencies and syntax extras",
+              "seconds": 8.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0,
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+              "seconds": 0.0,
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Install locked planner and observer without changing native dependencies",
+              "seconds": 0.0,
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run measured native or Smart CI path",
+              "seconds": 305.0,
+              "conclusion": "failure"
+            },
+            {
+              "name": "Preserve independent test results and audit",
+              "seconds": 2.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0,
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0,
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "seconds": 0.0,
+              "conclusion": "success"
+            }
+          ],
+          "base": "e6448b4645e8a7c2935a75abbb748ae017c145a7",
+          "command_seconds": 304.639804832,
+          "execution": "full",
+          "exit_code": 1,
+          "head": "2039dea85d9baa2dbc8dffaf13252365a5bd1048",
+          "mode": "native",
+          "planning_error": null,
+          "planning_seconds": 0.0,
+          "targets": null,
+          "test_seconds": 304.63979080900003,
+          "cases": 3467,
+          "failed": [
+            "tests.test_xterm_parser::test_extended_keys[\\x1b[58;2;126:47u-~/]"
+          ],
+          "skipped": [
+            "tests.css.test_inheritance::test_inheritance",
+            "tests.snapshot_tests.test_snapshots::test_select_width_auto",
+            "tests.snapshot_tests.test_snapshots::test_app_resize_order",
+            "tests.test_content_switcher::test_initial_display_unknown_id",
+            "tests.test_gc::test_gc",
+            "tests.test_win_sleep::test_win_sleep_timer_is_cancellable",
+            "tests.test_xterm_parser::test_escape_sequence_resulting_in_multiple_keypresses"
+          ]
+        }
+      },
+      "comparison": {
+        "omitted_failures": [],
+        "extra_failures": [],
+        "case_ids_equal": true,
+        "job_savings_seconds": -103.0,
+        "feedback_savings_seconds": -102.0
+      }
+    }
+  }
+}
