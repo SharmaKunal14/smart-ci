@@ -171,3 +171,35 @@ def test_http_uses_isolated_worker_with_credentials_only_on_stdin(monkeypatch):
 def test_host_and_credential_boundaries(host, token):
     with pytest.raises(ValueError):
         HTTPS(host, token)
+
+
+def test_api_errors_report_only_allowlisted_codes():
+    p, api, _ = provider()
+
+    def fail(method, path, body):
+        return Reply(
+            403,
+            b'{"error":{"code":"model_not_found","message":"PRIVATE_PROMPT"}}',
+        )
+
+    api.request = fail
+    with pytest.raises(BudgetError):
+        p.next_action("{}")
+    assert p.accounting()["last_stage"] == "count_input"
+    assert p.accounting()["api_error"] == "model_not_found"
+    assert p.accounting()["http_status"] == 403
+    assert "PRIVATE_PROMPT" not in json.dumps(p.accounting())
+
+
+def test_live_workflow_keeps_key_out_of_install_and_application_execution():
+    from pathlib import Path
+
+    workflow = Path(".github/workflows/model-budget.yml").read_text()
+    assert workflow.count("secrets.OPENAI_API_KEY") == 1
+    probe, live = workflow.split("  live-public-trial:")
+    assert "OPENAI_API_KEY" not in probe
+    assert "vars.SMARTCI_LIVE_CAMPAIGN == 'textual-public-20261123'" in live
+    assert "pull_request_target" not in workflow
+    assert "persist-credentials: true" not in workflow
+    assert live.index("OPENAI_API_KEY") > live.index("run: uv sync --frozen")
+    assert "--repo" in live and "pip install ./subject" not in live

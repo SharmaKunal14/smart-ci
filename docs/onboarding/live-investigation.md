@@ -82,3 +82,17 @@ new positive edge cannot justify removing tests from a plan that already require
 everything. No full-suite rerun or speedup claim is justified without a materially
 different, mechanically supported plan. Provider effectiveness and actual GitHub
 end-to-end savings remain separate, unmet acceptance criteria.
+
+The first [hosted control check](https://github.com/SharmaKunal14/smart-ci/actions/runs/45062445146)
+recorded HTTP 200 for the accepted write, 409 for the stale write and rejected
+admission while disabled. The corresponding [safety run](https://github.com/SharmaKunal14/smart-ci/actions/runs/45062445152)
+passed 540 tests, formatting, lint, types and both package builds.
+
+The live job is separately gated by the repository Actions variable
+`SMARTCI_LIVE_CAMPAIGN=textual-public-20261123` and the shared ledger. It verifies
+the SHA-256 of the downloaded input from Textual PR #11/run 45058699772 before
+changing only the public source-excerpt permission. It executes no Textual code.
+The first trial is fixed to slot group 1; rerunning the workflow cannot obtain a
+new investigation identity. Its upload includes `summary.json`, live/replay audits
+and the exact permitted input. Later trials require a deliberate harness change;
+the six-investigation allowance is a ceiling, not a quota to spend.

@@ -3,7 +3,7 @@
 import json
 
 from .budget import BudgetError, Ledger
-from .http import Transport
+from .http import Reply, Transport
 from .models import ActionEnvelope
 
 
@@ -22,6 +22,9 @@ class OpenAIProvider:
         self.model_calls = 0
         self.input_tokens = 0
         self.output_tokens = 0
+        self.last_stage = "not_started"
+        self.http_status: int | None = None
+        self.api_error: str | None = None
         self.messages: list[dict[str, str]] = [
             {
                 "role": "developer",
@@ -50,7 +53,33 @@ class OpenAIProvider:
             "input_tokens": self.input_tokens,
             "output_tokens": self.output_tokens,
             "billing_status": "usage_estimate_not_invoice; reservations_never_released",
+            "last_stage": self.last_stage,
+            "http_status": self.http_status,
+            "api_error": self.api_error,
         }
+
+    def _request(self, path: str, payload: dict[str, object]) -> Reply:
+        self.http_status = None
+        self.api_error = None
+        response = self.transport.request("POST", path, payload)
+        self.http_status = response.status
+        if response.status != 200:
+            try:
+                value = json.loads(response.body)
+                error = value.get("error") if isinstance(value, dict) else None
+                code = error.get("code") if isinstance(error, dict) else None
+                if isinstance(code, str) and code in {
+                    "model_not_found",
+                    "invalid_api_key",
+                    "insufficient_quota",
+                    "rate_limit_exceeded",
+                    "invalid_request_error",
+                    "context_length_exceeded",
+                }:
+                    self.api_error = code
+            except ValueError:
+                pass  # HTTP status remains available; never log an arbitrary body.
+        return response
 
     def next_action(self, context: str) -> str:
         from smartci.selection import digest
@@ -74,11 +103,13 @@ class OpenAIProvider:
             "service_tier": "default",
             "prompt_cache_options": {"mode": "explicit", "ttl": "30m"},
         }
+        self.last_stage = "reserve"
         reservation = self.ledger.reserve(
             self.investigation, self.attempts, digest(payload)
         )
         self.attempts += 1
-        counted = self.transport.request("POST", "/v1/responses/input_tokens", common)
+        self.last_stage = "count_input"
+        counted = self._request("/v1/responses/input_tokens", common)
         if counted.status != 200:
             raise BudgetError("input count unavailable")
         count = json.loads(counted.body)
@@ -95,7 +126,8 @@ class OpenAIProvider:
         if not campaign.enabled:
             raise BudgetError("campaign disabled")
         self.model_calls += 1
-        response = self.transport.request("POST", "/v1/responses", payload)
+        self.last_stage = "inference"
+        response = self._request("/v1/responses", payload)
         if response.status != 200:
             raise BudgetError("model response unavailable")
         value = json.loads(response.body)
@@ -112,11 +144,13 @@ class OpenAIProvider:
             or type(usage.get("output_tokens")) is not int
         ):
             raise BudgetError("usage unavailable; retain reservation")
+        self.last_stage = "record_usage"
         self.ledger.record_usage(
             reservation, usage["input_tokens"], usage["output_tokens"]
         )
         self.input_tokens += usage["input_tokens"]
         self.output_tokens += usage["output_tokens"]
+        self.last_stage = "validate_response"
         if value.get("status") != "completed":
             raise BudgetError("incomplete response; retain reservation")
         output = value.get("output")
@@ -148,4 +182,5 @@ class OpenAIProvider:
         action = ActionEnvelope.model_validate_json(texts[0]).root
         text = action.model_dump_json()
         self.messages.append({"role": "assistant", "content": text})
+        self.last_stage = "action_validated"
         return text
