@@ -96,3 +96,40 @@ The first trial is fixed to slot group 1; rerunning the workflow cannot obtain a
 new investigation identity. Its upload includes `summary.json`, live/replay audits
 and the exact permitted input. Later trials require a deliberate harness change;
 the six-investigation allowance is a ceiling, not a quota to spend.
+
+## First live result, 23 November 2026
+
+[Smart CI PR #12](https://github.com/SharmaKunal14/smart-ci/pull/12) ran the optional
+provider in [GitHub run 45062767011](https://github.com/SharmaKunal14/smart-ci/actions/runs/45062767011).
+The model made three calls: inspect the changed parser, query its graph, then
+finish. Those calls reported 5,835 input and 111 output tokens. Standard uncached
+generation pricing estimates **US$0.05112**, not an invoice or total account bill.
+The ledger retains **US$0.27** in reservations. Both the workflow variable and the
+shared campaign are now disabled; reservations were not reset or refunded.
+
+The live investigator accepted **zero claims and zero new edges**. The bounded
+replay accepted two already-known imports and also added zero edges. Both retained
+all 14 unresolved issues and a full 251-file plan with `INCOMPLETE_EVIDENCE`.
+The live final test list exactly matches its baseline. No Textual tests executed
+in this investigation run; the source evidence came from the earlier real PR run.
+There is no new regression-recall or end-to-end test-saving measurement here.
+
+The live job took 62 runner-seconds. The disabled control probe took another 17;
+the complete workflow took 85 seconds from trigger to completion. These are
+investigation/control overhead figures, not a substitute for the native CI
+baseline. [Hosted safety verification](https://github.com/SharmaKunal14/smart-ci/actions/runs/45062767010)
+passed all **542 tests**, formatting, lint, strict typing and both package builds.
+
+The [evidence record](../benchmarks/textual-live-investigation-2026-11-23.json)
+binds revisions, input/report hashes, model usage, actions and job URLs. To verify,
+open the linked workflow, download `model-live-trial-1`, and inspect `summary.json`
+and `live.json`. The separate `model-budget-probe-1` records real conditional-write
+rejection. Do not re-enable or reset the ledger merely to repeat a completed trial.
+
+This establishes that the bounded live tool loop works. It does **not** establish
+that an LLM improves Smart CI. The current verifier only recognizes supported
+absolute imports, and additive edges cannot narrow an existing full fallback.
+The next meaningful experiment needs a general, mechanically verified dependency
+scope that addresses an actual unresolved pattern; prompt changes or more model
+votes cannot supply that proof. One short trial also cannot characterize model
+quality across repositories. The broader time-and-resource savings goal is unmet.

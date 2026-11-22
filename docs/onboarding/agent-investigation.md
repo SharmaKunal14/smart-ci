@@ -2,8 +2,8 @@
 
 The product boundary is a reusable investigation engine, not Textual. Textual is
 the first evaluation adapter. Offline orchestration is verified. The optional
-[budgeted live provider](live-investigation.md) is under verification; it does not
-yet demonstrate that an LLM understands dependencies or improves selection.
+[budgeted live provider](live-investigation.md) has completed one hosted trial;
+it added no new edges and does not demonstrate improved selection.
 Replay remains the default. No AWS resource or merge is enabled.
 
 ## Flow and authority
@@ -84,7 +84,7 @@ same real PR: native, current static Smart CI, and assisted replay. Report their
 complete GitHub timings, case identities/outcomes, failures missed, fallbacks and
 runner-seconds. A single regression and replay do not establish broad performance.
 
-## Approved ceiling — live calls remain disabled
+## Approved ceiling and current live status
 
 The user approved a **US$5 total ceiling**, at most 24 calls and six investigations on
 23 November 2026. This is a ceiling, not a prediction of cost. Start
@@ -101,8 +101,10 @@ precedence over reaching six investigations.
 Before enabling calls: verify provider/model/data routing;
 implement usage reservation, timeouts, error accounting and a kill switch; verify
 rates and run an admission-only test. Token caps and estimated cost alone are not
-a billing cap. The approved ceiling is **US$5**; spend so far is **US$0**. GitHub runner usage
-is separate and must be reported from the completed workflows.
+a billing cap. The approved ceiling is **US$5**. A subsequent live trial made three
+generation calls (US$0.05112 usage estimate, US$0.27 retained reservation); the
+campaign is disabled after that trial. See the [live results](live-investigation.md#first-live-result-23-november-2026).
+GitHub runner usage is separate and is reported from the completed workflows.
 
 ## Real GitHub comparison, 23 November 2026
 
