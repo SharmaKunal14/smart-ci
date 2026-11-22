@@ -62,9 +62,20 @@ The [Textual scoped-runtime follow-up](docs/onboarding/runtime-scoped-observatio
 preserved all 3,467 case outcomes on a real PR: 350s native versus 570s instrumented
 feedback, with zero omissions. Fixture/collection attribution improved, but parser
 execution on other threads and shared file-open attempts still require broad
-handling. All 14 static gaps remain unresolved. Before another full-suite probe,
+handling. That runtime experiment left all 14 static gaps unresolved. Before another full-suite probe,
 classify the shared phases and preserve any independent reporting/build work;
 do not equate a scope label with exclusive dependency ownership.
+
+The subsequent [readonly-hook discovery audit](docs/onboarding/python-attribute-hooks.md)
+verified one supported static rejection pattern on Textual PR #8. At both base
+and head, diagnostics fell from 14 to 13 while all 3,467 collected case identities,
+sources, imports and dependency edges matched across collector versions. Full
+fallback remains required. This was collection/planning only, not another test
+benchmark; it establishes no savings. Before investing in a new full-suite
+comparison, also check how broad the existing dependency paths already are:
+closing the remaining diagnostics alone may still yield an unhelpfully large
+selection. The widget registry's computed targets, path-loaded snapshot apps,
+plugin behavior and runtime inputs remain unsupported.
 
 Workspace: `/Users/kunalsharma/Fun/project/smart-ci`
 

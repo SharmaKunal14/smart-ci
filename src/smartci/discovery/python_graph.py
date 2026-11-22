@@ -6,6 +6,7 @@ from pathlib import PurePosixPath
 
 from smartci.selection import digest
 
+from .attribute_hooks import rejecting_attribute_hook
 from .models import Edge, Environment, Gap, ImportFact, PythonConfig
 
 
@@ -485,12 +486,21 @@ class ImportVisitor(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
-        if node.name == "__getattr__" and not static_attribute_hook(node):
+        if (
+            node.name == "__getattr__"
+            and not static_attribute_hook(node)
+            and not rejecting_attribute_hook(node, self.analysis.trees[self.path])
+        ):
             self.analysis.gap("DYNAMIC_ATTRIBUTE_HOOK", self.path, node.lineno)
         before = self.constants
         self.constants = self.literal_bindings(node)
         self.generic_visit(node)
         self.constants = before
+
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        if node.name == "__getattr__":
+            self.analysis.gap("DYNAMIC_ATTRIBUTE_HOOK", self.path, node.lineno)
+        self.generic_visit(node)
 
     def visit_Name(self, node: ast.Name) -> None:
         if node.id == "__path__":
