@@ -28,3 +28,26 @@ This diagnostic is opt-in and is not added to the normal PR execution path.
 It executes no additional tests or application code beyond the existing native
 collection required to build snapshots. Hosted evidence will determine the next
 collector work; no useful subset is presumed from the remaining gap count.
+
+## Process dependencies are not import dependencies
+
+The source-only Textual parser audit reached 250 of 251 files. The remaining
+`tests/test_pipe.py` starts `tests/deadlock.py` through a shell/Python subprocess;
+that application imports `textual.app.App`. Absence of an import edge from the
+test therefore does not establish absence of a dependency. This is a concrete
+counterexample to treating unreached tests as irrelevant.
+
+The collector now records `DYNAMIC_PROCESS` for recognized process-launch APIs
+from subprocess, os, asyncio, multiprocessing, concurrent.futures and pty. It also
+handles imported aliases, escaped launcher references, star imports from those
+modules and relevant dynamic namespace lookup. Readonly uses such as exception
+classes and PIPE do not imply process execution. Literal commands still require
+fallback: executable resolution, script inputs, shell behavior, working directory
+and the child's environment have no supported adapter yet. No command is run to
+infer those relationships.
+
+This strengthens fallback and invalidates prior snapshots through the collector
+implementation hash. It can increase the number of diagnostics; warning-count
+reduction is not a safety metric. The recognized API set is not exhaustive for
+arbitrary wrappers, native extensions or external processes, and no universal
+completeness claim follows from it.

@@ -56,6 +56,36 @@ def analyse(files, env=None):
     return analysis
 
 
+def test_child_script_without_import_edge_requires_full_plan(repository):
+    (repository / "tests/test_child.py").write_text(
+        "import subprocess\nimport sys\n"
+        "def test_child():\n"
+        "    subprocess.run([sys.executable, '-c', "
+        "'from app.auth import allowed; assert allowed()'], check=True)\n"
+    )
+    commit(repository)
+    base, _, _ = collect(repository, config())
+    (repository / "app/auth.py").write_text("def allowed(): return False\n")
+    commit(repository)
+    head, _, _ = collect(repository, config())
+    report = plan(
+        repository,
+        base,
+        head,
+        SelectionPolicy(
+            schema_version="1", repository=config().repository, mode="selective"
+        ),
+    )
+    assert any(
+        g.code == "DYNAMIC_PROCESS" and g.path == "tests/test_child.py"
+        for g in head.provenance.gaps
+    )
+    assert not base.graph.complete and not head.graph.complete
+    assert report.execution == "full"
+    assert report.fallback == ["INCOMPLETE_EVIDENCE"]
+    assert set(report.selected) == {unit.id for unit in head.inventory.tests}
+
+
 def git(root, *args):
     return subprocess.run(
         ["git", "-C", str(root), *args], check=True, capture_output=True, text=True
