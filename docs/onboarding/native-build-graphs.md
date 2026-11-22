@@ -304,3 +304,28 @@ are untouched. HTTPS-only redirects, size and time bounds, and a checksum check
 precede cache acceptance; Bazel verifies the checksum again. Download failure or
 mismatch rejects the audit. Acquisition and total planning time are recorded,
 and no dependency branch is excluded to make the query succeed.
+
+The [repaired hosted query](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45083836757)
+passed, retaining 2,614 nodes and 13,349 edges and reconciling all 576 native build
+roots and 252 test targets. It acquired the identical archive in 0.618 seconds;
+graph preparation, including the pinned image setup, took 261.334 seconds.
+The [durable record](../benchmarks/abseil-graph-2026-11-23.json) binds raw artifact
+hashes, revisions, native reference and both attempts.
+
+The preselected scenarios produced mixed candidate breadth:
+
+| Actual upstream source change | Candidate native test targets |
+|---|---:|
+| Cord optimization | 250 / 252 |
+| Const-span regression | 251 / 252 |
+| Linked hash node insertion regression | 2 / 252 |
+| Shared hash implementation | 251 / 252 |
+
+These broad paths are not parser noise: for example, `algorithm_test` depends
+on GoogleTest, which depends on Abseil containers and RE2; those reach Cord,
+Span and hashing. Removing those edges would remove real declared dependencies.
+Only the linked-hash case currently offers a useful small candidate set. No
+selective tests ran, so neither regression recall nor end-to-end savings is yet
+established. The next comparison must validate map reuse against unchanged build
+definitions and source inventory, retain the 324 build-only roots and native
+runner settings, and execute independent full/selected arms on the same PR head.
