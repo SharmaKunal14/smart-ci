@@ -1,0 +1,30 @@
+name: Diagnose native Abseil failure
+on:
+  pull_request:
+    branches: [codex/smartci-native-base]
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+concurrency:
+  group: abseil-native-diagnostic-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  diagnostic:
+    if: github.head_ref == 'codex/native-failure-diagnostic'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Diagnose complete native target without changing assertions
+        run: python3 .smartci/diagnostics.py --output "$RUNNER_TEMP/native-diagnostic"
+      - name: Publish bounded diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-diagnostic-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/native-diagnostic
+          retention-days: 7
+          if-no-files-found: error

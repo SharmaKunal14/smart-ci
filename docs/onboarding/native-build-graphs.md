@@ -103,3 +103,32 @@ must be labeled as such and must not be generalized to cached enterprise CI.
 Agentic investigation remains a separate active-goal gate. No live model or
 agent benefit is claimed by this baseline or parser. No AWS deployment or merge
 is involved.
+
+## Bounded native failure diagnostic
+
+The regular-API agent trial is now implemented separately and has shown no
+selection benefit on Textual. To make progress on the end-to-end goal, first
+diagnose the failed native environment rather than weakening the selector or
+promoting a partial baseline.
+
+`examples/abseil/diagnostics.py` derives a diagnostic from the exact pinned native
+GCC script. It changes only `bazel test ...` to the complete
+`//absl/functional:function_ref_test` target and requests full test log output.
+Source, test bodies, assertions, timeouts, compiler flags, signal-handler setting,
+Docker image, workers and caching remain unchanged. The full profile script hash
+must match before derivation; application/build files must match the upstream pin.
+
+This is a manually scoped failure investigation, **not automatic test selection,
+a successful full-suite baseline, or a Smart CI speed comparison**. It preserves
+native failures and requires complete Build Event Protocol evidence for precisely
+that one target. The job has a 14-minute bound and a 10-minute process bound, with
+cleanup restricted to its uniquely named Docker container.
+
+Five-second samples record CPU, memory, swap and I/O-pressure counters, kernel
+core-dump settings and counts of known crash/symbolizer helper names. They do not
+read process arguments, environments, stacks or core contents. Crash handling is
+one hypothesis: Linux's [core documentation](https://man7.org/linux/man-pages/man5/core.5.html)
+explains that piped core handlers run outside a container's namespaces and that
+`RLIMIT_CORE` does not suppress those handlers. Their presence would not by itself
+prove that they caused the observed timeout. No kernel setting is changed by this
+diagnostic, and no resource-cause claim is justified until hosted evidence exists.
