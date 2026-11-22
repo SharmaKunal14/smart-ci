@@ -1,0 +1,102 @@
+name: Native Abseil with bounded crash reports
+on:
+  pull_request:
+    branches: [codex/smartci-native-base]
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+concurrency:
+  group: abseil-resource-baseline-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  native:
+    if: github.head_ref == 'codex/native-resource-baseline'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bound unused system crash processing on this disposable runner
+        id: cores
+        run: |
+          mkdir "$RUNNER_TEMP/runner-policy"
+          systemd-analyze cat-config systemd/coredump.conf > "$RUNNER_TEMP/runner-policy/before.conf"
+          python3 - <<'PY'
+          from pathlib import Path
+          value = Path('/proc/sys/kernel/core_pattern').read_text()
+          if not value.startswith('|/usr/lib/systemd/systemd-coredump '):
+              raise SystemExit('Unexpected core handler; no profile change performed')
+          PY
+          test ! -e /etc/systemd/coredump.conf.d/90-smartci-baseline.conf
+          printf '[Coredump]\nStorage=none\nProcessSizeMax=0\n' > "$RUNNER_TEMP/runner-policy/90-smartci-baseline.conf"
+          sudo install -d -m 0755 /etc/systemd/coredump.conf.d
+          sudo install -m 0644 "$RUNNER_TEMP/runner-policy/90-smartci-baseline.conf" /etc/systemd/coredump.conf.d/90-smartci-baseline.conf
+          echo 'created=true' >> "$GITHUB_OUTPUT"
+          if systemctl is-active --quiet systemd-coredumpd.service; then
+            sudo systemctl reload systemd-coredumpd.service
+          fi
+          systemd-analyze cat-config systemd/coredump.conf > "$RUNNER_TEMP/runner-policy/effective.conf"
+          python3 - <<'PY'
+          import configparser, os
+          from pathlib import Path
+          config = configparser.ConfigParser(strict=False, interpolation=None)
+          config.read(Path(os.environ['RUNNER_TEMP']) / 'runner-policy/effective.conf')
+          if dict(config['Coredump']).get('storage') != 'none' or config['Coredump'].get('ProcessSizeMax') != '0':
+              raise SystemExit('Crash-processing policy did not take effect')
+          PY
+      - name: Bound the separate Apport crash-report hook
+        id: apport
+        run: |
+          systemctl cat systemd-coredump@.service > "$RUNNER_TEMP/runner-policy/systemd-coredump-unit.txt"
+          systemctl cat apport-coredump-hook@.service > "$RUNNER_TEMP/runner-policy/apport-unit.txt"
+          systemctl show systemd-coredump@smartci-probe.service --property=OnSuccess --value > "$RUNNER_TEMP/runner-policy/on-success.txt"
+          systemctl show apport-coredump-hook@smartci-probe.service --property=ExecStart --value > "$RUNNER_TEMP/runner-policy/apport-command.txt"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP']) / 'runner-policy'
+          if 'apport-coredump-hook@smartci-probe.service' not in (root / 'on-success.txt').read_text().split():
+              raise SystemExit('Expected Apport hook not installed; no mask performed')
+          command = (root / 'apport-command.txt').read_text()
+          if 'path=/usr/share/apport/apport ;' not in command or '--from-systemd-coredump smartci-probe' not in command:
+              raise SystemExit('Unexpected Apport command; no mask performed')
+          PY
+          test "$(systemctl show apport-coredump-hook@smartci-probe.service --property=LoadState --value)" = loaded
+          test ! -e /run/systemd/system/apport-coredump-hook@.service
+          test ! -L /run/systemd/system/apport-coredump-hook@.service
+          sudo systemctl mask --runtime apport-coredump-hook@.service
+          echo 'created=true' >> "$GITHUB_OUTPUT"
+          systemctl show apport-coredump-hook@smartci-probe.service --property=LoadState --value > "$RUNNER_TEMP/runner-policy/apport-effective.txt"
+          test "$(cat "$RUNNER_TEMP/runner-policy/apport-effective.txt")" = masked
+      - name: Run complete native profile with resource telemetry
+        run: python3 .smartci/diagnostics.py --scope full --output "$RUNNER_TEMP/native-resource-baseline"
+      - name: Restore the Apport hook on the disposable runner
+        if: always() && steps.apport.outputs.created == 'true'
+        run: |
+          sudo systemctl unmask --runtime apport-coredump-hook@.service
+          systemctl show apport-coredump-hook@smartci-probe.service --property=LoadState --value > "$RUNNER_TEMP/runner-policy/apport-restored.txt"
+          test "$(cat "$RUNNER_TEMP/runner-policy/apport-restored.txt")" = loaded
+          systemctl cat apport-coredump-hook@.service > "$RUNNER_TEMP/runner-policy/apport-restored-unit.txt"
+          cmp "$RUNNER_TEMP/runner-policy/apport-unit.txt" "$RUNNER_TEMP/runner-policy/apport-restored-unit.txt"
+      - name: Restore disposable runner policy
+        if: always() && steps.cores.outputs.created == 'true'
+        run: |
+          sudo rm /etc/systemd/coredump.conf.d/90-smartci-baseline.conf
+          if systemctl is-active --quiet systemd-coredumpd.service; then
+            sudo systemctl reload systemd-coredumpd.service
+          fi
+          systemd-analyze cat-config systemd/coredump.conf > "$RUNNER_TEMP/runner-policy/restored.conf"
+          cmp "$RUNNER_TEMP/runner-policy/before.conf" "$RUNNER_TEMP/runner-policy/restored.conf"
+      - name: Publish complete native evidence and runner policy
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-resource-baseline-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/native-resource-baseline
+            ${{ runner.temp }}/runner-policy
+          retention-days: 7
+          if-no-files-found: error
