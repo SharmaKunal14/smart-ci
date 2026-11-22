@@ -1,0 +1,317 @@
+{
+  "$defs": {
+    "Changes": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "base": {
+          "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+          "title": "Base",
+          "type": "string"
+        },
+        "head": {
+          "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+          "title": "Head",
+          "type": "string"
+        },
+        "paths": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100000,
+          "title": "Paths",
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "repository",
+        "base",
+        "head",
+        "paths"
+      ],
+      "title": "Changes",
+      "type": "object"
+    },
+    "Graph": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "commit": {
+          "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+          "title": "Commit",
+          "type": "string"
+        },
+        "complete": {
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "unsupported": {
+          "default": false,
+          "title": "Unsupported",
+          "type": "boolean"
+        },
+        "owners": {
+          "additionalProperties": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+            "type": "string"
+          },
+          "title": "Owners",
+          "type": "object"
+        },
+        "dependencies": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$": {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "title": "Dependencies",
+          "type": "object"
+        },
+        "tests": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$": {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+              "type": "string"
+            }
+          },
+          "title": "Tests",
+          "type": "object"
+        }
+      },
+      "required": [
+        "schema_version",
+        "repository",
+        "commit",
+        "complete",
+        "owners",
+        "dependencies",
+        "tests"
+      ],
+      "title": "Graph",
+      "type": "object"
+    },
+    "Inventory": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "complete": {
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "environment": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Environment",
+          "type": "string"
+        },
+        "tests": {
+          "items": {
+            "$ref": "#/$defs/TestUnit"
+          },
+          "maxItems": 100000,
+          "title": "Tests",
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "repository",
+        "complete",
+        "environment",
+        "tests"
+      ],
+      "title": "Inventory",
+      "type": "object"
+    },
+    "SelectionPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "mode": {
+          "default": "shadow",
+          "enum": [
+            "shadow",
+            "selective"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "must_run": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+            "type": "string"
+          },
+          "maxItems": 100000,
+          "title": "Must Run",
+          "type": "array"
+        },
+        "unknown_evidence": {
+          "const": "full",
+          "default": "full",
+          "title": "Unknown Evidence",
+          "type": "string"
+        },
+        "allow_source_excerpts": {
+          "default": false,
+          "title": "Allow Source Excerpts",
+          "type": "boolean"
+        },
+        "full_paths": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "title": "Full Paths",
+          "type": "array"
+        },
+        "require_coverage": {
+          "default": false,
+          "title": "Require Coverage",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "schema_version",
+        "repository"
+      ],
+      "title": "SelectionPolicy",
+      "type": "object"
+    },
+    "TestUnit": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "runner": {
+          "enum": [
+            "pytest",
+            "vitest",
+            "maven"
+          ],
+          "title": "Runner",
+          "type": "string"
+        },
+        "granularity": {
+          "enum": [
+            "case",
+            "file",
+            "class"
+          ],
+          "title": "Granularity",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "runner",
+        "granularity",
+        "path"
+      ],
+      "title": "TestUnit",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "smartci.investigation-input.v1",
+      "default": "smartci.investigation-input.v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "changes": {
+      "$ref": "#/$defs/Changes"
+    },
+    "inventory": {
+      "$ref": "#/$defs/Inventory"
+    },
+    "base": {
+      "$ref": "#/$defs/Graph"
+    },
+    "head": {
+      "$ref": "#/$defs/Graph"
+    },
+    "policy": {
+      "$ref": "#/$defs/SelectionPolicy"
+    },
+    "sources": {
+      "additionalProperties": {
+        "additionalProperties": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "type": "object"
+      },
+      "title": "Sources",
+      "type": "object"
+    },
+    "unresolved": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 100000,
+      "title": "Unresolved",
+      "type": "array"
+    }
+  },
+  "required": [
+    "changes",
+    "inventory",
+    "base",
+    "head",
+    "policy",
+    "sources",
+    "unresolved"
+  ],
+  "title": "Inputs",
+  "type": "object"
+}

@@ -14,6 +14,10 @@ from .contracts import CONTRACTS, Inventory
 from .discovery.commands import collect_command, plan_command
 from .discovery.models import PythonConfig, Snapshot
 from .git_changes import changes_from_git
+from .investigation import commands as investigation_commands
+from .investigation.models import ActionEnvelope as InvestigationAction
+from .investigation.models import Inputs as InvestigationInputs
+from .investigation.models import Observation as InvestigationObservation
 from .reports import atomic_write, markdown
 from .selection import (
     Changes,
@@ -44,6 +48,9 @@ CONTRACTS.update(
         "baseline": Baseline,
         "typescript-collector": TypeScriptConfig,
         "typescript-snapshot": TypeScriptSnapshot,
+        "investigation-input": InvestigationInputs,
+        "investigation-action": InvestigationAction,
+        "investigation-observation": InvestigationObservation,
     }
 )
 
@@ -72,6 +79,7 @@ def main() -> int:
     )
     sub = parser.add_subparsers(dest="command", required=True)
     ci_commands.add_parser(sub)
+    investigation_commands.add_parser(sub)
     ts_commands.add_parser(sub)
     validate = sub.add_parser(
         "validate", help="validate a manifest; does not run tests"
@@ -129,6 +137,8 @@ def main() -> int:
         if command == "run":
             adapter.add_argument("--decision", type=Path)
     args = parser.parse_args()
+    if args.command == "investigate":
+        return investigation_commands.command(args)
     if args.command == "typescript":
         return ts_commands.command(args)
     if args.command == "shadow":
