@@ -329,3 +329,46 @@ selective tests ran, so neither regression recall nor end-to-end savings is yet
 established. The next comparison must validate map reuse against unchanged build
 definitions and source inventory, retain the 324 build-only roots and native
 runner settings, and execute independent full/selected arms on the same PR head.
+
+## Paired native evaluation and map reuse
+
+`src/smartci/bazel/planning.py` builds a deterministic candidate from the actual
+base/head Git trees and authenticated hosted graph. Both revisions must preserve
+the anchor's path inventory, file modes and every non-C++ input. Only modified,
+existing, declared regular `.cc`/`.h` files are eligible. Missing or invalid map
+artifacts, changed build definitions/dependencies/resources, unknown files,
+additions/deletions/renames, mode changes, empty impact and invalid must-run rules
+retain the original full command. Pilot setup files may differ from the anchor;
+changing them within the PR also forces full fallback. Reuse of this declared
+graph assumes the reviewed build profile does not derive topology from C++ file
+contents. This is a profile compatibility assumption, not universal inference.
+
+The pilot runner verifies exact PR checkout, clean tracked/untracked inputs,
+native script and container definitions, artifact digests and successful reference
+evidence. Two independent planning passes must produce the same digest. A selected
+arm retains `...` and subtracts only omitted native test labels through Bazel's
+target-pattern file. It does not replace the wildcard with a list of tests: all
+324 native build-only targets remain required, together with their configurations.
+The complete Build Event Protocol must reconcile selected tests and build scope.
+Native failures, flaky outcomes and missing/mismatched evidence fail the check.
+
+`examples/abseil/evaluation-workflow.yml` runs one native and one candidate job on
+separate identical runners, with the same pinned image/compiler/options and
+verified/restored crash-report policy. The native arm uses the original command
+and standard-library wrapper; only the candidate pays for planner setup and
+evidence downloads. Artifact or planner installation failure retains full native
+execution. Jobs have 25-minute bounds, read-only permissions and no model secrets.
+The independent full control remains required: this is an experiment, and no
+production omission authority has been enabled. No cache settings are changed.
+
+The first paired source case replays the historical hinted-node insertion bug
+from upstream `745e8f3eb8b5b9342fb658d94994ba349212f107`. The old four-file patch
+does not apply to this newer upstream pin: the method has moved into
+`absl/container/internal/raw_linked_hash_set.h`. The replay changes the current
+method between invalid `.first` and correct `.position`, keeping every current
+test, including upstream's original regression assertions. This is an **adapted
+historical regression replay**, not an exact cherry-pick. The base intentionally
+contains the old defect; the positive PR fixes it, and both comparison arms test
+the identical fixed head. A reverse PR on a fixed base will check failure recall.
+Do not report a failing run as a successful performance baseline. Broad-impact
+and configuration/full-fallback scenarios remain part of the evaluation.
