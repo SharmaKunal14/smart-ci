@@ -28,12 +28,16 @@ PROC_FILES = (
 )
 
 
-def targeted_profile(raw: bytes) -> bytes:
+def targeted_profile(raw: bytes, scope: str = "target") -> bytes:
     if hashlib.sha256(raw).hexdigest() != PROFILE_SHA256:
         raise ValueError("upstream profile changed; review required")
     original = b"/usr/local/bin/bazel test ..."
     if raw.count(original) != 1:
         raise ValueError("ambiguous native target command")
+    if scope == "full":
+        return raw
+    if scope != "target":
+        raise ValueError("unsupported native scope")
     return raw.replace(original, b"/usr/local/bin/bazel test " + TARGET.encode())
 
 
@@ -125,6 +129,7 @@ def run_profile(
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--scope", choices=["target", "full"], default="target")
     args = parser.parse_args()
     root, output = Path.cwd().resolve(), args.output.resolve()
     if output.is_relative_to(root) or any(
@@ -151,7 +156,7 @@ def main() -> int:
         stdout=subprocess.DEVNULL,
     )
     script = targeted_profile(
-        (root / "ci/linux_gcc-latest_libstdcxx_bazel.sh").read_bytes()
+        (root / "ci/linux_gcc-latest_libstdcxx_bazel.sh").read_bytes(), args.scope
     )
     output.mkdir(parents=True, exist_ok=False)
     profile = output / "targeted-native.sh"
@@ -167,16 +172,19 @@ def main() -> int:
             "COMPILATION_MODE": "fastbuild",
             "EXCEPTIONS_MODE": "-fno-exceptions",
             "DOCKER_EXTRA_ARGS": f"--name {name} --mount type=bind,source={output},target=/evidence",
-            "BAZEL_EXTRA_ARGS": "--build_event_json_file=/evidence/native.bep.json --test_output=all",
+            "BAZEL_EXTRA_ARGS": "--build_event_json_file=/evidence/native.bep.json"
+            + (" --test_output=all" if args.scope == "target" else ""),
         }
     )
     print(
-        "Diagnosing the complete native function_ref target; no TIA selection.",
+        f"Running native {args.scope} scope; no TIA selection.",
         flush=True,
     )
     started = time.monotonic()
     try:
-        code, elapsed, error = run_profile(profile, output, environment)
+        code, elapsed, error = run_profile(
+            profile, output, environment, timeout=1200 if args.scope == "full" else 600
+        )
     except (OSError, ValueError, subprocess.SubprocessError):
         code, elapsed, error = 125, time.monotonic() - started, "DIAGNOSTIC_FAILED"
     cleanup_error = False
@@ -194,17 +202,25 @@ def main() -> int:
     events = None
     try:
         events = summarize_events(output / "native.bep.json")
-        if events["exit_code"] != code or set(events["test_targets"]) != {TARGET}:
+        if events["exit_code"] != code or (
+            args.scope == "target" and set(events["test_targets"]) != {TARGET}
+        ):
             raise ValueError("native target or exit mismatch")
+        if args.scope == "full" and any(
+            status != "PASSED" for status in events["test_targets"].values()
+        ):
+            error = "FULL_BASELINE_HAS_NONPASS_TARGETS"
     except (OSError, ValueError, KeyError, TypeError, AttributeError, RecursionError):
         error = error or "DIAGNOSTIC_EVIDENCE_INVALID"
     report = {
         "schema_version": "smartci.native-diagnostic.v1",
-        "scope": "one_complete_native_target; not_TIA_or_full_baseline",
+        "scope": "one_complete_native_target; not_TIA_or_full_baseline"
+        if args.scope == "target"
+        else "complete_native_profile; not_TIA",
         "upstream": UPSTREAM,
         "profile_sha256": PROFILE_SHA256,
         "derived_profile_sha256": hashlib.sha256(script).hexdigest(),
-        "target": TARGET,
+        "target": TARGET if args.scope == "target" else "...",
         "command_seconds": elapsed,
         "exit_code": code,
         "evidence_error": error,
@@ -214,7 +230,9 @@ def main() -> int:
             "explicit diagnostic target",
             "test output verbosity",
             "read-only resource sampling",
-        ],
+        ]
+        if args.scope == "target"
+        else ["read-only resource sampling"],
         "omission_authorized": False,
         "speedup_demonstrated": False,
         "model_calls": 0,

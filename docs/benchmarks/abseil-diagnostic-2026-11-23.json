@@ -1,0 +1,70 @@
+{
+  "artifact_sha256": {
+    "diagnostic.json": "244c56f3309b72560947517deec3fa9485d671d446f6167cfe6d73d3bd5d00be",
+    "native.bep.json": "544dcc6d61beb020268a8778bf83c51f419fc0831471dc0850f0c1df887af9e8",
+    "native.log": "968427ade587e7fbc98a45c871171edb4ae7d5de21bbd854d15372cf3d9753df",
+    "resources.jsonl": "f537ee58a22df2b823ab01e01e69510c82333ffb1c47ddcfbbf3f4e88ea9936e",
+    "targeted-native.sh": "23f7b4105fb69727097c2f676429eb22b373184e20e0279820e9f1c4ecc973df"
+  },
+  "baseline_complete": false,
+  "conclusion": "The complete function_ref target passes in isolation under the original native flags. The prior full-workload cause remains unproven. System crash-report processing is a hypothesis, not an established cause.",
+  "head": "07fb41552e96c181bddb4ef3cfdf8a585fdb0096",
+  "helper_counts_peak": {
+    "addr2line": 0,
+    "apport": 0,
+    "llvm-symbolizer": 0,
+    "systemd-coredum": 0
+  },
+  "job": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45064543249/job/137337640275",
+  "kernel_core_pattern": "|/usr/lib/systemd/systemd-coredump %P %u %g %s %t 9223372036854775808 %h %d",
+  "minimum_available_memory_mib": 13191.20703125,
+  "model_calls": 0,
+  "native": {
+    "bazel": {
+      "build_target_configuration_count": 1,
+      "complete_stream": true,
+      "exit_code": 0,
+      "failed_build_target_configuration_count": 0,
+      "test_target_count": 1,
+      "test_targets": {
+        "//absl/functional:function_ref_test": "PASSED"
+      }
+    },
+    "changes": [
+      "explicit diagnostic target",
+      "test output verbosity",
+      "read-only resource sampling"
+    ],
+    "cleanup_error": false,
+    "command_seconds": 355.53677443199996,
+    "derived_profile_sha256": "23f7b4105fb69727097c2f676429eb22b373184e20e0279820e9f1c4ecc973df",
+    "evidence_error": null,
+    "exit_code": 0,
+    "model_calls": 0,
+    "omission_authorized": false,
+    "profile_sha256": "03239a4a9294eecfa5270d397cb0250824f8930e6dcc42c4fe37955ae0c2ade1",
+    "schema_version": "smartci.native-diagnostic.v1",
+    "scope": "one_complete_native_target; not_TIA_or_full_baseline",
+    "speedup_demonstrated": false,
+    "target": "//absl/functional:function_ref_test",
+    "upstream": "82530019412ff77ff99d39ba0ad12e5ea6b89ea4"
+  },
+  "native_cases_passed": 30,
+  "native_test_seconds": 1.035,
+  "omission_authorized": false,
+  "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/2",
+  "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45064543249",
+  "runner_seconds": 364.0,
+  "safety_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45064538246",
+  "safety_tests_passed": 546,
+  "schema_version": "smartci.native-diagnostic-evidence.v1",
+  "setup_correction": "Fetch upstream history required for source validation; include existing hardened BEP reconciler.",
+  "setup_failures_before_test_execution": [
+    "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45064421459",
+    "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45064474143"
+  ],
+  "speedup_demonstrated": false,
+  "telemetry_samples": 71,
+  "trigger_to_completion_seconds": 366.0,
+  "upstream": "82530019412ff77ff99d39ba0ad12e5ea6b89ea4"
+}

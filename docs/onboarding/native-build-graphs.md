@@ -132,3 +132,37 @@ explains that piped core handlers run outside a container's namespaces and that
 `RLIMIT_CORE` does not suppress those handlers. Their presence would not by itself
 prove that they caused the observed timeout. No kernel setting is changed by this
 diagnostic, and no resource-cause claim is justified until hosted evidence exists.
+
+The [corrected diagnostic PR #2](https://github.com/SharmaKunal14/abseil-cpp/pull/2),
+[run 45064543249](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45064543249),
+passed all **30 native cases** in the complete function-reference target. BEP
+records 1.035 seconds for its test process; the job took 364 seconds, including
+the large image pull, configuration and 324 compile actions. The earlier full
+attempt timed this same target out after 71.541 seconds. That difference points
+to full-workload/runner conditions but does not isolate their cause. Available
+memory remained above 13,191 MiB in this one-target run. Five-second samples saw
+no crash helpers; a one-second test can easily fall between samples, so absence
+does not establish that no helper ran. The kernel routes crashes to systemd-coredump.
+
+Two earlier setup attempts failed before executing tests because shallow history
+omitted the pinned upstream object. The corrected workflow fetches that history;
+the existing hardened event reconciler is included. [Hosted tool checks](https://github.com/SharmaKunal14/smart-ci/actions/runs/45064538246)
+passed 546 tests, formatting, lint, types and builds. The [durable record](../benchmarks/abseil-diagnostic-2026-11-23.json)
+includes all setup attempts, exact revisions, hashes and scope limits.
+
+The next full native attempt uses the **same application, tests, compiler,
+assertions, signal handler and native command**, with a documented disposable-runner
+policy: systemd-coredump `Storage=none` and `ProcessSizeMax=0`. These disable unused
+system crash payload/backtrace processing while retaining log entries, according
+to [systemd's documentation](https://www.freedesktop.org/software/systemd/man/latest/coredump.conf.html).
+No Abseil source references core-dump files, core patterns or RLIMIT_CORE at this
+pin. This is an environment intervention to evaluate, not proof of the suspected
+cause. A successful run would establish a new baseline under that explicit policy;
+it would not retroactively make the original failed run valid.
+
+The workflow checks the existing handler, records and validates effective policy,
+restores the previous configuration, and captures resource samples throughout the
+full native command. All test targets must pass with a complete event stream;
+flaky, failed or unknown targets prevent accepting the baseline. The native and
+Smart CI comparison arms must use the same runner policy. No model calls or test
+omissions are involved in establishing this baseline.

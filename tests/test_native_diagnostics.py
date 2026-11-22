@@ -24,6 +24,9 @@ def test_profile_drift_never_silently_changes_native_semantics(monkeypatch):
     monkeypatch.setattr(module, "PROFILE_SHA256", hashlib.sha256(raw).hexdigest())
     derived = module.targeted_profile(raw)
     assert derived.replace(module.TARGET.encode(), b"...") == raw
+    assert module.targeted_profile(raw, "full") == raw
+    with pytest.raises(ValueError, match="unsupported"):
+        module.targeted_profile(raw, "test-filter")
     duplicate = raw + raw
     monkeypatch.setattr(module, "PROFILE_SHA256", hashlib.sha256(duplicate).hexdigest())
     with pytest.raises(ValueError, match="ambiguous"):
