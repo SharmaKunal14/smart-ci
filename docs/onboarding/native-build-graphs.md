@@ -288,3 +288,19 @@ measurements. Keep broad and negative cases in the later comparison:
 A build/dependency-definition change must also retain the independent full native
 path. These four source cases cannot by themselves establish that fallback or
 safe handling of removed dependencies works.
+
+The [first hosted query](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45082915973)
+failed with exit 7: the all-branches closure required optional `libpfm` and its
+selected registry entry pointed at an unreachable `netcologne.dl.sourceforge.net`
+mirror. Its partial XML was rejected. No test selection or execution occurred.
+The native reference did not need that optional dependency in its configured build.
+
+The repair seeds Bazel's [distribution archive cache](https://docs.bazel.build/versions/main/guide.html#distribution-files-directories)
+from the [replacement URL published by the Bazel Central Registry](https://github.com/bazelbuild/bazel-central-registry/blob/main/modules/libpfm/4.11.0.bcr.2/source.json).
+Both registry releases pin the same archive SHA-256,
+`5da5f8872bde14b3634c9688d980f68bda28b510268723cc12973eedbab9fecc`.
+This changes only archive acquisition: the selected module version and patches
+are untouched. HTTPS-only redirects, size and time bounds, and a checksum check
+precede cache acceptance; Bazel verifies the checksum again. Download failure or
+mismatch rejects the audit. Acquisition and total planning time are recorded,
+and no dependency branch is excluded to make the query succeed.

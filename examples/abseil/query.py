@@ -25,6 +25,11 @@ REFERENCE = (
     Path(__file__).resolve().parents[2]
     / "docs/benchmarks/abseil-apport-baseline-2026-11-23.json"
 )
+LIBPFM_URL = (
+    "https://downloads.sourceforge.net/project/perfmon2/libpfm4/libpfm-4.11.0.tar.gz"
+)
+LIBPFM_SHA256 = "5da5f8872bde14b3634c9688d980f68bda28b510268723cc12973eedbab9fecc"
+MAX_ARCHIVE_BYTES = 2 * 1024 * 1024
 
 
 def bounded_read(path: Path, limit: int) -> bytes:
@@ -33,6 +38,59 @@ def bounded_read(path: Path, limit: int) -> bytes:
     if len(data) > limit:
         raise QueryError("artifact exceeds size limit")
     return data
+
+
+def prepare_archive(output: Path, environment: dict[str, str]) -> dict[str, object]:
+    """Replace a dead mirror with identical bytes, never a module override.
+
+    The URL and archive checksum are published in BCR libpfm 4.11.0.bcr.2.
+    The archive checksum is identical to the selected 4.11.0.bcr.1 release;
+    Bazel still applies that selected release's original module and patches.
+    """
+    directory = output / "distdir"
+    directory.mkdir()
+    partial = directory / "libpfm.download"
+    destination = directory / "libpfm-4.11.0.tar.gz"
+    try:
+        subprocess.run(
+            [
+                "curl",
+                "--disable",
+                "--fail",
+                "--silent",
+                "--show-error",
+                "--location",
+                "--proto",
+                "=https",
+                "--proto-redir",
+                "=https",
+                "--max-redirs",
+                "4",
+                "--connect-timeout",
+                "10",
+                "--max-time",
+                "45",
+                "--max-filesize",
+                str(MAX_ARCHIVE_BYTES),
+                "--output",
+                str(partial),
+                LIBPFM_URL,
+            ],
+            check=True,
+            timeout=50,
+            env=environment,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        data = bounded_read(partial, MAX_ARCHIVE_BYTES)
+        if hashlib.sha256(data).hexdigest() != LIBPFM_SHA256:
+            raise QueryError("dependency archive checksum mismatch")
+        partial.replace(destination)
+        return {"url": LIBPFM_URL, "sha256": LIBPFM_SHA256, "bytes": len(data)}
+    except (OSError, subprocess.SubprocessError) as exc:
+        raise QueryError("dependency archive acquisition failed") from exc
+    finally:
+        partial.unlink(missing_ok=True)
 
 
 def query_profile(raw: bytes) -> bytes:
@@ -47,9 +105,9 @@ def query_profile(raw: bytes) -> bytes:
     # execution eligibility is reconciled from a separate complete full run.
     commands = b"""          set -eu
           /usr/local/bin/bazel --version > /evidence/bazel-version.txt
-          /usr/local/bin/bazel query 'deps(//...)' --enable_bzlmod=true --output=xml --order_output=full --noxml:line_numbers > /evidence/query.xml
-          /usr/local/bin/bazel query '//...' --enable_bzlmod=true --output=label --order_output=full > /evidence/roots.txt
-          /usr/local/bin/bazel query 'buildfiles(deps(//...))' --enable_bzlmod=true --output=label --order_output=full > /evidence/buildfiles.txt\""""
+          /usr/local/bin/bazel query 'deps(//...)' --enable_bzlmod=true --distdir=/evidence/distdir --output=xml --order_output=full --noxml:line_numbers > /evidence/query.xml
+          /usr/local/bin/bazel query '//...' --enable_bzlmod=true --distdir=/evidence/distdir --output=label --order_output=full > /evidence/roots.txt
+          /usr/local/bin/bazel query 'buildfiles(deps(//...))' --enable_bzlmod=true --distdir=/evidence/distdir --output=label --order_output=full > /evidence/buildfiles.txt\""""
     return prefix + commands + suffix
 
 
@@ -102,11 +160,21 @@ def main() -> int:
         "Collecting declared Bazel graph in the native pinned toolchain...", flush=True
     )
     started = time.monotonic()
+    archive: dict[str, object] = {}
+    acquisition_seconds = 0.0
+    elapsed = 0.0
+    profile_started = False
     try:
+        archive = prepare_archive(output, environment)
+        acquisition_seconds = time.monotonic() - started
+        profile_started = True
         code, elapsed, error = run_profile(script, output, environment, timeout=600)
+    except QueryError as exc:
+        acquisition_seconds = time.monotonic() - started
+        code, error = 125, str(exc)
     except (OSError, ValueError, subprocess.SubprocessError):
-        code, elapsed, error = 125, time.monotonic() - started, "QUERY_COMMAND_FAILED"
-    if code in {124, 125} or code < 0:
+        code, error = 125, "QUERY_COMMAND_FAILED"
+    if profile_started and (code in {124, 125} or code < 0):
         try:
             subprocess.run(
                 ["docker", "rm", "--force", name],
@@ -124,6 +192,8 @@ def main() -> int:
         "native_profile_sha256": PROFILE_SHA256,
         "query_profile_sha256": hashlib.sha256(profile).hexdigest(),
         "command_seconds": elapsed,
+        "archive_acquisition_seconds": acquisition_seconds,
+        "archive": archive,
         "exit_code": code,
         "error": error,
         "omission_authorized": False,
@@ -178,6 +248,7 @@ def main() -> int:
             if isinstance(exc, QueryError)
             else "bounded artifact validation failed"
         )
+    report["planning_seconds"] = time.monotonic() - started
     (output / "audit.json").write_text(
         json.dumps(report, sort_keys=True, indent=2) + "\n"
     )

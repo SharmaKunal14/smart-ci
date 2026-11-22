@@ -133,7 +133,8 @@ def test_build_root_must_be_a_rule_not_an_unrelated_source_node():
         )
 
 
-def test_query_derivation_is_review_bound_and_cannot_execute_native_tests(monkeypatch):
+@pytest.fixture
+def query_module():
     directory = Path(__file__).resolve().parents[1] / "examples/abseil"
     sys.path.insert(0, str(directory))
     try:
@@ -144,6 +145,13 @@ def test_query_derivation_is_review_bound_and_cannot_execute_native_tests(monkey
         spec.loader.exec_module(query)
     finally:
         sys.path.pop(0)
+    return query
+
+
+def test_query_derivation_is_review_bound_and_cannot_execute_native_tests(
+    monkeypatch, query_module
+):
+    query = query_module
     raw = b"""#!/bin/bash
 /bin/sh -c "
           /usr/local/bin/bazel test ... \\
@@ -163,3 +171,56 @@ def test_query_derivation_is_review_bound_and_cannot_execute_native_tests(monkey
     assert b"--noimplicit_deps" not in derived
     assert b"--keep_going" not in derived
     assert b"'deps(//...)'" in derived and b"'buildfiles(deps(//...))'" in derived
+    assert derived.count(b"--distdir=/evidence/distdir") == 3
+    assert b"--override" not in derived
+
+
+def test_archive_cache_accepts_only_exact_pinned_bytes(
+    tmp_path, monkeypatch, query_module
+):
+    data = b"verified archive fixture"
+    monkeypatch.setattr(query_module, "LIBPFM_SHA256", hashlib.sha256(data).hexdigest())
+
+    def acquire(command, **kwargs):
+        assert command[:2] == ["curl", "--disable"]
+        assert command[-1] == query_module.LIBPFM_URL
+        assert command[command.index("--max-filesize") + 1] == "2097152"
+        assert command[command.index("--proto") + 1] == "=https"
+        assert command[command.index("--proto-redir") + 1] == "=https"
+        assert command[command.index("--max-redirs") + 1] == "4"
+        assert kwargs["check"] is True and kwargs["timeout"] == 50
+        assert kwargs["env"] == {"PATH": "/usr/bin"}
+        Path(command[command.index("--output") + 1]).write_bytes(data)
+
+    monkeypatch.setattr(query_module.subprocess, "run", acquire)
+    result = query_module.prepare_archive(tmp_path, {"PATH": "/usr/bin"})
+    assert result == {
+        "url": query_module.LIBPFM_URL,
+        "sha256": hashlib.sha256(data).hexdigest(),
+        "bytes": len(data),
+    }
+    assert (tmp_path / "distdir/libpfm-4.11.0.tar.gz").read_bytes() == data
+    assert not (tmp_path / "distdir/libpfm.download").exists()
+
+
+@pytest.mark.parametrize("defect", ["hash", "size", "timeout", "download", "missing"])
+def test_archive_failure_leaves_no_usable_cache(
+    tmp_path, monkeypatch, query_module, defect
+):
+    def acquire(command, **kwargs):
+        path = Path(command[command.index("--output") + 1])
+        if defect != "missing":
+            path.write_bytes(
+                b"x" * (query_module.MAX_ARCHIVE_BYTES + 1)
+                if defect == "size"
+                else b"bad"
+            )
+        if defect == "timeout":
+            raise subprocess.TimeoutExpired(command, 50)
+        if defect == "download":
+            raise subprocess.CalledProcessError(22, command)
+
+    monkeypatch.setattr(query_module.subprocess, "run", acquire)
+    with pytest.raises(QueryError):
+        query_module.prepare_archive(tmp_path, {"PATH": "/usr/bin"})
+    assert list((tmp_path / "distdir").iterdir()) == []
