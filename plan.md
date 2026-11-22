@@ -1,10 +1,56 @@
 # Smart CI: implementation and deployment plan
 
-Updated: 21 November 2026
+Updated: 23 November 2026
 
 Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Packaging selective execution and trusted baseline reuse remain unverified. The OnRecord TypeScript/Vitest pilot passed live GitHub PRs #29 (103 files / 440 cases, full fallback) and #30 (64 files / 280 cases, actual subset without fallback), with on-demand map rebuilding. Both remain unmerged; broader correctness and performance evaluation remain outstanding. No AWS resources or paid model calls.
 
-Current priority: deliver initial repository scanning followed by deterministic selective execution on the next eligible PR, starting with OnRecord. This requires TypeScript/Vitest support, on-demand base/head analysis and verified native subset execution. Shadow runs are development/optional evaluation tools, not a mandatory waiting period for every new repository.
+Current priority: satisfy the active end-to-end product goal: automatic deterministic PR selection with demonstrated GitHub time and resource savings, plus a bounded agentic investigation workflow. The earlier OnRecord/date-fns/Textual work is evidence, not completion. Textual still requires full execution; its runtime observer did not authorize omissions. Compare native build-graph evidence with the existing import and runtime approaches before extending speculative source inference. Shadow runs remain evaluation tools, not the permanent product behavior.
+
+### Active goal completion gates
+
+The active goal is broader than any single prototype. Keep it active until all of
+the following are verified; a green safety suite or a smaller candidate list is
+insufficient:
+
+1. A real existing repository is enrolled automatically, with native commands,
+   configurations and supported boundaries recorded. PR creation and updates
+   produce revision-bound, deterministic plans without handwritten dependency
+   maps or per-PR test choices. Unsupported changes retain independent full runs.
+2. Real GitHub PRs cover an ordinary localized change, a historical regression,
+   a shared dependency change and a required full-fallback case. Compare native
+   and selected outcomes on the same revisions; retain native failures and
+   account for every selected target. Use both old and new dependency evidence
+   or a verified invariant establishing that their declarations cannot differ.
+3. Measure **X = native trigger-to-result time** and **Y = Smart CI
+   trigger-to-result time**, including setup, planning, downloads, tests and
+   uploads. Demonstrate Y < X on repeated eligible comparisons, not just shorter
+   test subprocesses. Record runner-seconds and onboarding/cache costs separately.
+   Preserve native caching, workers, coverage and test configuration. Report cold
+   and warm behavior where the native build system already avoids unchanged work.
+4. Compare import analysis, runtime-assisted evidence and native build graphs
+   from actual hosted evidence. Do not equate fewer diagnostics with completeness
+   or select a favorable timing retry. A supported adapter does not establish
+   support for arbitrary repositories or languages.
+5. Deliver and verify the bounded adaptive investigation workflow described below:
+   choose tools based on observations, retain evidence and enforce authority
+   outside the agent. Selection remains deterministic; an agent cannot remove
+   required tests, waive gaps or promote its confidence to completeness evidence.
+   The existing fixture provider is not a live agent. Paid model calls remain
+   prohibited, so live-provider validation requires a separately authorized route.
+
+No merges, AWS deployment or paid model calls are authorized by this goal.
+Agentic investigation is a goal requirement, while cloud hosting remains optional.
+The older sections that defer agents describe implementation order, not permission
+to mark this new goal complete without its agentic component.
+
+The native-build-graph work begins with Abseil's unmodified GCC/Bazel C++17
+fastbuild profile on a fresh GitHub runner. Its public pinned image is large and
+may dominate setup; the upstream optional private remote cache is unavailable.
+This is one documented native profile, not the entire upstream matrix. Establish
+the native baseline before claiming selection support or savings. The first
+graph parser retains declared, generated, implicit and build-only relationships;
+it does not yet authorize execution. Native target reconciliation, configuration
+binding, source-change eligibility, fallback and actual PR execution remain gates.
 
 Workspace: `/Users/kunalsharma/Fun/project/smart-ci`
 
