@@ -39,7 +39,8 @@ def enclosing_entry(source, line):
 
 def assess(root, report, compatibility, changed_paths):
     if (
-        report["schema"] != "smartci.runtime-observation.v1"
+        report["schema"]
+        not in {"smartci.runtime-observation.v1", "smartci.runtime-observation.v2"}
         or report["complete"] is not False
         or report["omission_authorized"] is not False
         or not re.fullmatch(r"[a-f0-9]{40}", report["commit"])
@@ -55,6 +56,26 @@ def assess(root, report, compatibility, changed_paths):
     ):
         raise ValueError("observation digest mismatch")
     tests = set(report["test_files"])
+
+    def scope_files(context):
+        if context in tests:
+            return {context}
+        metadata = report.get("context_metadata", {}).get(context, {})
+        if report["schema"] != "smartci.runtime-observation.v2" or metadata.get(
+            "kind"
+        ) not in {"collection", "fixture_setup"}:
+            return tests
+        scope = metadata.get("scope")
+        owner = metadata.get("owner")
+        if scope in {"function", "class", "module"} and owner in tests:
+            return {owner}
+        if (
+            scope == "package"
+            and isinstance(owner, str)
+            and owner in {str(Path(t).parent) for t in tests}
+        ):
+            return {t for t in tests if t.startswith(owner + "/")}
+        return tests
 
     def contexts(path, entry=None):
         found = []
@@ -94,19 +115,18 @@ def assess(root, report, compatibility, changed_paths):
         observed = set(contexts(path))
         calls = sorted(observed & tests)
         shared = sorted(observed - tests)
+        scoped = set().union(*(scope_files(context) for context in observed))
         candidates.append(
             {
                 "path": path,
                 "observed_call_files": calls,
                 "shared_contexts": shared,
-                "candidate_files_including_shared": sorted(
-                    tests if shared else set(calls)
-                ),
+                "candidate_files_including_shared": sorted(scoped),
                 "omission_authorized": False,
             }
         )
     return {
-        "schema": "smartci.runtime-assessment.v1",
+        "schema": "smartci.runtime-assessment.v2",
         "commit": report["commit"],
         "observation_digest": report["digest"],
         "native_case_count": report["case_count"],
@@ -116,7 +136,7 @@ def assess(root, report, compatibility, changed_paths):
         "execution_required": "full",
         "omission_authorized": False,
         "reason": "positive runtime observations do not establish graph completeness",
-        "interpretation": "function entry does not prove the gap statement or every branch executed",
+        "interpretation": "temporal scope is not exclusive dependency ownership; function entry is not branch coverage",
     }
 
 

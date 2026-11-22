@@ -79,3 +79,36 @@ def test_function_entry_is_not_gap_statement_coverage(monkeypatch):
     assert gap["function"] == {"name": "loader", "line": 1}
     assert gap["observed_contexts"] == ["tests/test_a.py"]
     assert gap["resolved"] is False
+
+
+@pytest.mark.parametrize(
+    "scope,owner,expected",
+    [
+        ("function", "tests/test_a.py", 1),
+        ("module", "tests/test_a.py", 1),
+        ("class", "tests/test_a.py", 1),
+        ("package", "tests", 2),
+        ("session", ".", 2),
+        ("function", "@unknown", 2),
+        ("unrecognized", "tests/test_a.py", 2),
+    ],
+)
+def test_scoped_observations_are_candidates_not_omission_authority(
+    scope, owner, expected
+):
+    value = report(False)
+    value["schema"] = "smartci.runtime-observation.v2"
+    value["contexts"] = {"@phase:fixture": {"code_files": ["src/app.py"]}}
+    value["context_metadata"] = {
+        "@phase:fixture": {"kind": "fixture_setup", "scope": scope, "owner": owner}
+    }
+    value.pop("digest")
+    value["digest"] = hashlib.sha256(
+        json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    result = assessment.assess(
+        None, value, {"commit": "c" * 40, "gaps": []}, ["src/app.py"]
+    )
+    assert len(result["candidates"][0]["candidate_files_including_shared"]) == expected
+    assert result["execution_required"] == "full"
+    assert result["omission_authorized"] is False
