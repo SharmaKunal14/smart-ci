@@ -4,7 +4,9 @@ Phases 1–4 provide a local CLI, versioned contracts, conservative selection,
 read-only Git analysis, audit reports, pytest/Vitest/Maven adapters, and automatic
 Python dependency discovery with revision-bound deterministic planning.
 Phase 5 adds local shadow-CI contracts and a generated GitHub Actions enrollment;
-OnRecord now has verified live full-suite and subset PR runs. Broader rollout, agent orchestration and AWS hosting remain planned.
+OnRecord now has verified live full-suite and subset PR runs. A bounded offline
+investigation prototype adds independently verified dependency evidence; live
+model evaluation, broader rollout and AWS hosting remain pending.
 See [plan.md](plan.md) for subsequent phases.
 
 For progress reporting, explicit platform-skip handling, local verification and
@@ -62,11 +64,15 @@ its selected list is not authoritative for full discovery. Empty subsets are
 invalid. Incomplete executions cannot pass. Phase 3 reconciles native results with expected execution units and binds
 selective execution to the current inventory and a clean Git head.
 
-Investigation contracts bound model calls and tokens. Evidence remains provisional.
-The provider protocol and fixture provider only return typed actions; they do not
-execute tools or contact a model. Consumers must still validate returned actions.
+The original provider fixture remains available. The separate `smartci investigate`
+prototype adds a bounded tool loop, revision/source-bound evidence verification and
+additive graph versions. Only offline replay is implemented: it cannot remove
+required tests, clear gaps or override full fallback. See the [agent investigation
+handoff](docs/onboarding/agent-investigation.md) for supported capabilities,
+verification commands, Textual comparison scope and the approved US$5 ceiling and remaining live-call gates.
 
-Schema version `1` is required. Breaking changes require a new schema version and
+Legacy contracts require schema version `1`; the new investigation companion
+contracts use their explicit `smartci.*.v1` identifiers. Breaking changes require a new schema version and
 explicit migrations; readers must never guess or silently upgrade unknown versions.
 No compatibility migration exists yet. Application limits are not AWS bill caps.
 

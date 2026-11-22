@@ -4,7 +4,7 @@ Updated: 23 November 2026
 
 Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Packaging selective execution and trusted baseline reuse remain unverified. The OnRecord TypeScript/Vitest pilot passed live GitHub PRs #29 (103 files / 440 cases, full fallback) and #30 (64 files / 280 cases, actual subset without fallback), with on-demand map rebuilding. Both remain unmerged; broader correctness and performance evaluation remain outstanding. No AWS resources or paid model calls.
 
-Current priority: satisfy the active end-to-end product goal: automatic deterministic PR selection with demonstrated GitHub time and resource savings, plus a bounded agentic investigation workflow. The earlier OnRecord/date-fns/Textual work is evidence, not completion. Textual still requires full execution; its runtime observer did not authorize omissions. Compare native build-graph evidence with the existing import and runtime approaches before extending speculative source inference. Shadow runs remain evaluation tools, not the permanent product behavior.
+Current priority: build the general-purpose agent-assisted investigation prototype requested in the latest steering, with Textual as the first evaluation repository. Preserve the active end-to-end goal: automatic deterministic PR selection with demonstrated GitHub time and resource savings. The earlier OnRecord/date-fns/Textual work is evidence, not completion. Textual still requires full execution; its runtime observer did not authorize omissions. Native build-graph work is deferred while this alternative is evaluated. Shadow runs remain evaluation tools, not the permanent product behavior.
 
 ### Active goal completion gates
 
@@ -85,9 +85,29 @@ The new process-execution guard records that missing dependency scope explicitly
 bringing the audited gap count to 14 while keeping full fallback. Both hosted
 audits preserved the native 3,467-case inventory and authorized no omissions.
 Do not run further full Textual comparisons solely to chase a lower warning count.
-Keep it as a negative compatibility/safety case and resume native build-graph
-evaluation, first diagnosing the failed Abseil native environment. Neither actual
-time savings nor the required live agentic investigation workflow is complete.
+The user's subsequent steering explicitly prioritizes a reusable agent-assisted
+alternative, evaluated on Textual. The [prototype scope](docs/onboarding/agent-investigation.md)
+separates bounded orchestration, a read-only tool broker, language-specific positive
+evidence verifiers, versioned additive graphs and deterministic final selection.
+It cannot clear unknowns or delete existing relationships. Offline fixtures/replays
+validate plumbing; they do not satisfy the live-agent gate or demonstrate model
+effectiveness. Compare the current static approach and replay on the same real PR
+and native test profile, reporting misses, fallbacks, repeatability and end-to-end
+GitHub overhead. The user approved a US$5 total ceiling with at most 24 calls and six investigations.
+Live calls remain disabled pending provider pricing, data-routing review and enforced
+spend reservation. Actual model spend is US$0. No AWS work.
+Neither actual time savings nor the required live agentic workflow is complete.
+
+The first [agent prototype comparison](docs/onboarding/agent-investigation.md)
+has now completed on Textual PR #11. Native feedback took 360 seconds, static
+Smart CI 472 seconds, and offline replay 401 seconds. All ran 3,467 cases and
+caught the same parser regression. Replay accepted 14 existing import claims,
+added no new edges, retained 14 unresolved issues and full fallback, and reproduced
+its report exactly. This verifies reusable orchestration and safety plumbing,
+not LLM effectiveness or useful selection. Hosted safety checks passed 499 tests.
+Live-provider spend reservation, source/data scope, verified pricing and bounded
+evaluation remain next; the approved US$5 ceiling must not be treated as permission
+to bypass those gates. No model calls have been made.
 
 Workspace: `/Users/kunalsharma/Fun/project/smart-ci`
 

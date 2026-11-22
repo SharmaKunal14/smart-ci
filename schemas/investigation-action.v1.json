@@ -1,0 +1,204 @@
+{
+  "$defs": {
+    "Action": {
+      "discriminator": {
+        "mapping": {
+          "finish": "#/$defs/Finish",
+          "inspect": "#/$defs/Inspect",
+          "propose": "#/$defs/Propose",
+          "query_graph": "#/$defs/Query",
+          "search_paths": "#/$defs/Search",
+          "unresolved": "#/$defs/Unresolved"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Inspect"
+        },
+        {
+          "$ref": "#/$defs/Search"
+        },
+        {
+          "$ref": "#/$defs/Query"
+        },
+        {
+          "$ref": "#/$defs/Propose"
+        },
+        {
+          "$ref": "#/$defs/Unresolved"
+        },
+        {
+          "$ref": "#/$defs/Finish"
+        }
+      ]
+    },
+    "Finish": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "finish",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "Finish",
+      "type": "object"
+    },
+    "Inspect": {
+      "additionalProperties": false,
+      "properties": {
+        "revision": {
+          "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+          "title": "Revision",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 1024,
+          "title": "Path",
+          "type": "string"
+        },
+        "kind": {
+          "const": "inspect",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "revision",
+        "path",
+        "kind"
+      ],
+      "title": "Inspect",
+      "type": "object"
+    },
+    "Propose": {
+      "additionalProperties": false,
+      "properties": {
+        "revision": {
+          "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+          "title": "Revision",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 1024,
+          "title": "Path",
+          "type": "string"
+        },
+        "kind": {
+          "const": "propose",
+          "title": "Kind",
+          "type": "string"
+        },
+        "target": {
+          "maxLength": 1024,
+          "title": "Target",
+          "type": "string"
+        },
+        "evidence": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Evidence",
+          "type": "string"
+        },
+        "line": {
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "relation": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Relation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "revision",
+        "path",
+        "kind",
+        "target",
+        "evidence",
+        "line",
+        "relation"
+      ],
+      "title": "Propose",
+      "type": "object"
+    },
+    "Query": {
+      "additionalProperties": false,
+      "properties": {
+        "revision": {
+          "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+          "title": "Revision",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 1024,
+          "title": "Path",
+          "type": "string"
+        },
+        "kind": {
+          "const": "query_graph",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "revision",
+        "path",
+        "kind"
+      ],
+      "title": "Query",
+      "type": "object"
+    },
+    "Search": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "search_paths",
+          "title": "Kind",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "query"
+      ],
+      "title": "Search",
+      "type": "object"
+    },
+    "Unresolved": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "unresolved",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "label"
+      ],
+      "title": "Unresolved",
+      "type": "object"
+    }
+  },
+  "$ref": "#/$defs/Action",
+  "title": "ActionEnvelope"
+}

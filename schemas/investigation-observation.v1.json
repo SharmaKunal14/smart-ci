@@ -1,0 +1,78 @@
+{
+  "$defs": {
+    "ImportFact": {
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "line": {
+          "title": "Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "target",
+        "line"
+      ],
+      "title": "ImportFact",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "revision": {
+      "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$",
+      "title": "Revision",
+      "type": "string"
+    },
+    "path": {
+      "maxLength": 1024,
+      "title": "Path",
+      "type": "string"
+    },
+    "source_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Source Digest",
+      "type": "string"
+    },
+    "adapter": {
+      "title": "Adapter",
+      "type": "string"
+    },
+    "adapter_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Adapter Digest",
+      "type": "string"
+    },
+    "facts": {
+      "items": {
+        "$ref": "#/$defs/ImportFact"
+      },
+      "title": "Facts",
+      "type": "array"
+    },
+    "facts_truncated": {
+      "title": "Facts Truncated",
+      "type": "boolean"
+    },
+    "evidence": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Evidence",
+      "type": "string"
+    }
+  },
+  "required": [
+    "revision",
+    "path",
+    "source_digest",
+    "adapter",
+    "adapter_digest",
+    "facts",
+    "facts_truncated",
+    "evidence"
+  ],
+  "title": "Observation",
+  "type": "object"
+}
