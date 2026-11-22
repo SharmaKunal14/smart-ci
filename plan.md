@@ -51,6 +51,12 @@ the native baseline before claiming selection support or savings. The first
 graph parser retains declared, generated, implicit and build-only relationships;
 it does not yet authorize execution. Native target reconciliation, configuration
 binding, source-change eligibility, fallback and actual PR execution remain gates.
+The first [native GitHub run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45038161080)
+failed native timing assertions and timed out with 60 test-target outcomes missing.
+It is not an accepted baseline. Preserve this negative result; diagnose the native
+environment before spending more runs or comparing selective execution. See
+[`native-build-graphs.md`](docs/onboarding/native-build-graphs.md) for the artifact
+summary and the evidence required to resume that comparison.
 
 Workspace: `/Users/kunalsharma/Fun/project/smart-ci`
 

@@ -9,7 +9,7 @@ test files. All performance observations below come from GitHub artifacts.
 | Compiler/import graph with cached base evidence | [date-fns PR #7](https://github.com/SharmaKunal14/date-fns/pull/7) narrowed execution, but setup, fetching and planning exceeded saved test time. | Fast native suites leave little overhead budget. Precomputation alone does not establish net savings. |
 | Conservative Python import graph | [Textual PR #5](https://github.com/SharmaKunal14/textual/pull/5) retained full fallback after resolving some static gaps. | Computed loaders and resources require explicit supported semantics; clearing warnings is not sufficient. |
 | Runtime observation | [Textual PR #6](https://github.com/SharmaKunal14/textual/pull/6): 387s native versus 755s instrumented; same 3,467 outcomes. Observed examples/resources outside the configured roots. | Useful onboarding evidence, expensive in the PR path, and absence of observations cannot justify omissions. |
-| Native build graph | New bounded Abseil baseline and graph parser; selection and speedup unverified. | Build tools can provide language-independent declared relationships, but native caching, configuration, non-test builds and undeclared inputs must be accounted for. |
+| Native build graph | Abseil's unchanged native baseline failed and timed out; graph parsing is implemented, selection and speedup unverified. | A declared graph cannot repair an unreliable native baseline. Native caching, configuration, non-test builds and undeclared inputs remain acceptance gates. |
 
 The existing [Bazel query](https://bazel.build/query/language) graph includes all
 possible `select` branches. This is conservative with respect to declared build
@@ -40,9 +40,49 @@ fixed inputs. It does not change the current selector or grant skip authority.
 
 The wrapper counts native **Bazel test targets**, not internal C++ cases. Native
 failures and timeouts remain failing checks. Missing, incomplete or contradictory
-event evidence also fails the check. The initial run is not a Smart CI comparison
-and cannot establish a benefit. Its GitHub state must be inspected before reporting
-completion. Future comparisons must retain build-only checks as well as tests.
+event evidence also fails the check. Validation requires the announced event graph,
+including build-only results, to be present exactly once, with a genuine terminal
+message. A success marker alone is insufficient. This follows the native
+[BEP announcement structure](https://bazel.build/remote/bep-examples) and
+[completion semantics](https://bazel.build/remote/bep-glossary).
+
+### Observed failure, not an accepted performance baseline
+
+[Run 45038161080](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45038161080),
+job `native` (`137256408107`), failed at head
+`8711caddc87b1f4e0b84b3d825deb1ab7f7347ba`. The saved summary is
+[`abseil-native-2026-11-23.json`](../benchmarks/abseil-native-2026-11-23.json).
+
+- The native event stream announced **252 test targets**. Before interruption,
+  only **192** produced summaries: **190 passed, one failed, one timed out**.
+  The other 60 outcomes are unknown, not passes or skips.
+- `//absl/synchronization:mutex_test` failed its existing elapsed-time assertions.
+  `//absl/functional:function_ref_test` exceeded its native test timeout.
+- The full command reached the wrapper's 20-minute bound. The uniquely named
+  container's cleanup also exceeded its separate 20-second bound. No complete
+  build-finished or terminal event exists in the downloaded artifact.
+- Workflow creation to job completion was **1,450 seconds (24m 10s)**, including
+  setup, test/build work, timeout handling and GitHub cleanup. This is the duration
+  of a **failed attempt**, not the duration of a completed full suite.
+- There was no selective execution and no Smart CI speed comparison. The image
+  pull, native failures and cleanup remain part of the recorded outcome.
+
+The failure logs establish the assertions and timeouts, but do not identify their
+underlying resource cause. CPU contention, memory pressure or disk activity are
+hypotheses; resource telemetry was not collected. Increasing time limits would
+not by itself fix the native failures. Do not remove these tests, switch profiles
+silently, or rerun until a green sample can be reported. This profile needs a
+diagnosed intervention and an independent successful baseline before comparison.
+
+To inspect it, open the run above, expand **Run unchanged upstream native profile**,
+then download `abseil-native-1`. `execution.json` preserves exit 124 and the cleanup
+error; `native.bep.json` preserves the partial results. Artifact hashes are saved
+in the summary. Neither file is promotable evidence for skipping tests.
+
+The graph parser and original wrapper passed the separate
+[Smart CI safety run](https://github.com/SharmaKunal14/smart-ci/actions/runs/45041331271):
+344 tests, formatting, lint, typing and wheel/source build. That verifies the
+implementation's checks, not the failed Abseil workload or a performance benefit.
 
 ## Remaining delivery work
 

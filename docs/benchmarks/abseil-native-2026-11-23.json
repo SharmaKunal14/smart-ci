@@ -1,0 +1,68 @@
+{
+  "artifacts": {
+    "execution.json_sha256": "84d1c4ef9cf09dd48e22cce838518c207b9635bdf3484d810ae2a47d65e6a27d",
+    "name": "abseil-native-1",
+    "native.bep.json_sha256": "5593a807d7be0fd22422d2430212cf032f2c9dd05a49134e50ff0449572e85ef",
+    "retention_days": 7
+  },
+  "baseline_accepted": false,
+  "decision": "Do not promote incomplete evidence, remove failing tests, or increase retries without a diagnosed intervention.",
+  "execution": {
+    "bazel": null,
+    "command_seconds": 1224.946281181,
+    "evidence_error": "NATIVE_TIMEOUT_CONTAINER_CLEANUP_FAILED",
+    "exit_code": 124,
+    "mode": "native",
+    "profile": "upstream GCC C++17 fastbuild without optional private remote cache",
+    "schema_version": "1"
+  },
+  "experiment": "Abseil unchanged native GCC C++17 fastbuild",
+  "head_commit": "8711caddc87b1f4e0b84b3d825deb1ab7f7347ba",
+  "job_conclusion": "failure",
+  "job_id": 137256408107,
+  "known_failures": [
+    "Native Mutex timing assertions failed.",
+    "Native function_ref_test timed out.",
+    "Wrapper reached its 1200 second command limit.",
+    "Named Docker container cleanup did not finish within its 20 second bound."
+  ],
+  "partial_native_events": {
+    "announced_test_targets": 252,
+    "complete": false,
+    "counts_are": "Bazel targets, not individual C++ test cases",
+    "finished_event_present": false,
+    "missing_test_target_summaries": 60,
+    "observed_nonpassing_targets": {
+      "//absl/functional:function_ref_test": "TIMEOUT",
+      "//absl/synchronization:mutex_test": "FAILED"
+    },
+    "observed_status_counts": {
+      "FAILED": 1,
+      "PASSED": 190,
+      "TIMEOUT": 1
+    },
+    "observed_test_targets": 192,
+    "terminal_event_present": false
+  },
+  "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/1",
+  "run_attempt": 1,
+  "run_id": 45038161080,
+  "run_url": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45038161080",
+  "schema_version": "1",
+  "speedup_established": false,
+  "subset_executed": false,
+  "timing": {
+    "job_completed_at": "2026-11-22T15:48:53Z",
+    "job_seconds": 1448,
+    "job_started_at": "2026-11-22T15:24:45Z",
+    "run_created_at": "2026-11-22T15:24:43Z",
+    "scope": "Failed attempt only; not a completed full-suite baseline",
+    "trigger_to_result_seconds": 1450
+  },
+  "uncertainties": [
+    "No resource telemetry establishes whether CPU contention, memory pressure, disk IO, or another cause produced the timing failures.",
+    "The missing 60 summaries have unknown outcomes.",
+    "No completed Smart CI comparison exists for this profile."
+  ],
+  "upstream_commit": "82530019412ff77ff99d39ba0ad12e5ea6b89ea4"
+}
