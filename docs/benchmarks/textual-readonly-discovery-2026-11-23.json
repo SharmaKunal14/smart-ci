@@ -1,0 +1,149 @@
+{
+  "artifact_sha256": {
+    "artifacts/comparison.json": "9542b839dd4258f8a32b22cb73ff5a6e2b7e66b22b78826e6ba71cb2ef597cb7",
+    "artifacts/previous/base-compatibility.json": "a966a180d8faee039c2753f64f2322b58fabedab33559205ec1f282861f1a02d",
+    "artifacts/previous/head-compatibility.json": "efa35aab22c27942952a93705bc8ac7979f23b2d6ea12d5b4ccb3cadfa42b7da",
+    "artifacts/previous/selection.json": "7103503a176b9bd1f900b64b37a20acc220ab4669954ed1c53ac4af05de086a1",
+    "artifacts/previous/targets.json": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+    "artifacts/revised/base-compatibility.json": "36bbc7e9f5601f23071ac853b0eb517af55debc7b3522a21bd0fe39adcf392ab",
+    "artifacts/revised/head-compatibility.json": "accb0d3a31c486aa8644ffbfeb38aed3832f687062423a4a8e72008f8e9a94c2",
+    "artifacts/revised/selection.json": "8ea1dd96d3689be1b0aa7a83031860d560fbe1d683510580fbc4599d624942b5",
+    "artifacts/revised/targets.json": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed",
+    "audit.log": "118f9cfb548ea169a966bb69f694882287107ebec8fac798dbfa4a21439c5a1a",
+    "jobs.json": "14f2ab8f0e7d75c44ff9ab71f40d29240676bcfed4e8b8027e2e89de27954bb1",
+    "run.json": "bec198d9c475435462b2165225c28e9357d72cdc35c61200351d895761dc7a3d",
+    "safety.log": "d863a518384bec2eaab227f3d1a9d6c3d315be6b11a37ea5b2f225fb9f5d9676"
+  },
+  "comparison": {
+    "ci_savings_demonstrated": false,
+    "comparisons": [
+      {
+        "cases": 3467,
+        "commit": "f676c60945d06776e195c689f3e0a6bdfde4debc",
+        "files": 251,
+        "label": "base",
+        "previous_gaps": 14,
+        "removed": {
+          "code": "DYNAMIC_ATTRIBUTE_HOOK",
+          "line": 231,
+          "path": "src/textual/_node_list.py"
+        },
+        "revised_gaps": 13
+      },
+      {
+        "cases": 3467,
+        "commit": "114b69e248a0c7e8aa8b38a3bd5d154dc988a3dc",
+        "files": 251,
+        "label": "head",
+        "previous_gaps": 14,
+        "removed": {
+          "code": "DYNAMIC_ATTRIBUTE_HOOK",
+          "line": 231,
+          "path": "src/textual/_node_list.py"
+        },
+        "revised_gaps": 13
+      }
+    ],
+    "execution": "full",
+    "schema": "smartci.textual-discovery-audit.v1",
+    "test_execution_performed": false
+  },
+  "identical_fields": [
+    "commit",
+    "files",
+    "cases",
+    "native_cases_digest",
+    "source_digest",
+    "environment_identity",
+    "edges_digest",
+    "imports_digest",
+    "plugins"
+  ],
+  "initial_failed_run": {
+    "cause": "Audit workflow omitted the required native collection observer; stopped before collection. Fixed with --no-deps installation and matching observer file check.",
+    "url": "https://github.com/SharmaKunal14/textual/actions/runs/45047371112"
+  },
+  "limits": [
+    "Native test cases were collected, not executed; no performance comparison was run.",
+    "13 remaining diagnostics require full execution; no omission was authorized.",
+    "One supported static grammar is not proof against arbitrary Python runtime metaprogramming."
+  ],
+  "previous_collector": "0260615ca6d6764a16be7d525d3663ff42a5b0b7",
+  "remaining_gaps": [
+    {
+      "code": "CUSTOM_IMPORT_PATH",
+      "line": 63,
+      "path": "src/textual/_import_app.py"
+    },
+    {
+      "code": "CUSTOM_IMPORT_PATH",
+      "line": 109,
+      "path": "src/textual/_import_app.py"
+    },
+    {
+      "code": "DYNAMIC_ATTRIBUTE_HOOK",
+      "line": 102,
+      "path": "src/textual/widgets/__init__.py"
+    },
+    {
+      "code": "DYNAMIC_CODE",
+      "line": 183,
+      "path": "src/textual/_doc.py"
+    },
+    {
+      "code": "DYNAMIC_CODE",
+      "line": 65,
+      "path": "src/textual/_import_app.py"
+    },
+    {
+      "code": "DYNAMIC_IMPORT",
+      "line": 111,
+      "path": "src/textual/_import_app.py"
+    },
+    {
+      "code": "DYNAMIC_IMPORT",
+      "line": 19,
+      "path": "src/textual/_tree_sitter.py"
+    },
+    {
+      "code": "DYNAMIC_IMPORT",
+      "line": 1590,
+      "path": "src/textual/app.py"
+    },
+    {
+      "code": "DYNAMIC_IMPORT",
+      "line": 112,
+      "path": "src/textual/widgets/__init__.py"
+    },
+    {
+      "code": "UNRESOLVED_IMPORT",
+      "line": 8,
+      "path": "src/textual/demo/_project_stargazer_updater.py"
+    },
+    {
+      "code": "UNRESOLVED_IMPORT",
+      "line": 67,
+      "path": "tests/test_gc.py"
+    },
+    {
+      "code": "UNREVIEWED_PYTEST_PLUGIN",
+      "line": 0,
+      "path": null
+    },
+    {
+      "code": "UNSUPPORTED_MODULE_NAME",
+      "line": 0,
+      "path": "tests/snapshot_tests/snapshot_apps/auto-table.py"
+    }
+  ],
+  "revised_collector": "9a2ec11d7911f237b575f814d84a00444e9f3825",
+  "run_attempt": 1,
+  "run_id": 45049809987,
+  "run_url": "https://github.com/SharmaKunal14/textual/actions/runs/45049809987",
+  "safety_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45047350062",
+  "safety_tests_passed": 431,
+  "schema": "smartci.textual-readonly-discovery.v1",
+  "smartci_pr": "https://github.com/SharmaKunal14/smart-ci/pull/9",
+  "textual_head": "114b69e248a0c7e8aa8b38a3bd5d154dc988a3dc",
+  "textual_pr": "https://github.com/SharmaKunal14/textual/pull/8"
+}
