@@ -141,6 +141,19 @@ def test_changed_worktree_is_recorded_without_rewriting_native_result(tmp_path):
     )
 
 
+def test_session_finish_plugin_failure_is_preserved_in_observation(tmp_path):
+    root = repository(
+        tmp_path,
+        {
+            "test_a.py": "def test_a(): pass\n",
+            "conftest.py": "import pytest\n@pytest.hookimpl(tryfirst=True)\ndef pytest_sessionfinish(session):\n    session.exitstatus = 3\n",
+        },
+    )
+    output = tmp_path / "report.json"
+    assert observe(root, output).returncode == 3
+    assert json.loads(output.read_text())["exit_code"] == 3
+
+
 @pytest.mark.parametrize("case", ["inside", "existing", "dirty", "parallel"])
 def test_invalid_observation_setup_fails_explicitly(tmp_path, case):
     root = repository(tmp_path, {"test_a.py": "def test_a(): pass\n"})

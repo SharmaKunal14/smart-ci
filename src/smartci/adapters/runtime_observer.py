@@ -260,7 +260,9 @@ def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:
             f"{dist.project_name.lower()}=={dist.version}"
             for _, dist in session.config.pluginmanager.list_plugin_distinfo()
         ]
-        session.config.stash[STATE].finish(exitstatus, plugins)
+        # Earlier session-finish hooks (for example snapshot plugins) can change
+        # the result after the last test. The process wrapper remains authoritative.
+        session.config.stash[STATE].finish(int(session.exitstatus), plugins)
 
 
 def pytest_unconfigure(config: pytest.Config) -> None:
