@@ -58,6 +58,14 @@ environment before spending more runs or comparing selective execution. See
 [`native-build-graphs.md`](docs/onboarding/native-build-graphs.md) for the artifact
 summary and the evidence required to resume that comparison.
 
+The [Textual scoped-runtime follow-up](docs/onboarding/runtime-scoped-observation.md)
+preserved all 3,467 case outcomes on a real PR: 350s native versus 570s instrumented
+feedback, with zero omissions. Fixture/collection attribution improved, but parser
+execution on other threads and shared file-open attempts still require broad
+handling. All 14 static gaps remain unresolved. Before another full-suite probe,
+classify the shared phases and preserve any independent reporting/build work;
+do not equate a scope label with exclusive dependency ownership.
+
 Workspace: `/Users/kunalsharma/Fun/project/smart-ci`
 
 ## 1. Objective and starting point

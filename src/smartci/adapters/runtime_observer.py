@@ -16,14 +16,20 @@ import sys
 import tempfile
 import threading
 from collections.abc import Generator
+from contextlib import contextmanager
 from pathlib import Path
-from types import FrameType
+from types import CodeType, FrameType
+from typing import Literal, Protocol
 
 import pytest
 
 SHARED = "@shared"
 OTHER_THREAD = "@other-thread"
 LIMIT = 500_000
+
+
+class PathNode(Protocol):
+    path: Path
 
 
 def git(root: Path, *args: str) -> bytes:
@@ -43,7 +49,15 @@ def git(root: Path, *args: str) -> bytes:
 
 
 class Observation:
-    def __init__(self, root: Path, output: Path, limit: int = LIMIT) -> None:
+    def __init__(
+        self,
+        root: Path,
+        output: Path,
+        limit: int = LIMIT,
+        *,
+        engine: Literal["profile", "monitoring"] = "profile",
+        detailed_contexts: bool = False,
+    ) -> None:
         self.root = root.resolve(strict=True)
         self.output = output.resolve()
         if self.output.is_relative_to(self.root) or self.output.exists():
@@ -76,6 +90,58 @@ class Observation:
         self.audit_confirmed = False
         self.filename_cache: dict[str, str | None] = {}
         self.profile_installed = False
+        self.engine = engine
+        self.detailed_contexts = detailed_contexts
+        self.monitoring_id: int | None = None
+        self.monitoring_name = f"smartci-observation-{id(self)}"
+        self.context_metadata: dict[str, dict[str, str]] = {}
+
+    @contextmanager
+    def phase(self, kind: str, scope: str, owner: str) -> Generator[None]:
+        """Record temporal scope, never a proof of exclusive dependency ownership.
+
+        No fixture is evaluated, wrapped, requested or finalized by this observer.
+        Session/package fixtures are attributed to their scope, not their first
+        consumer. Teardown stays shared because public hooks do not surround each
+        cached fixture finalizer.
+        """
+        if not self.detailed_contexts:
+            yield
+            return
+        previous = self.context
+        metadata = {"kind": kind, "scope": scope, "owner": owner}
+        key = (
+            "@phase:"
+            + hashlib.sha256(json.dumps(metadata, sort_keys=True).encode()).hexdigest()
+        )
+        if len(self.context_metadata) >= 100_000 and key not in self.context_metadata:
+            self.diagnostics.add("CONTEXT_LIMIT_REACHED")
+            self.context = SHARED
+        else:
+            self.context_metadata[key] = metadata
+            self.context = key
+        try:
+            yield
+        finally:
+            self.context = previous
+
+    def node_owner(self, node: PathNode, scope: str) -> str:
+        """Keep parameter values and external paths out of observation metadata."""
+        if scope == "session":
+            return "."
+        try:
+            owner = node.path.resolve().relative_to(self.root).as_posix()
+        except (OSError, ValueError):
+            self.diagnostics.add("UNTRACKED_SCOPE_OWNER")
+            return "@unknown"
+        if (
+            owner in self.blobs
+            or scope == "package"
+            and (owner == "." or any(p.startswith(owner + "/") for p in self.blobs))
+        ):
+            return owner
+        self.diagnostics.add("UNTRACKED_SCOPE_OWNER")
+        return "@unknown"
 
     def add(self, kind: str, value: str) -> None:
         if not self.active:
@@ -94,7 +160,18 @@ class Observation:
     def profile(self, frame: FrameType, event: str, arg: object) -> None:
         if not self.active or event != "call":
             return
-        filename = frame.f_code.co_filename
+        self.record_code(frame.f_code)
+
+    def monitor(self, code: CodeType, offset: int) -> None:
+        if self.active:
+            self.record_code(code)
+
+    def monitor_throw(self, code: CodeType, offset: int, error: BaseException) -> None:
+        if self.active:
+            self.record_code(code)
+
+    def record_code(self, code: CodeType) -> None:
+        filename = code.co_filename
         # Profile filenames are normally absolute. Do not cache relative paths:
         # a test can change cwd between executions of the same code object.
         if filename in self.filename_cache:
@@ -110,7 +187,7 @@ class Observation:
             path = self.paths.get(os.path.abspath(filename))
         if path is not None:
             self.add("code_files", path)
-            self.add("code_entries", f"{path}:{frame.f_code.co_firstlineno}")
+            self.add("code_entries", f"{path}:{code.co_firstlineno}")
 
     def audit(self, event: str, args: tuple[object, ...]) -> None:
         if not self.active:
@@ -136,14 +213,51 @@ class Observation:
         sys.audit("smartci.observation.probe")
         if not self.audit_confirmed:
             self.diagnostics.add("AUDIT_HOOK_NOT_CONFIRMED")
-        if sys.getprofile() is None:
+        if self.engine == "monitoring":
+            self.start_monitoring()
+        elif sys.getprofile() is None:
             sys.setprofile(self.profile)
             self.profile_installed = True
         else:
             self.diagnostics.add("EXISTING_PROFILER_NOT_REPLACED")
 
+    def start_monitoring(self) -> None:
+        # Reserve only unclaimed, non-conventional IDs. Do not restart events:
+        # restart_events affects other tools too, including native coverage.
+        for tool_id in (3, 4):
+            try:
+                sys.monitoring.use_tool_id(tool_id, self.monitoring_name)
+            except ValueError:
+                continue
+            self.monitoring_id = tool_id
+            events = sys.monitoring.events
+            sys.monitoring.register_callback(tool_id, events.PY_START, self.monitor)
+            sys.monitoring.register_callback(tool_id, events.PY_RESUME, self.monitor)
+            sys.monitoring.register_callback(
+                tool_id, events.PY_THROW, self.monitor_throw
+            )
+            sys.monitoring.set_events(
+                tool_id, events.PY_START | events.PY_RESUME | events.PY_THROW
+            )
+            return
+        self.diagnostics.add("NO_MONITORING_TOOL_ID_AVAILABLE")
+
     def stop(self) -> None:
         self.active = False
+        if self.monitoring_id is not None:
+            tool_id = self.monitoring_id
+            if sys.monitoring.get_tool(tool_id) == self.monitoring_name:
+                sys.monitoring.set_events(tool_id, 0)
+                for event in (
+                    sys.monitoring.events.PY_START,
+                    sys.monitoring.events.PY_RESUME,
+                    sys.monitoring.events.PY_THROW,
+                ):
+                    sys.monitoring.register_callback(tool_id, event, None)
+                sys.monitoring.free_tool_id(tool_id)
+            else:
+                self.diagnostics.add("MONITORING_TOOL_REPLACED_DURING_RUN")
+            self.monitoring_id = None
         if self.profile_installed:
             if sys.getprofile() == self.profile:
                 sys.setprofile(None)
@@ -167,7 +281,8 @@ class Observation:
         except (OSError, ValueError, subprocess.SubprocessError):
             self.diagnostics.add("WORKTREE_CHANGED_OR_UNVERIFIABLE")
         payload = {
-            "schema": "smartci.runtime-observation.v1",
+            "schema": f"smartci.runtime-observation.v{2 if self.detailed_contexts else 1}",
+            "engine": self.engine,
             "complete": False,
             "omission_authorized": False,
             "commit": self.commit,
@@ -184,8 +299,9 @@ class Observation:
             "diagnostics": sorted(self.diagnostics),
             "limitations": [
                 "positive observations only; absence is not independence",
-                "collection/setup/teardown are shared across every test",
-                "main-thread Python calls only; native code and child processes incomplete",
+                "phase and fixture scopes are temporal attribution, not exclusive dependencies",
+                "teardown and unknown scopes remain shared; cached fixture consumers are not inferred from first use",
+                "native code and child processes incomplete; thread ownership not attributed",
                 "async background work may cross test-call boundaries",
                 "audit hooks are bypassable and imports may be cached",
                 "open/import events are attempts; no contents or external paths recorded",
@@ -198,6 +314,8 @@ class Observation:
                 for context, kinds in sorted(self.contexts.items())
             },
         }
+        if self.detailed_contexts:
+            payload["context_metadata"] = dict(sorted(self.context_metadata.items()))
         encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"))
         payload["digest"] = hashlib.sha256(encoded.encode()).hexdigest()
         self.output.parent.mkdir(parents=True, exist_ok=True)
@@ -214,6 +332,12 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     parser.addoption(
         "--smartci-observation", help="Advisory runtime report outside repository"
     )
+    parser.addoption(
+        "--smartci-observation-engine",
+        choices=["profile", "monitoring"],
+        default="profile",
+    )
+    parser.addoption("--smartci-observation-contexts", action="store_true")
 
 
 def pytest_configure(config: pytest.Config) -> None:
@@ -223,7 +347,16 @@ def pytest_configure(config: pytest.Config) -> None:
     if hasattr(config, "workerinput") or getattr(config.option, "numprocesses", False):
         raise pytest.UsageError("runtime prototype supports serial pytest only")
     try:
-        state = Observation(config.rootpath, Path(destination))
+        state = Observation(
+            config.rootpath,
+            Path(destination),
+            engine=(
+                "monitoring"
+                if config.getoption("--smartci-observation-engine") == "monitoring"
+                else "profile"
+            ),
+            detailed_contexts=config.getoption("--smartci-observation-contexts"),
+        )
     except (OSError, ValueError, subprocess.SubprocessError) as exc:
         raise pytest.UsageError(
             "observation requires clean Git and a new external report"
@@ -239,6 +372,33 @@ def pytest_collection_finish(session: pytest.Session) -> None:
         state.test_files = {state.test_context(item) for item in session.items} - {
             SHARED
         }
+
+
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
+def pytest_make_collect_report(collector: pytest.Collector) -> Generator[None]:
+    state = collector.config.stash.get(STATE, None)
+    if state is None or not state.detailed_contexts:
+        yield
+    else:
+        scope = "module" if str(collector.path) in state.paths else "package"
+        with state.phase("collection", scope, state.node_owner(collector, scope)):
+            yield
+
+
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
+def pytest_fixture_setup(
+    fixturedef: pytest.FixtureDef[object], request: pytest.FixtureRequest
+) -> Generator[None]:
+    state = request.config.stash.get(STATE, None)
+    if state is None or not state.detailed_contexts:
+        yield
+    else:
+        with state.phase(
+            "fixture_setup",
+            request.scope,
+            state.node_owner(request.node, request.scope),
+        ):
+            yield
 
 
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)

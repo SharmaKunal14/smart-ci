@@ -202,3 +202,9 @@ independent native full suite on real PRs. One recorded run alone cannot replace
 those contracts or establish safety for future changes.
 
 No AWS service or paid model is used; all PRs remain unmerged.
+
+The follow-up [scoped observation experiment](runtime-scoped-observation.md)
+separates collection and fixture setup and tests a monitoring backend. Its hosted
+pair preserves all outcomes but still requires all 251 files; background parser
+execution and shared file opens remain unresolved. It does not supersede this
+run's negative result with a claim of selective-CI savings.
