@@ -58,3 +58,11 @@ def test_diagnostic_preserves_process_exit_and_bounds_runtime(tmp_path, monkeypa
     result = module.run_profile(profile, tmp_path, {}, timeout=0)
     assert result[0] == 124
     assert result[2] == "DIAGNOSTIC_TIMEOUT"
+
+
+def test_hosted_diagnostic_has_upstream_history_and_no_model_credentials():
+    workflow = (ROOT / "examples/abseil/diagnostic-workflow.yml").read_text()
+    assert "fetch-depth: 0" in workflow
+    assert "persist-credentials: false" in workflow
+    assert "secrets." not in workflow
+    assert "contents: read" in workflow and "timeout-minutes: 14" in workflow
