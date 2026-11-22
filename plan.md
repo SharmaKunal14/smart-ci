@@ -891,3 +891,25 @@ Trusted precomputed base maps and feature-push planning remain future work.
 Reuse must validate exact revisions, implementation/configuration/dependency and
 runtime provenance, plus evidence trust. Stale or untrusted evidence must trigger
 reconstruction or full execution; precomputation cannot know a future diff.
+
+### Precomputed base maps — hosted evaluation, 22 November 2026
+
+Implemented opt-in base-map reuse with authenticated publisher/artifact origin,
+exact revision/tree/configuration/environment/tool validation, and safe source
+reconstruction on misses. The head is still freshly discovered. Trusted fetch
+executes in a separate job without application code; no AWS or paid models.
+
+GitHub safety checks passed 289 tests and the package build. PR #7's three
+hosted repetitions reduced planning from 6.42s rebuilding to 2.57s with a cache
+hit, but trigger-to-result latency was 27s native, 39s rebuilding and 58s cached.
+The separate fetch job cost 18s median; producer jobs cost 30s and 33s separately.
+Cache reuse works, but the end-to-end performance gate remains unmet. PR #8
+retained exactly the six historical-defect failures with a validated cache hit.
+All experiment PRs remain unmerged. Evidence and reproduction guidance are in
+`docs/onboarding/precomputed-maps.md` and
+`docs/benchmarks/date-fns-precomputed-2026-11-22.json`.
+
+Recommended next direction: integrate into the existing test job, reduce trusted
+transport overhead, add deterministic cost-based full execution, and evaluate
+safe incremental discovery on a genuinely expensive native workload. These are
+future work; no universal recall or production savings claim is established.

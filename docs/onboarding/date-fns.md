@@ -74,6 +74,10 @@ All PRs remain unmerged. No AWS deployment or paid model calls were used.
 
 Fork: https://github.com/SharmaKunal14/date-fns
 
+The subsequent [precomputed-map experiment](precomputed-maps.md) also completed:
+cache hits reduced planning, but authenticated retrieval increased end-to-end
+latency. It remains an unsuccessful performance experiment.
+
 ## Planning optimization — hosted verification, 22 November 2026
 
 [Optimization PR](https://github.com/SharmaKunal14/smart-ci/pull/2) batches
