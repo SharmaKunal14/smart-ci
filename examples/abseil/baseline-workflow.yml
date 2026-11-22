@@ -1,0 +1,29 @@
+name: Smart CI native build baseline
+on:
+  pull_request:
+    branches: [codex/smartci-native-base]
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+concurrency:
+  group: abseil-baseline-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Run unchanged upstream native profile
+        run: python3 .smartci/baseline.py --output "$RUNNER_TEMP/abseil-evidence"
+      - name: Publish native evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: abseil-native-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/abseil-evidence
+          retention-days: 7
+          if-no-files-found: error
