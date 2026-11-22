@@ -1,0 +1,237 @@
+{
+  "attempt": 1,
+  "comparison": {
+    "actual_test_omissions": 0,
+    "case_identities_outcomes_and_skips_equal": true,
+    "mismatched_cases": [],
+    "observer_extra_feedback_seconds": 220.0,
+    "selective_ci_savings_demonstrated": false,
+    "total_runner_seconds": 914.0
+  },
+  "head": "8d41e6a879ba704f3c53633cefeaf809aa76996d",
+  "interpretation": {
+    "caution": "Different runner instances and two instrumentation changes; these single pairs do not isolate a causal engine speedup. Neither run omits tests.",
+    "current_pair_extra_seconds": 220.0,
+    "new_evidence": "Monitoring observed parser execution in other threads; their test ownership remains unknown.",
+    "next_gate": "Classify shared observation phases and obtain supported dependency contracts; do not waive gaps or attribute arbitrary worker threads only to their creator.",
+    "previous_pair_extra_seconds": 368.0,
+    "remaining_attribution": "Shared activity for both candidate source files contains open attempts, not code entries. The report does not distinguish test setup, teardown or reporting origins of those opens.",
+    "useful_subset_justified": false
+  },
+  "jobs": {
+    "native": {
+      "cases": 3467,
+      "conclusion": "failure",
+      "execution": {
+        "base": "f676c60945d06776e195c689f3e0a6bdfde4debc",
+        "command_seconds": 300.35754694999997,
+        "execution": "full",
+        "exit_code": 1,
+        "head": "8d41e6a879ba704f3c53633cefeaf809aa76996d",
+        "mode": "native",
+        "planning_error": null,
+        "planning_seconds": 0.0,
+        "targets": null,
+        "test_seconds": 300.35753240500003
+      },
+      "execution_sha256": "ab372e4dae5962da00780f664d2f6c207fdcf332722a15d2938bba75ff0610d6",
+      "failed_cases": [
+        "tests.test_xterm_parser::test_extended_keys[\\x1b[58;2;126:47u-~/]"
+      ],
+      "id": 137274335556,
+      "job_seconds": 347.0,
+      "junit_sha256": "a6f11a055954191790798bd53463f4992df19276e149ffc40e9fde605ac23bc2",
+      "queue_seconds": 3.0,
+      "trigger_to_result_seconds": 350.0,
+      "url": "https://github.com/SharmaKunal14/textual/actions/runs/45043961511/job/137274335556"
+    },
+    "observe-scoped": {
+      "cases": 3467,
+      "conclusion": "failure",
+      "execution": {
+        "base": "f676c60945d06776e195c689f3e0a6bdfde4debc",
+        "command_seconds": 509.352409485,
+        "execution": "full",
+        "exit_code": 1,
+        "head": "8d41e6a879ba704f3c53633cefeaf809aa76996d",
+        "mode": "observe-scoped",
+        "planning_error": null,
+        "planning_seconds": 0.0,
+        "targets": null,
+        "test_seconds": 509.35238304
+      },
+      "execution_sha256": "44491ffed016148bba4e2df47cdd92e71f18c9213d06b1d23e8141c42e753182",
+      "failed_cases": [
+        "tests.test_xterm_parser::test_extended_keys[\\x1b[58;2;126:47u-~/]"
+      ],
+      "id": 137274335803,
+      "job_seconds": 567.0,
+      "junit_sha256": "78b186c4e13157ad2a55ccf8eefa9ccf3ec00860e1f8e83064651f544b427779",
+      "queue_seconds": 3.0,
+      "trigger_to_result_seconds": 570.0,
+      "url": "https://github.com/SharmaKunal14/textual/actions/runs/45043961511/job/137274335803"
+    }
+  },
+  "limits": [
+    "one paired run",
+    "both paths execute the full suite",
+    "observation cannot prove future dependency completeness"
+  ],
+  "observation": {
+    "candidates": [
+      {
+        "candidate_file_count": 251,
+        "observed_call_files": [
+          "tests/test_xterm_parser.py"
+        ],
+        "omission_authorized": false,
+        "path": "src/textual/_xterm_parser.py",
+        "shared_contexts": [
+          "@other-thread",
+          "@phase:71f1dd28e5c78f0344217960766cb16e51f8ad9cce4cfe60e714ac547cc9728f",
+          "@phase:e09a9fa129fec7abff12959a2e730fd71ec820f40917514cdd31bb28328718d1",
+          "@shared"
+        ]
+      },
+      {
+        "candidate_file_count": 251,
+        "observed_call_files": [
+          "tests/snapshot_tests/test_snapshots.py",
+          "tests/test_demo.py",
+          "tests/test_disabled.py",
+          "tests/test_markdown.py",
+          "tests/test_markdownviewer.py"
+        ],
+        "omission_authorized": false,
+        "path": "src/textual/widgets/_markdown.py",
+        "shared_contexts": [
+          "@phase:e80403a357777dec6dc926d3f28378650b23bdd22be8d050b4ca72954d6741d4",
+          "@shared"
+        ]
+      }
+    ],
+    "diagnostics": [
+      "CHILD_PROCESS_NOT_OBSERVED",
+      "UNTRACKED_OR_EXTERNAL_OPENS_NOT_ATTRIBUTED"
+    ],
+    "engine": "monitoring",
+    "executed_outside_configured_root_count": 122,
+    "executed_tracked_file_count": 737,
+    "execution_required": "full",
+    "gaps_discharged": 0,
+    "metadata_context_count": 502,
+    "remaining_static_gaps": 14,
+    "schema": "smartci.runtime-observation.v2",
+    "subject_phase_evidence": {
+      "src/textual/_xterm_parser.py": [
+        {
+          "code_entries": [
+            "src/textual/_xterm_parser.py:145",
+            "src/textual/_xterm_parser.py:65",
+            "src/textual/_xterm_parser.py:75",
+            "src/textual/_xterm_parser.py:80"
+          ],
+          "context": "@other-thread",
+          "file_open_attempt": false,
+          "metadata": null
+        },
+        {
+          "code_entries": [
+            "src/textual/_xterm_parser.py:145",
+            "src/textual/_xterm_parser.py:65",
+            "src/textual/_xterm_parser.py:75"
+          ],
+          "context": "@phase:71f1dd28e5c78f0344217960766cb16e51f8ad9cce4cfe60e714ac547cc9728f",
+          "file_open_attempt": false,
+          "metadata": {
+            "kind": "fixture_setup",
+            "owner": "tests/test_xterm_parser.py",
+            "scope": "function"
+          }
+        },
+        {
+          "code_entries": [
+            "src/textual/_xterm_parser.py:1",
+            "src/textual/_xterm_parser.py:62"
+          ],
+          "context": "@phase:e09a9fa129fec7abff12959a2e730fd71ec820f40917514cdd31bb28328718d1",
+          "file_open_attempt": true,
+          "metadata": {
+            "kind": "collection",
+            "owner": "tests/test_xterm_parser.py",
+            "scope": "module"
+          }
+        },
+        {
+          "code_entries": [],
+          "context": "@shared",
+          "file_open_attempt": true,
+          "metadata": null
+        }
+      ],
+      "src/textual/widgets/_markdown.py": [
+        {
+          "code_entries": [
+            "src/textual/widgets/_markdown.py:1",
+            "src/textual/widgets/_markdown.py:1067",
+            "src/textual/widgets/_markdown.py:1088",
+            "src/textual/widgets/_markdown.py:1107",
+            "src/textual/widgets/_markdown.py:112",
+            "src/textual/widgets/_markdown.py:1514",
+            "src/textual/widgets/_markdown.py:1600",
+            "src/textual/widgets/_markdown.py:1627",
+            "src/textual/widgets/_markdown.py:183",
+            "src/textual/widgets/_markdown.py:366",
+            "src/textual/widgets/_markdown.py:380",
+            "src/textual/widgets/_markdown.py:395",
+            "src/textual/widgets/_markdown.py:409",
+            "src/textual/widgets/_markdown.py:41",
+            "src/textual/widgets/_markdown.py:425",
+            "src/textual/widgets/_markdown.py:440",
+            "src/textual/widgets/_markdown.py:455",
+            "src/textual/widgets/_markdown.py:470",
+            "src/textual/widgets/_markdown.py:483",
+            "src/textual/widgets/_markdown.py:501",
+            "src/textual/widgets/_markdown.py:521",
+            "src/textual/widgets/_markdown.py:535",
+            "src/textual/widgets/_markdown.py:564",
+            "src/textual/widgets/_markdown.py:606",
+            "src/textual/widgets/_markdown.py:617",
+            "src/textual/widgets/_markdown.py:717",
+            "src/textual/widgets/_markdown.py:789",
+            "src/textual/widgets/_markdown.py:793",
+            "src/textual/widgets/_markdown.py:797",
+            "src/textual/widgets/_markdown.py:801",
+            "src/textual/widgets/_markdown.py:805",
+            "src/textual/widgets/_markdown.py:809",
+            "src/textual/widgets/_markdown.py:832",
+            "src/textual/widgets/_markdown.py:853",
+            "src/textual/widgets/_markdown.py:857",
+            "src/textual/widgets/_markdown.py:861",
+            "src/textual/widgets/_markdown.py:962"
+          ],
+          "context": "@phase:e80403a357777dec6dc926d3f28378650b23bdd22be8d050b4ca72954d6741d4",
+          "file_open_attempt": true,
+          "metadata": {
+            "kind": "collection",
+            "owner": "tests/snapshot_tests/test_snapshots.py",
+            "scope": "module"
+          }
+        },
+        {
+          "code_entries": [],
+          "context": "@shared",
+          "file_open_attempt": true,
+          "metadata": null
+        }
+      ]
+    }
+  },
+  "observation_digest": "a51c6e330090a5119279899086cbcb69b3cf77078c6a501cbfa09b0e2c20b832",
+  "observer_commit": "20989eeeb91134ab68873bf98745f3c639ee3a09",
+  "observer_sha256": "46201e95668b591e5b3a175fdc533065c96aee1d51030b3fe1790d968994deb5",
+  "observer_source_hash_matches_pin": true,
+  "pr": "https://github.com/SharmaKunal14/textual/pull/7",
+  "run": "https://github.com/SharmaKunal14/textual/actions/runs/45043961511",
+  "schema_version": "1"
+}
