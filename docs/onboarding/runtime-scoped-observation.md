@@ -73,6 +73,11 @@ single pairs on different runners and both attribution and instrumentation chang
 This does not isolate a causal engine improvement and is **not selective-CI
 savings**. Both paths still executed every test.
 
+Native coverage settings were preserved, and both reports contain the same 245
+source files and 31,456 statements. Covered-line counts differ by three (27,109
+native; 27,112 observed). Matching case outcomes therefore do not establish
+identical execution paths; this pair does not identify the cause of that difference.
+
 The report has 502 collection/fixture scope records, 737 executed tracked files
 and the same 122 executed files outside the configured `src/` and `tests/` roots.
 Parser setup is now correctly recorded under its function-scoped fixture, and

@@ -11,6 +11,7 @@
   "head": "8d41e6a879ba704f3c53633cefeaf809aa76996d",
   "interpretation": {
     "caution": "Different runner instances and two instrumentation changes; these single pairs do not isolate a causal engine speedup. Neither run omits tests.",
+    "coverage_limit": "Native coverage configuration and reported source/statement universe match, but covered-line counts differ by three. Matching case outcomes do not imply identical execution paths; the cause is not established by this pair.",
     "current_pair_extra_seconds": 220.0,
     "new_evidence": "Monitoring observed parser execution in other threads; their test ownership remains unknown.",
     "next_gate": "Classify shared observation phases and obtain supported dependency contracts; do not waive gaps or attribute arbitrary worker threads only to their creator.",
@@ -22,6 +23,13 @@
     "native": {
       "cases": 3467,
       "conclusion": "failure",
+      "coverage": {
+        "line_rate": "0.8618",
+        "lines_covered": 27109,
+        "lines_valid": 31456,
+        "sha256": "2082deccee423ed9464e4765f78ddd5124797de7d754bca5984be51fd93ab0fd",
+        "source_files": 245
+      },
       "execution": {
         "base": "f676c60945d06776e195c689f3e0a6bdfde4debc",
         "command_seconds": 300.35754694999997,
@@ -48,6 +56,13 @@
     "observe-scoped": {
       "cases": 3467,
       "conclusion": "failure",
+      "coverage": {
+        "line_rate": "0.8619",
+        "lines_covered": 27112,
+        "lines_valid": 31456,
+        "sha256": "6b28fc7edaf7a89e14ac3562de6e9bcd9041e46f6fcc1e24b07b6beb341e337c",
+        "source_files": 245
+      },
       "execution": {
         "base": "f676c60945d06776e195c689f3e0a6bdfde4debc",
         "command_seconds": 509.352409485,
