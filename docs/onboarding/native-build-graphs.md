@@ -94,6 +94,16 @@ retain full fallback. Do not assume a parsed XML graph is a complete native test
 inventory. Verify deleted/renamed files and dependency changes against both
 revisions, preserving removed edges.
 
+The native `bazel test ...` also builds non-test targets. Replacing `...` with
+only impacted test labels can silently remove build checks. Reconcile native
+build-only target/configuration results as well as tests; preserve that build
+coverage in the selected arm and include its cost. Explicitly list all native
+flags and runner settings that each arm inherits. A declared graph alone does
+not prove hermetic runtime access: Bazel's [test specification](https://bazel.build/reference/test-encyclopedia)
+requires declared dependencies but says that requirement is not fully enforced.
+Undeclared resource access remains a compatibility limitation, not something an
+agent's confidence can waive.
+
 Compare eligible historical source changes against the independent full native
 command on real PRs. Retain ordinary native build/test caches; Bazel itself may
 already avoid unchanged work, so this approach may provide little additional
@@ -117,6 +127,12 @@ GCC script. It changes only `bazel test ...` to the complete
 Source, test bodies, assertions, timeouts, compiler flags, signal-handler setting,
 Docker image, workers and caching remain unchanged. The full profile script hash
 must match before derivation; application/build files must match the upstream pin.
+The current harness checks the complete tracked tree outside `.smartci/` and
+`.github/workflows/`, disables external diff/text conversion and replacement
+objects, and rejects untracked inputs, including ignored files copied by the
+native script. The already-running full experiment uses the previous path-based
+guard; its complete Git diff was independently checked to contain only harness
+and workflow changes. This hardening does not change that experiment's inputs.
 
 This is a manually scoped failure investigation, **not automatic test selection,
 a successful full-suite baseline, or a Smart CI speed comparison**. It preserves

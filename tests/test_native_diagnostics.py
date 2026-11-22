@@ -1,5 +1,6 @@
 import hashlib
 import importlib.util
+import subprocess
 import sys
 from pathlib import Path
 
@@ -15,6 +16,65 @@ try:
     SPEC.loader.exec_module(module)
 finally:
     sys.path.pop(0)
+
+
+@pytest.fixture
+def native_tree(tmp_path, monkeypatch):
+    def git(*args):
+        return (
+            subprocess.run(
+                ["git", *args], cwd=tmp_path, check=True, capture_output=True
+            )
+            .stdout.decode()
+            .strip()
+        )
+
+    git("init", "-q")
+    git("config", "user.email", "test@example.invalid")
+    git("config", "user.name", "Test")
+    (tmp_path / ".gitignore").write_text("*.generated\n")
+    (tmp_path / "WORKSPACE.bazel").write_text("# original\n")
+    (tmp_path / "README.md").write_text("original\n")
+    git("add", ".")
+    git("commit", "-qm", "native baseline")
+    monkeypatch.setattr(module, "UPSTREAM", git("rev-parse", "HEAD"))
+    return tmp_path, git
+
+
+def test_native_baseline_allows_only_approved_harness_changes(native_tree):
+    root, git = native_tree
+    (root / ".smartci").mkdir()
+    (root / ".smartci/baseline.py").write_text("# harness\n")
+    (root / ".github/workflows").mkdir(parents=True)
+    (root / ".github/workflows/pilot.yml").write_text("# workflow\n")
+    module.verify_source(root)
+    git("add", ".")
+    git("commit", "-qm", "pilot harness")
+    module.verify_source(root)
+
+
+@pytest.mark.parametrize("path", ["WORKSPACE.bazel", "README.md", ".gitignore"])
+def test_native_baseline_rejects_changes_outside_old_path_allowlist(native_tree, path):
+    root, git = native_tree
+    (root / path).write_text("changed\n")
+    with pytest.raises(subprocess.CalledProcessError):
+        module.verify_source(root)
+    git("add", path)
+    with pytest.raises(subprocess.CalledProcessError):
+        module.verify_source(root)
+    git("commit", "-qm", "unexpected input change")
+    with pytest.raises(subprocess.CalledProcessError):
+        module.verify_source(root)
+
+
+@pytest.mark.parametrize("path", ["extra.bzl", "ignored.generated", ".github/config"])
+def test_native_baseline_rejects_untracked_and_ignored_inputs(native_tree, path):
+    root, _ = native_tree
+    target = root / path
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("unexpected native input\n")
+    with pytest.raises(ValueError, match="untracked"):
+        module.verify_source(root)
 
 
 def test_profile_drift_never_silently_changes_native_semantics(monkeypatch):

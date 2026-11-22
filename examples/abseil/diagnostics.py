@@ -6,6 +6,7 @@ import json
 import os
 import signal
 import subprocess
+import tempfile
 import time
 import uuid
 from pathlib import Path
@@ -26,6 +27,42 @@ PROC_FILES = (
     "sys/kernel/core_pattern",
     "sys/kernel/core_pipe_limit",
 )
+
+
+def verify_source(root: Path) -> None:
+    """Only the pilot harness/workflows may differ from the pinned native tree."""
+    paths = ["--", ".", ":(exclude).smartci", ":(exclude).github/workflows"]
+    git = ["git", "--no-replace-objects", "-c", "core.fsmonitor=false"]
+    subprocess.run(
+        [
+            *git,
+            "diff",
+            "--no-ext-diff",
+            "--no-textconv",
+            "--exit-code",
+            UPSTREAM,
+            *paths,
+        ],
+        cwd=root,
+        check=True,
+        timeout=10,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    # Include ignored files: the native Docker copy also copies them. Stream the
+    # listing to a temporary file so an unexpected tree cannot grow Python RAM.
+    with tempfile.TemporaryFile() as listing:
+        subprocess.run(
+            [*git, "ls-files", "--others", "-z", *paths],
+            cwd=root,
+            check=True,
+            timeout=10,
+            stdout=listing,
+            stderr=subprocess.DEVNULL,
+        )
+        listing.seek(0)
+        if listing.read(1):
+            raise ValueError("unexpected untracked input in native baseline")
 
 
 def targeted_profile(raw: bytes, scope: str = "target") -> bytes:
@@ -137,24 +174,7 @@ def main() -> int:
         for c in str(output)
     ):
         parser.error("external new output directory with simple path required")
-    subprocess.run(
-        [
-            "git",
-            "diff",
-            "--exit-code",
-            UPSTREAM,
-            "--",
-            "absl",
-            "ci",
-            "MODULE.bazel",
-            "MODULE.bazel.lock",
-            "BUILD.bazel",
-            ".bazelrc",
-        ],
-        check=True,
-        timeout=10,
-        stdout=subprocess.DEVNULL,
-    )
+    verify_source(root)
     script = targeted_profile(
         (root / "ci/linux_gcc-latest_libstdcxx_bazel.sh").read_bytes(), args.scope
     )
