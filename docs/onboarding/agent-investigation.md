@@ -80,9 +80,10 @@ same real PR: native, current static Smart CI, and assisted replay. Report their
 complete GitHub timings, case identities/outcomes, failures missed, fallbacks and
 runner-seconds. A single regression and replay do not establish broad performance.
 
-## Proposed live evaluation budget — not authorized
+## Approved ceiling — live calls remain disabled
 
-Propose a **US$5 total ceiling**, not a prediction of cost or authorization. Start
+The user approved a **US$5 total ceiling**, at most 24 calls and six investigations on
+23 November 2026. This is a ceiling, not a prediction of cost. Start
 with two real Textual changes and three trials each: at most six investigations,
 four model calls each (24 total, including retries), 120,000 aggregate input tokens
 and 24,000 output tokens. No recursive agent spawning or test execution tools.
@@ -93,8 +94,50 @@ is reached; never auto-top-up. If the selected model cannot fit, reduce the tria
 scope explicitly or leave live evaluation disabled. The dollar ceiling takes
 precedence over reaching six investigations.
 
-Before enabling calls: agree on that ceiling and provider/model/data routing;
+Before enabling calls: verify provider/model/data routing;
 implement usage reservation, timeouts, error accounting and a kill switch; verify
 rates and run an admission-only test. Token caps and estimated cost alone are not
-a billing cap. Current approved model spend remains **US$0**. GitHub runner usage
+a billing cap. The approved ceiling is **US$5**; spend so far is **US$0**. GitHub runner usage
 is separate and must be reported from the completed workflows.
+
+## Real GitHub comparison, 23 November 2026
+
+[Smart CI PR #11](https://github.com/SharmaKunal14/smart-ci/pull/11) implements the
+prototype at `bcbf54de3e98b991db9a8c312db492ed6a73b6d8`.
+Its [hosted safety run](https://github.com/SharmaKunal14/smart-ci/actions/runs/45058488501)
+passed all 499 tests, formatting, lint, type checks and wheel/source builds.
+
+[Textual PR #11](https://github.com/SharmaKunal14/textual/pull/11) changes only one
+line of the historical terminal-key parser regression. The dedicated base contains
+the workflow. Its [first-attempt comparison](https://github.com/SharmaKunal14/textual/actions/runs/45058699772)
+finished with intentional native test failures in every arm:
+
+| Approach | Trigger to job completion | Runner time | Planning | Native test process |
+| --- | ---: | ---: | ---: | ---: |
+| Native full suite | 360 s | 357 s | 0 s | 309.44 s |
+| Current static Smart CI | 472 s | 470 s | 53.84 s | 359.28 s |
+| Smart CI + offline investigation replay | 401 s | 399 s | 36.65 s | 306.75 s |
+
+Every arm executed all **3,467 cases / 251 test files**. Case identities, outcomes
+and skip details matched; each caught the same extended-key parser failure. Zero
+failures were missed, but zero tests were omitted, so this is not evidence that
+omission is safe. Both Smart CI arms fell back on this one PR: 1/1 each, with
+`INCOMPLETE_EVIDENCE`. The replay accepted 14 claims that were already recorded,
+added **zero new edges**, retained **14 unresolved issues**, and reproduced the
+same entire investigation report on repeat. Inventory/environment identities
+also matched the static collector's hosted artifacts.
+
+The replay was **41 seconds slower than native CI**. Its 71-second advantage over
+the static arm cannot be attributed to agent reasoning: no model was called and
+the static arm's native test process alone varied by about 53 seconds. This is one
+paired experiment, not a robust performance estimate. Total measurement compute
+was 1,226 runner-seconds across the three jobs. No selective savings or LLM benefit
+was demonstrated. A second comparison is not justified solely to seek a better
+timing; live model evaluation is a separate pending experiment.
+
+The [durable evidence record](../benchmarks/textual-agent-replay-2026-11-23.json)
+contains exact revisions, job URLs, case failure IDs, hashes and timing boundaries.
+The benchmark clock includes queue/setup/planning/tests/artifact upload through
+job completion; report generation after artifact download is not included.
+`examples/textual/compare_agent.py` checks complete first-attempt GitHub provenance,
+case-level parity and report integrity, rejecting incomplete or mismatched results.

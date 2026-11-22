@@ -93,9 +93,21 @@ It cannot clear unknowns or delete existing relationships. Offline fixtures/repl
 validate plumbing; they do not satisfy the live-agent gate or demonstrate model
 effectiveness. Compare the current static approach and replay on the same real PR
 and native test profile, reporting misses, fallbacks, repeatability and end-to-end
-GitHub overhead. Live calls remain disabled pending a separately agreed budget;
-the concrete proposal is US$5 total with stricter call/token limits. No AWS work.
+GitHub overhead. The user approved a US$5 total ceiling with at most 24 calls and six investigations.
+Live calls remain disabled pending provider pricing, data-routing review and enforced
+spend reservation. Actual model spend is US$0. No AWS work.
 Neither actual time savings nor the required live agentic workflow is complete.
+
+The first [agent prototype comparison](docs/onboarding/agent-investigation.md)
+has now completed on Textual PR #11. Native feedback took 360 seconds, static
+Smart CI 472 seconds, and offline replay 401 seconds. All ran 3,467 cases and
+caught the same parser regression. Replay accepted 14 existing import claims,
+added no new edges, retained 14 unresolved issues and full fallback, and reproduced
+its report exactly. This verifies reusable orchestration and safety plumbing,
+not LLM effectiveness or useful selection. Hosted safety checks passed 499 tests.
+Live-provider spend reservation, source/data scope, verified pricing and bounded
+evaluation remain next; the approved US$5 ceiling must not be treated as permission
+to bypass those gates. No model calls have been made.
 
 Workspace: `/Users/kunalsharma/Fun/project/smart-ci`
 

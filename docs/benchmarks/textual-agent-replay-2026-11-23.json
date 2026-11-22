@@ -1,0 +1,112 @@
+{
+  "accepted_graph_digest": "ea173c1a23c8fdab0588ae02d750786ae16cbfab8cadcb104d1fa7a0f023e66e",
+  "artifact_sha256": {
+    "textual-assisted-replay-1/comparison.json": "16c0034e678748fb561e4b3d9a703d6e989541ba3d35de3084264846cb4b8e3b",
+    "textual-assisted-replay-1/execution.json": "cefa40deba6313982444ea19fbab150a75ce9b0b82d1b881dcdce5afb1dc9d11",
+    "textual-assisted-replay-1/investigation.json": "9b015819cde1d7eed34c307648df202477e9cf8325d566af6021c6fddf218168",
+    "textual-assisted-replay-1/junit.xml": "1abb6ae130dc2b32bc21743dc6415cc326d9e0121e592fde446fd67d3a381587",
+    "textual-native-1/execution.json": "4277d9d72ffe011c8adc3c35f755caece379a65a6afc4b3087f7f1137cf7b467",
+    "textual-native-1/junit.xml": "28c28a55485a676c95e0eaf94a004671d96e5dff382b46d4854d3f72af280055",
+    "textual-smart-1/execution.json": "5755ee3c22b33fb5fd8cc8ecd75e81eba1073088b418ab683fa1e520b24d7359",
+    "textual-smart-1/head-compatibility.json": "0a1f3bbfe44e069acd49abfda910e333ffcda6986752b5dcdd4bdccc3e5b5fd8",
+    "textual-smart-1/junit.xml": "dee1e4fbefa5c559075816b3e67b14888d15459c96771a2d83dabd2579d85357"
+  },
+  "base": "ae23055a7898901a3aa69229bf9359b110be739e",
+  "comparison": {
+    "accepted_claims": 14,
+    "assisted_fallback": [
+      "INCOMPLETE_EVIDENCE"
+    ],
+    "assisted_selected": 251,
+    "base": "ae23055a7898901a3aa69229bf9359b110be739e",
+    "baseline_fallback": [
+      "INCOMPLETE_EVIDENCE"
+    ],
+    "baseline_selected": 251,
+    "environment": "40ae031df516a96973bc1abbdad235f6bc97efb9df6c6defa376e6938f53c8ec",
+    "evaluation": "rule_driven_replay_not_llm_effectiveness",
+    "head": "b99f72e9691c85f18fd773df427cb5e7a493470d",
+    "inventory_cases": 3467,
+    "inventory_files": 251,
+    "model_calls": 0,
+    "model_effectiveness_measured": false,
+    "native_cases_digest": "6be17a7c37561f9b5d3f9abd9cae6db7aa2d908432c8ea85f31ea8dc4b95fad8",
+    "new_edges": 0,
+    "profile": "native Poetry locked dependencies, syntax extras, pytest tests with coverage",
+    "repeatable": true,
+    "repository": "SharmaKunal14/textual",
+    "unresolved": 14
+  },
+  "evaluation": "offline_mock_plumbing_not_llm_effectiveness",
+  "fallbacks": {
+    "assisted-replay": [
+      "INCOMPLETE_EVIDENCE"
+    ],
+    "smart": [
+      "INCOMPLETE_EVIDENCE"
+    ]
+  },
+  "head": "b99f72e9691c85f18fd773df427cb5e7a493470d",
+  "investigation_digest": "b15ac39d8e4742e0ef29eccbf4ae3223047f58a370205cc97b72f084487fe106",
+  "jobs": {
+    "assisted-replay": {
+      "cases": 3467,
+      "conclusion": "failure",
+      "execution": "full",
+      "failures": [
+        "tests.test_xterm_parser::test_extended_keys[\\x1b[58;2;126:47u-~/]"
+      ],
+      "job": "https://github.com/SharmaKunal14/textual/actions/runs/45058699772/job/137319560265",
+      "planning_seconds": 36.650355830999985,
+      "runner_seconds": 399.0,
+      "test_seconds": 306.751197437,
+      "trigger_to_result_seconds": 401.0
+    },
+    "native": {
+      "cases": 3467,
+      "conclusion": "failure",
+      "execution": "full",
+      "failures": [
+        "tests.test_xterm_parser::test_extended_keys[\\x1b[58;2;126:47u-~/]"
+      ],
+      "job": "https://github.com/SharmaKunal14/textual/actions/runs/45058699772/job/137319560504",
+      "planning_seconds": 0.0,
+      "runner_seconds": 357.0,
+      "test_seconds": 309.439188129,
+      "trigger_to_result_seconds": 360.0
+    },
+    "smart": {
+      "cases": 3467,
+      "conclusion": "failure",
+      "execution": "full",
+      "failures": [
+        "tests.test_xterm_parser::test_extended_keys[\\x1b[58;2;126:47u-~/]"
+      ],
+      "job": "https://github.com/SharmaKunal14/textual/actions/runs/45058699772/job/137319560633",
+      "planning_seconds": 53.84349442600001,
+      "runner_seconds": 470.0,
+      "test_seconds": 359.282088186,
+      "trigger_to_result_seconds": 472.0
+    }
+  },
+  "limitation": "One real regression, full execution in every arm; timing variation is not selective-test savings or LLM benefit.",
+  "model_calls": 0,
+  "native_outcome_parity": true,
+  "observed_missed_failures": {
+    "assisted-replay": 0,
+    "smart": 0
+  },
+  "run": "https://github.com/SharmaKunal14/textual/actions/runs/45058699772",
+  "safety_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45058488501",
+  "safety_tests_passed": 499,
+  "smartci_revision": "bcbf54de3e98b991db9a8c312db492ed6a73b6d8",
+  "source_comparison": [
+    "src/textual/_xterm_parser.py"
+  ],
+  "subset_executed": false,
+  "total_runner_seconds": 1226.0,
+  "trigger_to_result_savings_seconds": {
+    "assisted-replay": -41.0,
+    "smart": -112.0
+  }
+}
