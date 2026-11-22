@@ -24,14 +24,107 @@ def module_name(path: str, config: PythonConfig, paths: set[str]) -> str:
         relative = path if root == "." else path[len(root) + 1 :]
     else:
         relative = path
-        # pytest's default prepend mode imports unpackaged test files by basename.
+        # Helpers below a regular package retain that package's namespace even
+        # when an intermediate directory has no initializer. Truly unpackaged
+        # test files use pytest's default prepend-mode basename.
         parent = PurePosixPath(path).parent
-        if (parent / "__init__.py").as_posix() not in paths:
+        if not any(
+            (directory / "__init__.py").as_posix() in paths
+            for directory in (parent, *parent.parents)
+            if directory.as_posix() != "."
+        ):
             relative = PurePosixPath(path).name
     parts = relative.removesuffix(".py").split("/")
     if parts[-1] == "__init__":
         parts.pop()
     return ".".join(parts)
+
+
+def static_attribute_hook(node: ast.FunctionDef) -> bool:
+    """Recognize a closed lazy export table, not arbitrary attribute dispatch.
+
+    Every successful branch imports a literal module and returns its named
+    export (or a literal importlib.metadata.version query). The normal visitor
+    still records every import. Anything beyond this grammar stays opaque.
+    """
+    args = node.args
+    if (
+        node.decorator_list
+        or args.posonlyargs
+        or len(args.args) != 1
+        or args.kwonlyargs
+        or args.vararg
+        or args.kwarg
+        or args.defaults
+    ):
+        return False
+    argument = args.args[0].arg
+    body = list(node.body)
+    if (
+        body
+        and isinstance(body[0], ast.Expr)
+        and isinstance(body[0].value, ast.Constant)
+    ):
+        body.pop(0)
+    if len(body) < 2 or not isinstance(body[-1], ast.Raise):
+        return False
+    exc = body[-1].exc
+    if not (
+        isinstance(exc, ast.Call)
+        and isinstance(exc.func, ast.Name)
+        and exc.func.id == "AttributeError"
+        and not exc.keywords
+        and body[-1].cause is None
+    ):
+        return False
+    # Diagnostics may interpolate the requested name, but cannot run code.
+    if any(
+        not isinstance(
+            part, (ast.Constant, ast.Name, ast.Load, ast.JoinedStr, ast.FormattedValue)
+        )
+        for arg in exc.args
+        for part in ast.walk(arg)
+    ):
+        return False
+    for branch in body[:-1]:
+        if not isinstance(branch, ast.If) or branch.orelse:
+            return False
+        condition = branch.test
+        if not (
+            isinstance(condition, ast.Compare)
+            and isinstance(condition.left, ast.Name)
+            and condition.left.id == argument
+            and len(condition.ops) == 1
+            and isinstance(condition.ops[0], ast.Eq)
+            and len(condition.comparators) == 1
+            and isinstance(condition.comparators[0], ast.Constant)
+            and isinstance(condition.comparators[0].value, str)
+            and len(branch.body) == 2
+            and isinstance(branch.body[0], ast.ImportFrom)
+            and isinstance(branch.body[1], ast.Return)
+        ):
+            return False
+        imported = branch.body[0]
+        if len(imported.names) != 1 or imported.names[0].name == "*":
+            return False
+        alias = imported.names[0]
+        result = branch.body[1].value
+        if isinstance(result, ast.Name) and result.id == (alias.asname or alias.name):
+            continue
+        if not (
+            imported.module == "importlib.metadata"
+            and imported.level == 0
+            and alias.name == "version"
+            and isinstance(result, ast.Call)
+            and isinstance(result.func, ast.Name)
+            and result.func.id == (alias.asname or alias.name)
+            and len(result.args) == 1
+            and isinstance(result.args[0], ast.Constant)
+            and isinstance(result.args[0].value, str)
+            and not result.keywords
+        ):
+            return False
+    return True
 
 
 @dataclass
@@ -46,6 +139,7 @@ class Analysis:
     gaps: list[Gap] = field(default_factory=list)
     edges: list[Edge] = field(default_factory=list)
     imports: list[ImportFact] = field(default_factory=list)
+    namespaces: set[str] = field(default_factory=set)
 
     def gap(self, code: str, path: str, line: int = 0) -> None:
         self.gaps.append(Gap(code=code, path=path, line=line))
@@ -63,11 +157,19 @@ class Analysis:
         )
 
     def analyse(self) -> None:
+        self.modules.clear()
+        self.names.clear()
+        self.trees.clear()
+        self.gaps.clear()
+        self.edges.clear()
+        self.imports.clear()
+        self.namespaces.clear()
         self.dependencies = {p: set() for p in self.files}
+        paths = set(self.files)
         for path, raw in sorted(self.files.items()):
             if not path.endswith(".py"):
                 continue
-            name = module_name(path, self.config, set(self.files))
+            name = module_name(path, self.config, paths)
             self.names[path] = name
             if not name or not all(p.isidentifier() for p in name.split(".")):
                 self.gap("UNSUPPORTED_MODULE_NAME", path)
@@ -84,15 +186,28 @@ class Analysis:
                 parent = ".".join(name.split(".")[:count])
                 initializer = self.modules.get(parent)
                 if initializer is None:
-                    self.gap("UNSUPPORTED_NAMESPACE_PACKAGE", path)
+                    # A namespace nested under a regular tracked package cannot
+                    # acquire portions from unrelated sys.path entries. Root
+                    # namespaces still require native search-location evidence.
+                    ancestors = [
+                        self.modules.get(".".join(name.split(".")[:i]))
+                        for i in range(1, count)
+                    ]
+                    if any(p and p.endswith("/__init__.py") for p in ancestors):
+                        self.namespaces.add(parent)
+                    else:
+                        self.gap("UNSUPPORTED_NAMESPACE_PACKAGE", path)
+                elif not initializer.endswith("/__init__.py"):
+                    self.gap("NON_PACKAGE_PARENT", path)
                 else:
                     self.edge(path, initializer, "package_init")
+        for path, tree in sorted(self.trees.items()):
             ImportVisitor(self, path).visit(tree)
 
     def resolve(self, path: str, name: str, line: int, optional: bool = False) -> None:
         top = name.split(".")[0]
         resolution = "unresolved"
-        if name in self.modules:
+        if name in self.modules or name in self.namespaces:
             resolution = "local"
             parts = name.split(".")
             for count in range(1, len(parts) + 1):
@@ -265,6 +380,7 @@ class ImportVisitor(ast.NodeVisitor):
         call = self.qualified(node.func)
         if call in {"__import__", "builtins.__import__", "importlib.import_module"}:
             self.handled.add(id(node.func))
+            module = None
             if (
                 len(node.args) == 1
                 and not node.keywords
@@ -273,9 +389,29 @@ class ImportVisitor(ast.NodeVisitor):
                 and node.args[0].value
                 and not node.args[0].value.startswith(".")
             ):
-                self.analysis.resolve(
-                    self.path, node.args[0].value, node.lineno, self.optional
-                )
+                module = node.args[0].value
+            elif (
+                call == "importlib.import_module"
+                and len(node.args) == 1
+                and isinstance(node.args[0], ast.Constant)
+                and isinstance(node.args[0].value, str)
+                and node.args[0].value.startswith(".")
+                and len(node.keywords) == 1
+                and node.keywords[0].arg == "package"
+                and isinstance(node.keywords[0].value, ast.Constant)
+                and isinstance(node.keywords[0].value.value, str)
+            ):
+                relative = node.args[0].value
+                package = node.keywords[0].value.value.split(".")
+                level = len(relative) - len(relative.lstrip("."))
+                if level <= len(package) and all(p.isidentifier() for p in package):
+                    suffix = relative[level:]
+                    module = ".".join(
+                        package[: len(package) - level + 1]
+                        + ([suffix] if suffix else [])
+                    )
+            if module is not None:
+                self.analysis.resolve(self.path, module, node.lineno, self.optional)
             else:
                 self.analysis.gap("DYNAMIC_IMPORT", self.path, node.lineno)
         elif call in {
@@ -337,6 +473,8 @@ class ImportVisitor(ast.NodeVisitor):
     def visit_Attribute(self, node: ast.Attribute) -> None:
         if self.qualified(node) in {"sys.path", "sys.meta_path", "sys.path_hooks"}:
             self.analysis.gap("CUSTOM_IMPORT_PATH", self.path, node.lineno)
+        if node.attr == "__path__":
+            self.analysis.gap("CUSTOM_IMPORT_PATH", self.path, node.lineno)
         if self.qualified(node) == "sys.modules" and id(node) not in self.handled:
             self.analysis.gap("CUSTOM_MODULE_REGISTRY", self.path, node.lineno)
         if (
@@ -347,7 +485,7 @@ class ImportVisitor(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
-        if node.name == "__getattr__":
+        if node.name == "__getattr__" and not static_attribute_hook(node):
             self.analysis.gap("DYNAMIC_ATTRIBUTE_HOOK", self.path, node.lineno)
         before = self.constants
         self.constants = self.literal_bindings(node)
@@ -355,6 +493,8 @@ class ImportVisitor(ast.NodeVisitor):
         self.constants = before
 
     def visit_Name(self, node: ast.Name) -> None:
+        if node.id == "__path__":
+            self.analysis.gap("CUSTOM_IMPORT_PATH", self.path, node.lineno)
         if node.id == "pytest_plugins" and isinstance(node.ctx, ast.Store):
             self.analysis.gap("LOCAL_PYTEST_PLUGIN", self.path, node.lineno)
         if (
