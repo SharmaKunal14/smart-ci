@@ -51,3 +51,68 @@ implementation hash. It can increase the number of diagnostics; warning-count
 reduction is not a safety metric. The recognized API set is not exhaustive for
 arbitrary wrappers, native extensions or external processes, and no universal
 completeness claim follows from it.
+
+## Hosted evidence and decision
+
+Both Textual PRs contain only the previously tested one-line parser regression.
+The diagnostic workflows are already on their isolated base branches. Native
+test files, dependencies, coverage and configuration are unchanged; collection
+still finds 251 files and 3,467 cases.
+
+| GitHub audit | Reached files | Recorded gaps | Required execution |
+|---|---:|---:|---|
+| [PR #9](https://github.com/SharmaKunal14/textual/pull/9), [run 45051610251](https://github.com/SharmaKunal14/textual/actions/runs/45051610251), tool `9c775322984a77a4c1f7fd3c424aa6e5cc9d01c9` | 250 / 251 | 13 | Full |
+| [PR #10](https://github.com/SharmaKunal14/textual/pull/10), [run 45055835427](https://github.com/SharmaKunal14/textual/actions/runs/45055835427), tool `13b04ab3eaff4244413f1e81fa5c3e0e32eefbe7` | 250 / 251 | 14 | Full |
+
+A representative recorded path is `_xterm_parser.py` ->
+`drivers/linux_driver.py` -> `app.py` -> an application test. The import graph
+operates at file granularity, so a dependency on App propagates through all of
+that file's recorded imports, even when a test does not exercise those paths.
+This explains the breadth; it does not prove that all 250 tests exercise the
+parser at runtime.
+
+The only unreached file is
+[`tests/test_pipe.py`](https://github.com/SharmaKunal14/textual/blob/7e0ecf590c7915126e822bf55cc5ff7a4e2a6dc6/tests/test_pipe.py#L16).
+It launches a Python application whose
+[`App` import](https://github.com/SharmaKunal14/textual/blob/7e0ecf590c7915126e822bf55cc5ff7a4e2a6dc6/tests/deadlock.py#L6)
+is outside that test's import edges. The second audit confirms an explicit
+`DYNAMIC_PROCESS` at `tests/test_pipe.py:16` in both snapshots. Its source,
+import, edge and case-inventory digests match the first audit. The new diagnostic
+strengthens fallback without changing the recorded graph or authorizing omissions.
+
+The implementation is [Smart CI PR #10](https://github.com/SharmaKunal14/smart-ci/pull/10).
+The final code [safety run](https://github.com/SharmaKunal14/smart-ci/actions/runs/45055635444)
+passed 469 tests, formatting, lint, typing and package builds. Added checks cover
+aliasing, namespace lookup, readonly module use and a child-script test whose
+dependency is not an import edge. The actual collector must retain a full plan
+for that fixture; a diagnostic report alone is insufficient.
+
+**Decision:** do not spend another full-suite benchmark trying to obtain savings
+merely by closing Textual warnings. Preserving these file-level edges reaches
+almost the entire suite, and the unreached test is not proven irrelevant. Finer
+runtime/context semantics remain research and adapter work, with unresolved
+process, resource, plugin and side-effect boundaries. Keep Textual as a negative
+compatibility/safety case. Return to native build-graph evaluation for the active
+performance goal, first diagnosing Abseil's failed native environment rather than
+promoting its incomplete run to a baseline. The agentic and end-to-end savings
+requirements remain unmet.
+
+No Textual test bodies were executed in these two audits, no subset was run, and
+no end-to-end savings are claimed. No PR was merged, and no AWS or paid model
+was used.
+
+## Verify the results
+
+Open the second run's **Verify source-only comparison and retained full fallback**
+step. Download `textual-graph-breadth-1` and inspect `verification.json`,
+`known-reachability.json`, both compatibility reports and `selection.json`.
+Expect 250 reached files, one unreached file, an explicit process gap and full
+execution with `INCOMPLETE_EVIDENCE`; `targets.json` is `null`.
+
+```sh
+gh run download 45055835427 --repo SharmaKunal14/textual --name textual-graph-breadth-1 --dir /private/tmp/textual-process-gap-verification
+```
+
+Artifact retention is seven days. Durable summaries and artifact hashes are in
+[`textual-graph-breadth-2026-11-23.json`](../benchmarks/textual-graph-breadth-2026-11-23.json)
+and [`textual-process-gap-2026-11-23.json`](../benchmarks/textual-process-gap-2026-11-23.json).
