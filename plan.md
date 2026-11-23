@@ -4,7 +4,11 @@ Updated: 23 November 2026
 
 Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Packaging selective execution and trusted baseline reuse remain unverified. The OnRecord TypeScript/Vitest pilot passed live GitHub PRs #29 (103 files / 440 cases, full fallback) and #30 (64 files / 280 cases, actual subset without fallback), with on-demand map rebuilding. Both remain unmerged; broader correctness and performance evaluation remain outstanding. No AWS resources. A separately approved bounded live investigation has now made three paid generation calls; see its evidence below.
 
-Current priority: retain the general-purpose agent-assisted investigation path and build the native dependency-graph comparison needed for actual end-to-end savings. The agent uses the regular OpenAI Responses API, not Codex authentication; its first hosted trial added zero edges and preserved full fallback. Textual remains the first agent pilot and a negative compatibility case. Abseil now has one complete GitHub native baseline after diagnosing crash-report resource exhaustion; automatic graph collection, selective execution and paired savings remain outstanding. Preserve the active goal: automatic deterministic PR selection with demonstrated GitHub time and resource savings. The earlier OnRecord/date-fns/Textual work is evidence, not completion. Shadow runs remain evaluation tools, not permanent product behavior.
+Current priority: generalize native enrollment/map lifecycle and evaluate representative caching without weakening the verified selection rules. Abseil PR #10 now demonstrates whole-workflow savings against a matching standalone native baseline: 655 seconds native versus 544 seconds Smart CI from the actual PR event to completed workflow (111 seconds / 16.9% faster). It selected 2/252 test targets and retained all 324 build-only targets; Bazel actions fell from 2,988 to 1,092. Earlier paired localized runs measured 1,061/315 seconds and 619/324 seconds from workflow trigger to job completion, with identical plans. These are repeated measurements of one historical source fix, not independent new scenarios.
+
+Safety and negative evidence are retained: PR #7 detects the same two compilation failures as full native execution; PR #8 verifies full fallback after a header/build-definition change; PR #11 repeats that fallback successfully in the actual one-job policy. Broad shared-hash PR #9 selects 251/252 targets and is slower (640 seconds native versus 924 seconds candidate), with only seven fewer actions. Do not generalize the localized benefit to broad changes. Hosted checks passed 644 tests plus formatting, lint, types and build on the selective tool pin. Native enrollment and artifact references are still pilot-specific, native maps are not automatically refreshed, and warm-cache benefit remains unmeasured. The full product goal remains open.
+
+The agent uses the regular OpenAI Responses API, not Codex authentication; its first hosted trial added zero edges and preserved full fallback. Textual remains a negative compatibility case. Preserve the active goal: automatic deterministic PR selection with demonstrated GitHub time and resource savings. The earlier OnRecord/date-fns/Textual work is evidence, not completion. Shadow runs remain evaluation tools, not permanent product behavior.
 
 ### Active goal completion gates
 
@@ -119,9 +123,10 @@ caught the same parser regression. Replay accepted 14 existing import claims,
 added no new edges, retained 14 unresolved issues and full fallback, and reproduced
 its report exactly. This verifies reusable orchestration and safety plumbing,
 not LLM effectiveness or useful selection. Hosted safety checks passed 499 tests.
-Live-provider spend reservation, source/data scope, verified pricing and bounded
-evaluation remain next; the approved US$5 ceiling must not be treated as permission
-to bypass those gates. No model calls have been made.
+The later bounded live evaluation described above passed its admission controls
+and made three calls. It did not add useful dependency evidence. Its campaign
+remains disabled; the approved US$5 ceiling does not authorize bypassing admission
+controls or treating model confidence as omission authority.
 
 Workspace: `/Users/kunalsharma/Fun/project/smart-ci`
 
