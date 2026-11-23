@@ -1,7 +1,7 @@
 name: Smart CI selective native tests
 on:
   pull_request:
-    branches: [codex/native-selective-base]
+    branches: [codex/native-selective-base, codex/native-selective-fixed-base]
     types: [opened, synchronize, reopened]
 permissions:
   contents: read

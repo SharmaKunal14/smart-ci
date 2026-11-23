@@ -524,3 +524,28 @@ one test job, a validated subset, all build-only work retained, complete outcome
 and trigger-to-workflow-completion time against the matching native baseline.
 Rollback restores the reviewed full-native workflow and runner policy. This remains
 one supported native profile; it is not an arbitrary-Bazel-project installer.
+
+## Build-definition fallback verification
+
+[PR #8](https://github.com/SharmaKunal14/abseil-cpp/pull/8) renames the internal
+linked-hash header and updates its Bazel/CMake declarations and public includes,
+without changing test bodies. Its [GitHub run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45103078298)
+passed both jobs. Smart CI reported `MAP_INPUTS_CHANGED` and
+`UNSUPPORTED_OR_RISK_CHANGE`, retained the original native command byte-for-byte,
+and ran all 252 test targets plus all 324 build-only targets. Full build/test
+identities and configurations matched between jobs, with no evidence errors.
+
+The native job finished 638 seconds after the trigger; the full-fallback candidate
+finished in 665 seconds. Both ran everything, so there is **no selection saving**
+in this case. The difference includes setup and runner variation; it is not a
+measurement of planning alone. The
+[record](../benchmarks/abseil-header-fallback-2026-11-23.json) binds both artifacts,
+the original event revisions and the changed paths. CMake declarations were
+updated but this run measured only the pinned GCC/Bazel profile, not CMake.
+
+The preselected broad shared-hash case is prepared as an exact reverse of upstream
+`82530019412ff77ff99d39ba0ad12e5ea6b89ea4`, changing only
+`absl/hash/internal/hash.cc` and `absl/hash/internal/hash.h`. Current upstream tests
+are retained. It is expected to have broad impact, and no useful speedup is assumed.
+The paired template permits that one additional named branch; concurrency and
+timeout bounds remain unchanged. Its execution is still pending.

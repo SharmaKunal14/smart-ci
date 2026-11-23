@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   compare:
-    if: contains(fromJSON('["codex/linked-hash-fix-evaluation", "codex/linked-hash-regression-evaluation", "codex/native-fallback-evaluation"]'), github.head_ref)
+    if: contains(fromJSON('["codex/linked-hash-fix-evaluation", "codex/linked-hash-regression-evaluation", "codex/native-fallback-evaluation", "codex/shared-hash-revert-evaluation"]'), github.head_ref)
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     strategy:
