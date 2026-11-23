@@ -372,3 +372,15 @@ contains the old defect; the positive PR fixes it, and both comparison arms test
 the identical fixed head. A reverse PR on a fixed base will check failure recall.
 Do not report a failing run as a successful performance baseline. Broad-impact
 and configuration/full-fallback scenarios remain part of the evaluation.
+
+The first candidate arm on [PR #5](https://github.com/SharmaKunal14/abseil-cpp/pull/5),
+[run 45085741236](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45085741236),
+ran the intended two tests and all 324 build-only roots successfully, but its
+check failed during evidence validation. Bazel repeats the 250 exclusion names
+in an announced target-pattern event ID; the 9,461-byte ID exceeded the reader's
+original 4 KiB bound. The raw hosted evidence is retained, and this attempt is
+not a passing benchmark. A narrowly validated exclusion-pattern form now has a
+64 KiB/2,048-pattern bound; ordinary IDs retain the 4 KiB limit. Event announcement,
+completion, duplicate detection and native scope checks are unchanged. Planning
+falls back before execution when its exclusions exceed the supported size. Tests
+cover both complete large-pattern events and malformed/missing/oversized forms.

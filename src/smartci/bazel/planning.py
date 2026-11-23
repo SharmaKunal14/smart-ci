@@ -136,6 +136,15 @@ def candidate_plan(
     # Retain the original wildcard and subtract only eligible native tests.
     # Replacing it with selected test labels would silently lose build checks.
     patterns = ["...", *("-" + name for name in omitted)]
+    # Leave headroom below the native evidence reader's 64 KiB/2048-pattern
+    # bound. Large selections must fall back before executing an unauditable job.
+    if (
+        len(patterns) > 1000
+        or len(json.dumps({"pattern": {"pattern": patterns}})) > 60_000
+    ):
+        fallback.append("TARGET_PATTERN_EVIDENCE_LIMIT")
+        selected = set(native.tests)
+        omitted, patterns = [], ["..."]
     report: dict[str, object] = {
         "schema_version": "smartci.bazel-candidate.v1",
         "mode": "subset" if omitted else "full",

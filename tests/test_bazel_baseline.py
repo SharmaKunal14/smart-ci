@@ -131,6 +131,51 @@ def test_build_only_failures_remain_visible(tmp_path):
     assert result["exit_code"] == 1
 
 
+def test_large_native_exclusion_id_still_requires_complete_announced_graph(tmp_path):
+    path = tmp_path / "events.json"
+    events(path)
+    rows = [json.loads(line) for line in path.read_text().splitlines()]
+    pattern = {
+        "pattern": {
+            "pattern": [
+                "...",
+                *[f"-//long_package_name:target_{i}_test" for i in range(250)],
+            ]
+        }
+    }
+    assert 4096 < len(json.dumps(pattern)) < 64 * 1024
+    rows[0]["children"].append(pattern)
+    rows.insert(1, {"id": pattern, "expanded": {}})
+    path.write_text("\n".join(json.dumps(row) for row in rows))
+    assert baseline.summarize_events(path)["complete_stream"] is True
+    del rows[1]
+    path.write_text("\n".join(json.dumps(row) for row in rows))
+    with pytest.raises(ValueError, match="incomplete"):
+        baseline.summarize_events(path)
+
+
+@pytest.mark.parametrize(
+    "defect", ["other_id", "count", "size", "element", "duplicates", "fields"]
+)
+def test_large_event_ids_reject_unknown_or_unbounded_forms(defect):
+    patterns = ["...", *[f"-//long_package_name:target_{i}_test" for i in range(250)]]
+    value = {"pattern": {"pattern": patterns}}
+    if defect == "other_id":
+        value = {"targetCompleted": {"label": "x" * 5000}}
+    elif defect == "count":
+        patterns.extend(f"-//pkg:test_{i}" for i in range(2048))
+    elif defect == "size":
+        patterns.extend(f"-//pkg:{'x' * 900}_{i}" for i in range(100))
+    elif defect == "element":
+        patterns[-1] = {"untrusted": "nested"}
+    elif defect == "duplicates":
+        patterns[-1] = patterns[1]
+    else:
+        value["pattern"]["unexpected"] = True
+    with pytest.raises(ValueError):
+        baseline.event_key(value)
+
+
 @pytest.mark.parametrize("code", [0, 3, 124])
 def test_native_profile_exit_and_timeout_are_preserved(tmp_path, monkeypatch, code):
     root = tmp_path / "repo"

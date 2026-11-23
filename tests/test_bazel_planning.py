@@ -168,6 +168,30 @@ def test_plan_and_digest_are_deterministic_under_input_reordering():
     assert result == reordered
 
 
+def test_excessive_exclusion_lists_fall_back_before_execution():
+    graph = copy.deepcopy(GRAPH_VALUE)
+    configurations = dict(NATIVE.build_configurations)
+    tests = list(NATIVE.tests)
+    for i in range(1001):
+        name = f"//many:test_{i}"
+        graph.dependencies[name] = ()
+        graph.rule_classes[name] = "cc_test"
+        graph.rule_tags[name] = ()
+        configurations[name] = ("a" * 64,)
+        tests.append(name)
+    result = candidate_plan(
+        ANCHOR,
+        ANCHOR,
+        modified(),
+        graph,
+        list(graph.rule_classes),
+        NativeInventory(configurations, tuple(sorted(tests))),
+    )
+    assert result["mode"] == "full"
+    assert result["patterns"] == ["..."]
+    assert result["fallback"] == ["TARGET_PATTERN_EVIDENCE_LIMIT"]
+
+
 def test_tree_parser_retains_modes_and_blob_identity():
     raw = b"100644 blob " + b"a" * 40 + b"\tlib/one.h\0"
     assert parse_tree(raw) == {"lib/one.h": TreeEntry("100644", "a" * 40)}

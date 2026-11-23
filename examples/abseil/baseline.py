@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import re
 import signal
 import subprocess
 import time
@@ -24,7 +25,26 @@ def event_key(value: object) -> str:
         raise ValueError("invalid build-event ID")
     key = json.dumps(value, sort_keys=True, separators=(",", ":"))
     if len(key) > 4096:
-        raise ValueError("build-event ID exceeds limit")
+        # A selective target-pattern event repeats the complete exclusion list.
+        # Keep ordinary IDs small; admit only this bounded, explicit native form.
+        pattern = value.get("pattern")
+        values = pattern.get("pattern") if isinstance(pattern, dict) else None
+        if (
+            len(key) > 64 * 1024
+            or not isinstance(pattern, dict)
+            or set(pattern) != {"pattern"}
+            or not isinstance(values, list)
+            or not 2 <= len(values) <= 2048
+            or values[0] != "..."
+            or any(
+                not isinstance(item, str)
+                or len(item) > 1024
+                or not re.fullmatch(r"-//[A-Za-z0-9_./+\-]*:[A-Za-z0-9_./+\-]+", item)
+                for item in values[1:]
+            )
+            or len(set(values)) != len(values)
+        ):
+            raise ValueError("build-event ID exceeds supported bounds")
     return key
 
 
