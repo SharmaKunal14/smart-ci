@@ -9,7 +9,8 @@ test files. All performance observations below come from GitHub artifacts.
 | Compiler/import graph with cached base evidence | [date-fns PR #7](https://github.com/SharmaKunal14/date-fns/pull/7) narrowed execution, but setup, fetching and planning exceeded saved test time. | Fast native suites leave little overhead budget. Precomputation alone does not establish net savings. |
 | Conservative Python import graph | [Textual PR #5](https://github.com/SharmaKunal14/textual/pull/5) retained full fallback after resolving some static gaps. | Computed loaders and resources require explicit supported semantics; clearing warnings is not sufficient. |
 | Runtime observation | [Textual PR #6](https://github.com/SharmaKunal14/textual/pull/6): 387s native versus 755s instrumented; same 3,467 outcomes. Observed examples/resources outside the configured roots. | Useful onboarding evidence, expensive in the PR path, and absence of observations cannot justify omissions. |
-| Native build graph | Abseil's original baseline and systemd-only intervention failed. A complete baseline passed after also masking the separate Apport crash-report hook; selection and speedup remain unverified. | Use the documented runner policy on both comparison arms. Native caching, configuration, build-only scope and undeclared inputs remain acceptance gates. |
+| Native build graph | Abseil PR #6 passed two cold comparisons: 252 native test targets versus 2 selected, with all 324 build-only targets retained. Candidate trigger-to-result reductions were 70.3% and 47.7%. | The paired workflow still waits for its full control. A single-job workflow, broad-change results and warm-cache behavior must be distinguished from candidate-job savings. |
+| Bounded model investigation | [Textual live investigation](https://github.com/SharmaKunal14/smart-ci/actions/runs/45062767011): three calls, zero accepted new edges, all 14 gaps unresolved. | Agent proposals remain subordinate to deterministic validation. This trial demonstrated no selection or speed benefit; the campaign is disabled. |
 
 The existing [Bazel query](https://bazel.build/query/language) graph includes all
 possible `select` branches. This is conservative with respect to declared build
@@ -509,7 +510,7 @@ and executes the original full command once. Missing map data or planner install
 still selects that full path. Invalid execution evidence and native failures still
 fail the check; they never become an empty green result.
 
-`examples/abseil/selective-workflow.yml` is an **inactive template** for the reviewed
+`examples/abseil/selective-workflow.yml` is the template for the reviewed
 Abseil profile. It has one candidate job, a 25-minute limit, pinned actions, read-only
 permissions, the same runner policy and artifact verification, and no model secret.
 Both the normal and standard-library fallback command paths explicitly select the
@@ -518,10 +519,11 @@ existing paired comparisons. Replace `REVIEWED_TOOL_COMMIT` with the verified to
 commit and install the workflow in the enrollment base before creating the source
 PR. Do not claim a deployment or single-job saving until that real PR completes.
 
-Activation remains pending the live build-definition fallback and repeat timing
-checks. The first live single-job PR must account for the entire workflow: exactly
-one test job, a validated subset, all build-only work retained, complete outcomes,
-and trigger-to-workflow-completion time against the matching native baseline.
+The fallback and repeat checks passed. [PR #10](https://github.com/SharmaKunal14/abseil-cpp/pull/10)
+completed the explicitly enabled single-job policy on the one-line source fix.
+Its verified result below includes exactly one test job, a validated subset, all
+build-only work retained, complete outcomes and whole-workflow timing against
+the matching independent native baseline.
 Rollback restores the reviewed full-native workflow and runner policy. This remains
 one supported native profile; it is not an arbitrary-Bazel-project installer.
 
@@ -543,9 +545,131 @@ measurement of planning alone. The
 the original event revisions and the changed paths. CMake declarations were
 updated but this run measured only the pinned GCC/Bazel profile, not CMake.
 
-The preselected broad shared-hash case is prepared as an exact reverse of upstream
+The preselected broad shared-hash case is an exact reverse of upstream
 `82530019412ff77ff99d39ba0ad12e5ea6b89ea4`, changing only
 `absl/hash/internal/hash.cc` and `absl/hash/internal/hash.h`. Current upstream tests
 are retained. It is expected to have broad impact, and no useful speedup is assumed.
 The paired template permits that one additional named branch; concurrency and
-timeout bounds remain unchanged. Its execution is still pending.
+timeout bounds remain unchanged. [PR #9](https://github.com/SharmaKunal14/abseil-cpp/pull/9)
+completed the comparison described below.
+
+## Repeated passing comparison
+
+Reopening PR #6 produced [run 45104438683](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45104438683)
+on exactly the same base, head and tool pin as the original accepted run. Both
+jobs passed. The candidate plan is byte-identical, including its deterministic
+digest, selected test identities, dependency witnesses and build configurations.
+All 324 build-only targets remain present. The
+[repeat record](../benchmarks/abseil-source-only-repeat-2026-11-23.json) preserves
+both artifacts and their hashes.
+
+| Fresh GitHub trigger to result | Original accepted run | Repeat |
+|---|---:|---:|
+| Full native job | 1,061s | 619s |
+| Candidate job | 315s | 324s |
+| Candidate reduction | 70.3% | 47.7% |
+| Native / candidate Bazel actions | 2,988 / 1,092 | 2,988 / 1,092 |
+
+Planning in the repeat took 1.302 seconds. The native command, including container
+preparation, took 291.020 seconds in the candidate. Its 324-second result includes
+checkout, installation, authenticated map downloads, planning, execution, artifact
+upload and cleanup. Both jobs restored runner policy. Fresh workflow creation,
+not the original PR's age, defines the repeat's start timestamp.
+
+Two pairs establish repeatability for one source change under this cold profile,
+not a general speedup percentage. Native timing varied substantially, while action
+counts were identical across repetitions. The shared-hash case below shows what
+happens when a real change has broad dependency impact. Neither passing pair by
+itself reduces the entire paired workflow's completion time or total compute.
+The separate single-job result below measures whole-workflow savings.
+
+## Broad shared-hash comparison: no useful benefit
+
+[PR #9 run 45105549633](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45105549633)
+passed both jobs. The automatically selected 251 test targets all matched the
+passing full control; all 324 build-only targets/configurations remained present.
+The [record](../benchmarks/abseil-shared-hash-2026-11-23.json) retains the negative
+timing result and complete artifacts.
+
+| GitHub measurement | Full native | Candidate |
+|---|---:|---:|
+| Trigger to job completion | 640s | 924s |
+| Passing test targets | 252 | 251 |
+| Bazel actions | 2,988 | 2,981 |
+| Native command, including preparation | 619.218s | 901.635s |
+| Bazel wall time | 476.554s | 630.792s |
+
+Seven fewer actions is a 0.23% work-count reduction; the candidate took 284 seconds
+longer. Planning took 1.678 seconds, so attributing the entire slowdown to planning
+would be false. Both native execution and command time outside Bazel were slower
+on the candidate's separate runner; this pair does not isolate their cause. Both
+jobs had zero recorded OOM kills and restored runner settings. Do not generalize
+the narrow-change gain to shared core changes or prune real dependency edges to
+manufacture savings. This passing source change does not add a failure-recall case.
+
+## Whole-workflow result and selective-policy fallback
+
+The [single-job PR #10](https://github.com/SharmaKunal14/abseil-cpp/pull/10),
+[run 45107669149](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45107669149),
+passed. Its independent [native PR #3 repeat](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45106725231)
+also passed. The complete application/build/test trees match byte-for-byte under
+Git, excluding only `.github/workflows/` and `.smartci/`. Both used the same native
+profile and runner policy. The [record](../benchmarks/abseil-single-workflow-2026-11-23.json)
+binds the source tree digest, native outcomes, artifact hashes and timestamps.
+
+| GitHub measurement | Native baseline | Smart CI |
+|---|---:|---:|
+| Actual PR event to completed workflow status | 655s (10m 55s) | 544s (9m 04s) |
+| Workflow creation to completed status | 653s | 519s |
+| Allocated runner time | 650s | 517s |
+| Passing test targets | 252 | 2 |
+| Build-only targets retained | 324 | 324 |
+| Bazel actions executed | 2,988 | 1,092 |
+
+The developer-facing result is **111 seconds / 16.9% faster from PR event to
+completed workflow**, with 133 fewer allocated runner-seconds. The native start
+is its recorded fresh PR-reopen event; the selective start is PR #10's creation.
+These timestamps include GitHub event dispatch: two seconds before native workflow
+creation and 25 seconds before selective workflow creation. Do not substitute the
+20.5% workflow-creation reduction for the more complete PR-event result. There is
+one test job in each workflow; the Smart CI PR does not wait for a second full job.
+
+Selection and build/test outcomes match the earlier paired localized scenario.
+Planning took 1.631 seconds. Candidate native-command time was 494.693 seconds,
+including 248.874 seconds of Bazel wall time; native command time was 637.909
+seconds, including 488.125 seconds of Bazel wall time. Command work outside Bazel
+includes container preparation and copying; it is not measured as network time
+alone. Candidate elapsed time varied substantially from the earlier pairs despite
+identical action counts. This is a demonstrated saving for one supported cold
+profile and localized change, not a stable universal speedup or a new regression
+scenario. The graph audit's 283-second onboarding cost remains separate.
+
+The same one-job policy also passed [PR #11](https://github.com/SharmaKunal14/abseil-cpp/pull/11),
+[run 45108053153](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45108053153).
+The header/build refactor produced `MAP_INPUTS_CHANGED` and
+`UNSUPPORTED_OR_RISK_CHANGE`; no omissions were authorized. It executed the full
+command once, with all 252 test targets passing and all 324 build-only targets
+retained. Actual result identities, outcomes and build configurations match the
+independent PR #8 full control. The workflow completed 661 seconds after creation,
+with native exit 0 and no evidence error. The
+[fallback record](../benchmarks/abseil-single-fallback-2026-11-23.json) retains its
+complete plan/report and hashes. This is fallback verification, not a speedup.
+Both standalone comparisons recorded zero OOM kills and restored runner policy.
+
+## Product boundaries still open
+
+The native collector discovers dependencies; nobody supplied per-test edges for
+these PRs. However, enrollment of this pilot still uses a reviewed Abseil-specific
+profile, pinned artifact references and a prepared CI workflow. It is not yet a
+general `smartci` enrollment command for arbitrary Bazel repositories. Missing or
+expired map artifacts fall back to full execution rather than rebuilding a native
+map automatically. A changed native test inventory/profile requires re-enrollment;
+the existing full-result reconciler otherwise rejects the unexpected scope. That
+is a conservative failure, not seamless support for adding arbitrary test targets.
+
+Warm-cache benefit is also unmeasured. The private upstream cache is unavailable,
+and fresh hosted runners do not approximate its cache hit rate. Do not promise
+the measured cold-profile savings for an enterprise system that already caches
+most builds and test results. A general installer, automated map lifecycle and
+representative cache evaluation remain delivery work even if the single-job pilot
+demonstrates an end-to-end saving.
