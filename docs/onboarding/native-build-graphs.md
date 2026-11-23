@@ -384,3 +384,56 @@ not a passing benchmark. A narrowly validated exclusion-pattern form now has a
 completion, duplicate detection and native scope checks are unchanged. Planning
 falls back before execution when its exclusions exceed the supported size. Tests
 cover both complete large-pattern events and malformed/missing/oversized forms.
+
+The [second PR #5 attempt](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45086969708)
+passed both arms, but correctly selected **full execution**: GitHub's event still
+used the earlier base snapshot, so its diff included the workflow-pin update.
+Both arms ran all 252 tests and retained 576 build/configuration results. The
+candidate finished in 744 seconds and the native arm in 916 seconds; because
+both executed the full suite, that difference is **runner variation, not selector
+savings**. The [record](../benchmarks/abseil-workflow-fallback-2026-11-23.json)
+preserves the exact event base separately from the subsequently refreshed PR base.
+
+PR #5 was closed without merging. [PR #6](https://github.com/SharmaKunal14/abseil-cpp/pull/6)
+has the corrected base, the same production head content, and exactly one changed
+production line. It retains the repaired tool pin in both base and head. All
+earlier attempts remain recorded, including the
+[initial failed evidence check](../benchmarks/abseil-pair-attempt1-2026-11-23.json).
+Hosted [Smart CI safety checks](https://github.com/SharmaKunal14/smart-ci/actions/runs/45086538971)
+passed formatting, lint, types, 613 tests and the package build on that tool pin.
+
+### Accepted source-only comparison
+
+[PR #6 run 45088718028](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45088718028)
+passed both arms on the same head, `5b3e552a931ad12302fdff00f3688b806429ff44`.
+Its only change fixes the shared hinted-node insertion implementation; all tests
+and native build definitions remain unchanged. The
+[record](../benchmarks/abseil-source-only-pair-2026-11-23.json) includes GitHub job
+links, timing scopes, complete test identities, action counts and artifact hashes.
+
+| GitHub measurement | Full native | Smart CI candidate |
+|---|---:|---:|
+| Workflow trigger to job completion | 1,061s (17m 41s) | 315s (5m 15s) |
+| PR creation to job completion | 1,065s | 319s |
+| Runner allocation to job completion | 1,059s | 312s |
+| Passing native test targets | 252 | 2 |
+| Required build-only targets retained | 324 | 324 |
+| Bazel actions executed | 2,988 | 1,092 |
+
+The candidate's **746-second / 70.3% trigger-to-result reduction** includes its
+own setup, evidence downloads, planning and uploads. Planning took 1.380 seconds;
+the native command, including container preparation, took 283.330 seconds. The
+selector automatically chose `linked_hash_map_test` and `linked_hash_set_test`.
+Their configurations and all build-only configurations matched the authenticated
+reference. Both arms restored runner settings, and neither recorded an OOM kill.
+This is a measured candidate-arm saving, not a 70% improvement to the whole paired
+validation workflow: that workflow still waits for the full control and consumes
+both jobs' runner time.
+
+Keep the limits explicit. This is one successful pair on separate cold runners;
+successful full runs have varied from 632 to 1,061 seconds in the retained attempts.
+The 283-second initial graph audit is a separate onboarding cost. The warm private
+remote cache and other compiler/standard configurations are not measured. Passing
+fix outcomes do not measure failure recall; the reverse regression, repeated
+measurements and a subset-only eligible PR remain acceptance gates. Broad changes
+still select nearly all tests. Production omission authority remains disabled.
