@@ -1,8 +1,9 @@
 """Deterministic candidate planning for a reviewed native C++ build profile.
 
-This is an evaluation planner, not production omission authority. Reuse assumes
-the reviewed build profile derives its graph from build definitions and paths,
-not C++ file contents. A paired independent native run remains required.
+Reuse assumes the reviewed build profile derives its graph from build definitions
+and paths, not C++ file contents. Paired evaluation is the default. Single-job
+selection requires explicit policy from the trusted CI entry point; agents and
+repository evidence cannot enable it.
 """
 
 import hashlib
@@ -10,6 +11,7 @@ import json
 import re
 from dataclasses import asdict, dataclass
 from pathlib import PurePosixPath
+from typing import Literal
 
 from smartci.contracts import TestUnit
 
@@ -101,6 +103,7 @@ def candidate_plan(
     native: NativeInventory,
     *,
     must_run: tuple[str, ...] = (),
+    execution_mode: Literal["paired", "selective"] = "paired",
 ) -> dict[str, object]:
     """Reuse an authenticated map only while both revisions preserve its inputs.
 
@@ -108,6 +111,8 @@ def candidate_plan(
     configuration, unknown paths and empty impact all retain native full scope.
     Removing a C++ include cannot remove a BUILD edge from this cached graph.
     """
+    if execution_mode not in {"paired", "selective"}:
+        raise QueryError("unsupported native execution policy")
     reconcile_graph(graph, roots, native)
     changes = changed_paths(base, head)
     fallback = []
@@ -167,8 +172,9 @@ def candidate_plan(
             "base": tree_digest(base),
             "head": tree_digest(head),
         },
-        "production_omission_authorized": False,
-        "requires_independent_full_control": True,
+        "production_omission_authorized": execution_mode == "selective"
+        and bool(omitted),
+        "requires_independent_full_control": execution_mode == "paired",
     }
     report["digest"] = hashlib.sha256(
         json.dumps(report, sort_keys=True, separators=(",", ":")).encode()

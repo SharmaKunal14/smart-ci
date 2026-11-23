@@ -63,6 +63,23 @@ def test_existing_declared_source_change_preserves_native_build_only_roots():
     assert result["requires_independent_full_control"] is True
 
 
+def test_explicit_selective_policy_preserves_selection_and_changes_audited_authority():
+    paired = plan(modified())
+    selective = plan(modified(), execution_mode="selective")
+    assert selective["production_omission_authorized"] is True
+    assert selective["requires_independent_full_control"] is False
+    for key in paired.keys() - {
+        "digest",
+        "production_omission_authorized",
+        "requires_independent_full_control",
+    }:
+        assert selective[key] == paired[key]
+    assert selective["digest"] != paired["digest"]
+    assert selective == plan(modified(), execution_mode="selective")
+    with pytest.raises(QueryError, match="execution policy"):
+        plan(modified(), execution_mode="untrusted")
+
+
 def test_anchor_can_precompute_unchanged_topology_for_both_revisions():
     base = modified("lib/two.cc")
     head = dict(base)
@@ -95,7 +112,8 @@ def test_reverting_source_to_anchor_still_selects_its_tests():
         "harness",
     ],
 )
-def test_unsupported_or_topology_changes_fall_back_to_full(kind):
+@pytest.mark.parametrize("execution_mode", ["paired", "selective"])
+def test_unsupported_or_topology_changes_fall_back_to_full(kind, execution_mode):
     head = modified()
     if kind in {"build", "resource", "dependency", "unknown", "workflow", "harness"}:
         path = {
@@ -117,10 +135,12 @@ def test_unsupported_or_topology_changes_fall_back_to_full(kind):
         head["lib/one.h"] = TreeEntry(
             "120000" if kind == "symlink" else "100755", "c" * 40
         )
-    result = plan(head)
+    result = plan(head, execution_mode=execution_mode)
     assert result["mode"] == "full" and result["fallback"]
     assert result["patterns"] == ["..."]
     assert result["selected"] == list(NATIVE.tests)
+    assert result["production_omission_authorized"] is False
+    assert result["requires_independent_full_control"] == (execution_mode == "paired")
 
 
 def test_reviewed_setup_files_may_differ_from_anchor_but_not_within_pr():
@@ -133,13 +153,17 @@ def test_reviewed_setup_files_may_differ_from_anchor_but_not_within_pr():
     assert plan(head, base)["mode"] == "full"
 
 
-def test_must_run_adds_tests_and_unknown_policy_falls_back():
-    result = plan(modified(), must_run=("//lib:two_test",))
+@pytest.mark.parametrize("execution_mode", ["paired", "selective"])
+def test_must_run_adds_tests_and_unknown_policy_falls_back(execution_mode):
+    result = plan(
+        modified(), must_run=("//lib:two_test",), execution_mode=execution_mode
+    )
     assert result["selected"] == list(NATIVE.tests)
     assert result["mode"] == "full" and result["fallback"] == []
-    assert plan(modified(), must_run=("//unknown:test",))["fallback"] == [
-        "INVALID_MUST_RUN"
-    ]
+    assert result["production_omission_authorized"] is False
+    assert plan(
+        modified(), must_run=("//unknown:test",), execution_mode=execution_mode
+    )["fallback"] == ["INVALID_MUST_RUN"]
 
 
 def test_empty_change_or_impact_cannot_silently_omit_all_tests():

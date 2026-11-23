@@ -140,10 +140,13 @@ def test_profile_changes_only_target_patterns_and_retains_native_options(monkeyp
         module.selected_profile(RAW + b"# drift", True)
 
 
-@pytest.mark.parametrize("mode", ["native", "candidate"])
+@pytest.mark.parametrize(
+    ("mode", "execution_mode"),
+    [("native", "paired"), ("candidate", "paired"), ("candidate", "selective")],
+)
 @pytest.mark.parametrize("code", [0, 1])
 def test_missing_evidence_executes_independent_full_command_without_credentials(
-    tmp_path, monkeypatch, reference, mode, code
+    tmp_path, monkeypatch, reference, mode, execution_mode, code
 ):
     root = tmp_path / "source"
     root.mkdir()
@@ -184,6 +187,8 @@ def test_missing_evidence_executes_independent_full_command_without_credentials(
             "evaluate",
             "--mode",
             mode,
+            "--execution-mode",
+            execution_mode,
             "--base",
             "a" * 40,
             "--head",
@@ -196,10 +201,121 @@ def test_missing_evidence_executes_independent_full_command_without_credentials(
     result = json.loads((output / "execution.json").read_text())
     assert result["evidence_error"] is None
     assert result["production_omission_authorized"] is False
+    assert result["requires_independent_full_control"] == (execution_mode == "paired")
+    assert result["execution_mode"] == execution_mode
     assert result["failed_test_build_targets"] == (
         ["//lib:one_test", "//lib:two_test"] if code else []
     )
     assert json.loads((output / "plan.json").read_text())["mode"] == "full"
+
+
+@pytest.mark.parametrize("defect", [None, "compile_failure", "missing_build"])
+def test_selective_runner_executes_once_and_preserves_failures(
+    tmp_path, monkeypatch, reference, defect
+):
+    root, output = tmp_path / "source", tmp_path / "result"
+    root.mkdir()
+    monkeypatch.chdir(root)
+    monkeypatch.setattr(module, "verify_checkout", lambda *_: RAW)
+    monkeypatch.setattr(
+        sys.modules["diagnostics"], "PROFILE_SHA256", hashlib.sha256(RAW).hexdigest()
+    )
+    value = events()
+    del value["test_targets"]["//lib:two_test"]
+    value["build_target_results"] = {
+        key: success
+        for key, success in value["build_target_results"].items()
+        if json.loads(key)["targetCompleted"]["label"] != "//lib:two_test"
+    }
+    if defect == "compile_failure":
+        value["exit_code"] = 1
+        value["test_targets"] = {}
+        value["build_target_results"][next(iter(value["build_target_results"]))] = False
+    elif defect == "missing_build":
+        value["build_target_results"].pop(next(reversed(value["build_target_results"])))
+    monkeypatch.setattr(module, "summarize_events", lambda _: value)
+
+    def planned(*args, execution_mode):
+        assert execution_mode == "selective"
+        return {
+            "mode": "subset",
+            "fallback": [],
+            "patterns": ["...", "-//lib:two_test"],
+            "selected": ["//lib:one_test"],
+            "build_configurations": {
+                "//lib:one_test": ["a" * 64],
+                "//lib:binary": ["a" * 64],
+            },
+            "production_omission_authorized": True,
+            "requires_independent_full_control": False,
+        }
+
+    monkeypatch.setattr(module, "plan_candidate", planned)
+    calls = []
+
+    def run(profile, directory, environment, timeout):
+        calls.append(profile.read_bytes())
+        assert b"--target_pattern_file=/evidence/targets.txt" in calls[-1]
+        assert (directory / "targets.txt").read_text() == "...\n-//lib:two_test\n"
+        return value["exit_code"], 1.0, None
+
+    monkeypatch.setattr(module, "run_profile", run)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "evaluate",
+            "--mode",
+            "candidate",
+            "--execution-mode",
+            "selective",
+            "--base",
+            "a" * 40,
+            "--head",
+            "b" * 40,
+            "--evidence",
+            str(tmp_path / "map"),
+            "--output",
+            str(output),
+        ],
+    )
+    assert module.main() == (1 if defect else 0)
+    assert len(calls) == 1
+    report = json.loads((output / "execution.json").read_text())
+    assert report["production_omission_authorized"] is True
+    assert report["requires_independent_full_control"] is False
+    assert report["evidence_error"] == (
+        "EXECUTION_EVIDENCE_INVALID" if defect == "missing_build" else None
+    )
+    assert report["failed_test_build_targets"] == (
+        ["//lib:one_test"] if defect == "compile_failure" else []
+    )
+
+
+def test_selective_policy_cannot_relabel_independent_native_control(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "evaluate",
+            "--mode",
+            "native",
+            "--execution-mode",
+            "selective",
+            "--base",
+            "a" * 40,
+            "--head",
+            "b" * 40,
+            "--output",
+            str(tmp_path / "unused"),
+        ],
+    )
+    with pytest.raises(SystemExit) as exc:
+        module.main()
+    assert exc.value.code == 2
+    assert not (tmp_path / "unused").exists()
 
 
 def test_bad_artifact_hash_is_rejected_before_planning(tmp_path, monkeypatch):
@@ -266,9 +382,12 @@ def test_checkout_requires_exact_head_clean_inputs_and_pinned_image(checkout):
         module.verify_checkout(root, git("rev-parse", "HEAD"))
 
 
-def test_paired_workflow_preserves_verified_native_runner_policy():
+@pytest.mark.parametrize(
+    "template", ["evaluation-workflow.yml", "selective-workflow.yml"]
+)
+def test_workflow_preserves_verified_native_runner_policy(template):
     native = (ROOT / "examples/abseil/resource-baseline-workflow.yml").read_text()
-    paired = (ROOT / "examples/abseil/evaluation-workflow.yml").read_text()
+    paired = (ROOT / "examples/abseil" / template).read_text()
     policy = native[
         native.index("      - name: Bound unused") : native.index(
             "      - name: Run complete"
@@ -282,6 +401,13 @@ def test_paired_workflow_preserves_verified_native_runner_policy():
     assert policy in paired and restoration in paired
     assert "secrets." not in paired and "pull_request_target" not in paired
     assert "contents: read" in paired and "actions: read" in paired
-    assert "fail-fast: false" in paired and "max-parallel: 2" in paired
+    assert "fail-fast: false" in paired
+    if template == "selective-workflow.yml":
+        assert "max-parallel: 1" in paired and "arm: [candidate]" in paired
+        assert paired.count("--execution-mode selective") == 2
+        assert "arm: [native, candidate]" not in paired
+    else:
+        assert "max-parallel: 2" in paired
+        assert "--execution-mode selective" not in paired
     assert "timeout-minutes: 25" in paired
     assert 'python3 "$GITHUB_WORKSPACE/tool/examples/abseil/evaluate.py"' in paired

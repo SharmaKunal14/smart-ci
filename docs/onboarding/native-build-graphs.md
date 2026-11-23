@@ -492,3 +492,35 @@ One historical defect, repeated to repair reporting, is still one regression
 scenario. Repeated passing comparisons, broad/fallback source scenarios and a
 subset-only eligible PR remain open gates; no production omission authority is
 enabled by this result.
+
+## Opt-in single-job execution
+
+The runner now accepts `--mode candidate --execution-mode selective`. Paired
+evaluation remains the default; an independent `--mode native` cannot be relabeled
+as selective. This policy belongs in the reviewed CI workflow, not PR-provided
+configuration or agent output. The native profile, artifact provenance, exact
+base/head trees, supported source changes, mandatory tests and complete native
+result checks remain unchanged. Policy changes cannot remove dependency edges.
+
+The core planner includes execution authority in its deterministic digest. Under
+the selective policy, a valid subset authorizes those omissions and does not
+require a second full-control job. A full-fallback decision authorizes no omissions
+and executes the original full command once. Missing map data or planner installation
+still selects that full path. Invalid execution evidence and native failures still
+fail the check; they never become an empty green result.
+
+`examples/abseil/selective-workflow.yml` is an **inactive template** for the reviewed
+Abseil profile. It has one candidate job, a 25-minute limit, pinned actions, read-only
+permissions, the same runner policy and artifact verification, and no model secret.
+Both the normal and standard-library fallback command paths explicitly select the
+single-job policy. Its dedicated base/head branch filters avoid changing the
+existing paired comparisons. Replace `REVIEWED_TOOL_COMMIT` with the verified tool
+commit and install the workflow in the enrollment base before creating the source
+PR. Do not claim a deployment or single-job saving until that real PR completes.
+
+Activation remains pending the live build-definition fallback and repeat timing
+checks. The first live single-job PR must account for the entire workflow: exactly
+one test job, a validated subset, all build-only work retained, complete outcomes,
+and trigger-to-workflow-completion time against the matching native baseline.
+Rollback restores the reviewed full-native workflow and runner policy. This remains
+one supported native profile; it is not an arbitrary-Bazel-project installer.

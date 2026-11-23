@@ -1,4 +1,4 @@
-"""Run paired native/candidate arms on a PR; never replace the full control."""
+"""Run a pinned native profile with paired or explicitly enabled selective policy."""
 
 import argparse
 import hashlib
@@ -10,6 +10,7 @@ import tempfile
 import time
 import uuid
 from pathlib import Path
+from typing import Literal
 
 from baseline import summarize_events
 from diagnostics import PROFILE_SHA256, UPSTREAM, run_profile, targeted_profile
@@ -66,18 +67,27 @@ def verify_checkout(root: Path, head: str) -> bytes:
     return raw
 
 
-def full_plan(reason: str) -> dict[str, object]:
+def full_plan(
+    reason: str, execution_mode: Literal["paired", "selective"] = "paired"
+) -> dict[str, object]:
+    if execution_mode not in {"paired", "selective"}:
+        raise ValueError("unsupported native execution policy")
     return {
         "mode": "full",
         "fallback": [reason],
         "patterns": ["..."],
         "production_omission_authorized": False,
-        "requires_independent_full_control": True,
+        "requires_independent_full_control": execution_mode == "paired",
     }
 
 
 def plan_candidate(
-    root: Path, base: str, head: str, evidence: Path
+    root: Path,
+    base: str,
+    head: str,
+    evidence: Path,
+    *,
+    execution_mode: Literal["paired", "selective"] = "paired",
 ) -> dict[str, object]:
     # Lazy imports keep the independent native arm standard-library-only.
     from smartci.bazel.audit import native_inventory
@@ -127,7 +137,11 @@ def plan_candidate(
         for commit in (UPSTREAM, base, head)
     ]
     plan = candidate_plan(
-        *trees, graph, artifacts["roots.txt"].decode().splitlines(), native
+        *trees,
+        graph,
+        artifacts["roots.txt"].decode().splitlines(),
+        native,
+        execution_mode=execution_mode,
     )
     plan["comparison"] = {"base": base, "head": head, "map_revision": UPSTREAM}
     plan["map_run"] = reference["run"]
@@ -140,6 +154,7 @@ def plan_candidate(
         parse_query_xml(artifacts["query.xml"]),
         artifacts["roots.txt"].decode().splitlines(),
         native,
+        execution_mode=execution_mode,
     )
     if plan["digest"] != repeat["digest"]:
         raise ValueError("non-deterministic plan")
@@ -207,11 +222,19 @@ def verify_results(
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode", choices=["native", "candidate"], required=True)
+    parser.add_argument(
+        "--execution-mode",
+        choices=["paired", "selective"],
+        default="paired",
+        help="trusted CI policy; selective runs one candidate/full-fallback job",
+    )
     parser.add_argument("--base", required=True)
     parser.add_argument("--head", required=True)
     parser.add_argument("--evidence", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    if args.mode == "native" and args.execution_mode != "paired":
+        parser.error("independent native control requires paired execution mode")
     root, output = Path.cwd().resolve(), args.output.resolve()
     if output.is_relative_to(root) or not re.fullmatch(
         r"[/._a-zA-Z0-9-]+", str(output)
@@ -220,12 +243,18 @@ def main() -> int:
     raw = verify_checkout(root, args.head)
     output.mkdir(parents=True, exist_ok=False)
     started = time.monotonic()
-    plan = full_plan("INDEPENDENT_NATIVE_CONTROL")
+    plan = full_plan("INDEPENDENT_NATIVE_CONTROL", args.execution_mode)
     if args.mode == "candidate":
         try:
             if args.evidence is None:
                 raise ValueError("map evidence missing")
-            plan = plan_candidate(root, args.base, args.head, args.evidence)
+            plan = plan_candidate(
+                root,
+                args.base,
+                args.head,
+                args.evidence,
+                execution_mode=args.execution_mode,
+            )
         except (
             ImportError,
             OSError,
@@ -234,7 +263,7 @@ def main() -> int:
             KeyError,
             subprocess.SubprocessError,
         ):
-            plan = full_plan("MISSING_INVALID_OR_INCOMPATIBLE_MAP")
+            plan = full_plan("MISSING_INVALID_OR_INCOMPATIBLE_MAP", args.execution_mode)
     planning_seconds = time.monotonic() - started
     (output / "plan.json").write_text(json.dumps(plan, sort_keys=True, indent=2) + "\n")
     (output / "targets.txt").write_text("\n".join(plan["patterns"]) + "\n")
@@ -288,8 +317,11 @@ def main() -> int:
     except (OSError, ValueError, KeyError, TypeError, AttributeError, RecursionError):
         error = error or "EXECUTION_EVIDENCE_INVALID"
     report = {
-        "schema_version": "smartci.native-paired-evaluation.v1",
+        "schema_version": "smartci.native-paired-evaluation.v1"
+        if args.execution_mode == "paired"
+        else "smartci.native-execution.v1",
         "arm": args.mode,
+        "execution_mode": args.execution_mode,
         "base": args.base,
         "head": args.head,
         "native_profile_sha256": PROFILE_SHA256,
@@ -302,8 +334,8 @@ def main() -> int:
         "bazel": events,
         "failed_test_build_targets": failed_test_build_targets,
         "model_calls": 0,
-        "production_omission_authorized": False,
-        "requires_independent_full_control": True,
+        "production_omission_authorized": plan["production_omission_authorized"],
+        "requires_independent_full_control": plan["requires_independent_full_control"],
     }
     (output / "execution.json").write_text(
         json.dumps(report, sort_keys=True, indent=2) + "\n"
