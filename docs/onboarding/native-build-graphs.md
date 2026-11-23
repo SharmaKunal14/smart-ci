@@ -424,6 +424,9 @@ The candidate's **746-second / 70.3% trigger-to-result reduction** includes its
 own setup, evidence downloads, planning and uploads. Planning took 1.380 seconds;
 the native command, including container preparation, took 283.330 seconds. The
 selector automatically chose `linked_hash_map_test` and `linked_hash_set_test`.
+The recorded witnesses are native dependency paths, not handwritten test rules:
+`linked_hash_map_test → linked_hash_map → raw_linked_hash_set → internal/raw_linked_hash_set.h`
+and the equivalent `linked_hash_set_test → linked_hash_set` path to the same header.
 Their configurations and all build-only configurations matched the authenticated
 reference. Both arms restored runner settings, and neither recorded an OOM kill.
 This is a measured candidate-arm saving, not a 70% improvement to the whole paired
@@ -458,3 +461,34 @@ remain checked. `failed_test_build_targets` records those targets separately;
 still returns the native failure. Interrupted, truncated or aborted streams are
 not accepted. This distinction follows the separate build-completion and test
 summary events in the [Bazel protocol](https://raw.githubusercontent.com/bazelbuild/bazel/9.1.0/src/main/java/com/google/devtools/build/lib/buildeventstream/proto/build_event_stream.proto).
+
+The [first full regression control](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45091357544)
+completed too: 250 actual test summaries passed, and the identical two selected
+targets failed compilation. Reconciliation with the repaired reader accounts for
+all 252 native test targets and all build/configuration results; no failed native
+target was omitted in this one replay. Both original hosted reports still contain
+`EXECUTION_EVIDENCE_INVALID`, so the
+[record](../benchmarks/abseil-regression-reporting-2026-11-23.json) labels this as
+forensic reconciliation, not a clean hosted report or successful benchmark.
+The repair's [hosted safety run](https://github.com/SharmaKunal14/smart-ci/actions/runs/45092478298)
+passed 624 tests, formatting, lint, types and package build. The subsequent live
+PR attempt must verify the repaired reporting path before that gate is closed.
+
+The [repaired PR #7 run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45098113404)
+now verifies that path on head `1174e91618f3447b60727afbc075ae3b084beedf` and tool
+`b3bce1969d6986be4b03bda101c687e64caf1c55`. Both jobs returned native exit 1 with
+**no evidence error**. The full control reported 250 passing test targets and two
+failed compilation targets; the candidate reported the identical two failed
+compilation targets, with no executed test summaries. All 324 build-only targets
+and required configurations were accounted for in both jobs. No failed native
+target was omitted in this replay. Both PR checks correctly remain red.
+
+The [durable record](../benchmarks/abseil-regression-2026-11-23.json) distinguishes
+this accepted failure-detection evaluation from a successful performance baseline.
+The candidate rejected the defect in 312 seconds from the update trigger; the
+full control finished in 1,085 seconds. These are GitHub measurements of the same
+faulty source revision, not local timing or a claim that two test cases executed.
+One historical defect, repeated to repair reporting, is still one regression
+scenario. Repeated passing comparisons, broad/fallback source scenarios and a
+subset-only eligible PR remain open gates; no production omission authority is
+enabled by this result.
