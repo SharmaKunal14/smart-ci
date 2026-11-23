@@ -135,7 +135,10 @@ def summarize_events(path: Path) -> dict[str, object]:
     if (
         finished is None
         or not last_message
-        or not summaries
+        # Compilation may fail before any test starts. Only a native build
+        # failure with completed failed targets can explain zero summaries;
+        # announced-but-missing summaries still fail the closure checks below.
+        or (not summaries and (finished != 1 or all(build_results.values())))
         or not build_results
         or received != announced | {event_key({"started": {}})}
         or actual_tests != expected_tests

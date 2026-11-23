@@ -158,19 +158,31 @@ def selected_profile(raw: bytes, subset: bool) -> bytes:
 
 def verify_results(
     events: dict[str, object], code: int, plan: dict[str, object]
-) -> None:
+) -> list[str]:
     reference = json.loads(read_bounded(BASELINE, 1024 * 1024))
     native_tests = set(reference["native"]["bazel"]["test_targets"])
     selected = set(plan["selected"]) if plan["mode"] == "subset" else native_tests
     build_only = set(reference["build_only_labels"])
-    if events["exit_code"] != code or set(events["test_targets"]) != selected:
-        raise ValueError("execution does not match planned native test scope")
-    built = {
-        json.loads(key)["targetCompleted"]["label"]
-        for key in events["build_target_results"]
-    }
-    if built != build_only | selected:
+    build_results: dict[str, list[bool]] = {}
+    for key, success in events["build_target_results"].items():
+        label = json.loads(key)["targetCompleted"]["label"]
+        build_results.setdefault(label, []).append(success)
+    if set(build_results) != build_only | selected:
         raise ValueError("native build-only scope was not preserved")
+    failed_tests = {label for label in selected if not any(build_results[label])}
+    # A compiler failure has no testSummary when the test never ran. Account
+    # for it separately; never synthesize an executed test or excuse a missing
+    # outcome for a target whose build succeeded in any configuration.
+    accounted = set(events["test_targets"])
+    if code == 1:
+        accounted |= failed_tests
+    if events["exit_code"] != code or accounted != selected:
+        raise ValueError("execution does not match planned native test scope")
+    if any(
+        not all(build_results[label]) and status != "FAILED_TO_BUILD"
+        for label, status in events["test_targets"].items()
+    ):
+        raise ValueError("test outcome contradicts failed native build")
     if plan["mode"] == "subset":
         configurations = {}
         for key in events["build_target_results"]:
@@ -189,6 +201,7 @@ def verify_results(
         raise ValueError("native build configuration count changed")
     if code == 0 and set(events["test_targets"].values()) != {"PASSED"}:
         raise ValueError("nonpassing or flaky test outcome")
+    return sorted(failed_tests)
 
 
 def main() -> int:
@@ -268,9 +281,10 @@ def main() -> int:
         except (OSError, subprocess.SubprocessError):
             error = "NATIVE_CONTAINER_CLEANUP_FAILED"
     events = None
+    failed_test_build_targets: list[str] = []
     try:
         events = summarize_events(output / "native.bep.json")
-        verify_results(events, code, plan)
+        failed_test_build_targets = verify_results(events, code, plan)
     except (OSError, ValueError, KeyError, TypeError, AttributeError, RecursionError):
         error = error or "EXECUTION_EVIDENCE_INVALID"
     report = {
@@ -286,6 +300,7 @@ def main() -> int:
         "exit_code": code,
         "evidence_error": error,
         "bazel": events,
+        "failed_test_build_targets": failed_test_build_targets,
         "model_calls": 0,
         "production_omission_authorized": False,
         "requires_independent_full_control": True,
@@ -297,7 +312,13 @@ def main() -> int:
         json.dumps(
             {
                 k: report[k]
-                for k in ("arm", "exit_code", "evidence_error", "process_seconds")
+                for k in (
+                    "arm",
+                    "exit_code",
+                    "evidence_error",
+                    "failed_test_build_targets",
+                    "process_seconds",
+                )
             }
         ),
         flush=True,

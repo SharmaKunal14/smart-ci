@@ -131,6 +131,30 @@ def test_build_only_failures_remain_visible(tmp_path):
     assert result["exit_code"] == 1
 
 
+@pytest.mark.parametrize(
+    "defect", [None, "missing_announced_summary", "successful_build", "wrong_exit"]
+)
+def test_compilation_failure_accounts_for_tests_that_never_started(tmp_path, defect):
+    path = tmp_path / "events.json"
+    events(path, code=3 if defect == "wrong_exit" else 1)
+    rows = [json.loads(line) for line in path.read_text().splitlines()]
+    rows[2]["completed"]["success"] = defect == "successful_build"
+    if defect != "missing_announced_summary":
+        rows[2]["children"] = []
+    del rows[3]
+    path.write_text("\n".join(json.dumps(row) for row in rows))
+    if defect:
+        with pytest.raises(ValueError, match="incomplete"):
+            baseline.summarize_events(path)
+    else:
+        result = baseline.summarize_events(path)
+        assert result["complete_stream"] is True
+        assert result["test_targets"] == {}
+        assert result["test_target_count"] == 0
+        assert result["failed_build_target_configuration_count"] == 1
+        assert result["exit_code"] == 1
+
+
 def test_large_native_exclusion_id_still_requires_complete_announced_graph(tmp_path):
     path = tmp_path / "events.json"
     events(path)

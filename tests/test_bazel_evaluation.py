@@ -97,6 +97,35 @@ def test_selected_scope_preserves_all_non_test_build_results(reference):
         module.verify_results(value, 0, plan)
 
 
+@pytest.mark.parametrize("defect", [None, "false_pass", "wrong_exit", "partial_build"])
+def test_failed_build_explains_only_its_own_missing_test_outcome(reference, defect):
+    value = events()
+    value["exit_code"] = 3 if defect == "wrong_exit" else 1
+    key = next(iter(value["build_target_results"]))
+    value["build_target_results"][key] = False
+    if defect != "false_pass":
+        del value["test_targets"]["//lib:one_test"]
+    if defect == "partial_build":
+        second_configuration = json.loads(key)
+        second_configuration["targetCompleted"]["configuration"]["id"] = "b" * 64
+        value["build_target_results"][json.dumps(second_configuration)] = True
+    if defect:
+        with pytest.raises(ValueError):
+            module.verify_results(value, value["exit_code"], {"mode": "full"})
+    else:
+        assert module.verify_results(value, 1, {"mode": "full"}) == ["//lib:one_test"]
+        assert value["test_targets"] == {"//lib:two_test": "PASSED"}
+
+
+def test_missing_successful_test_is_not_excused_by_another_build_failure(reference):
+    value = events()
+    value["exit_code"] = 1
+    value["build_target_results"][next(iter(value["build_target_results"]))] = False
+    value["test_targets"] = {}
+    with pytest.raises(ValueError, match="planned native test scope"):
+        module.verify_results(value, 1, {"mode": "full"})
+
+
 def test_profile_changes_only_target_patterns_and_retains_native_options(monkeypatch):
     monkeypatch.setattr(
         sys.modules["diagnostics"], "PROFILE_SHA256", hashlib.sha256(RAW).hexdigest()
@@ -112,8 +141,9 @@ def test_profile_changes_only_target_patterns_and_retains_native_options(monkeyp
 
 
 @pytest.mark.parametrize("mode", ["native", "candidate"])
+@pytest.mark.parametrize("code", [0, 1])
 def test_missing_evidence_executes_independent_full_command_without_credentials(
-    tmp_path, monkeypatch, reference, mode
+    tmp_path, monkeypatch, reference, mode, code
 ):
     root = tmp_path / "source"
     root.mkdir()
@@ -123,7 +153,15 @@ def test_missing_evidence_executes_independent_full_command_without_credentials(
     monkeypatch.setattr(
         sys.modules["diagnostics"], "PROFILE_SHA256", hashlib.sha256(RAW).hexdigest()
     )
-    monkeypatch.setattr(module, "summarize_events", lambda _: events())
+    native_events = events()
+    if code:
+        native_events["exit_code"] = code
+        native_events["test_targets"] = {}
+        native_events["build_target_results"] = {
+            key: json.loads(key)["targetCompleted"]["label"] == "//lib:binary"
+            for key in native_events["build_target_results"]
+        }
+    monkeypatch.setattr(module, "summarize_events", lambda _: native_events)
     monkeypatch.setenv("OPENAI_API_KEY", "must-not-pass")
     monkeypatch.setenv("GH_TOKEN", "must-not-pass")
     monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "must-not-pass")
@@ -136,7 +174,7 @@ def test_missing_evidence_executes_independent_full_command_without_credentials(
             for key in ("OPENAI_API_KEY", "GH_TOKEN", "AWS_SECRET_ACCESS_KEY")
         )
         assert timeout == 1200
-        return 0, 1.0, None
+        return code, 1.0, None
 
     monkeypatch.setattr(module, "run_profile", run)
     monkeypatch.setattr(
@@ -154,10 +192,13 @@ def test_missing_evidence_executes_independent_full_command_without_credentials(
             str(output),
         ],
     )
-    assert module.main() == 0
+    assert module.main() == code
     result = json.loads((output / "execution.json").read_text())
     assert result["evidence_error"] is None
     assert result["production_omission_authorized"] is False
+    assert result["failed_test_build_targets"] == (
+        ["//lib:one_test", "//lib:two_test"] if code else []
+    )
     assert json.loads((output / "plan.json").read_text())["mode"] == "full"
 
 

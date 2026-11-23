@@ -437,3 +437,24 @@ remote cache and other compiler/standard configurations are not measured. Passin
 fix outcomes do not measure failure recall; the reverse regression, repeated
 measurements and a subset-only eligible PR remain acceptance gates. Broad changes
 still select nearly all tests. Production omission authority remains disabled.
+
+### Compiler failure evidence
+
+The reverse historical replay is [PR #7](https://github.com/SharmaKunal14/abseil-cpp/pull/7).
+Its first candidate run selected the same two targets and exited 1 after both
+failed compilation. Its 1,067-event stream was closed and retained all 326 required
+build results, but contained no test summaries: neither test executable existed.
+The original reader rejected that valid failed-build evidence as incomplete.
+This is a reporting defect; the failed native exit was preserved, and the check
+was never green. It is not a successful benchmark or yet a completed recall claim.
+
+The repair accepts zero summaries only for native exit 1 with completed failed
+build results and the entire announced event graph present. Evaluation accounts
+for a missing selected test summary only when every recorded build configuration
+of that exact target failed. Successful builds cannot excuse missing test outcomes,
+contradictory passes are rejected, and all required build roots/configurations
+remain checked. `failed_test_build_targets` records those targets separately;
+`test_targets` continues to contain actual native test summaries. The command
+still returns the native failure. Interrupted, truncated or aborted streams are
+not accepted. This distinction follows the separate build-completion and test
+summary events in the [Bazel protocol](https://raw.githubusercontent.com/bazelbuild/bazel/9.1.0/src/main/java/com/google/devtools/build/lib/buildeventstream/proto/build_event_stream.proto).
