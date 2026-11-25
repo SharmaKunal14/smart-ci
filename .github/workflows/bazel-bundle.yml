@@ -1,0 +1,70 @@
+name: Verify native evidence bundles on real PR captures
+on:
+  pull_request:
+    branches: [codex/bazel-paired-evaluation]
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: bazel-bundle-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    if: github.head_ref == 'codex/bazel-evidence-bundles' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          path: tool
+          persist-credentials: false
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: SharmaKunal14/abseil-cpp
+          ref: 434d2a068d1e6690a38a1a63d565f915f39bc4fb
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        with:
+          version: '0.11.6'
+          enable-cache: false
+      - name: Capture immutable run provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir "$RUNNER_TEMP/capture"
+          gh api repos/SharmaKunal14/abseil-cpp/actions/runs/45083836757 > "$RUNNER_TEMP/capture/graph-run.json"
+          gh api repos/SharmaKunal14/abseil-cpp/actions/runs/45073921737 > "$RUNNER_TEMP/capture/native-run.json"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          github-token: ${{ github.token }}
+          repository: SharmaKunal14/abseil-cpp
+          run-id: 45083836757
+          name: native-query-1
+          path: ${{ runner.temp }}/capture
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          github-token: ${{ github.token }}
+          repository: SharmaKunal14/abseil-cpp
+          run-id: 45073921737
+          name: native-resource-baseline-1
+          path: ${{ runner.temp }}/capture/native-reference
+      - name: Verify CLI plans against real PR captures
+        working-directory: tool
+        run: |
+          uv sync --frozen
+          uv run --frozen python scripts/verify_bazel_bundle.py \
+            --repo "$GITHUB_WORKSPACE/source" --capture "$RUNNER_TEMP/capture" --output "$RUNNER_TEMP/verified"
+      - name: Retain complete plan evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-bundle-verification-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/verified
+          retention-days: 7
+          if-no-files-found: error

@@ -6,12 +6,19 @@ from types import SimpleNamespace
 
 import pytest
 
+from smartci.bazel import events as portable_events
+
 SPEC = importlib.util.spec_from_file_location(
     "bazel_baseline", Path(__file__).parents[1] / "examples/abseil/baseline.py"
 )
 assert SPEC is not None and SPEC.loader is not None
 baseline = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(baseline)
+
+
+@pytest.fixture(params=[baseline, portable_events], ids=["standalone", "packaged"])
+def reader(request):
+    return request.param
 
 
 def events(path, status="PASSED", code=0, complete=True):
@@ -41,25 +48,25 @@ def events(path, status="PASSED", code=0, complete=True):
     path.write_text("\n".join(json.dumps(r) for r in rows))
 
 
-def test_bazel_summary_preserves_native_failed_target(tmp_path):
+def test_bazel_summary_preserves_native_failed_target(reader, tmp_path):
     path = tmp_path / "events.json"
     events(path, "FAILED", 3)
-    result = baseline.summarize_events(path)
+    result = reader.summarize_events(path)
     assert result["test_target_count"] == 1
     assert result["test_targets"] == {"//lib:test": "FAILED"}
     assert result["exit_code"] == 3
     assert result["build_target_configuration_count"] == 1
 
 
-def test_protobuf_default_zero_exit_code_is_supported(tmp_path):
+def test_protobuf_default_zero_exit_code_is_supported(reader, tmp_path):
     path = tmp_path / "events.json"
     events(path)
     path.write_text(path.read_text().replace('"code": 0', '"name": "SUCCESS"'))
-    assert baseline.summarize_events(path)["exit_code"] == 0
+    assert reader.summarize_events(path)["exit_code"] == 0
 
 
 @pytest.mark.parametrize("defect", ["truncated", "duplicate", "unknown_status"])
-def test_invalid_build_evidence_is_not_accepted(tmp_path, defect):
+def test_invalid_build_evidence_is_not_accepted(reader, tmp_path, defect):
     path = tmp_path / "events.json"
     events(
         path,
@@ -69,7 +76,7 @@ def test_invalid_build_evidence_is_not_accepted(tmp_path, defect):
     if defect == "duplicate":
         path.write_text(path.read_text() + "\n" + path.read_text())
     with pytest.raises(ValueError):
-        baseline.summarize_events(path)
+        reader.summarize_events(path)
 
 
 @pytest.mark.parametrize(
@@ -87,7 +94,7 @@ def test_invalid_build_evidence_is_not_accepted(tmp_path, defect):
     ],
 )
 def test_completion_marker_cannot_hide_missing_or_contradictory_evidence(
-    tmp_path, defect
+    reader, tmp_path, defect
 ):
     path = tmp_path / "events.json"
     events(path)
@@ -114,10 +121,10 @@ def test_completion_marker_cannot_hide_missing_or_contradictory_evidence(
     if defect == "duplicate_key":
         path.write_text(path.read_text().replace('"code": 0', '"code": 3, "code": 0'))
     with pytest.raises(ValueError):
-        baseline.summarize_events(path)
+        reader.summarize_events(path)
 
 
-def test_build_only_failures_remain_visible(tmp_path):
+def test_build_only_failures_remain_visible(reader, tmp_path):
     path = tmp_path / "events.json"
     events(path, code=1)
     rows = [json.loads(line) for line in path.read_text().splitlines()]
@@ -125,7 +132,7 @@ def test_build_only_failures_remain_visible(tmp_path):
     rows[0]["children"].append(build)
     rows.insert(-1, {"id": build, "completed": {}})
     path.write_text("\n".join(json.dumps(row) for row in rows))
-    result = baseline.summarize_events(path)
+    result = reader.summarize_events(path)
     assert result["test_targets"] == {"//lib:test": "PASSED"}
     assert result["failed_build_target_configuration_count"] == 1
     assert result["exit_code"] == 1
@@ -134,7 +141,9 @@ def test_build_only_failures_remain_visible(tmp_path):
 @pytest.mark.parametrize(
     "defect", [None, "missing_announced_summary", "successful_build", "wrong_exit"]
 )
-def test_compilation_failure_accounts_for_tests_that_never_started(tmp_path, defect):
+def test_compilation_failure_accounts_for_tests_that_never_started(
+    reader, tmp_path, defect
+):
     path = tmp_path / "events.json"
     events(path, code=3 if defect == "wrong_exit" else 1)
     rows = [json.loads(line) for line in path.read_text().splitlines()]
@@ -145,9 +154,9 @@ def test_compilation_failure_accounts_for_tests_that_never_started(tmp_path, def
     path.write_text("\n".join(json.dumps(row) for row in rows))
     if defect:
         with pytest.raises(ValueError, match="incomplete"):
-            baseline.summarize_events(path)
+            reader.summarize_events(path)
     else:
-        result = baseline.summarize_events(path)
+        result = reader.summarize_events(path)
         assert result["complete_stream"] is True
         assert result["test_targets"] == {}
         assert result["test_target_count"] == 0
@@ -155,7 +164,9 @@ def test_compilation_failure_accounts_for_tests_that_never_started(tmp_path, def
         assert result["exit_code"] == 1
 
 
-def test_large_native_exclusion_id_still_requires_complete_announced_graph(tmp_path):
+def test_large_native_exclusion_id_still_requires_complete_announced_graph(
+    reader, tmp_path
+):
     path = tmp_path / "events.json"
     events(path)
     rows = [json.loads(line) for line in path.read_text().splitlines()]
@@ -171,17 +182,17 @@ def test_large_native_exclusion_id_still_requires_complete_announced_graph(tmp_p
     rows[0]["children"].append(pattern)
     rows.insert(1, {"id": pattern, "expanded": {}})
     path.write_text("\n".join(json.dumps(row) for row in rows))
-    assert baseline.summarize_events(path)["complete_stream"] is True
+    assert reader.summarize_events(path)["complete_stream"] is True
     del rows[1]
     path.write_text("\n".join(json.dumps(row) for row in rows))
     with pytest.raises(ValueError, match="incomplete"):
-        baseline.summarize_events(path)
+        reader.summarize_events(path)
 
 
 @pytest.mark.parametrize(
     "defect", ["other_id", "count", "size", "element", "duplicates", "fields"]
 )
-def test_large_event_ids_reject_unknown_or_unbounded_forms(defect):
+def test_large_event_ids_reject_unknown_or_unbounded_forms(reader, defect):
     patterns = ["...", *[f"-//long_package_name:target_{i}_test" for i in range(250)]]
     value = {"pattern": {"pattern": patterns}}
     if defect == "other_id":
@@ -197,7 +208,7 @@ def test_large_event_ids_reject_unknown_or_unbounded_forms(defect):
     else:
         value["pattern"]["unexpected"] = True
     with pytest.raises(ValueError):
-        baseline.event_key(value)
+        reader.event_key(value)
 
 
 @pytest.mark.parametrize("code", [0, 3, 124])

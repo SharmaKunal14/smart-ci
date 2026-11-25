@@ -1,1 +1,1 @@
-"""Native build-graph evidence; no production omissions authorized yet."""
+"""Validated native build graphs, evidence bundles and conservative planning."""

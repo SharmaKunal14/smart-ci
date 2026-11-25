@@ -12,7 +12,9 @@ class GitError(ValueError):
     pass
 
 
-def git(repo: Path, *args: str) -> bytes:
+def git(repo: Path, *args: str, max_bytes: int = 5 * 1024 * 1024) -> bytes:
+    if not 0 < max_bytes <= 16 * 1024 * 1024:
+        raise GitError("invalid output bound")
     with tempfile.TemporaryFile() as output:
         try:
             result = subprocess.run(
@@ -27,8 +29,8 @@ def git(repo: Path, *args: str) -> bytes:
         if result.returncode:
             raise GitError("git operation failed")
         output.seek(0)
-        data = output.read(5 * 1024 * 1024 + 1)
-        if len(data) > 5 * 1024 * 1024:
+        data = output.read(max_bytes + 1)
+        if len(data) > max_bytes:
             raise GitError("diff exceeds limit")
         return data
 
