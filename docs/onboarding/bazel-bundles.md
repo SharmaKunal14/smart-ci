@@ -119,6 +119,16 @@ outcomes and repeats plans byte-for-byte. It does not execute new native tests o
 claim a new performance measurement. The repository/run pins belong to that test
 harness, not the reusable CLI implementation.
 
+The first [hosted replay](https://github.com/SharmaKunal14/smart-ci/actions/runs/45561199771)
+passed on [PR #16](https://github.com/SharmaKunal14/smart-ci/pull/16). It reproduced
+2/252 targets for the localized change, the same two compilation-failure targets
+for the regression, 251/252 for the shared dependency, and all 252 after a build
+change. Each retained all 324 build-only targets, matched recorded configuration
+identities and repeated byte-for-byte. Altering an evidence artifact required full
+execution. The [record](../benchmarks/bazel-bundle-replay-2026-11-25.json) binds
+the tested tool commit and output hashes. These are planning checks against prior
+native outcomes, not new native test runs or evidence of additional time savings.
+
 The hosted verifier downloads pinned historical artifacts. It will fail when those
 artifacts expire or disappear; it must not silently substitute a different run.
 This bounded evaluation workflow is not the production artifact retention or

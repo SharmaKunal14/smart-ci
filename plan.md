@@ -14,9 +14,11 @@ Native lifecycle work has started with reusable `smartci bazel pack` and `smartc
 bazel plan` commands. They validate full native event completeness, root wildcard
 scope, repository/profile identity, bounded artifact hashes and exact Git trees;
 they retain full fallback for invalid maps and reject unverified execution
-checkouts. The old standalone harness remains compatible. The new CLI's hosted
-verification against existing real-PR captures is pending; this is not a new
-execution benchmark or completion of automatic collection/refresh. The
+checkouts. The old standalone harness remains compatible. The new CLI's first
+[hosted replay](https://github.com/SharmaKunal14/smart-ci/actions/runs/45561199771)
+passed against four existing real-PR captures, including deterministic repetition,
+exact test/build configuration identities and tampered-evidence fallback. This is
+not a new execution benchmark or completion of automatic collection/refresh. The
 [bundle handoff](docs/onboarding/bazel-bundles.md) separates implemented contracts
 from the remaining trusted collector, artifact lifecycle and runner integration.
 
