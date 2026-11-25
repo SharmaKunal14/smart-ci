@@ -1,6 +1,6 @@
 # Smart CI: implementation and deployment plan
 
-Updated: 23 November 2026
+Updated: 25 November 2026
 
 Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Packaging selective execution and trusted baseline reuse remain unverified. The OnRecord TypeScript/Vitest pilot passed live GitHub PRs #29 (103 files / 440 cases, full fallback) and #30 (64 files / 280 cases, actual subset without fallback), with on-demand map rebuilding. Both remain unmerged; broader correctness and performance evaluation remain outstanding. No AWS resources. A separately approved bounded live investigation has now made three paid generation calls; see its evidence below.
 
@@ -9,6 +9,16 @@ Current priority: generalize native enrollment/map lifecycle and evaluate repres
 Safety and negative evidence are retained: PR #7 detects the same two compilation failures as full native execution; PR #8 verifies full fallback after a header/build-definition change; PR #11 repeats that fallback successfully in the actual one-job policy. Broad shared-hash PR #9 selects 251/252 targets and is slower (640 seconds native versus 924 seconds candidate), with only seven fewer actions. Do not generalize the localized benefit to broad changes. Hosted checks passed 644 tests plus formatting, lint, types and build on the selective tool pin. Native enrollment and artifact references are still pilot-specific, native maps are not automatically refreshed, and warm-cache benefit remains unmeasured. The full product goal remains open.
 
 The agent uses the regular OpenAI Responses API, not Codex authentication; its first hosted trial added zero edges and preserved full fallback. Textual remains a negative compatibility case. Preserve the active goal: automatic deterministic PR selection with demonstrated GitHub time and resource savings. The earlier OnRecord/date-fns/Textual work is evidence, not completion. Shadow runs remain evaluation tools, not permanent product behavior.
+
+Native lifecycle work has started with reusable `smartci bazel pack` and `smartci
+bazel plan` commands. They validate full native event completeness, root wildcard
+scope, repository/profile identity, bounded artifact hashes and exact Git trees;
+they retain full fallback for invalid maps and reject unverified execution
+checkouts. The old standalone harness remains compatible. The new CLI's hosted
+verification against existing real-PR captures is pending; this is not a new
+execution benchmark or completion of automatic collection/refresh. The
+[bundle handoff](docs/onboarding/bazel-bundles.md) separates implemented contracts
+from the remaining trusted collector, artifact lifecycle and runner integration.
 
 ### Active goal completion gates
 

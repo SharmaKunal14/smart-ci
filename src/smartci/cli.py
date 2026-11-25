@@ -8,6 +8,9 @@ from pydantic import ValidationError
 
 from .adapters.results import RunReport
 from .adapters.suite import SuiteConfig, discover, execute, manifest
+from .bazel import commands as bazel_commands
+from .bazel.bundle import Manifest as BazelManifest
+from .bazel.bundle import Profile as BazelProfile
 from .ci import commands as ci_commands
 from .ci.models import Baseline, Comparison, Context, ShadowPolicy
 from .contracts import CONTRACTS, Inventory
@@ -53,6 +56,8 @@ CONTRACTS.update(
         "investigation-action": InvestigationAction,
         "investigation-observation": InvestigationObservation,
         "model-budget": ModelBudget,
+        "bazel-profile": BazelProfile,
+        "bazel-manifest": BazelManifest,
     }
 )
 
@@ -83,6 +88,7 @@ def main() -> int:
     ci_commands.add_parser(sub)
     investigation_commands.add_parser(sub)
     ts_commands.add_parser(sub)
+    bazel_commands.add_parser(sub)
     validate = sub.add_parser(
         "validate", help="validate a manifest; does not run tests"
     )
@@ -139,6 +145,8 @@ def main() -> int:
         if command == "run":
             adapter.add_argument("--decision", type=Path)
     args = parser.parse_args()
+    if args.command == "bazel":
+        return bazel_commands.command(args)
     if args.command == "investigate":
         return investigation_commands.command(args)
     if args.command == "typescript":

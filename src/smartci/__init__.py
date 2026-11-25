@@ -1,1 +1,1 @@
-"""Offline contracts for Smart CI. No selection engine is implemented yet."""
+"""Contracts, dependency evidence and deterministic test-impact planning."""

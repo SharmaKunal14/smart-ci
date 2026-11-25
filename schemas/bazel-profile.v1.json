@@ -1,0 +1,58 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "bazel_version": {
+      "maxLength": 32,
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "title": "Bazel Version",
+      "type": "string"
+    },
+    "command_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Command Digest",
+      "type": "string"
+    },
+    "options_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Options Digest",
+      "type": "string"
+    },
+    "environment_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Environment Digest",
+      "type": "string"
+    },
+    "query_mode": {
+      "const": "unconfigured-deps-all",
+      "title": "Query Mode",
+      "type": "string"
+    },
+    "change_model": {
+      "const": "reviewed-declared-cpp-inputs-v1",
+      "title": "Change Model",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "bazel_version",
+    "command_digest",
+    "options_digest",
+    "environment_digest",
+    "query_mode",
+    "change_model"
+  ],
+  "title": "Profile",
+  "type": "object"
+}

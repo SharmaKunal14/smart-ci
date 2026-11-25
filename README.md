@@ -26,6 +26,21 @@ See [the OnRecord handoff](docs/onboarding/onrecord.md) for exact scope, local
 verification, audit artifacts, rollback and the PR-only workflow enrollment steps.
 The [live subset PR](https://github.com/SharmaKunal14/slack-incidence-evidence/pull/30) passed with 64 of 103 files executed and no fallback. Both pilot PRs remain unmerged. A three-round hosted comparison reduced the old adapter's median time from 18.89 to 13.31 seconds, including planning; native full execution took 13.87 seconds. That small net advantage is environment-specific: native full execution was faster on the local Mac. See the [measurements and limits](docs/onboarding/onrecord.md#performance-investigation-and-reproducible-comparison).
 
+## Native Bazel evidence and planning
+
+The Abseil pilot has a verified one-job localized comparison: **655 seconds native
+versus 544 seconds Smart CI from PR event to completed workflow**, retaining all
+324 build-only targets while selecting 2/252 test targets. Broad changes showed no
+useful benefit. See the [native comparison](docs/onboarding/native-build-graphs.md)
+for exact GitHub runs, negative results, cold-cache limits and remaining work.
+
+`smartci bazel pack` now packages validated native captures into revision/profile-bound
+bundles, and `smartci bazel plan` produces deterministic plans from an authenticated
+bundle digest. These installed CLI commands have no repository-specific run pins.
+They do not collect or execute native tests, automatically refresh maps, or establish
+arbitrary-project compatibility. See the [bundle workflow](docs/onboarding/bazel-bundles.md)
+for commands, trust boundaries, full fallback and verification.
+
 ## Setup and verification
 
 Install Python 3.13 or newer and uv, then run:
