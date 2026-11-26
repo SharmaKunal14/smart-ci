@@ -37,8 +37,8 @@ test and build inputs after the initial setup inherited an intentional regressio
 The bounded push publisher succeeded after earlier Actions-disabled errors and a
 repaired PR conflict; the exact cause of the activation inconsistency is unknown.
 The [evidence record](docs/benchmarks/bazel-enrollment-2026-11-26.json) separates
-initial collection from the remaining hosted artifact handoff, automatic PR
-execution and representative warm-cache comparisons. Keep the full goal active.
+initial collection from automatic PR execution and representative warm-cache
+comparisons that remain outstanding. Keep the full goal active.
 
 The next transport increment adds `smartci bazel fetch`: discover successful
 approved publishers at an exact revision, authenticate workflow/run/artifact
@@ -46,9 +46,12 @@ origin, validate the native bundle and command configuration, and emit an audite
 receipt without hard-coded run IDs. Untrusted/missing evidence remains a cache
 miss requiring collection or full execution. PR-produced maps cannot become
 trusted publishers. Its bounded API/ZIP checks are covered by controlled tests;
-Fresh native publication is verified; separate download/consumption and complete
-PR integration still need hosted verification. No new PR performance
-result is claimed. See [artifact onboarding](docs/onboarding/bazel-artifacts.md).
+Fresh native publication and [separate hosted consumption](https://github.com/SharmaKunal14/smart-ci/actions/runs/45767540576)
+are verified. The consumer reproduced identical plans for historical PRs #10/#11,
+selected two tests for the localized change, retained all 324 build-only targets,
+and required full fallback for risky changes and tampered maps. These are planning
+replays, not new native execution. Complete PR runner integration and a new
+end-to-end comparison remain outstanding. See [artifact onboarding](docs/onboarding/bazel-artifacts.md).
 
 ### Active goal completion gates
 

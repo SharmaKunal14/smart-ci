@@ -56,7 +56,7 @@
     "One enrollment run on the declared GCC/Bazel C++17 fastbuild profile, not the entire upstream matrix.",
     "Durations are onboarding costs from GitHub, not a new native-versus-Smart-CI PR comparison.",
     "Compatible reuse skipped both native/query commands; this does not prove a subsequent PR is faster.",
-    "Hosted cross-job artifact handoff and automatic selected execution still need verification."
+    "Hosted cross-job handoff is recorded separately in bazel-handoff-2026-11-26.json; automatic selected execution still needs integration and verification."
   ],
   "model_calls": 0,
   "native": {

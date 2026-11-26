@@ -48,9 +48,10 @@ compatibility or complete PR execution integration. See
 for commands, trust boundaries, full fallback and verification.
 `smartci bazel fetch` adds [trusted GitHub artifact discovery](docs/onboarding/bazel-artifacts.md)
 without configured run IDs. It rejects unapproved publishers and invalid evidence;
-a miss requires rebuilding or full execution. Separate hosted map retrieval and
-complete automatic PR integration remain to be verified; enrollment is not a new
-PR savings measurement.
+a miss requires rebuilding or full execution. A
+[separate hosted consumer passed](https://github.com/SharmaKunal14/smart-ci/actions/runs/45767540576),
+including repeatable subset/full plans and tampered-map fallback. Complete automatic
+PR execution remains to be integrated; these checks are not a new PR savings measurement.
 
 ## Setup and verification
 

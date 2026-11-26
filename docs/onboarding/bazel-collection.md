@@ -113,6 +113,8 @@ This implements collection and compatibility-driven refresh. The separate
 [`smartci bazel fetch` command](bazel-artifacts.md) discovers compatible artifacts
 from a reviewed GitHub publisher without hard-coded run IDs. Its transport checks
 are tested with controlled API responses. Fresh native publication is now
-verified; separate hosted retrieval and consumption are the next verification
-step. A complete PR runner integration remains required. A map or receipt
+verified, as is [separate hosted retrieval and consumption](https://github.com/SharmaKunal14/smart-ci/actions/runs/45767540576).
+The consumer reproduced historical subset/full plans and tampered-map fallback;
+it did not execute new native tests. Complete PR runner integration remains
+required. A map or receipt
 supplied by the PR is not trusted merely because its hashes match.
