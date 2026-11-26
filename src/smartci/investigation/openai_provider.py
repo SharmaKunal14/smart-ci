@@ -72,6 +72,10 @@ class OpenAIProvider:
             "api_error": self.api_error,
         }
 
+    def _normalize_action(self, raw: str) -> str:
+        """Keep the production action contract fixed; experiments subclass explicitly."""
+        return ActionEnvelope.model_validate_json(raw).root.model_dump_json()
+
     def _request(self, path: str, payload: dict[str, object]) -> Reply:
         self.http_status = None
         self.api_error = None
@@ -193,8 +197,7 @@ class OpenAIProvider:
                 texts.append(content["text"])
         if len(texts) != 1 or len(texts[0].encode()) > 8192:
             raise ValueError("one bounded action required")
-        action = ActionEnvelope.model_validate_json(texts[0]).root
-        text = action.model_dump_json()
+        text = self._normalize_action(texts[0])
         self.messages.append({"role": "assistant", "content": text})
         self.last_stage = "action_validated"
         return text
