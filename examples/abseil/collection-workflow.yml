@@ -1,5 +1,7 @@
+# Bounded enrollment only; no selected-test execution in this workflow.
 name: Smart CI native map enrollment
 on:
+  workflow_dispatch:
   pull_request:
     branches: [codex/native-collection-base]
     types: [opened, synchronize, reopened]
@@ -10,13 +12,15 @@ concurrency:
   cancel-in-progress: true
 jobs:
   collect:
-    if: github.head_ref == 'codex/native-collection-onboarding' && github.event.pull_request.head.repo.full_name == github.repository
+    if: >-
+      (github.event_name == 'pull_request' && github.head_ref == 'codex/native-collection-onboarding' && github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/native-collection-onboarding')
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           path: source
           fetch-depth: 0
           persist-credentials: false
@@ -91,7 +95,7 @@ jobs:
       - name: Rebuild missing evidence and verify compatible reuse
         working-directory: tool
         env:
-          HEAD: ${{ github.event.pull_request.head.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           uv run --frozen python examples/abseil/collection_driver.py configure \
             --profile examples/abseil/capture-profile.json --output "$RUNNER_TEMP/capture-config.json"

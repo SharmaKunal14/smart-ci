@@ -42,9 +42,35 @@ uv run --frozen python examples/abseil/collection_driver.py configure \
   --profile examples/abseil/capture-profile.json --output "$TRUSTED_CAPTURE_CONFIG"
 ```
 
-The example enrollment workflow runs on an isolated GitHub runner and checks
-missing-map rebuilding followed by compatible reuse. Hosted verification is
-pending. Enrollment runs are not new PR-savings comparisons.
+The example enrollment workflow is intended for an isolated GitHub runner and
+checks missing-map rebuilding followed by compatible reuse. It supports a bounded
+PR trigger and an explicit dispatch restricted to the reviewed enrollment branch.
+Enrollment runs are not new PR-savings comparisons.
+
+[Smart CI PR #17](https://github.com/SharmaKunal14/smart-ci/pull/17) passed all
+727 tests, formatting, lint, strict types and source/wheel builds in
+[GitHub run 45751951089](https://github.com/SharmaKunal14/smart-ci/actions/runs/45751951089).
+Those tests include real subprocess handling with synthetic native evidence;
+they do not replace a fresh native enrollment run.
+
+[Abseil PR #12](https://github.com/SharmaKunal14/abseil-cpp/pull/12) remains unmerged
+and has no enrollment run. The current workflow is `.github/workflows/smartci-native-query.yml`,
+on the isolated `codex/native-collection-base` and `codex/native-collection-onboarding`
+branches. Native source and tests are unchanged. GitHub's dispatch API returned
+HTTP 422, “Actions has been disabled for this repository,” before and after
+reapplying the repository's enabled setting. Its permissions API simultaneously
+reported enabled=true. The cause of that inconsistent service state is unresolved.
+Reopen/synchronize events, the existing workflow path, and matching base/head
+definitions did not create a run. Follow GitHub's
+[workflow troubleshooting guidance](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows)
+and inspect the fork's Actions UI before retrying; do not treat an absent check
+as a successful collection. Once activation is resolved, trigger this one bounded
+workflow and verify `enrollment/collection.json`, `enrollment/bundle/manifest.json`,
+the native event stream, and `reused/collection.json` in `native-enrollment-1`.
+
+The [status record](../benchmarks/bazel-collection-2026-11-26.json) separates the
+successful tool checks from the unexecuted native experiment. No onboarding
+duration, selective-execution result or new savings claim is available yet.
 
 Collection executes build logic and tests. Use protected configuration and an
 isolated runner without persisted credentials. Only PATH, HOME, LANG and TMPDIR

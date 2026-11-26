@@ -37,8 +37,13 @@ for exact GitHub runs, negative results, cold-cache limits and remaining work.
 `smartci bazel pack` now packages validated native captures into revision/profile-bound
 bundles, and `smartci bazel plan` produces deterministic plans from an authenticated
 bundle digest. These installed CLI commands have no repository-specific run pins.
-They do not collect or execute native tests, automatically refresh maps, or establish
-arbitrary-project compatibility. See the [bundle workflow](docs/onboarding/bazel-bundles.md)
+`smartci bazel collect` now runs reviewed native capture commands and automatically
+rebuilds missing or incompatible maps, or reuses a validated compatible bundle.
+Its hosted safety tests pass; fresh Abseil enrollment is still awaiting resolution
+of a GitHub Actions enablement error. This does not establish arbitrary-project
+compatibility or complete PR execution integration. See
+[automatic collection](docs/onboarding/bazel-collection.md) and the
+[bundle workflow](docs/onboarding/bazel-bundles.md)
 for commands, trust boundaries, full fallback and verification.
 
 ## Setup and verification
