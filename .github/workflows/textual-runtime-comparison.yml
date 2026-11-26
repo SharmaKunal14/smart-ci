@@ -1,0 +1,169 @@
+name: Focused Textual three-arm comparison
+on:
+  pull_request:
+    branches: [codex/python-change-scope]
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: textual-runtime-comparison
+  cancel-in-progress: false
+env:
+  BASE_SHA: e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8
+  HEAD_SHA: 62e3ddf22ab3876d39b279358f6f7f485db5f557
+  ENROLLMENT_RUN: '45862622090'
+jobs:
+  controls:
+    if: >-
+      github.repository == 'SharmaKunal14/smart-ci' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.head_ref == 'codex/runtime-candidate-evaluation' &&
+      vars.SMARTCI_TEXTUAL_RUNTIME_TRIAL == 'markdown-one'
+    name: ${{ matrix.mode }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        mode: [native, candidate]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: tool
+          persist-credentials: false
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: SharmaKunal14/textual
+          ref: ${{ env.HEAD_SHA }}
+          fetch-depth: 0
+          path: app
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - name: Install native locked profile
+        working-directory: app
+        run: |
+          pipx install poetry==1.7.1
+          poetry env use "$pythonLocation/bin/python"
+          poetry install --no-interaction --extras syntax
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        if: matrix.mode == 'candidate'
+        with:
+          version: '0.11.6'
+          enable-cache: false
+      - name: Install isolated deterministic planner
+        if: matrix.mode == 'candidate'
+        run: uv sync --project tool --frozen --no-dev --python 3.14
+      - name: Retrieve passing enrollment
+        if: matrix.mode == 'candidate'
+        continue-on-error: true
+        timeout-minutes: 2
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/enrollment"
+          gh api "repos/SharmaKunal14/textual/actions/runs/$ENROLLMENT_RUN" > "$RUNNER_TEMP/enrollment/run.json"
+          gh api "repos/SharmaKunal14/textual/actions/runs/$ENROLLMENT_RUN/attempts/1/jobs?per_page=100" > "$RUNNER_TEMP/enrollment/jobs.json"
+          gh run download "$ENROLLMENT_RUN" --repo SharmaKunal14/textual --pattern 'textual-native-1' --pattern 'textual-observe-scoped-1' --dir "$RUNNER_TEMP/enrollment"
+      - name: Execute unchanged native profile
+        working-directory: app
+        env:
+          BENCHMARK_MODE: ${{ matrix.mode }}
+        run: |
+          poetry run python ../tool/examples/textual/runtime_candidate.py --mode "$BENCHMARK_MODE" \
+            --base "$BASE_SHA" --head "$HEAD_SHA" --output "$RUNNER_TEMP/results" \
+            --enrollment "$RUNNER_TEMP/enrollment" --planner-python "$GITHUB_WORKSPACE/tool/.venv/bin/python"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: textual-${{ matrix.mode }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/results
+          retention-days: 7
+          if-no-files-found: error
+  agent:
+    if: >-
+      github.repository == 'SharmaKunal14/smart-ci' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.head_ref == 'codex/runtime-candidate-evaluation' &&
+      vars.SMARTCI_TEXTUAL_RUNTIME_TRIAL == 'markdown-one'
+    name: agent
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write # Required by the existing conditional ledger updates; application tests receive no token.
+      actions: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: tool
+          persist-credentials: false
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: SharmaKunal14/textual
+          ref: ${{ env.HEAD_SHA }}
+          fetch-depth: 0
+          path: app
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        with:
+          version: '0.11.6'
+          enable-cache: false
+      - name: Install identical native and isolated planner environments
+        run: |
+          uv sync --project tool --frozen --no-dev --python 3.14
+          pipx install poetry==1.7.1
+          cd app
+          poetry env use "$pythonLocation/bin/python"
+          poetry install --no-interaction --extras syntax
+      - name: Retrieve passing enrollment
+        timeout-minutes: 2
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/enrollment"
+          gh api "repos/SharmaKunal14/textual/actions/runs/$ENROLLMENT_RUN" > "$RUNNER_TEMP/enrollment/run.json"
+          gh api "repos/SharmaKunal14/textual/actions/runs/$ENROLLMENT_RUN/attempts/1/jobs?per_page=100" > "$RUNNER_TEMP/enrollment/jobs.json"
+          gh run download "$ENROLLMENT_RUN" --repo SharmaKunal14/textual --pattern 'textual-native-1' --pattern 'textual-observe-scoped-1' --dir "$RUNNER_TEMP/enrollment"
+      - name: Record native environment before supplying model credentials
+        working-directory: app
+        run: |
+          poetry run python ../tool/examples/textual/runtime_candidate.py --mode profile \
+            --base "$BASE_SHA" --head "$HEAD_SHA" --output "$RUNNER_TEMP/results"
+      - name: One approved investigation, at most four reserved calls
+        working-directory: app
+        timeout-minutes: 4
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SMARTCI_DISABLE_MODEL_CALLS: '0'
+        run: |
+          ../tool/.venv/bin/python ../tool/examples/textual/runtime_agent.py \
+            --base "$BASE_SHA" --head "$HEAD_SHA" --output "$RUNNER_TEMP/results" --enrollment "$RUNNER_TEMP/enrollment"
+      - name: Disable campaign without resetting reservations
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: tool/.venv/bin/python tool/scripts/disable_model_campaign.py
+      - name: Execute native tests without model credentials; missing evidence runs full
+        if: always()
+        working-directory: app
+        run: |
+          poetry run python ../tool/examples/textual/runtime_candidate.py --mode agent \
+            --base "$BASE_SHA" --head "$HEAD_SHA" --output "$RUNNER_TEMP/results"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: textual-agent-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/results
+          retention-days: 7
+          if-no-files-found: error

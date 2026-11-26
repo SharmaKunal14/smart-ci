@@ -123,6 +123,9 @@ def test_failure_keeps_exit_status_and_redacts_external_io_and_process_arguments
     report = json.loads(text)
     assert report["exit_code"] == 1
     assert "CHILD_PROCESS_NOT_OBSERVED" in report["diagnostics"]
+    assert report["contexts"]["test_a.py"]["process_events"] == [
+        "CHILD_PROCESS_ATTEMPT"
+    ]
     assert "UNTRACKED_OR_EXTERNAL_OPENS_NOT_ATTRIBUTED" in report["diagnostics"]
     for value in [str(secret), secret.read_text(), "private-argument"]:
         assert value not in text

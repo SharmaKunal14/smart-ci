@@ -206,6 +206,9 @@ class Observation:
                 self.add("import_requests", name)
         elif event in {"subprocess.Popen", "os.system", "os.fork", "os.posix_spawn"}:
             self.diagnostics.add("CHILD_PROCESS_NOT_OBSERVED")
+            # Retain the temporal caller without persisting executable/arguments.
+            # This is not observation of the child or proof of exclusive ownership.
+            self.add("process_events", "CHILD_PROCESS_ATTEMPT")
 
     def start(self) -> None:
         self.active = True
