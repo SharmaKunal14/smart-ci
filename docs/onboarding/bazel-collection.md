@@ -43,9 +43,11 @@ uv run --frozen python examples/abseil/collection_driver.py configure \
 ```
 
 The example enrollment workflow is intended for an isolated GitHub runner and
-checks missing-map rebuilding followed by compatible reuse. It supports a bounded
-PR trigger and an explicit dispatch restricted to the reviewed enrollment branch.
-Enrollment runs are not new PR-savings comparisons.
+checks missing-map rebuilding followed by compatible reuse. It publishes on
+pushes to `codex/native-collection-onboarding` in the reviewed Abseil fork only,
+with one 35-minute job. This push trigger can produce a trusted map before later
+PRs need it. It does not require merging a PR or a manual-dispatch definition on
+the default branch. Enrollment runs are not new PR-savings comparisons.
 
 [Smart CI PR #17](https://github.com/SharmaKunal14/smart-ci/pull/17) passed all
 727 tests, formatting, lint, strict types and source/wheel builds in
@@ -56,28 +58,37 @@ they do not replace a fresh native enrollment run.
 [Abseil PR #12](https://github.com/SharmaKunal14/abseil-cpp/pull/12) remains unmerged
 and has no enrollment run. The current workflow is `.github/workflows/smartci-native-query.yml`,
 on the isolated `codex/native-collection-base` and `codex/native-collection-onboarding`
-branches. Native source and tests are unchanged. GitHub's dispatch API returned
+branches. The initial setup mistakenly inherited the intentionally broken source
+used by the earlier regression experiment. The current head restores the exact
+application/test/build inputs of passing native baseline `6da46d213f16f99b80f57f9d861792bb793923a9`;
+the only application change relative to this PR's base is `.first` to `.position`
+in `raw_linked_hash_set.h`. No tests or native settings were weakened, and earlier
+regression evidence remains intact. Fresh verification is still required.
+
+GitHub's earlier dispatch API returned
 HTTP 422, “Actions has been disabled for this repository,” before and after
 reapplying the repository's enabled setting. Its permissions API simultaneously
 reported enabled=true. The cause of that inconsistent service state is unresolved.
-Reopen/synchronize events, the existing workflow path, and matching base/head
-definitions did not create a run. Follow GitHub's
+Further inspection also found GitHub marked the PR `CONFLICTING/DIRTY`. Reparenting
+its identical file tree onto the current base cleared that state; GitHub then
+reported `MERGEABLE/CLEAN`. A new reopen event still created no run. The workflow
+now uses the bounded push publisher above instead of PR/manual triggers. This
+corrects two setup mistakes; it does not establish that the service activation
+problem is resolved. Follow GitHub's
 [workflow troubleshooting guidance](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows)
 and inspect the fork's Actions UI before retrying; do not treat an absent check
-as a successful collection. Once activation is resolved, trigger this one bounded
-workflow and verify `enrollment/collection.json`, `enrollment/bundle/manifest.json`,
+as a successful collection. Once activation is resolved, a reviewed push to the
+enrollment branch triggers the single bounded workflow. Reopening PR #12 is no
+longer its trigger. Verify `enrollment/collection.json`, `enrollment/bundle/manifest.json`,
 the native event stream, and `reused/collection.json` in `native-enrollment-1`.
 
 The [status record](../benchmarks/bazel-collection-2026-11-26.json) separates the
 successful tool checks from the unexecuted native experiment. No onboarding
 duration, selective-execution result or new savings claim is available yet.
 
-Source-scope clarification: "unchanged" means relative to this enrollment PR's
-own base. That base is the pre-fix side of the earlier localized experiment and
-differs from the previous standalone native performance baseline in
-`absl/container/internal/raw_linked_hash_set.h`. The collector must establish its
-own complete passing native evidence; previous timing/results cannot substitute
-for this run.
+The collector must establish its own complete passing native evidence. Matching
+the earlier baseline's source inputs does not transfer its outcome or timing to
+this new enrollment run.
 
 Collection executes build logic and tests. Use protected configuration and an
 isolated runner without persisted credentials. Only PATH, HOME, LANG and TMPDIR

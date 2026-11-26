@@ -4,15 +4,16 @@
     "enabled": true,
     "sha_pinning_required": false
   },
-  "application_inputs_match_pr_base": true,
+  "application_inputs_match_pr_base": false,
+  "application_inputs_match_previous_passing_native_baseline": true,
   "artifact_sha256": {
     "actions-permissions.json": "0bffee97e4ad52676c0127aacb5b4b304a2675f5c524de641acf1326e0b0e857",
     "pr.json": "43e0624dce428606eed8470c5b2eddae5a1b39034073febde93f23066b9a85c7",
     "safety-run.json": "04c3166686052a8cfcde21235063e021dc2c1ab9d89b092105b78f005c55cedf",
     "safety.log": "da86dcd9fb798d5416f06d7eda64f4e037e8aac8d5b64b02ef47dfa8ad8eb502"
   },
-  "baseline_scope_note": "Enrollment uses the pre-fix side of the earlier localized pilot. It changes no application source/tests relative to its own PR base. It is not the same source revision as the earlier standalone native performance baseline; fresh native verification is required.",
-  "cause": "Unresolved inconsistent GitHub Actions activation state; not a verified application or native test failure.",
+  "baseline_scope_note": "Initial enrollment inherited the intentional .first regression fixture. Current head restores upstream .position and exactly matches the previously passing baseline application/test/build inputs; CI/enrollment control files differ. Fresh native evidence remains required.",
+  "cause": "PR conflict and incorrect enrollment source were repaired. No native run exists after the corrected PR event or initial bounded publisher push; repository Actions activation remains unresolved.",
   "dispatch_error": {
     "http_status": 422,
     "message": "Actions has been disabled for this repository.",
@@ -20,9 +21,7 @@
     "reproduced_after_reapplying_enabled": true,
     "workflow_id": 427228315
   },
-  "model_calls": 0,
-  "native_enrollment_status": "not_started",
-  "native_pr": {
+  "initial_native_pr": {
     "baseRefName": "codex/native-collection-base",
     "baseRefOid": "bfe338d724a2d4776443b49cfdcc35a118a06938",
     "headRefName": "codex/native-collection-onboarding",
@@ -33,27 +32,57 @@
     "statusCheckRollup": [],
     "url": "https://github.com/SharmaKunal14/abseil-cpp/pull/12"
   },
+  "model_calls": 0,
+  "native_enrollment_status": "not_started",
+  "native_pr": {
+    "baseRefName": "codex/native-collection-base",
+    "baseRefOid": "bfe338d724a2d4776443b49cfdcc35a118a06938",
+    "headRefName": "codex/native-collection-onboarding",
+    "headRefOid": "ac159728f2a083a9f6f2a925adacf8ae7ed033d7",
+    "isDraft": true,
+    "mergeStateStatus": "CLEAN",
+    "mergeable": "MERGEABLE",
+    "state": "OPEN",
+    "statusCheckRollup": [],
+    "url": "https://github.com/SharmaKunal14/abseil-cpp/pull/12"
+  },
   "native_run": null,
   "native_test_execution": false,
   "new_performance_measurement": false,
   "pr_changed_paths": [
     ".github/workflows/smartci-native-query.yml",
-    ".smartci/native-enrollment.txt"
+    ".smartci/native-enrollment.txt",
+    "absl/container/internal/raw_linked_hash_set.h"
   ],
+  "previous_passing_native_baseline_commit": "6da46d213f16f99b80f57f9d861792bb793923a9",
   "remaining": [
     "Fresh native collection and compatible reuse on GitHub",
     "Protected artifact publication and acquisition",
     "Automatic PR execution integration",
     "Representative warm-cache comparisons"
   ],
+  "repair": {
+    "artifact_sha256": {
+      "permissions.json": "0bffee97e4ad52676c0127aacb5b4b304a2675f5c524de641acf1326e0b0e857",
+      "pr.json": "b3b68335dd751f99fef866f0c082611b8d2ee98eb0c7857957f3c7f96a00ec50",
+      "runs.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "checked_at_utc": "2026-11-26T04:55:27.927762+00:00",
+    "confirmed_merge_state_before_reopen": "MERGEABLE/CLEAN",
+    "initial_reported_merge_state": "CONFLICTING/DIRTY",
+    "native_runs": [],
+    "publisher_push_commit": "ac159728f2a083a9f6f2a925adacf8ae7ed033d7",
+    "source_fix": "Restore .position from the prior passing native baseline; no tests or native profile changes",
+    "source_restore_commit": "226f570001c1e73da532c6341077f8791d28623a",
+    "tree_preserving_reparent_commit": "20d08488516604263b69a9fe766b56ffc770ddd3"
+  },
   "safety_conclusion": "success",
   "safety_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45751951089",
   "safety_scope": "Tool unit and integration tests, including subprocess handling with synthetic native evidence; not fresh Abseil execution.",
   "safety_tests_passed": 727,
   "schema_version": "smartci.bazel-collection-status.v1",
-  "source_differences_from_previous_native_performance_baseline": [
-    "absl/container/internal/raw_linked_hash_set.h"
-  ],
+  "source_differences_from_previous_native_performance_baseline": [],
   "tested_tool_commit": "595547f45437b438ba17cca45b2c6f2c4af61ffb",
-  "tool_pr": "https://github.com/SharmaKunal14/smart-ci/pull/17"
+  "tool_pr": "https://github.com/SharmaKunal14/smart-ci/pull/17",
+  "trigger": "push to codex/native-collection-onboarding in SharmaKunal14/abseil-cpp only; one 35-minute job"
 }
