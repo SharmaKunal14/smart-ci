@@ -1,9 +1,10 @@
 # Native cache comparison: next verification step
 
-Status: cache adapter, bounded seed and consumer workflows implemented. The first
-adapter revision passed [840 hosted safety tests and builds](https://github.com/SharmaKunal14/smart-ci/actions/runs/45792014787).
+Status: cache adapter, bounded seed and consumer workflows implemented. The
+consumer revision passed [854 hosted safety tests and builds](https://github.com/SharmaKunal14/smart-ci/actions/runs/45793248434).
 The [seed run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45792537512)
-is in progress; no warm-cache benchmark result is claimed.
+passed, and the first real regression PR pair is running. No warm-cache speed
+result is claimed yet.
 The current public Abseil profile has no credentials for upstream's optional
 private cache. Its measured cold savings cannot establish savings in that private
 environment. On 26 November 2026, the fork's GitHub cache-usage API reported zero
@@ -34,8 +35,10 @@ upstream's private service. See [Bazel's cache documentation](https://bazel.buil
    source trees for native and Smart CI. Each gets an independent copy of the same
    base seed on a fresh runner. Native caching must remain enabled in both arms.
    Keep at most two native jobs active. Cap the seed and each comparison job at
-   25 minutes; start with one seed and one pair, then at most one repeat after
-   checking correctness. No larger runners, AWS deployment or model calls.
+   25 minutes; start with one seed and one regression pair, then at most one
+   passing comparison pair after checking correctness. This uses the second pair
+   for normal passing feedback rather than extrapolating from compilation failure.
+   No larger runners, AWS deployment or model calls.
 5. **Verify what actually happened.** Require an authenticated cache hit and
    record native cache-hit metrics from build events, not merely cache-action
    output or repeated stdout. Reconcile all native test outcomes and every required
@@ -68,7 +71,7 @@ from the repository and captures. The Docker adapter mounts it at `/native-cache
 and adds only `--disk_cache=/native-cache` to the native flags. Cached collection
 and execution require `cache-profile.json`; supplying an uncached profile with a
 cache, or the cached profile without a cache, is rejected. Native event validation
-still checks the exact options digest; the first hosted capture must confirm it.
+still checks the exact options digest; the first hosted capture has confirmed it.
 
 `native_cache.py` fingerprints the cache after native processes finish. It rejects
 links, special files, excessive nesting, more than 100,000 entries and more than
@@ -103,3 +106,26 @@ shell's cold-full routing for missing/invalid cache evidence. These are correctn
 checks, not performance measurements. The controlled cache is separate from the
 unavailable upstream private cache. No AWS deployment or model credentials are
 needed.
+
+## Verified base seed
+
+Run `45792537512` built the passing base revision
+`08f1bcddc9372a42496fea05a81f9d6b7ad6122d` with producer tool `25e32aba`.
+The authenticated map contains 252 passing test targets and 324 build-only targets,
+with 576 native build configurations. Its anchor matches the actual Git tree and
+its profile/command digests match the reviewed cached configuration. Compatible
+map reuse then avoided another native build or query. Runner policies were restored.
+
+Workflow creation through completion took **686 seconds**, including 637.02 seconds
+for the native command and 9.59 seconds for the query. This is initial enrollment,
+not a PR saving. It ran on an Intel Xeon 6975P-C host with four visible processors.
+The cache receipt covers **858,023,104 bytes in 7,564 files**. GitHub confirms one
+base-branch cache containing **112,871,152 compressed bytes**, below the content cap.
+The [seed record](../benchmarks/abseil-cache-seed-2026-11-26.json) retains identities,
+hashes, native scope and the exact cache ID for cleanup.
+
+[Native PR #22](https://github.com/SharmaKunal14/abseil-cpp/pull/22) and
+[Smart CI PR #23](https://github.com/SharmaKunal14/abseil-cpp/pull/23) replay the same
+known compiler regression against this seed. Their complete Git trees are identical;
+both should stay red on the two real compiler failures. Cache admission and native
+cache-hit evidence must pass before their timing can be classified as warm.
