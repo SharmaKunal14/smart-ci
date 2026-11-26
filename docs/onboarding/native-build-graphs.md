@@ -656,20 +656,26 @@ with native exit 0 and no evidence error. The
 complete plan/report and hashes. This is fallback verification, not a speedup.
 Both standalone comparisons recorded zero OOM kills and restored runner policy.
 
-## Product boundaries still open
+## Earlier harness boundaries and current delivery status
 
 The native collector discovers dependencies; nobody supplied per-test edges for
-these PRs. However, enrollment of this pilot still uses a reviewed Abseil-specific
-profile, pinned artifact references and a prepared CI workflow. It is not yet a
-general `smartci` enrollment command for arbitrary Bazel repositories. Missing or
-expired map artifacts fall back to full execution rather than rebuilding a native
-map automatically. A changed native test inventory/profile requires re-enrollment;
-the existing full-result reconciler otherwise rejects the unexpected scope. That
-is a conservative failure, not seamless support for adding arbitrary test targets.
+these PRs. The older harness measured above used an Abseil-specific profile,
+pinned artifact references and a prepared workflow. It could not rebuild missing
+maps automatically, and its full-result reconciler rejected a changed inventory.
+Those are historical harness limitations, not the current command contract.
+
+The newer [`collect`, `fetch` and `execute` integration](bazel-execution.md) now
+discovers reviewed publishers, validates map compatibility and reconstructs
+missing evidence at the actual PR base before restoring the head. Real PR #17
+verifies that recovery. PRs #18/#19 verify independent full fallback after adding
+a test: both runs discover all 253 current targets despite the map listing 252.
+These commands still require reviewed native commands and a supported dependency
+profile; they are not a universal installer for arbitrary Bazel repositories.
 
 Warm-cache benefit is also unmeasured. The private upstream cache is unavailable,
 and fresh hosted runners do not approximate its cache hit rate. Do not promise
 the measured cold-profile savings for an enterprise system that already caches
-most builds and test results. A general installer, automated map lifecycle and
-representative cache evaluation remain delivery work even if the single-job pilot
-demonstrates an end-to-end saving.
+most builds and test results. A general installer and representative cache
+evaluation remain delivery work even though automatic map recovery and cold-run
+savings have now been demonstrated. The [cache study](native-cache-evaluation.md)
+is a design and storage preflight only; it has no measured result yet.

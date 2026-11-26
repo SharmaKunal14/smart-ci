@@ -64,8 +64,12 @@ checks are separate from the actual execution comparison above.
 [`smartci bazel execute`](docs/onboarding/bazel-execution.md) runs and reconciles
 the actual native test plan. The Abseil PR workflow retrieves a reviewed map or
 reconstructs missing evidence before execution. The first compatible-map
-PR comparison passed; repeated measurements and live regression, shared-change and
-missing-map/fallback cases on this new runner remain outstanding.
+PR comparison and repeat passed. Live regression checks preserve both native
+compiler failures; missing-map recovery rebuilds the base and restores the head.
+A new-target full-fallback pair also passes all 253 current tests, including the
+test absent from the saved map. Its 665/1,068-second result shows no saving.
+The broad shared-change comparison and representative native-cache evaluation
+remain outstanding. See the execution guide for exact runs and evidence limits.
 
 ## Setup and verification
 
