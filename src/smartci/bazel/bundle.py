@@ -53,6 +53,7 @@ class Manifest(StrictModel):
     anchor_commit: Revision
     profile: Profile
     artifacts: dict[str, Digest] = Field(min_length=4, max_length=4)
+    capture_config_digest: Digest | None = None
 
     @model_validator(mode="after")
     def known_members(self) -> Self:
@@ -172,7 +173,7 @@ def validate_artifacts(manifest: Manifest, artifacts: dict[str, bytes]) -> Bundl
     reconcile_graph(graph, roots, native)
     return Bundle(
         manifest,
-        sha256(canonical(manifest.model_dump())),
+        sha256(canonical(manifest.model_dump(exclude_none=True))),
         anchor,
         graph,
         tuple(sorted(roots)),
@@ -185,6 +186,8 @@ def pack(
     profile: Profile,
     anchor_commit: str,
     artifacts: dict[str, bytes],
+    *,
+    capture_config_digest: str | None = None,
 ) -> Bundle:
     if set(artifacts) != set(LIMITS):
         raise QueryError("unsupported evidence member")
@@ -194,6 +197,7 @@ def pack(
         anchor_commit=anchor_commit,
         profile=profile,
         artifacts={name: sha256(raw) for name, raw in artifacts.items()},
+        capture_config_digest=capture_config_digest,
     )
     bundle = validate_artifacts(manifest, artifacts)
     # Never overwrite another capture. Publish the validated manifest last, so a
@@ -203,7 +207,7 @@ def pack(
         with (output / name).open("xb") as stream:
             stream.write(artifacts[name])
     with (output / "manifest.json").open("xb") as stream:
-        stream.write(canonical(manifest.model_dump()))
+        stream.write(canonical(manifest.model_dump(exclude_none=True)))
     return bundle
 
 
@@ -212,7 +216,7 @@ def load(output: Path, expected_digest: str, expected_profile: Profile) -> Bundl
     if sha256(raw) != expected_digest:
         raise QueryError("manifest identity mismatch")
     manifest = Manifest.model_validate(json.loads(raw, object_pairs_hook=unique_object))
-    if canonical(manifest.model_dump()) != raw:
+    if canonical(manifest.model_dump(exclude_none=True)) != raw:
         raise QueryError("noncanonical evidence manifest")
     if manifest.profile != expected_profile:
         raise QueryError("repository or native profile mismatch")

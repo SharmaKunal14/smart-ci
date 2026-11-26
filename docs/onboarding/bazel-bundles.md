@@ -3,7 +3,7 @@
 `smartci bazel pack` and `smartci bazel plan` expose the native graph planner through
 the installed CLI. Their implementation contains no Abseil repository, workflow
 run or benchmark-record constants. This is a reusable evidence boundary, not yet
-automatic native collection, cache refresh or execution for arbitrary projects.
+automatic execution or artifact acquisition for arbitrary projects.
 The supported change model is the reviewed C++ declaration model used by the
 existing native selector: only existing declared `.cc`/`.h` modifications can
 reuse the graph. Other changes retain the full native command.
@@ -106,6 +106,10 @@ native failures and reconcile actual test/build results.
 
 ## Verification and remaining work
 
+`smartci bazel collect` now orchestrates full native execution and dependency
+queries from a trusted capture configuration. See [automatic collection](bazel-collection.md)
+for its command contract, refresh behavior, trust boundary and live verification.
+
 Safety tests cover manifest/artifact tampering, wrong repository/profile, incomplete
 or selective native references, duplicate keys, special files, dirty checkouts,
 wrong revisions, output overlap, stable plans and full fallback. The packaged event
@@ -134,7 +138,9 @@ artifacts expire or disappear; it must not silently substitute a different run.
 This bounded evaluation workflow is not the production artifact retention or
 refresh mechanism.
 
-Automatic collector orchestration, protected artifact publication/acquisition,
-refresh after build/test inventory changes, execution integration and representative
-warm-cache evaluation remain unfinished. Missing bundles currently request full
-execution; this CLI does not silently rebuild one or promote untrusted evidence.
+Protected artifact publication/acquisition, complete PR execution integration and
+representative warm-cache evaluation remain unfinished. `plan` alone still requests
+full execution for missing maps; the CI flow must call `collect` in an isolated
+checkout of its trusted base to reconstruct a missing map first. Do not promote
+PR-controlled evidence or confuse the collector's baseline with tests of a
+different PR head.

@@ -18,6 +18,7 @@ from .bundle import (
     read_bounded,
     sha256,
 )
+from .collection import collect, read_config
 from .graph import QueryError
 from .planning import MAX_TREE_BYTES, parse_tree
 
@@ -29,6 +30,15 @@ def add_parser(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None
         "bazel", help="validated native Bazel evidence and planning"
     )
     commands = parent.add_subparsers(dest="bazel_command", required=True)
+    collection = commands.add_parser(
+        "collect", help="collect or safely reuse native evidence from trusted commands"
+    )
+    collection.add_argument("--repo", type=Path, required=True)
+    collection.add_argument("--revision", required=True)
+    collection.add_argument("--config", type=Path, required=True)
+    collection.add_argument("--output", type=Path, required=True)
+    collection.add_argument("--reuse-bundle", type=Path)
+    collection.add_argument("--expected-digest")
     packaging = commands.add_parser(
         "pack",
         help="package a trusted full native capture; does not collect or run tests",
@@ -185,6 +195,33 @@ def plan_command(args: argparse.Namespace) -> int:
 
 
 def command(args: argparse.Namespace) -> int:
+    if args.bazel_command == "collect":
+        try:
+            if (args.reuse_bundle is None) != (args.expected_digest is None):
+                raise QueryError(
+                    "cache path and authenticated digest required together"
+                )
+            config = read_config(args.config)
+            report = collect(
+                args.repo.resolve(),
+                args.revision,
+                config,
+                args.output.resolve(),
+                reuse=args.reuse_bundle.resolve() if args.reuse_bundle else None,
+                expected_digest=args.expected_digest,
+            )
+        except (
+            OSError,
+            ValueError,
+            TypeError,
+            KeyError,
+            AttributeError,
+            RecursionError,
+        ):
+            print(json.dumps({"status": "error", "code": "INVALID_COLLECTION_REQUEST"}))
+            return 2
+        print(json.dumps(report), flush=True)
+        return 0 if report["status"] == "ready" else 1
     if args.bazel_command == "pack":
         return pack_command(args)
     return plan_command(args)
