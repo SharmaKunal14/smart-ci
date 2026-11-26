@@ -68,8 +68,54 @@ then compare PR-event-to-workflow-completion time, total runner time, outcomes,
 native build/test counts, and action counts. Initial enrollment and cache misses
 must be reported separately. A smaller plan is not a measured speed improvement.
 
-Current verification covers subprocess execution, token filtering, full fallback,
+Verification covers subprocess execution, token filtering, full fallback,
 new targets in full runs, exact subset/build-only scope, compiler failures, profile
 drift, timeouts, dirty checkouts, lifecycle rebuilding and failed head restoration.
-Live execution of this new path and a new end-to-end GitHub comparison are pending.
-The earlier Abseil measurements belong to the previous pilot harness.
+The [hosted safety suite](https://github.com/SharmaKunal14/smart-ci/actions/runs/45773092592)
+passed 817 tests, formatting, lint, types and both package builds. The initial CI
+attempt caught a missing exported schema; that file was added before the candidate
+experiment, without changing runtime code.
+
+## First real PR comparison
+
+Both PRs replay the same historical hinted node-insertion fix: `.first` becomes
+`.position` in `raw_linked_hash_set.h`. Their application, test and build trees are
+identical. This is a repeated workload for the new integration, not a new scenario.
+
+| GitHub measurement | Native PR #13 | Smart CI PR #14 |
+| --- | ---: | ---: |
+| PR creation to completed workflow | 626 s | 413 s |
+| Runner time | 620 s | 406 s |
+| Passed Bazel test targets | 252 | 2 |
+| Retained build-only targets | 324 | 324 |
+| Bazel actions | 2,988 | 1,092 |
+
+[Native run 45771460665](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45771460665)
+and [Smart CI run 45772824303](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45772824303)
+both passed. Smart CI saved **213 seconds / 34.0% end to end** in this pair. It
+retrieved the reviewed map, performed no reconstruction, selected
+`linked_hash_map_test` and `linked_hash_set_test`, and had no fallback. Native
+events independently confirm the selected test results and preservation of every
+build-only configuration. Both runners restored their temporary crash-report policy.
+
+The GitHub map-discovery step took 4 seconds. The execution planner reported
+0.460 seconds, which excludes retrieval, prior compatibility validation, interpreter
+startup and dependency installation. Those costs are included in the 413-second
+whole-workflow result. Native command durations were 609.42 and 383.87 seconds;
+they are not substituted for the end-to-end measurement.
+
+Download `independent-native-1` from the native run and inspect
+`native-control/execution.json`. From the Smart CI run download `automatic-native-1`
+and inspect `map/fetch.json`, `native-pr/lifecycle.json`, and
+`native-pr/execution/{plan,execution}.json`. The
+[versioned record](../benchmarks/abseil-automatic-execution-2026-11-26.json) retains
+timestamps, exact revisions, profile, source identity, artifact hashes and limits.
+The control pins `cbc9544`; the candidate pins `4acbf07`. The only intervening tool
+change is the exported schema; executable code is byte-identical.
+
+This is one cold-run pair on one reviewed native profile. Runner/image-download
+variation remains included, and private remote-cache behavior is unmeasured. The
+661-second initial enrollment is separate and must be amortized. Target counts are
+not individual test-case counts. Repeat this path and verify live regression,
+shared-change and missing-map/full-fallback cases before making broader claims.
+Earlier Abseil measurements remain evidence for the previous pilot harness.

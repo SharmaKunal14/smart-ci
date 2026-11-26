@@ -4,9 +4,11 @@ Updated: 26 November 2026
 
 Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Packaging selective execution and trusted baseline reuse remain unverified. The OnRecord TypeScript/Vitest pilot passed live GitHub PRs #29 (103 files / 440 cases, full fallback) and #30 (64 files / 280 cases, actual subset without fallback), with on-demand map rebuilding. Both remain unmerged; broader correctness and performance evaluation remain outstanding. No AWS resources. A separately approved bounded live investigation has now made three paid generation calls; see its evidence below.
 
-Current priority: generalize native enrollment/map lifecycle and evaluate representative caching without weakening the verified selection rules. Abseil PR #10 now demonstrates whole-workflow savings against a matching standalone native baseline: 655 seconds native versus 544 seconds Smart CI from the actual PR event to completed workflow (111 seconds / 16.9% faster). It selected 2/252 test targets and retained all 324 build-only targets; Bazel actions fell from 2,988 to 1,092. Earlier paired localized runs measured 1,061/315 seconds and 619/324 seconds from workflow trigger to job completion, with identical plans. These are repeated measurements of one historical source fix, not independent new scenarios.
+Current priority: repeat the automatic native PR integration and verify its live regression, shared-change and missing-map/fallback cases, then evaluate representative caching. Its first real pair, Abseil PRs #13/#14, passed with **626 seconds native versus 413 seconds Smart CI from PR creation to completed workflow** (213 seconds / 34.0% faster). Smart CI discovered the current reviewed map without a saved run ID, selected 2/252 test targets, retained all 324 build-only targets, and reduced Bazel actions from 2,988 to 1,092. This is one cold-run pair replaying the same historical localized fix, not a representative average. See the [record](docs/benchmarks/abseil-automatic-execution-2026-11-26.json).
 
-Safety and negative evidence are retained: PR #7 detects the same two compilation failures as full native execution; PR #8 verifies full fallback after a header/build-definition change; PR #11 repeats that fallback successfully in the actual one-job policy. Broad shared-hash PR #9 selects 251/252 targets and is slower (640 seconds native versus 924 seconds candidate), with only seven fewer actions. Do not generalize the localized benefit to broad changes. Hosted checks passed 644 tests plus formatting, lint, types and build on the selective tool pin. Native enrollment and artifact references are still pilot-specific, native maps are not automatically refreshed, and warm-cache benefit remains unmeasured. The full product goal remains open.
+Historical evidence remains separate: the old standalone harness's PR #10 measured 655 seconds native versus 544 seconds Smart CI from the actual PR event to completed workflow (111 seconds / 16.9% faster). Earlier paired localized runs measured 1,061/315 seconds and 619/324 seconds from workflow trigger to job completion, with identical plans. These are repeated measurements of one historical source fix, not independent new scenarios.
+
+Safety and negative evidence are retained: PR #7 detects the same two compilation failures as full native execution; PR #8 verifies full fallback after a header/build-definition change; PR #11 repeats that fallback successfully in the actual one-job policy. Broad shared-hash PR #9 selects 251/252 targets and is slower (640 seconds native versus 924 seconds candidate), with only seven fewer actions. Do not generalize the localized benefit to broad changes. Hosted checks passed 644 tests plus formatting, lint, types and build on the selective tool pin. Those older measurements used pilot-specific enrollment and artifact references. The new commands automate map retrieval and compatibility-driven rebuilding; its live missing-map case and warm-cache benefit remain unverified. The full product goal remains open.
 
 The agent uses the regular OpenAI Responses API, not Codex authentication; its first hosted trial added zero edges and preserved full fallback. Textual remains a negative compatibility case. Preserve the active goal: automatic deterministic PR selection with demonstrated GitHub time and resource savings. The earlier OnRecord/date-fns/Textual work is evidence, not completion. Shadow runs remain evaluation tools, not permanent product behavior.
 
@@ -37,8 +39,8 @@ test and build inputs after the initial setup inherited an intentional regressio
 The bounded push publisher succeeded after earlier Actions-disabled errors and a
 repaired PR conflict; the exact cause of the activation inconsistency is unknown.
 The [evidence record](docs/benchmarks/bazel-enrollment-2026-11-26.json) separates
-initial collection from automatic PR execution and representative warm-cache
-comparisons that remain outstanding. Keep the full goal active.
+initial collection from subsequent PR execution and representative warm-cache
+comparisons. The first execution result below does not close the full goal.
 
 The next transport increment adds `smartci bazel fetch`: discover successful
 approved publishers at an exact revision, authenticate workflow/run/artifact
@@ -50,8 +52,8 @@ Fresh native publication and [separate hosted consumption](https://github.com/Sh
 are verified. The consumer reproduced identical plans for historical PRs #10/#11,
 selected two tests for the localized change, retained all 324 build-only targets,
 and required full fallback for risky changes and tampered maps. These are planning
-replays, not new native execution. Complete PR runner integration and a new
-end-to-end comparison remain outstanding. See [artifact onboarding](docs/onboarding/bazel-artifacts.md).
+replays, not new native execution. The subsequent execution increment below adds
+the first real PR comparison; broader verification remains outstanding. See [artifact onboarding](docs/onboarding/bazel-artifacts.md).
 
 The execution increment adds `smartci bazel execute`, which derives its own plan,
 runs reviewed full/subset commands, and reconciles the complete native build-event
@@ -60,9 +62,13 @@ Abseil workflow resolves the current reviewed publisher without a saved run ID,
 rebuilds missing/incompatible maps from the base, restores the exact head, and
 retains full execution when reconstruction cannot establish evidence. A separate
 native-control workflow avoids adding planning overhead to the baseline. The first
-new comparison will replay the historical localized fix on identical application
-trees; it evaluates this integration, not a new independent workload. Hosted
-execution and timing results remain pending. See [execution onboarding](docs/onboarding/bazel-execution.md).
+new comparison replayed the historical localized fix on identical application
+trees. [Native run 45771460665](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45771460665)
+and [Smart CI run 45772824303](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45772824303)
+both passed, with the 626/413-second end-to-end result above. The first run is a
+compatible-map hit; reconstruction and failure scenarios on this new runner remain
+live-verification gates. Hosted safety checks passed 817 tests plus formatting,
+lint, types and package builds. See [execution onboarding](docs/onboarding/bazel-execution.md).
 
 ### Active goal completion gates
 

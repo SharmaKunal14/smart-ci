@@ -1,0 +1,239 @@
+{
+  "limitations": [
+    "One fresh pair on a repeated historical localized fix, not an independent new scenario or representative average.",
+    "Fresh GitHub runners without the optional private upstream remote cache; warm-cache benefit unmeasured.",
+    "Runner/image-download variability is included; this pair does not isolate every causal contribution to elapsed time.",
+    "The 661-second initial enrollment is separate and must be amortized; this comparison is a compatible-map hit.",
+    "Counts are Bazel test targets, not individual test cases. All 324 native build-only targets remain.",
+    "Native and Smart CI tool pins differ only by the exported schema file; executable code is byte-identical.",
+    "New-runner regression, shared-change, live missing-map/fallback scenarios and repeated timing comparisons remain outstanding.",
+    "PR-to-result is PR created_at to completed run updatedAt, at GitHub one-second timestamp resolution."
+  ],
+  "model_calls": 0,
+  "native": {
+    "application_tree_digest": "aa3056da03856282c0c9a6f66453e6da374ad35f17290ba677dfeee8f26ba387",
+    "artifact_sha256": {
+      "native-control/execution.json": "25c9f9a31558109d3a2913c85de006a17bd88a848baa6937d668453546a0aef6",
+      "native-control/native.bep.json": "abff033687103a087cf0049ec99812d893f19133a9f43a5ef3c7b14090f6d10b"
+    },
+    "base": "0c89ce5e9c9a6e1847b1ccd28f7cdd7dd42db7fd",
+    "bazel_actions": 2988,
+    "build_only_targets": 324,
+    "build_target_configurations": 576,
+    "conclusion": "success",
+    "head": "aa74e2664e67813fba1be1184e7d651c827305fd",
+    "native_command_seconds": 609.4198704070001,
+    "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/13",
+    "pr_created_at": "2026-11-26T06:54:26Z",
+    "pr_metadata_sha256": "606d2352aab17c617989c2928db40f786bbd4b8c589c6e05041ef61252b37a2a",
+    "pr_to_completed_seconds": 626.0,
+    "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45771460665",
+    "run_metadata_sha256": "bba8d102e1a9f006a85168825295e20bd6fe7ec0f6481b24796884db3fca37b2",
+    "runner_policy_restored": true,
+    "runner_seconds": 620.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "seconds": 2.0
+      },
+      {
+        "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+        "seconds": 5.0
+      },
+      {
+        "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+        "seconds": 0.0
+      },
+      {
+        "name": "Bound unused system crash processing on this disposable runner",
+        "seconds": 1.0
+      },
+      {
+        "name": "Bound the separate Apport crash-report hook",
+        "seconds": 0.0
+      },
+      {
+        "name": "Run the independent complete native suite",
+        "seconds": 609.0
+      },
+      {
+        "name": "Restore the Apport hook on the disposable runner",
+        "seconds": 0.0
+      },
+      {
+        "name": "Restore disposable runner policy",
+        "seconds": 0.0
+      },
+      {
+        "name": "Publish native execution and map lifecycle evidence",
+        "seconds": 2.0
+      },
+      {
+        "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+        "seconds": 0.0
+      },
+      {
+        "name": "Complete job",
+        "seconds": 0.0
+      }
+    ],
+    "test_targets": 252,
+    "tool_commit": "cbc9544312f59bfd98882e60d64adea30f5cd943",
+    "workflow_completed_at": "2026-11-26T07:04:52Z",
+    "workflow_created_at": "2026-11-26T06:54:29Z",
+    "workflow_created_to_completed_seconds": 623.0
+  },
+  "profile": {
+    "bazel_version": "9.1.0",
+    "change_model": "reviewed-declared-cpp-inputs-v1",
+    "command_digest": "03239a4a9294eecfa5270d397cb0250824f8930e6dcc42c4fe37955ae0c2ade1",
+    "environment_digest": "e5298946537e8d27609f5e2915f154f7e84072e8cb404ca18d059196fc226c2f",
+    "options_digest": "10df8ca5ba46367b03a887aecaf3e8361c2dd235d783eedf0e813de5ba8d7623",
+    "query_mode": "unconfigured-deps-all",
+    "repository": "SharmaKunal14/abseil-cpp",
+    "schema_version": "1"
+  },
+  "safety": {
+    "format_lint_types_builds": true,
+    "head": "7be5ead5096a33a2d2b6ab55d7f88242a31a311c",
+    "run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45773092592",
+    "tests_passed": 817
+  },
+  "saving": {
+    "faster_in_this_pair": true,
+    "percent": 34.02555910543131,
+    "seconds": 213.0
+  },
+  "scenario": "Repeated historical hinted node insertion fix; application inputs identical across arms",
+  "schema_version": "smartci.automatic-native-comparison.v1",
+  "smartci": {
+    "application_tree_digest": "aa3056da03856282c0c9a6f66453e6da374ad35f17290ba677dfeee8f26ba387",
+    "artifact_sha256": {
+      "native-pr/execution/capture/native.bep.json": "a3b208529352c73405798e8fdf8a6863a016b39d79320cef29e2fefdae58c5cf",
+      "native-pr/execution/execution.json": "2bd8f60c4a1d439e168ad85dbd7e628f810a29de65689f0d498f7c6f3733c683"
+    },
+    "base": "7c169411f41cc842d38b6ac605f0afc3c1544f4f",
+    "bazel_actions": 1092,
+    "build_only_targets": 324,
+    "build_target_configurations": 326,
+    "conclusion": "success",
+    "fallback": [],
+    "head": "dc8577003cf8dcd5984432619e3b79f79e961f54",
+    "lifecycle": {
+      "map": "retrieved",
+      "rebuild": null
+    },
+    "native_command_seconds": 383.86689827099997,
+    "plan_digest": "fedd195b027afefc5eefd1363fd0cda08f266ac0091d1359a75964ab52352deb",
+    "planning_seconds": 0.45956097199999135,
+    "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/14",
+    "pr_created_at": "2026-11-26T07:06:00Z",
+    "pr_metadata_sha256": "62d970989c60d0ce34a2d24c18c30c3277df18f05db953894a18e0d7c45200b7",
+    "pr_to_completed_seconds": 413.0,
+    "publisher": {
+      "archive_digest": "69d7263c33f0d6560af8d67615b467a1dd88e5451601da85fdc4e5ed8fdeb06b",
+      "artifact_id": 15091334618,
+      "config_digest": "d3df5eeb4a611ef4c11d4a0ffb759c1d483ad516530cebf55fe7a71cd7bd8c9c",
+      "manifest_digest": "51ff2469ab7671530a93b24379faa07176dc9ea102a0f50b188915f8ce6ce640",
+      "map_revision": "622fd1c2829655d595ffeca8656382ff305a5ddb",
+      "publisher_digest": "c94c498af6e721c9baa01c4f84f6129855addfd5b5556852db1cb6203dcaffee",
+      "repository": "SharmaKunal14/abseil-cpp",
+      "revision": "622fd1c2829655d595ffeca8656382ff305a5ddb",
+      "run_attempt": 1,
+      "run_id": 45764627612,
+      "schema_version": "smartci.bazel-fetch.v1",
+      "status": "ready"
+    },
+    "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45772824303",
+    "run_metadata_sha256": "5019ecfec7f428a622b63964cb57e7603fa7ecb929103552e9fe7f2f99248a1f",
+    "runner_policy_restored": true,
+    "runner_seconds": 406.0,
+    "selected": [
+      "//absl/container:linked_hash_map_test",
+      "//absl/container:linked_hash_set_test"
+    ],
+    "steps": [
+      {
+        "name": "Set up job",
+        "seconds": 2.0
+      },
+      {
+        "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+        "seconds": 2.0
+      },
+      {
+        "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+        "seconds": 1.0
+      },
+      {
+        "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+        "seconds": 0.0
+      },
+      {
+        "name": "Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+        "seconds": 3.0
+      },
+      {
+        "name": "Install planner and prepare local command configuration",
+        "seconds": 2.0
+      },
+      {
+        "name": "Discover the current reviewed publisher map",
+        "seconds": 4.0
+      },
+      {
+        "name": "Bound unused system crash processing on this disposable runner",
+        "seconds": 0.0
+      },
+      {
+        "name": "Bound the separate Apport crash-report hook",
+        "seconds": 0.0
+      },
+      {
+        "name": "Execute the native PR plan or independent full fallback",
+        "seconds": 386.0
+      },
+      {
+        "name": "Restore the Apport hook on the disposable runner",
+        "seconds": 0.0
+      },
+      {
+        "name": "Restore disposable runner policy",
+        "seconds": 0.0
+      },
+      {
+        "name": "Publish native execution and map lifecycle evidence",
+        "seconds": 2.0
+      },
+      {
+        "name": "Post Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+        "seconds": 0.0
+      },
+      {
+        "name": "Complete job",
+        "seconds": 0.0
+      }
+    ],
+    "test_targets": 2,
+    "tool_commit": "4acbf07ba36e558539b42d87fd5ddaf05daeb0d3",
+    "workflow_completed_at": "2026-11-26T07:12:53Z",
+    "workflow_created_at": "2026-11-26T07:06:04Z",
+    "workflow_created_to_completed_seconds": 409.0
+  }
+}
