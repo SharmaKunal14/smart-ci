@@ -45,6 +45,10 @@ compatibility or complete PR execution integration. See
 [automatic collection](docs/onboarding/bazel-collection.md) and the
 [bundle workflow](docs/onboarding/bazel-bundles.md)
 for commands, trust boundaries, full fallback and verification.
+`smartci bazel fetch` adds [trusted GitHub artifact discovery](docs/onboarding/bazel-artifacts.md)
+without configured run IDs. It rejects unapproved publishers and invalid evidence;
+a miss requires rebuilding or full execution. Fresh live native map retrieval
+and complete automatic PR integration remain unverified.
 
 ## Setup and verification
 

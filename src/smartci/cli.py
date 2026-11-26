@@ -12,6 +12,7 @@ from .bazel import commands as bazel_commands
 from .bazel.bundle import Manifest as BazelManifest
 from .bazel.bundle import Profile as BazelProfile
 from .bazel.collection import CaptureConfig as BazelCaptureConfig
+from .bazel.transport import Publisher as BazelPublisher
 from .ci import commands as ci_commands
 from .ci.models import Baseline, Comparison, Context, ShadowPolicy
 from .contracts import CONTRACTS, Inventory
@@ -60,6 +61,7 @@ CONTRACTS.update(
         "bazel-profile": BazelProfile,
         "bazel-manifest": BazelManifest,
         "bazel-capture": BazelCaptureConfig,
+        "bazel-publisher": BazelPublisher,
     }
 )
 

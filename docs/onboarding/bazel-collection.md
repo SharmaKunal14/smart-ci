@@ -88,8 +88,10 @@ it cannot constrain arbitrary repository filesystem writes by itself. Failed
 commands retain redacted stage/error codes; the reviewed adapter retains bounded
 native logs separately for diagnosis.
 
-This implements collection and compatibility-driven refresh. It does not yet
-discover trusted GitHub artifacts automatically, publish an authenticated catalog,
-or execute a PR's selected plan. Those integration steps remain required for the
-complete product. A map or receipt supplied by the PR is not trusted merely
-because its hashes match.
+This implements collection and compatibility-driven refresh. The separate
+[`smartci bazel fetch` command](bazel-artifacts.md) discovers compatible artifacts
+from a reviewed GitHub publisher without hard-coded run IDs. Its transport checks
+are tested with controlled API responses; fresh native publication and live
+retrieval remain unverified while Abseil Actions is blocked. An authenticated
+catalog and complete PR runner integration remain required. A map or receipt
+supplied by the PR is not trusted merely because its hashes match.
