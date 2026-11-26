@@ -22,7 +22,7 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.head_ref == 'codex/textual-agent-generated-test' &&
       github.run_attempt == 1 &&
-      vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'generate-one'
+      vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'repair-one'
     runs-on: ubuntu-24.04
     timeout-minutes: 8
     permissions:
@@ -64,7 +64,8 @@ jobs:
           SMARTCI_DISABLE_MODEL_CALLS: '0'
         run: |
           tool/.venv/bin/python tool/examples/textual/generate_test.py --repo app \
-            --enrollment "$RUNNER_TEMP/enrollment" --output "$RUNNER_TEMP/proposal"
+            --enrollment "$RUNNER_TEMP/enrollment" --output "$RUNNER_TEMP/proposal" \
+            --repair-feedback tool/examples/textual/generated-test-working-feedback.json
       - name: Disable campaign without resetting reservations
         if: always()
         env:
@@ -83,7 +84,8 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.head_ref == 'codex/textual-agent-generated-test' &&
       github.run_attempt == 1 &&
-      vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'verify-one'
+      (vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'verify-working' ||
+       vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'verify-heldout')
     name: generated-${{ matrix.revision }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -91,7 +93,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        revision: [working, defect]
+        revision: ${{ fromJSON(vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'verify-working' && '["working"]' || vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'verify-heldout' && '["defect"]' || '[]') }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
@@ -143,6 +145,13 @@ jobs:
             --cov=./src/textual --cov-report=term-missing \
             --cov-report="xml:$RUNNER_TEMP/results/surrounding/coverage.xml" \
             --junitxml="$RUNNER_TEMP/results/surrounding/junit.xml"
+      - name: Require passing cases and actual target-body execution before held-out evaluation
+        if: success() && matrix.revision == 'working'
+        working-directory: app
+        run: |
+          poetry run python ../tool/examples/textual/check_generated_test.py \
+            --coverage "$RUNNER_TEMP/results/generated/coverage.xml" \
+            --junit "$RUNNER_TEMP/results/generated/junit.xml"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

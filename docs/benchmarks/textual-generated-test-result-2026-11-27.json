@@ -1,0 +1,202 @@
+{
+  "budget": {
+    "additional_calls_remaining": 0,
+    "cumulative_reserved_micro_usd": 990000,
+    "enabled": false,
+    "new_reserved_micro_usd": 360000,
+    "reservations_preserved": 11
+  },
+  "controls": {
+    "claim": "original-suite defect-detection control only; no generated-test or speedup result",
+    "generation_executed": false,
+    "jobs": {
+      "original-defect": {
+        "cases": 3467,
+        "failures": 0,
+        "job_seconds": 352.0,
+        "junit_sha256": "9890b4212eeabb89390fe8e87a92a56e06e177f5c9a68988fa3741cf330c42cc",
+        "passed": 3460,
+        "pytest_seconds": 300.51142144999994,
+        "skips": 7,
+        "source_commit": "f1a9d30986616a922871020df233f883ead8dc82",
+        "target_coverage": {
+          "body_end": 706,
+          "coverage_sha256": "36bc5aa4c1209782513f86ad75fa83b6388b6229724a90c5ad04ece9eb2095ef",
+          "definition_line": 693,
+          "executable_body_line_hits": {
+            "694": 0,
+            "695": 0,
+            "696": 0,
+            "697": 0,
+            "698": 0,
+            "699": 0,
+            "705": 0,
+            "706": 0
+          },
+          "method": "MarkdownTableContent._update_rows",
+          "path": "src/textual/widgets/_markdown.py",
+          "scope": "one pinned Linux Python 3.14 native-suite profile; not universal absence of tests"
+        },
+        "trigger_to_result_seconds": 354.0,
+        "url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45875657293/job/140101951055"
+      },
+      "original-working": {
+        "cases": 3467,
+        "failures": 0,
+        "job_seconds": 352.0,
+        "junit_sha256": "e18c1110b23044d116a4dcc160d0b158735681d3ba8ad5645ecd88a0d4e24918",
+        "passed": 3460,
+        "pytest_seconds": 302.142808338,
+        "skips": 7,
+        "source_commit": "e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8",
+        "target_coverage": {
+          "body_end": 706,
+          "coverage_sha256": "9ff8a4d69841009ab9bf0c028a915665bb818cff0e2de0f1138afab331daeae3",
+          "definition_line": 693,
+          "executable_body_line_hits": {
+            "694": 0,
+            "695": 0,
+            "696": 0,
+            "697": 0,
+            "698": 0,
+            "699": 0,
+            "705": 0,
+            "706": 0
+          },
+          "method": "MarkdownTableContent._update_rows",
+          "path": "src/textual/widgets/_markdown.py",
+          "scope": "one pinned Linux Python 3.14 native-suite profile; not universal absence of tests"
+        },
+        "trigger_to_result_seconds": 354.0,
+        "url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45875657293/job/140101950589"
+      }
+    },
+    "original_suite_detected_fixed_defect": false,
+    "run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45875657293",
+    "same_case_identities_outcomes_and_skips": true,
+    "same_environment_profile": true,
+    "schema": "smartci.generated-test-controls.v1",
+    "source_pr": "https://github.com/SharmaKunal14/textual/pull/15",
+    "source_scope": "one preselected artificial row-removal mutation, Linux/Python 3.14 native locked profile",
+    "tool_commit": "50b1a0f81c6417b4d38a27b355f77bb81cf68c32"
+  },
+  "experiment_runner_seconds": 910.0,
+  "failure_analysis": "Generated input did not enter the incremental-table path. Coverage shows the type-specific branch was bypassed and generic block remove/mount ran. The test retained the old table and asserted row-widget identity after it was removed. Both revisions failed at this same assertion; the target mutation was never executed. This is not evidence of a real upstream bug.",
+  "generated_test_pr": "https://github.com/SharmaKunal14/textual/pull/16",
+  "generation": {
+    "accounting": {
+      "api_error": null,
+      "billing_status": "usage_estimate_not_invoice; reservations_never_released",
+      "evaluation_kind": "live_model_observation",
+      "http_status": 200,
+      "input_tokens": 10531,
+      "last_stage": "action_validated",
+      "model_calls": 4,
+      "output_tokens": 560,
+      "reserved_calls": 4,
+      "reserved_micro_usd": 360000
+    },
+    "estimated_standard_uncached_micro_usd": 106648,
+    "human_or_codex_edits": false,
+    "input_included_defect": false,
+    "job": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45876697306/job/140105471461",
+    "job_seconds": 81.0,
+    "model_and_tool_seconds": 32.17973140600003,
+    "pricing_source": "https://developers.openai.com/api/docs/pricing",
+    "run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45876697306",
+    "source_sha256": "8be235aa45b8ed68d0351207d423a486a345b5309e5ab82ae161d628ad6aa8d6",
+    "trigger_to_result_seconds": 84.0
+  },
+  "limitations": [
+    "Single selected coverage gap and artificial defect.",
+    "Four-call read-only generation without execution feedback or repair.",
+    "No test-selection or production savings inference."
+  ],
+  "production_selection_changed": false,
+  "production_speedup_demonstrated": false,
+  "schema": "smartci.generated-test-experiment.v1",
+  "scope": "one preselected uncovered method and one hidden artificial defect; no repair loop",
+  "source_pr": "https://github.com/SharmaKunal14/textual/pull/15",
+  "timing_limit": "three separately triggered CI stages; not autonomous product latency; runner sum excludes Smart CI unit-check jobs",
+  "tool_pr": "https://github.com/SharmaKunal14/smart-ci/pull/27",
+  "verdict": "negative: no added target-body coverage or valid defect detection",
+  "verification": {
+    "jobs": {
+      "generated-defect": {
+        "call_path_line_hits": {
+          "264": 1,
+          "265": 1,
+          "773": 1,
+          "774": 0,
+          "784": 0,
+          "786": 1
+        },
+        "cases": 1,
+        "coverage_sha256": "b2fafe1f244a3e865c06cce951b4241666e01c97c0072719e766c305f6cecbed",
+        "failure_assertion_line": 26,
+        "failures": 1,
+        "job_seconds": 60.0,
+        "same_profile_as_control": true,
+        "source_commit": "f1a9d30986616a922871020df233f883ead8dc82",
+        "steps": [
+          {
+            "conclusion": "failure",
+            "name": "Run the exact generated test alone with independent coverage",
+            "seconds": 9.0
+          },
+          {
+            "conclusion": "skipped",
+            "name": "Run existing surrounding Markdown tests on working source",
+            "seconds": 0.0
+          }
+        ],
+        "target_body_covered_lines": 0,
+        "target_body_reported_executable_lines": 8,
+        "trigger_to_result_seconds": 62.0,
+        "url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45877497403/job/140108177400"
+      },
+      "generated-working": {
+        "call_path_line_hits": {
+          "264": 1,
+          "265": 1,
+          "773": 1,
+          "774": 0,
+          "784": 0,
+          "786": 1
+        },
+        "cases": 1,
+        "coverage_sha256": "9d8d0ec753d605b07046e6932caa82b1de22dd02386708a662024cb0875faf31",
+        "failure_assertion_line": 26,
+        "failures": 1,
+        "job_seconds": 65.0,
+        "same_profile_as_control": true,
+        "source_commit": "e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8",
+        "steps": [
+          {
+            "conclusion": "failure",
+            "name": "Run the exact generated test alone with independent coverage",
+            "seconds": 7.0
+          },
+          {
+            "conclusion": "success",
+            "name": "Run existing surrounding Markdown tests on working source",
+            "seconds": 11.0
+          }
+        ],
+        "target_body_covered_lines": 0,
+        "target_body_reported_executable_lines": 8,
+        "trigger_to_result_seconds": 67.0,
+        "url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45877497403/job/140108176987"
+      }
+    },
+    "run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45877497403",
+    "surrounding_native_tests": {
+      "cases": 42,
+      "failures": 0,
+      "passed": 42,
+      "scope": "existing test_markdown.py, test_markdownviewer.py and Markdown snapshot tests; separate process/coverage"
+    },
+    "tool_commit": "f0cb3a3b4c1ce2e4622aad8666dd0c18653f5f35"
+  },
+  "wall_clock_seconds_including_approval_review_and_workflow_preparation": 889.0
+}

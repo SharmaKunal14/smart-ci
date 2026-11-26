@@ -116,6 +116,78 @@ def test_workflow_never_executes_generated_code_with_model_credentials():
     assert "sha256sum --check" in reviewed
     assert "--mode native" in controls
     assert "poetry" not in generation and "pytest" not in generation
-    assert "vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'generate-one'" in generation
+    assert "vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'repair-one'" in generation
     assert "disable_model_campaign.py" in generation
     assert "persist-credentials: true" not in workflow
+
+
+def test_repair_feedback_is_the_original_working_failure(generator):
+    feedback = generator.RepairFeedback.model_validate_json(
+        Path("examples/textual/generated-test-working-feedback.json").read_bytes()
+    )
+    proposal = json.loads(
+        Path(
+            "docs/benchmarks/textual-generated-test-proposal-2026-11-27.json"
+        ).read_text()
+    )
+    assert feedback.previous_source == proposal["events"][-1]["action"]["source"]
+    assert feedback.generation_digest == proposal["digest"]
+    assert feedback.working_job == "generated-working"
+    assert "f1a9d30986616a922871020df233f883ead8dc82" not in feedback.model_dump_json()
+
+
+@pytest.mark.parametrize("change", ["revision", "job", "source", "coverage", "heldout"])
+def test_repair_rejects_wrong_or_extra_feedback(generator, change):
+    value = json.loads(
+        Path("examples/textual/generated-test-working-feedback.json").read_text()
+    )
+    if change == "revision":
+        value["revision"] = "a" * 40
+    elif change == "job":
+        value["working_job"] = "generated-defect"
+    elif change == "source":
+        value["previous_source"] += "\n"
+    elif change == "coverage":
+        value["target_body_line_hits"]["694"] = 1
+    else:
+        value["defect_results"] = "do not send this to the model"
+    with pytest.raises(ValueError):
+        generator.RepairFeedback.model_validate_json(json.dumps(value))
+
+
+def test_repair_workflow_separates_working_and_heldout_execution():
+    workflow = Path(".github/workflows/textual-generated-test.yml").read_text()
+    assert "== 'verify-working' && '[\"working\"]'" in workflow
+    assert "== 'verify-heldout' && '[\"defect\"]'" in workflow
+    assert "generated-test-working-feedback.json" in workflow
+    assert "check_generated_test.py" in workflow
+
+
+@pytest.mark.parametrize(
+    "defect", [None, "zero_hit", "missing_line", "skipped", "failed"]
+)
+def test_working_acceptance_requires_real_body_coverage_and_passing_cases(
+    generator, defect
+):
+    check = importlib.import_module("check_generated_test")
+    lines = {n: 1 for n in check.BODY_LINES}
+    if defect == "zero_hit":
+        lines[694] = 0
+    if defect == "missing_line":
+        lines.pop(694)
+    coverage = (
+        '<coverage><class filename="widgets/_markdown.py"><lines>'
+        + "".join(f'<line number="{n}" hits="{v}"/>' for n, v in lines.items())
+        + "</lines></class></coverage>"
+    ).encode()
+    tag = {"skipped": '<skipped type="pytest.skip"/>', "failed": "<failure/>"}.get(
+        defect, ""
+    )
+    outcomes = (
+        f'<testsuites><testsuite tests="1" errors="0" failures="{int(defect == "failed")}" skipped="{int(defect == "skipped")}"><testcase classname="generated" name="test_rows">{tag}</testcase></testsuite></testsuites>'
+    ).encode()
+    if defect is None:
+        check.verify(coverage, outcomes)
+    else:
+        with pytest.raises(ValueError):
+            check.verify(coverage, outcomes)

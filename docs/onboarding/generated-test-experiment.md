@@ -1,134 +1,146 @@
 # One Textual generated-test experiment
 
-Status: generation and original-suite controls completed on GitHub. The exact
-proposal is under verification; the campaign and automatic trigger are disabled.
-This experiment replaces the proposed parser-selection trial. It evaluates added
-test coverage and defect detection, not test-selection speed or general agent quality.
+The first attempt was negative: the unedited generated test failed on both
+working and defective source and did not execute `_update_rows`. A single bounded
+repair cycle is prepared but has not been approved or run. The campaign and
+experiment trigger remain disabled. This evaluates added coverage and defect
+detection, not test-selection speed or general agent quality.
 
-## Fixed question and inputs
+## Fixed scope and provenance
 
-Can the product agent write a useful test for
-`MarkdownTableContent._update_rows` using a coverage-gap report and public source?
+The target is `MarkdownTableContent._update_rows` at working commit
+`e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8` in `SharmaKunal14/textual`.
+The passing [enrollment run](https://github.com/SharmaKunal14/textual/actions/runs/45862622090)
+and new original-suite controls recorded zero hits on all eight reported
+executable body lines. The declaration was executed. This is a gap for that
+Linux/Python 3.14 native profile, not universal absence of tests.
 
-Working source: `e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8` in
-`SharmaKunal14/textual`. The prior passing
-[GitHub enrollment](https://github.com/SharmaKunal14/textual/actions/runs/45862622090)
-contains native and observed coverage with zero hits on every reported executable
-body line of that method. Its declaration was executed. This is a gap in that
-Linux/Python 3.14 profile, not proof that no configuration tests the method.
+Before generation, [Textual PR #15](https://github.com/SharmaKunal14/textual/pull/15)
+fixed an independent artificial defect at
+`f1a9d30986616a922871020df233f883ead8dc82`: row removal uses `self.last_row + 1`
+instead of `self.last_row`. All existing tests and other source are unchanged.
+The mutation is not a claim of a real upstream bug. It remains excluded from all
+model input. The earlier `expand=True` change is not used or presumed to be a bug.
 
-The agent receives the verified native coverage gap, the unchanged method source,
-matching source/test paths, and access to exact revision-bound source excerpts.
-It can read source, search paths, submit one Python test file, or abstain. It cannot
-run commands or see the mutation, expected failure, evaluation results, or a
-suggested test solution. Native conventions and the public Markdown update flow
-are preferred; any private-method-only test will be disclosed as a limitation.
-
-## Independently fixed evaluation defect
-
-Before generation, commit `f1a9d30986616a922871020df233f883ead8dc82`
-changes the row-removal selector from `self.last_row` to `self.last_row + 1`.
-This intentional off-by-one mutation targets replacement of an existing row;
-it is not a claim of a real upstream bug. Native tests and all other source remain
-unchanged. The earlier `expand=True` change is not used or assumed to be a bug.
-
-Only the working revision is in the model's source catalog. This document and the
-defect branch are not model inputs.
-
-## Procedure and acceptance
-
-1. **Run unchanged controls before model approval.** With the workflow variable
-   set to `controls-only`, two GitHub jobs run the existing full native suite
-   with its locked dependencies on working and defective source. Preserve test
-   identities, outcomes, coverage, package profiles, commit IDs and timing. These
-   jobs receive no model credentials and include no generated test. The generation
-   job is skipped, so this step cannot make model calls.
-2. **Generate once on GitHub after approval.** Reuse the existing regular Responses API transport,
-   durable ledger and four-call bounds. Save accepted actions, source observations,
-   the exact proposed file, its hash, token accounting and model/tool elapsed time.
-   This stage never imports Textual or executes generated code. Syntax parsing is
-   only an initial check, not a security or semantic review.
-   The control jobs are skipped during generation, avoiding duplicate full runs.
-3. **Review the unedited proposal.** Check that assertions express the intended
-   behavior, the test really exercises the target, and it does not skip, xfail,
-   patch the target, manipulate coverage, or access external services or secrets.
-   Unsafe or invalid output is a negative result, not automatically repaired.
-4. **Verify the reviewed proposal on GitHub.** Commit its exact bytes on an
-   unmerged experiment branch and bind them to the generation artifact hash. Run
-   the test alone on working and defective source, with independent coverage and
-   JUnit reports. Also run the surrounding existing Markdown tests on working
-   source. Isolated-test coverage must show execution of the method body; combined
-   coverage from unrelated tests does not establish this. Model credentials are
-   absent. There is no automatic model retry or repair.
-5. **Report the actual result.** A useful detection result requires a passing test
-   on working source, a meaningful assertion failure on the fixed mutation, and
-   no original-suite failure on that mutation. Compare identical original test
-   identities and profiles. If the original suite already detects it, claim no
-   incremental detection. Include actual GitHub job/trigger-to-result times,
-   generation/tool time, token usage and estimated spend; do not call this a CI
-   speedup. Record any human/Codex edits separately from unedited agent performance.
-
-Generation and reviewed-test execution are separate runs because arbitrary model
-code must be inspected first. Report this review delay separately; do not subtract
-it and describe the experiment as an autonomous end-to-end workflow. One chosen
-method and one artificial defect cannot establish general effectiveness.
-
-## Spend and execution controls
-
-The existing campaign `textual-public-20261123` is disabled. Its seven prior
-reservations total US$0.63. The earlier one-investigation approval was consumed;
-it is not reused for this experiment. Proposed new allowance: one investigation,
-at most four calls, each reserving 5,000 input and 1,000 output tokens, for at most
-US$0.36 additional reservations within the original US$5 ceiling. Existing
-reservations remain intact. No reset, refunds, retries or Codex authentication.
-
-The current standard model rates are US$8 input and US$40 output per million
-tokens; the reservation retains the higher US$10 input rate. Revalidate the
-[official pricing](https://developers.openai.com/api/docs/pricing) before activation.
-The ledger's per-call token counter rejects requests exceeding the allowance.
-Exhaustion, malformed output or timeout stops generation and is reported.
-
-After explicit approval, update only the existing campaign to permit eleven
-total reservations, three investigations, 55,000 reserved input and 11,000 output
-tokens, and a cumulative US$0.99 reservation cap. Set
-`SMARTCI_TEXTUAL_GENERATION_TRIAL=generate-one` for the exact reviewed tool branch
-and trigger one PR event. The workflow disables the campaign afterward without
-erasing reservations; disable the workflow variable after that run as well.
-The later reviewed-test jobs use no model key and need no paid-call activation.
-
-The additional one-investigation approval was received on 2026-11-27 (Sydney).
-Generation consumed all four new reservations, then disabled the campaign. No
-new call allowance remains in this experiment. `verify-one` enables only the two
-reviewed-test jobs; neither full controls nor model generation are repeated.
-
-## Recorded results so far
-
-[Original-suite control run](https://github.com/SharmaKunal14/smart-ci/actions/runs/45875657293):
-working and defective source each produced 3,460 passes, seven identical
-skip/expected-failure outcomes, and zero failures. All 3,467 identities and native
-package profiles matched. Both runs still recorded zero hits on the eight
-reported executable body lines. Each job took 352 seconds, or 354 seconds from
-workflow creation to completion. The original suite missed this specific defect.
-See the [control record](../benchmarks/textual-generated-test-controls-2026-11-27.json).
-
-[Generation run](https://github.com/SharmaKunal14/smart-ci/actions/runs/45876697306):
-the agent read two unchanged implementation excerpts and one native test excerpt,
-then submitted one test. Four live calls consumed 10,531 input and 560 output
-tokens; the standard uncached usage estimate is US$0.106648, not a provider invoice.
-US$0.36 remains reserved; the cumulative ledger has eleven reservations totaling
-US$0.99 and is disabled. Model/tool time was 32.180 seconds; preparation plus
-model/tools was 35.897 seconds. These internal GitHub timings exclude runner setup;
-the final report will include the entire generation job as well.
-
-The [exact proposal and transcript](../benchmarks/textual-generated-test-proposal-2026-11-27.json)
-are preserved. [Textual PR #16](https://github.com/SharmaKunal14/textual/pull/16)
-contains its unedited bytes, committed as
-`181d67627cfbb89a4be69b2d9923e307f2d6fcd3`, with SHA-256
+[Textual PR #16](https://github.com/SharmaKunal14/textual/pull/16) contains the
+original model output with no human/Codex edits or formatting changes, at commit
+`181d67627cfbb89a4be69b2d9923e307f2d6fcd3`. Its file SHA-256 is
 `8be235aa45b8ed68d0351207d423a486a345b5309e5ab82ae161d628ad6aa8d6`.
-The test uses public `Markdown.update` and `Markdown.append`, with private widget
-state/tooltip assertions. Review found no external I/O, mocking, skipping, or
-changes to the method under test. This review is not a passing execution result.
+The [proposal, accepted actions and source transcript](../benchmarks/textual-generated-test-proposal-2026-11-27.json)
+are preserved separately from any future revision. All experiment PRs are unmerged.
 
-No AWS, merges, changes to production selection, or weakened full-suite fallback.
-Local mocked tests verify the experiment's plumbing only; they are not model
-effectiveness or performance evidence.
+## Verified first-attempt GitHub results
+
+| Stage | Result | Job time | Workflow creation to result |
+| --- | --- | ---: | ---: |
+| Original suite, working source | 3,460 passed; 7 skip/expected-failure outcomes; 0 failures | 352s | 354s |
+| Original suite, defect | Identical identities, outcomes and environment; defect missed | 352s | 354s |
+| Agent generation | Four API calls produced one test | 81s | 84s |
+| Generated test, working source | 1 assertion failure; 0/8 target-body lines executed; 42 surrounding native tests passed separately | 65s | 67s |
+| Generated test, defect | Same assertion failed; 0/8 target-body lines executed | 60s | 62s |
+
+Sources: [controls](https://github.com/SharmaKunal14/smart-ci/actions/runs/45875657293),
+[generation](https://github.com/SharmaKunal14/smart-ci/actions/runs/45876697306),
+[verification](https://github.com/SharmaKunal14/smart-ci/actions/runs/45877497403),
+and the [reconciled result record](../benchmarks/textual-generated-test-result-2026-11-27.json).
+All four native environments matched exactly, including Python 3.14.10 and locked
+package versions. The generated-test and surrounding-test coverage are separate.
+
+The generation used 10,531 input and 560 output tokens: approximately US$0.106648
+at the checked standard uncached rates, not a provider invoice. Model/tool time
+was 32.180s; preparation plus model/tools was 35.897s, both inside the 81s job.
+The five experiment jobs consumed 910 runner seconds; wall time across the three
+separately triggered stages was 889s, including approval, review and workflow
+preparation. These figures exclude Smart CI's own safety-check jobs and are not
+an autonomous product latency or a speedup claim.
+
+The failure was at generated-test line 26, which required earlier row widgets to
+retain their identity after a public Markdown update/append sequence. Working-run
+coverage shows that the table-specific update branch was bypassed and the general
+block remove/mount path ran. The saved table reference then had no earlier rows.
+The assertion failure therefore did not distinguish the hidden defect.
+
+Known: this input did not exercise `_update_rows`; preserving private widget
+identity is not established by the public append contract. Unresolved: whether
+the observed append-after-update behavior also reveals a separate baseline
+content issue. Neither an upstream bug nor an acceptable test setup follows
+merely from this identity assertion. Initial semantic review did not catch the
+setup/path problem; actual execution invalidated the proposal. No test edits or
+extra calls were used to turn the first attempt into a success.
+
+## Prepared generate/execute/inspect/revise cycle
+
+This is one controlled repair of that first failed attempt, not an unbounded
+self-fixing agent or a new diagnostic framework.
+
+1. **Inspect working feedback.** The strict
+   [working-feedback record](../../examples/textual/generated-test-working-feedback.json)
+   contains only the original proposal, its digest, the real working-job failure
+   message/location and coverage hashes/line hits. The original source hash and
+   working revision are checked. Defect-run results and mutation details are not
+   included. Source locations for `Markdown.update` and `Markdown.append` are
+   derived from the unchanged source AST; no test solution is supplied.
+2. **Revise once after paid-call approval.** Set the experiment gate to `repair-one`
+   for the reviewed tool branch and trigger one PR event. The agent can read exact
+   public Git source, search paths, submit a revised file, or abstain. It receives
+   working feedback and must investigate its setup/assertions without assuming a
+   baseline bug. The existing regular Responses API, reservation ledger and
+   four-call limit apply. The generator never imports Textual or executes proposed
+   code. Save the complete accepted transcript, exact output bytes, hash and costs.
+3. **Review and freeze the revision.** Preserve the first proposal and commit the
+   new one separately, with any human/Codex edits explicitly reported. Check its
+   behavioral assertions and reject skipping, xfail, target monkeypatches, fake
+   coverage, external I/O or dropping meaningful checks merely to pass. Bind the
+   workflow to the immutable generated-test commit and exact file hash.
+4. **Execute on working source only.** Use `verify-working`, with no model key.
+   Run the generated file alone and the 42 surrounding native Markdown tests
+   separately. `check_generated_test.py` requires passing generated cases without
+   skips/expected failures and execution of all eight recorded target-body lines.
+   A passing coverage gate does not prove assertion correctness; retain semantic
+   review. Failure or inadequate assertions ends this bounded repair attempt.
+5. **Inspect, then evaluate held-out source.** Only after the working gate and
+   semantic review pass, trigger `verify-heldout` using the exact same frozen
+   commit/file hash. The operator checks the working run and revision binding
+   before enabling this stage; do not describe this review step as fully
+   autonomous. The held-out result never becomes model feedback in this attempt.
+   Compare against the original-suite controls already recorded; do not rerun
+   them merely to improve timings or change the chosen defect.
+6. **Report either outcome.** Useful detection requires a test that passes on
+   working source, executes the intended body, and fails meaningfully on the
+   fixed defect missed by the original suite. Preserve every revision, native
+   execution result, model/tool and total CI timing, spending and manual changes.
+   If this repair fails, report it; no further paid repair is authorized.
+
+This is a single feedback iteration following the first generate/execute cycle.
+Model requests have no command-execution capability; native execution is isolated
+in credential-free CI jobs. The campaign is disabled after the model job, and the
+trigger is closed after each admitted stage. The original `generate-one` and
+combined `verify-one` runs remain reproducible from their recorded older tool
+commits; the current workflow only admits the staged repair path.
+
+## Proposed repair allowance; not yet approved
+
+The existing `textual-public-20261123` campaign is disabled with eleven retained
+reservations totaling US$0.99. All previously approved calls have been consumed.
+Resuming the goal is not paid-call authorization.
+
+Proposed: **one repair investigation, at most four calls, US$0.36 additional
+reservations within the original US$5 ceiling**. Each call reserves at most 5,000
+input and 1,000 output tokens. The four-call total is 20,000 input and 4,000 output
+tokens. The source/tool loop has a 120s check and the containing model step a
+four-minute timeout; network failures and uncertain calls are not retried or
+refunded. Invalid output or exhaustion stops the attempt.
+
+Only after explicit approval, recheck
+[official pricing](https://developers.openai.com/api/docs/pricing) and conditionally
+update the existing ledger to fifteen total reservations, four investigations,
+75,000 reserved input and 15,000 output tokens, with a cumulative US$1.35 reservation
+cap. Retain every old reservation. The reservation uses US$10 input and US$40 output
+per million tokens; the last checked standard uncached input rate was US$8. Do not
+activate if current rates exceed the reserved rates. No new provider or Codex
+authentication is introduced.
+
+Production selection remains deterministic, with conservative full fallback.
+No AWS deployment or merges. Mocked checks validate control behavior only, not
+model effectiveness or performance. Even a successful repair of this chosen
+method/defect would not establish safe test omission or CI speed savings.

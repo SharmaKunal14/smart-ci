@@ -12,10 +12,11 @@ from typing import Annotated, Literal
 
 from benchmark import write
 from compare_observation import read
-from pydantic import Field, RootModel
+from pydantic import Field, RootModel, model_validator
 from runtime_agent import inputs_from_observation
 from runtime_candidate import enrollment
 
+from smartci.contracts import Digest
 from smartci.git_changes import git
 from smartci.investigation.adapters import PythonImports
 from smartci.investigation.broker import Broker
@@ -45,6 +46,43 @@ class Abstain(Strict):
     reason: str = Field(min_length=1, max_length=1000)
 
 
+class RepairFeedback(Strict):
+    schema_version: Literal["smartci.textual-working-feedback.v1"]
+    revision: Literal["e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8"]
+    previous_source: str = Field(min_length=1, max_length=6000)
+    previous_source_sha256: Digest
+    generation_digest: Digest
+    working_run: Literal[
+        "https://github.com/SharmaKunal14/smart-ci/actions/runs/45877497403"
+    ]
+    working_job: Literal["generated-working"]
+    failure_message: str = Field(min_length=1, max_length=3000)
+    failure_location: Literal["tests/test_smartci_generated_markdown.py:26"]
+    junit_sha256: Digest
+    coverage_sha256: Digest
+    target_body_line_hits: dict[str, int]
+
+    @model_validator(mode="after")
+    def original_proposal_and_gap(self) -> "RepairFeedback":
+        if (
+            hashlib.sha256(self.previous_source.encode()).hexdigest()
+            != self.previous_source_sha256
+        ):
+            raise ValueError("prior proposal identity mismatch")
+        if (
+            self.previous_source_sha256
+            != "8be235aa45b8ed68d0351207d423a486a345b5309e5ab82ae161d628ad6aa8d6"
+        ):
+            raise ValueError("this bounded repair accepts only the original proposal")
+        if self.target_body_line_hits != {
+            str(n): 0 for n in (694, 695, 696, 697, 698, 699, 705, 706)
+        }:
+            raise ValueError(
+                "working coverage differs from the recorded failed attempt"
+            )
+        return self
+
+
 class Action(
     RootModel[
         Annotated[ReadSource | Search | Submit | Abstain, Field(discriminator="kind")]
@@ -56,7 +94,7 @@ class Action(
 class TestProvider(OpenAIProvider):
     """Experimental artifact output; production investigation actions stay unchanged."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, repair=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.messages[0]["content"] = (
             "Write one small pytest test file for the supplied uncovered Textual method. "
@@ -73,6 +111,18 @@ class TestProvider(OpenAIProvider):
             + " You have at most four calls total, including this one. Use submit_test for your "
             "complete Python file (not Markdown fences), or abstain. No repair loop follows."
         )
+        if repair:
+            self.messages[0]["content"] += (
+                " This is the single approved repair of a prior proposal. Use only the supplied "
+                "working-code failure and source to revise its setup or assertions. Determine whether "
+                "the assertion/setup was wrong or exposed a separate baseline behavior; do not assume "
+                "either. A passing test that avoids the target, drops meaningful checks, skips, or "
+                "patches the implementation is not success. The revised test must pass on working "
+                "source and execute the actual target body before any held-out evaluation. Inspect "
+                "relevant public-call implementation, not just the target. Each request must fit "
+                "5000 input tokens; use short excerpts and submit within four calls. No extra paid "
+                "repair follows this attempt. Do not claim a source bug solely from widget identity."
+            )
 
     def _normalize_action(self, raw: str) -> str:
         return Action.model_validate_json(raw).root.model_dump_json()
@@ -183,6 +233,7 @@ def main():
     parser.add_argument("--repo", type=Path, required=True)
     parser.add_argument("--enrollment", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--repair-feedback", type=Path)
     args = parser.parse_args()
     started = time.monotonic()
     root, output = args.repo.resolve(), args.output.resolve()
@@ -216,6 +267,34 @@ def main():
         "matching_paths": broker.search(Search(kind="search_paths", query="markdown")),
         "input_digest": inputs.identity(),
     }
+    investigation_identity = {
+        "purpose": "update-rows-test-generation-one",
+        "input": inputs.identity(),
+    }
+    if args.repair_feedback is not None:
+        feedback = RepairFeedback.model_validate_json(
+            read(args.repair_feedback, 16_384)
+        )
+        initial["repair_feedback"] = feedback.model_dump()
+        # Source locations help find public calls without supplying a test fix.
+        initial["source_symbols"] = [
+            {
+                "class": cls.name,
+                "method": node.name,
+                "line": node.lineno,
+                "end": node.end_lineno,
+            }
+            for cls in ast.parse(source).body
+            if isinstance(cls, ast.ClassDef) and cls.name == "Markdown"
+            for node in cls.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in {"update", "append"}
+        ]
+        initial.pop("matching_paths")
+        investigation_identity.update(
+            purpose="update-rows-test-repair-one",
+            feedback=digest(feedback.model_dump()),
+        )
     github = HTTPS("api.github.com", os.environ.get("GITHUB_TOKEN", ""))
     validate_public_scope(inputs, github)
     provider = TestProvider(
@@ -228,9 +307,8 @@ def main():
             ),
             "textual-public-20261123",
         ),
-        digest(
-            {"purpose": "update-rows-test-generation-one", "input": inputs.identity()}
-        ),
+        digest(investigation_identity),
+        repair=args.repair_feedback is not None,
     )
     report = propose(provider, broker, initial, output)
     write(
