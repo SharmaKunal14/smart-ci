@@ -1,0 +1,188 @@
+{
+  "agent_increment": {
+    "accepted_new_edges": 1,
+    "accounting": {
+      "api_error": null,
+      "billing_status": "usage_estimate_not_invoice; reservations_never_released",
+      "evaluation_kind": "live_model_observation",
+      "http_status": 200,
+      "input_tokens": 9937,
+      "last_stage": "action_validated",
+      "model_calls": 4,
+      "output_tokens": 230,
+      "reserved_calls": 4,
+      "reserved_micro_usd": 360000
+    },
+    "additional_test_files": [],
+    "cases_added": 0,
+    "feedback_seconds_added": 5.0,
+    "native_failures_recovered": [],
+    "status": "finished",
+    "timing": {
+      "model_and_tool_seconds": 29.97156835700001,
+      "preparation_and_model_seconds": 34.078031515999996,
+      "source_preparation_seconds": 4.10646405
+    }
+  },
+  "agent_report_digest": "9e06b5fd3bae6c5f2557f6ede0a84dc0ef907407188a025507c83d87c41a76a3",
+  "artifact_sha256": {
+    "textual-agent-1/agent-input.json": "bbb28c4cc432cbe7765885b87ce3effdecc16aa67e6c4fa9f7c833120a79f0f2",
+    "textual-agent-1/agent-timing.json": "5196ca69a95cf6a6c3be0ec96cfce7a89de0101f825573dca82b9c7554fb75cd",
+    "textual-agent-1/agent.json": "839772787836535dd02c85d9d5579a116783e3c1d559b246bf36d8a3cbfdb6c5",
+    "textual-agent-1/candidate.json": "7e0b4117ffe6f7ebfabc1e108e292b68365281c3dcbf48078fa56f9214a1f03d",
+    "textual-agent-1/execution.json": "bb1f03e28523cd318a8881d07ac78fcfba1c06acb258b94574c0e11de58454d4",
+    "textual-agent-1/initial-candidate.json": "a800043fb12a6b75ac42971321daae530a99aa7d67bfa9eed6d05355fc1e4c20",
+    "textual-agent-1/junit.xml": "4ea659824c732a430bd90f79759bfc8bab20bc94c1598983c2393c5af3d4f774",
+    "textual-agent-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+    "textual-candidate-1/candidate.json": "a800043fb12a6b75ac42971321daae530a99aa7d67bfa9eed6d05355fc1e4c20",
+    "textual-candidate-1/execution.json": "149670c78a23f903d1f0435e6faeaeb4cf0a9b3150e0e52e9cfc617c702862b6",
+    "textual-candidate-1/junit.xml": "dbc2cfc298dd4a4a65135a88f939a0f5057956e04ffb0e216843530a27e8da4a",
+    "textual-candidate-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+    "textual-native-1/execution.json": "dcda6b86cc32f333d3e6a40e000fe4fa36c22529d533456152b8d66964a92bed",
+    "textual-native-1/junit.xml": "1a016c2b0d3ec380cf047d4db33a5847f551ba2e36037c1ebc7b75f18cb525a9",
+    "textual-native-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644"
+  },
+  "assisted": {
+    "candidate_feedback_faster": true,
+    "candidate_feedback_seconds_saved": 209.0,
+    "identical_selected_outcomes_and_no_missed_failures": true,
+    "mismatched_selected_cases": [],
+    "missed_native_failures": [],
+    "production_selective_savings_demonstrated": false,
+    "total_runner_seconds": 613.0,
+    "whole_workflow_seconds": 414.0
+  },
+  "budget": {
+    "enabled_after": false,
+    "estimated_uncached_generation_usd": 0.088696,
+    "new_reserved_calls": 4,
+    "new_reserved_usd": 0.36,
+    "previous_reserved_calls": 3,
+    "pricing_checked_at": "2026-11-26T17:09:09Z",
+    "pricing_source": "https://developers.openai.com/api/docs/pricing",
+    "total_reserved_usd": 0.63,
+    "usage_is_not_an_invoice": true
+  },
+  "candidate_digest": "5504eb14538174e0ff1d66eb626d9c6526901f69c33f1ca5e97709ee4bc44ed7",
+  "deterministic": {
+    "candidate_feedback_faster": true,
+    "candidate_feedback_seconds_saved": 214.0,
+    "identical_selected_outcomes_and_no_missed_failures": true,
+    "mismatched_selected_cases": [],
+    "missed_native_failures": [],
+    "production_selective_savings_demonstrated": false,
+    "total_runner_seconds": 608.0,
+    "whole_workflow_seconds": 414.0
+  },
+  "enrollment_run": "https://github.com/SharmaKunal14/textual/actions/runs/45862622090",
+  "interpretation": "Deterministic experimental feedback improved on this one regression. Agent verified a process edge already covered by mandatory process retention, changed no tests and recovered no additional failures. Production full control remains required.",
+  "jobs": {
+    "agent": {
+      "cases": 451,
+      "conclusion": "failure",
+      "execution": {
+        "base": "e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8",
+        "command_seconds": 126.436271716,
+        "execution": "subset",
+        "exit_code": 1,
+        "harness_sha256": "38bec9ccb9564152569081c0e10688af8105b2d62e4d46f5146637700d2951c6",
+        "head": "62e3ddf22ab3876d39b279358f6f7f485db5f557",
+        "mode": "agent",
+        "omission_authorized": false,
+        "planning_error": null,
+        "planning_seconds": 0.00034707199999672866,
+        "required_execution": "full",
+        "targets": [
+          "tests/snapshot_tests/test_snapshots.py",
+          "tests/test_pipe.py"
+        ],
+        "test_seconds": 126.43588172899999
+      },
+      "failed_cases": [
+        "tests.snapshot_tests.test_snapshots::test_markdown_stream_switch_theme"
+      ],
+      "id": 140066870119,
+      "job_seconds": 202.0,
+      "junit_sha256": "4ea659824c732a430bd90f79759bfc8bab20bc94c1598983c2393c5af3d4f774",
+      "queue_seconds": 2.0,
+      "trigger_to_result_seconds": 204.0,
+      "url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45865417885/job/140066870119"
+    },
+    "candidate": {
+      "cases": 451,
+      "conclusion": "failure",
+      "execution": {
+        "base": "e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8",
+        "command_seconds": 143.75419651099998,
+        "execution": "subset",
+        "exit_code": 1,
+        "harness_sha256": "38bec9ccb9564152569081c0e10688af8105b2d62e4d46f5146637700d2951c6",
+        "head": "62e3ddf22ab3876d39b279358f6f7f485db5f557",
+        "mode": "candidate",
+        "omission_authorized": false,
+        "planning_error": null,
+        "planning_seconds": 1.1671832680000023,
+        "required_execution": "full",
+        "targets": [
+          "tests/snapshot_tests/test_snapshots.py",
+          "tests/test_pipe.py"
+        ],
+        "test_seconds": 142.586906815
+      },
+      "failed_cases": [
+        "tests.snapshot_tests.test_snapshots::test_markdown_stream_switch_theme"
+      ],
+      "id": 140066870248,
+      "job_seconds": 197.0,
+      "junit_sha256": "dbc2cfc298dd4a4a65135a88f939a0f5057956e04ffb0e216843530a27e8da4a",
+      "queue_seconds": 2.0,
+      "trigger_to_result_seconds": 199.0,
+      "url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45865417885/job/140066870248"
+    },
+    "native": {
+      "cases": 3467,
+      "conclusion": "failure",
+      "execution": {
+        "base": "e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8",
+        "command_seconds": 349.80534281499996,
+        "execution": "full",
+        "exit_code": 1,
+        "harness_sha256": "38bec9ccb9564152569081c0e10688af8105b2d62e4d46f5146637700d2951c6",
+        "head": "62e3ddf22ab3876d39b279358f6f7f485db5f557",
+        "mode": "native",
+        "omission_authorized": false,
+        "planning_error": null,
+        "planning_seconds": 0.0,
+        "required_execution": "full",
+        "targets": null,
+        "test_seconds": 349.80529747900005
+      },
+      "failed_cases": [
+        "tests.snapshot_tests.test_snapshots::test_markdown_stream_switch_theme"
+      ],
+      "id": 140066869580,
+      "job_seconds": 411.0,
+      "junit_sha256": "1a016c2b0d3ec380cf047d4db33a5847f551ba2e36037c1ebc7b75f18cb525a9",
+      "queue_seconds": 2.0,
+      "trigger_to_result_seconds": 413.0,
+      "url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45865417885/job/140066869580"
+    }
+  },
+  "limits": [
+    "one real regression, not a representative average or safety proof",
+    "experimental subsets retain independent authoritative full control",
+    "agent is addition-only and cannot reduce the deterministic candidate",
+    "runtime savings cannot be attributed to the model",
+    "clock begins at Smart CI evaluation workflow creation; automatic Textual PR trigger latency is not measured",
+    "runner variance and separate one-time enrollment cost remain"
+  ],
+  "production_selective_savings_demonstrated": false,
+  "run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45865417885",
+  "safety_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45864871832",
+  "safety_test_count": 989,
+  "schema_version": "smartci.three-arm-runtime-evaluation.v1",
+  "source_head": "62e3ddf22ab3876d39b279358f6f7f485db5f557",
+  "source_pr": "https://github.com/SharmaKunal14/textual/pull/13",
+  "tool_revision": "0fc00dcbf277a6bd1395ed182a606933d141447f",
+  "total_runner_seconds": 810.0
+}

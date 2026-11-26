@@ -2,6 +2,20 @@
 
 Updated: 27 November 2026
 
+Focused Textual comparison completed on real [PR #13](https://github.com/SharmaKunal14/textual/pull/13),
+[GitHub run 45865417885](https://github.com/SharmaKunal14/smart-ci/actions/runs/45865417885).
+Native full feedback: 413 seconds / 3,467 cases. Deterministic experimental
+candidate: 199 seconds / 451 cases. Same candidate plus the live agent: 204 seconds
+/ 451 cases. Both caught the same sole regression with no missed native failures.
+The agent verified one already-covered process relationship, changed no tests and
+provided no measured incremental benefit. Four approved calls used approximately
+US$0.088696 in estimated generation cost; US$0.36 of reservations remains retained.
+The ledger and one-shot trigger are disabled. Full validation still took 414
+seconds, and unresolved dependency classes still require production full fallback.
+This completes the bounded experiment, not the broader product goal. Preserve the
+[evidence and limitations](docs/onboarding/runtime-candidate.md#completed-three-arm-result-27-november-2026);
+do not add another trial merely to seek a favorable agent result.
+
 Focused experiment: compare one real Textual change in three arms: unchanged full
 suite, deterministic planning without an agent, and planning with a live agent.
 Both Smart CI arms must start with the same evidence and deterministic selection

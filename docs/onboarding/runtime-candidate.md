@@ -3,7 +3,8 @@
 This experiment asks whether function-entry observations can identify a useful
 candidate for Textual's real Markdown regression. It does **not** authorize
 production omissions. The deterministic production selector is unchanged; the
-independent native full job remains required. No model calls or AWS resources.
+independent native full job remains required. The bounded model investigation is
+complete and further calls are disabled. No AWS resources were created.
 
 ## Focused three-arm comparison
 
@@ -24,14 +25,14 @@ agent. This is an addition-only experiment: it tests whether an agent finds
 relationships missing from the initial map, not whether it can beat that map by
 removing dependencies. Report this limitation explicitly.
 
-Proposed live scope: one investigation, at most four calls, at most 5,000 input
+Approved live scope: one investigation, at most four calls, at most 5,000 input
 and 1,000 output tokens per call, regular OpenAI API with public Textual source
 only. Reuse the existing ledger without resetting its three reservations. At its
 recorded conservative rates, at most US$0.36 additional reservation fits within
-the original US$5 campaign ceiling. Pricing must be reverified before admission.
+the original US$5 campaign ceiling. Pricing was reverified before admission.
 The user approved this one bounded investigation on 27 November 2026. Activation
-still waits for verified enrollment and hosted code checks. The ledger will retain
-its previous reservations and be capped at seven total calls/two investigations
+followed verified enrollment and hosted code checks. The ledger retained
+its previous reservations and was capped at seven total calls/two investigations
 and US$0.63 total reservations, permitting at most four new calls/US$0.36. Model
 credentials must exist only in the investigation step and never in test execution.
 The existing key is in Smart CI's repository, not the Textual fork; run the three
@@ -54,8 +55,80 @@ both paths passed 3,467 cases with identical identities, outcomes and skip detai
 Native feedback was 366 seconds; observed feedback 507 seconds. Combined runner
 time was 867 seconds. These are one-time enrollment costs, not selection savings.
 [Textual PR #13](https://github.com/SharmaKunal14/textual/pull/13) contains the exact
-historical Markdown regression with unchanged tests. Its three-arm result is
-pending; do not substitute enrollment success for that result.
+historical Markdown regression with unchanged tests. Its completed comparison is
+recorded below; enrollment success is not substituted for that result.
+
+## Completed three-arm result, 27 November 2026
+
+[GitHub run 45865417885](https://github.com/SharmaKunal14/smart-ci/actions/runs/45865417885)
+tested source head `62e3ddf22ab3876d39b279358f6f7f485db5f557` using tool revision
+`0fc00dcbf277a6bd1395ed182a606933d141447f`. All three jobs are red because they
+preserve the intentional `test_markdown_stream_switch_theme` regression. The
+comparison verifier passed: every selected case identity, outcome and skip detail
+matched the full control, and neither subset omitted any native failure.
+
+| Arm | Cases | Workflow trigger to job completion | Runner time | Test subprocess |
+| --- | ---: | ---: | ---: | ---: |
+| Native full suite | 3,467 | 413 s | 411 s | 349.81 s |
+| Deterministic candidate | 451 | 199 s | 197 s | 142.59 s |
+| Same candidate plus live agent | 451 | 204 s | 202 s | 126.44 s |
+
+Both candidates selected `tests/snapshot_tests/test_snapshots.py` and
+`tests/test_pipe.py` automatically. The deterministic path returned results 214
+seconds (51.8%) sooner than full execution on this one regression. Its planning
+took 1.17 seconds using the enrolled map. The full validation workflow took 414
+seconds because the authoritative full control remained required; these are
+experimental feedback savings, not demonstrated production pipeline savings.
+
+The live model made four calls: two inspections, one proposal and finish. It
+verified `tests/test_pipe.py` -> `tests/deadlock.py` as a process-script dependency.
+That edge was absent from this experiment's incomplete head graph, but the process
+caller was already mandatory in the deterministic candidate. It added **zero test
+files**, recovered **zero additional failures**, and finished **five seconds later**
+than the non-agent arm. There is no measured incremental agent benefit here.
+
+Agent preparation/investigation took 34.08 seconds: 4.11 seconds preparing source
+evidence and 29.97 seconds for provider/tool work. Do not interpret the five-second
+overall difference as the entire model overhead: its identical test list happened
+to execute about 16 seconds faster, and setup time varied too. This single run
+cannot establish an average speedup or characterize model quality generally. The
+addition-only design does not test using an LLM to remove deterministic targets.
+
+Reported usage was 9,937 input and 230 output tokens, approximately US$0.088696 at
+the reverified standard uncached generation rates. This is an estimate, not an
+invoice. US$0.36 in new reservations is retained (US$0.63 across the two
+investigations in the same campaign). The ledger and one-shot workflow gate are
+disabled. No reservations were reset, no extra trials were run, and no merge or
+AWS deployment occurred. The three measurement jobs used 810 runner-seconds,
+separate from the enrollment's 867 runner-seconds and code safety checks.
+
+Known limitations remain: `MarkdownTableContent._update_rows` was unobserved in
+enrollment; source reads, shared/background state and broader dynamic dependencies
+are unresolved. The production selector still requires full execution. Catching
+one known regression does not prove that future omissions are safe.
+
+The [durable evidence record](../benchmarks/textual-runtime-threeway-2026-11-27.json)
+contains exact job links, source/tool revisions, outcome hashes, timing boundaries,
+model accounting and the incremental comparison. Hosted safety run
+[45864871832](https://github.com/SharmaKunal14/smart-ci/actions/runs/45864871832)
+passed all 989 tests, formatting, lint, strict types and wheel/source builds.
+
+To verify, download `textual-native-1`, `textual-candidate-1` and `textual-agent-1`
+from the measurement run, and both artifacts from enrollment run `45862622090`.
+Retain each artifact in its named directory. Save GitHub's run and first-attempt
+jobs JSON as `run.json`/`jobs.json` in each run directory, and Textual PR #13's API
+response as `subject-pr.json` beside the measurement artifacts. Then run:
+
+```sh
+uv run python examples/textual/compare_threeway.py \
+  --artifacts /path/to/measurement --enrollment /path/to/enrollment \
+  --output /path/to/new-comparison.json
+```
+
+An exit code of zero means the recorded comparison reconciles; it does not change
+the intentionally failing tests or approve production omissions. Application
+tests receive no model credentials. This is a reviewed
+public pilot, not a general privileged workflow for arbitrary untrusted PRs.
 
 ## Starting point and deliverables
 
