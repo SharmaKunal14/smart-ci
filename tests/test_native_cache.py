@@ -74,6 +74,17 @@ def test_empty_seed_and_root_symlink_are_rejected(tmp_path):
         cache.fingerprint(link)
 
 
+def test_cache_depth_is_bounded(tmp_path):
+    path = tmp_path / "cache"
+    path.mkdir()
+    child = path
+    for _ in range(65):
+        child = child / "d"
+        child.mkdir()
+    with pytest.raises(ValueError, match="nesting"):
+        cache.fingerprint(path)
+
+
 def test_restore_checks_separately_authenticated_manifest(tmp_path, monkeypatch):
     path = populated(tmp_path)
     expected = tmp_path / "expected.json"

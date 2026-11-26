@@ -1,7 +1,9 @@
 # Native cache comparison: next verification step
 
-Status: cache adapter and bounded seed workflow implemented; hosted seed and warm
-PR comparison are not verified yet. No warm-cache benchmark result is claimed.
+Status: cache adapter, bounded seed and consumer workflows implemented. The first
+adapter revision passed [840 hosted safety tests and builds](https://github.com/SharmaKunal14/smart-ci/actions/runs/45792014787).
+The [seed run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45792537512)
+is in progress; no warm-cache benchmark result is claimed.
 The current public Abseil profile has no credentials for upstream's optional
 private cache. Its measured cold savings cannot establish savings in that private
 environment. On 26 November 2026, the fork's GitHub cache-usage API reported zero
@@ -80,11 +82,24 @@ in the PR measurement.
 write-only cache access, checks that repository cache usage is empty before saving,
 and uploads a separate cache receipt plus the existing authenticated map evidence.
 It retains the original full test command, compiler, worker policy and cleanup.
-It does not execute PR source. Consumers will restore only and use the exact seed
-identity; their native full fallback must remain available if warm evidence fails.
+It does not execute PR source. `cache-pr-control-workflow.yml` and
+`cache-pr-candidate-workflow.yml` both use read-only cache access and the exact seed
+identity. They independently download a receipt from one reviewed seed run, bind
+it to the actual PR base, producer tool revision and profile bytes, then verify
+the entire restored content digest. The one reviewed seed-run reference is an
+experiment control, not a new requirement for ordinary map discovery.
+
+The candidate still discovers/authenticates its dependency map through `bazel
+fetch`, using the actual base revision and `cache-publisher.json`. Its publisher
+command identity is separate from local execution commands. If cache admission
+fails, either workflow executes the independent uncached full suite. The candidate
+also uses full fallback if planner installation fails. Native nonzero exits are
+preserved. `cache-admission.json` distinguishes these cold fallback results from
+valid warm samples; a passing fallback is not evidence of cache reuse.
 
 Focused tests cover cache integrity/bounds, profile mismatch, unchanged native
-failure/timeout behavior and explicit publisher configuration. These are correctness
+failure/timeout behavior, explicit publisher configuration and the actual workflow
+shell's cold-full routing for missing/invalid cache evidence. These are correctness
 checks, not performance measurements. The controlled cache is separate from the
 unavailable upstream private cache. No AWS deployment or model credentials are
 needed.
