@@ -110,7 +110,17 @@ Focused transport tests exercise origin mismatches, PR-origin rejection, expired
 or tampered artifacts, archive bounds, failed collection receipts, profile/command
 changes, subprocess time/output limits and redacted misses. The existing full
 safety workflow runs these tests and the package build on each tool PR. These
-tests use controlled API responses and synthetic native evidence; successful live
-download and consumption of a fresh Abseil map remain to be verified after its
-Actions activation problem is resolved. The enrollment PR has no run as of this
-change. No new native execution or savings result is claimed.
+tests use controlled API responses and synthetic native evidence. The
+[fresh Abseil publisher passed](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45764627612);
+the separate consumer workflow in `.github/workflows/native-map-handoff.yml` now
+checks discovery without a configured run ID, stable receipts, actual source-tree
+binding, compatible reuse, repeated plans for historical PRs #10/#11, preservation
+of all build-only targets, and full fallback for tampered evidence. Its result
+remains pending until that hosted run completes. It does not execute native tests
+or measure a new PR speedup.
+
+The verifier binds the reviewed Linux producer's exact command paths, including
+`.venv/bin/python3`, independently of the consumer's interpreter and workspace.
+Generating a new consumer-local configuration would correctly fail the command
+identity check. The expected configuration is constructed from reviewed inputs,
+not accepted from the downloaded artifact. No command identity check is relaxed.

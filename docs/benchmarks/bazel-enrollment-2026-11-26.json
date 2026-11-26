@@ -1,0 +1,87 @@
+{
+  "artifact": {
+    "id": 15091334618,
+    "manifest_digest": "51ff2469ab7671530a93b24379faa07176dc9ea102a0f50b188915f8ce6ce640",
+    "sha256": "69d7263c33f0d6560af8d67615b467a1dd88e5451601da85fdc4e5ed8fdeb06b",
+    "size_bytes": 2105938
+  },
+  "collector_commit": "595547f45437b438ba17cca45b2c6f2c4af61ffb",
+  "compatible_reuse": {
+    "cache": "reused",
+    "config_digest": "d3df5eeb4a611ef4c11d4a0ffb759c1d483ad516530cebf55fe7a71cd7bd8c9c",
+    "manifest_digest": "51ff2469ab7671530a93b24379faa07176dc9ea102a0f50b188915f8ce6ce640",
+    "map_revision": "622fd1c2829655d595ffeca8656382ff305a5ddb",
+    "model_calls": 0,
+    "native_build_only_targets": 324,
+    "native_exit": null,
+    "native_test_targets": 252,
+    "query_exit": null,
+    "revision": "622fd1c2829655d595ffeca8656382ff305a5ddb",
+    "schema_version": "smartci.bazel-collection.v1",
+    "status": "ready"
+  },
+  "conclusion": "success",
+  "event": "push",
+  "evidence_sha256": {
+    "captured-config.json": "533b820597d0adb4787a83218db60e641f7d1b95399b9c532f2064083cae92d9",
+    "fresh.json": "b8c06e3cf3d5e76c9c4dc2461f22110eaeae826d4016b2816ba5a132f4e6bd18",
+    "native-command.json": "81d3bf1b47b1c3fc2c985f29033562fc69cf8fcd3f1f867b3c817e16171a9464",
+    "query-command.json": "29d14a5b4fff5daab6089ee207f05fb1b0d271074a7ede80a0d5d5a02e4a7719",
+    "reused.json": "fbb6f3f49c87de9efe7a906cd2909b77ae5608d79215262e37b1b315f661ee5d",
+    "run.json": "a615537804ff4f6cf8d6e2093a54ab13660aa394be46465a5d843e63d1ab9913",
+    "run.log": "2ab728f84c9cc768c82896e7d4add195d33a1b97a44ba578b8f72970f512718e"
+  },
+  "fresh_collection": {
+    "cache": "rejected",
+    "config_digest": "d3df5eeb4a611ef4c11d4a0ffb759c1d483ad516530cebf55fe7a71cd7bd8c9c",
+    "manifest_digest": "51ff2469ab7671530a93b24379faa07176dc9ea102a0f50b188915f8ce6ce640",
+    "map_revision": "622fd1c2829655d595ffeca8656382ff305a5ddb",
+    "model_calls": 0,
+    "native_build_only_targets": 324,
+    "native_exit": 0,
+    "native_test_targets": 252,
+    "query_exit": 0,
+    "revision": "622fd1c2829655d595ffeca8656382ff305a5ddb",
+    "schema_version": "smartci.bazel-collection.v1",
+    "status": "ready"
+  },
+  "graph": {
+    "edges": 13349,
+    "nodes": 2614,
+    "query_roots": 588,
+    "source_paths": 1504
+  },
+  "head": "622fd1c2829655d595ffeca8656382ff305a5ddb",
+  "limitations": [
+    "One enrollment run on the declared GCC/Bazel C++17 fastbuild profile, not the entire upstream matrix.",
+    "Durations are onboarding costs from GitHub, not a new native-versus-Smart-CI PR comparison.",
+    "Compatible reuse skipped both native/query commands; this does not prove a subsequent PR is faster.",
+    "Hosted cross-job artifact handoff and automatic selected execution still need verification."
+  ],
+  "model_calls": 0,
+  "native": {
+    "build_only_targets": 324,
+    "build_target_configurations": 576,
+    "passed_test_targets": 252
+  },
+  "native_command": {
+    "command_seconds": 623.6704621469999,
+    "error": null,
+    "exit_code": 0
+  },
+  "native_test_execution": true,
+  "new_savings_measurement": false,
+  "new_selective_execution": false,
+  "producer_pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/12",
+  "query_command": {
+    "command_seconds": 9.334684467999978,
+    "error": null,
+    "exit_code": 0
+  },
+  "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45764627612",
+  "runner_policy_restored": true,
+  "runner_seconds": 657.0,
+  "schema_version": "smartci.native-enrollment-evidence.v1",
+  "source_matches_prior_passing_baseline": "6da46d213f16f99b80f57f9d861792bb793923a9",
+  "workflow_created_to_completed_seconds": 661.0
+}

@@ -56,14 +56,24 @@ Those tests include real subprocess handling with synthetic native evidence;
 they do not replace a fresh native enrollment run.
 
 [Abseil PR #12](https://github.com/SharmaKunal14/abseil-cpp/pull/12) remains unmerged
-and has no enrollment run. The current workflow is `.github/workflows/smartci-native-query.yml`,
+and its [native enrollment run passed](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45764627612)
+at head `622fd1c2829655d595ffeca8656382ff305a5ddb`. The full native command passed
+252 test targets and retained all 324 build-only targets. Fresh collection produced
+2,614 nodes, 13,349 edges, 1,504 source paths and 588 query roots. A deliberately
+missing bundle was rebuilt; the subsequent compatible collection reused the same
+manifest without executing either command again.
+
+The workflow took 661 seconds from creation to completion (657 runner seconds).
+Its native command took 623.67 seconds and its query 9.33 seconds. These are initial
+enrollment costs, not a new selective-PR comparison. The current workflow is
+`.github/workflows/smartci-native-query.yml`,
 on the isolated `codex/native-collection-base` and `codex/native-collection-onboarding`
 branches. The initial setup mistakenly inherited the intentionally broken source
 used by the earlier regression experiment. The current head restores the exact
 application/test/build inputs of passing native baseline `6da46d213f16f99b80f57f9d861792bb793923a9`;
 the only application change relative to this PR's base is `.first` to `.position`
 in `raw_linked_hash_set.h`. No tests or native settings were weakened, and earlier
-regression evidence remains intact. Fresh verification is still required.
+regression evidence remains intact.
 
 GitHub's earlier dispatch API returned
 HTTP 422, “Actions has been disabled for this repository,” before and after
@@ -72,19 +82,19 @@ reported enabled=true. The cause of that inconsistent service state is unresolve
 Further inspection also found GitHub marked the PR `CONFLICTING/DIRTY`. Reparenting
 its identical file tree onto the current base cleared that state; GitHub then
 reported `MERGEABLE/CLEAN`. A new reopen event still created no run. The workflow
-now uses the bounded push publisher above instead of PR/manual triggers. This
-corrects two setup mistakes; it does not establish that the service activation
-problem is resolved. Follow GitHub's
-[workflow troubleshooting guidance](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows)
-and inspect the fork's Actions UI before retrying; do not treat an absent check
-as a successful collection. Once activation is resolved, a reviewed push to the
-enrollment branch triggers the single bounded workflow. Reopening PR #12 is no
+now uses the bounded push publisher above instead of PR/manual triggers. A later
+reviewed push produced the successful run above. The exact cause of the earlier
+activation inconsistency remains unknown; success does not establish which
+setting or service change resolved it. A reviewed push to the enrollment branch
+triggers the single bounded workflow. Reopening PR #12 is no
 longer its trigger. Verify `enrollment/collection.json`, `enrollment/bundle/manifest.json`,
 the native event stream, and `reused/collection.json` in `native-enrollment-1`.
 
-The [status record](../benchmarks/bazel-collection-2026-11-26.json) separates the
-successful tool checks from the unexecuted native experiment. No onboarding
-duration, selective-execution result or new savings claim is available yet.
+The [enrollment evidence](../benchmarks/bazel-enrollment-2026-11-26.json) records the
+GitHub run, fresh/reuse receipts, scope, timings and artifact hashes. The earlier
+[blocked status record](../benchmarks/bazel-collection-2026-11-26.json) is retained
+as historical evidence. There is still no new selective-execution or savings
+claim for this collector.
 
 The collector must establish its own complete passing native evidence. Matching
 the earlier baseline's source inputs does not transfer its outcome or timing to
@@ -102,7 +112,7 @@ native logs separately for diagnosis.
 This implements collection and compatibility-driven refresh. The separate
 [`smartci bazel fetch` command](bazel-artifacts.md) discovers compatible artifacts
 from a reviewed GitHub publisher without hard-coded run IDs. Its transport checks
-are tested with controlled API responses; fresh native publication and live
-retrieval remain unverified while Abseil Actions is blocked. An authenticated
-catalog and complete PR runner integration remain required. A map or receipt
+are tested with controlled API responses. Fresh native publication is now
+verified; separate hosted retrieval and consumption are the next verification
+step. A complete PR runner integration remains required. A map or receipt
 supplied by the PR is not trusted merely because its hashes match.

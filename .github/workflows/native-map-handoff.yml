@@ -1,0 +1,65 @@
+name: Verify fresh native map handoff
+on:
+  pull_request:
+    branches: [codex/native-enrollment-trigger-repair]
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-handoff-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    if: github.head_ref == 'codex/native-map-handoff' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          path: tool
+          persist-credentials: false
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: SharmaKunal14/abseil-cpp
+          ref: 622fd1c2829655d595ffeca8656382ff305a5ddb
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        with:
+          version: '0.11.6'
+          enable-cache: false
+      - name: Prepare reviewed publisher and command identity
+        working-directory: tool
+        run: |
+          uv sync --frozen
+          uv run --frozen python scripts/verify_native_handoff.py prepare --output "$RUNNER_TEMP/handoff"
+      - name: Discover and authenticate the fresh map without a run ID
+        working-directory: tool
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for name in fetched repeated; do
+            uv run --frozen smartci bazel fetch \
+              --publisher "$RUNNER_TEMP/handoff/publisher.json" \
+              --revision 622fd1c2829655d595ffeca8656382ff305a5ddb \
+              --config "$RUNNER_TEMP/handoff/capture-config.json" \
+              --output "$RUNNER_TEMP/handoff/$name"
+          done
+      - name: Verify source binding, reuse and deterministic real-PR plans
+        working-directory: tool
+        run: |
+          uv run --frozen python scripts/verify_native_handoff.py verify \
+            --repo "$GITHUB_WORKSPACE/source" --output "$RUNNER_TEMP/handoff"
+      - name: Retain handoff evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-handoff-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/handoff
+          retention-days: 7
+          if-no-files-found: error

@@ -28,15 +28,17 @@ and command configuration. A compatible authenticated bundle avoids both command
 missing, stale or tampered evidence triggers rebuilding. [Smart CI PR #17](https://github.com/SharmaKunal14/smart-ci/pull/17)
 has [727 passing hosted safety tests and successful builds](https://github.com/SharmaKunal14/smart-ci/actions/runs/45751951089).
 Fresh enrollment on [Abseil PR #12](https://github.com/SharmaKunal14/abseil-cpp/pull/12)
-has **not executed**. Earlier dispatch requests returned HTTP 422, “Actions has been
-disabled for this repository,” despite enabled settings. Later inspection found
-two setup mistakes: a GitHub-reported merge conflict, now cleared, and a checkout
-inherited from the deliberately broken regression fixture. The head now matches
-the passing native baseline's application/test/build inputs. A bounded publisher
-push replaces the PR/manual trigger, but has not yet produced a run. No new native
-outcome, onboarding cost or savings measurement exists for this collector. Artifact
-acquisition/publication, automatic PR integration and representative warm-cache
-comparisons remain required; keep the full goal active.
+now [passes on GitHub](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45764627612):
+252 native test targets passed, all 324 build-only targets were retained, a missing
+map was rebuilt, and compatible reuse avoided another native/query execution.
+Initial enrollment took 661 seconds from workflow creation to completion, not a
+new PR speed comparison. The head restores the passing baseline's application,
+test and build inputs after the initial setup inherited an intentional regression.
+The bounded push publisher succeeded after earlier Actions-disabled errors and a
+repaired PR conflict; the exact cause of the activation inconsistency is unknown.
+The [evidence record](docs/benchmarks/bazel-enrollment-2026-11-26.json) separates
+initial collection from the remaining hosted artifact handoff, automatic PR
+execution and representative warm-cache comparisons. Keep the full goal active.
 
 The next transport increment adds `smartci bazel fetch`: discover successful
 approved publishers at an exact revision, authenticate workflow/run/artifact
@@ -44,8 +46,8 @@ origin, validate the native bundle and command configuration, and emit an audite
 receipt without hard-coded run IDs. Untrusted/missing evidence remains a cache
 miss requiring collection or full execution. PR-produced maps cannot become
 trusted publishers. Its bounded API/ZIP checks are covered by controlled tests;
-successful fresh native publication/download and complete PR integration still
-need hosted verification after Abseil Actions is restored. No new performance
+Fresh native publication is verified; separate download/consumption and complete
+PR integration still need hosted verification. No new PR performance
 result is claimed. See [artifact onboarding](docs/onboarding/bazel-artifacts.md).
 
 ### Active goal completion gates
