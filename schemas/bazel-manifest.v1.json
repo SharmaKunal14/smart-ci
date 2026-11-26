@@ -90,6 +90,19 @@
       "minProperties": 4,
       "title": "Artifacts",
       "type": "object"
+    },
+    "capture_config_digest": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Capture Config Digest"
     }
   },
   "required": [

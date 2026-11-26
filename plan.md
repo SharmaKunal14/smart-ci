@@ -1,6 +1,6 @@
 # Smart CI: implementation and deployment plan
 
-Updated: 25 November 2026
+Updated: 26 November 2026
 
 Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Packaging selective execution and trusted baseline reuse remain unverified. The OnRecord TypeScript/Vitest pilot passed live GitHub PRs #29 (103 files / 440 cases, full fallback) and #30 (64 files / 280 cases, actual subset without fallback), with on-demand map rebuilding. Both remain unmerged; broader correctness and performance evaluation remain outstanding. No AWS resources. A separately approved bounded live investigation has now made three paid generation calls; see its evidence below.
 
@@ -21,6 +21,19 @@ exact test/build configuration identities and tampered-evidence fallback. This i
 not a new execution benchmark or completion of automatic collection/refresh. The
 [bundle handoff](docs/onboarding/bazel-bundles.md) separates implemented contracts
 from the remaining trusted collector, artifact lifecycle and runner integration.
+
+The next step adds `smartci bazel collect`: execute reviewed native full-suite and
+query commands, validate their evidence, then publish a map bound to the revision
+and command configuration. A compatible authenticated bundle avoids both commands;
+missing, stale or tampered evidence triggers rebuilding. [Smart CI PR #17](https://github.com/SharmaKunal14/smart-ci/pull/17)
+has [727 passing hosted safety tests and successful builds](https://github.com/SharmaKunal14/smart-ci/actions/runs/45751951089).
+Fresh enrollment on [Abseil PR #12](https://github.com/SharmaKunal14/abseil-cpp/pull/12)
+has **not executed**: GitHub's dispatch endpoint returns HTTP 422, “Actions has been
+disabled for this repository,” while its permissions endpoint reports enabled=true.
+Reapplying that setting did not resolve the rejection. No new native outcome,
+onboarding cost or savings measurement exists for this collector. Artifact
+acquisition/publication, automatic PR integration and representative warm-cache
+comparisons remain required; keep the full goal active.
 
 ### Active goal completion gates
 
