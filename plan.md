@@ -53,6 +53,17 @@ and required full fallback for risky changes and tampered maps. These are planni
 replays, not new native execution. Complete PR runner integration and a new
 end-to-end comparison remain outstanding. See [artifact onboarding](docs/onboarding/bazel-artifacts.md).
 
+The execution increment adds `smartci bazel execute`, which derives its own plan,
+runs reviewed full/subset commands, and reconciles the complete native build-event
+stream against actual selected tests and every build-only configuration. The
+Abseil workflow resolves the current reviewed publisher without a saved run ID,
+rebuilds missing/incompatible maps from the base, restores the exact head, and
+retains full execution when reconstruction cannot establish evidence. A separate
+native-control workflow avoids adding planning overhead to the baseline. The first
+new comparison will replay the historical localized fix on identical application
+trees; it evaluates this integration, not a new independent workload. Hosted
+execution and timing results remain pending. See [execution onboarding](docs/onboarding/bazel-execution.md).
+
 ### Active goal completion gates
 
 The active goal is broader than any single prototype. Keep it active until all of

@@ -53,6 +53,11 @@ a miss requires rebuilding or full execution. A
 including repeatable subset/full plans and tampered-map fallback. Complete automatic
 PR execution remains to be integrated; these checks are not a new PR savings measurement.
 
+The next increment adds [`smartci bazel execute`](docs/onboarding/bazel-execution.md)
+and an Abseil PR workflow that retrieves a reviewed map or reconstructs missing
+evidence, then runs and reconciles the actual native test plan. Its new end-to-end
+GitHub comparison is pending; previous speed measurements belong to the old harness.
+
 ## Setup and verification
 
 Install Python 3.13 or newer and uv, then run:
