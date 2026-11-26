@@ -74,6 +74,26 @@ artifact retention. Its artifact dependency can expire; rerunning after expiry
 requires authenticating another capture, not silently substituting a different
 input. GitHub runner usage is separate from model spending.
 
+## Hosted result, 26 November 2026
+
+[Smart CI PR #23](https://github.com/SharmaKunal14/smart-ci/pull/23) has a
+[successful source audit](https://github.com/SharmaKunal14/smart-ci/actions/runs/45811172563)
+at tool commit `2fc38ddfe8dea50eb54e2f32226724b0ac8cb968`. The import-only control
+added zero edges. The process inspector added the `test_pipe.py → deadlock.py`
+relationship at both revisions: two versioned edges, one unique relationship.
+Repeated complete reports were identical. All 14 gaps, the incomplete graph flags
+and full execution of 251 files remained required. Known graph reachability grew
+from 250 to 251 files, so this discovery strengthens evidence but does not provide
+a useful subset. No Textual tests or model calls were executed in this audit.
+
+The audit job used 41 runner-seconds. That is tool-verification compute, not an
+end-to-end Textual CI result or a claimed saving. The initial separate safety run
+failed because the committed action JSON schema had not been regenerated after
+adding the optional adapter field; 918 other tests passed. The schema is corrected
+in the follow-up commit; consult the PR's current checks for the repaired-head
+result. The [durable record](../benchmarks/textual-process-evidence-2026-11-26.json)
+retains both the audit provenance and that initial failure.
+
 ## Remaining selection problem
 
 The current full fallback cannot become a useful subset merely by adding edges.

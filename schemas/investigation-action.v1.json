@@ -69,6 +69,19 @@
           "const": "inspect",
           "title": "Kind",
           "type": "string"
+        },
+        "adapter": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adapter"
         }
       },
       "required": [
