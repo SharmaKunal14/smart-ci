@@ -1,0 +1,65 @@
+{
+  "deleted_at": "2026-11-26T10:34:34.603843+00:00",
+  "deleted_cache": {
+    "created_at": "2026-11-26T10:17:40.475125Z",
+    "id": 11147067505,
+    "key": "smartci-native-v1-e101dfc59d30ce735c2f49484fe20b57c57df3b1-e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6-25e32aba39624c70260b82c7aaf42adf6887f334",
+    "last_accessed_at": "2026-11-26T10:26:35.911750Z",
+    "ref": "refs/heads/codex/native-cache-base",
+    "size_in_bytes": 112954696,
+    "version": "21104d45a637519b20c640f9bb169051a0f2a2b9c9b6185358ed29e1f2689c62"
+  },
+  "native_job_runner_seconds": 3011.0,
+  "previous_cleanup": {
+    "deleted_at": "2026-11-26T10:01:20.018581+00:00",
+    "deleted_cache": {
+      "created_at": "2026-11-26T09:41:23.289046Z",
+      "id": 11145401082,
+      "key": "smartci-native-v1-08f1bcddc9372a42496fea05a81f9d6b7ad6122d-e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6-25e32aba39624c70260b82c7aaf42adf6887f334",
+      "last_accessed_at": "2026-11-26T09:45:15.128546Z",
+      "ref": "refs/heads/codex/native-cache-base",
+      "size_in_bytes": 112871152,
+      "version": "21104d45a637519b20c640f9bb169051a0f2a2b9c9b6185358ed29e1f2689c62"
+    },
+    "reason": "Replace only completed initial experiment seed after preserving full-fallback PR evidence",
+    "remaining_cache_count": 0
+  },
+  "remaining_cache_count": 0,
+  "rerun_note": "Seed caches removed after bounded comparison; reopening these PRs now falls back cold unless a new reviewed seed is deliberately created.",
+  "runs": [
+    {
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45792537512",
+      "runner_seconds": 683.0
+    },
+    {
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45794818352",
+      "runner_seconds": 190.0
+    },
+    {
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45794833158",
+      "runner_seconds": 197.0
+    },
+    {
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45797438847",
+      "runner_seconds": 963.0
+    },
+    {
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45800358458",
+      "runner_seconds": 192.0
+    },
+    {
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45800366705",
+      "runner_seconds": 202.0
+    },
+    {
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45801313040",
+      "runner_seconds": 282.0
+    },
+    {
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45801322610",
+      "runner_seconds": 302.0
+    }
+  ],
+  "schema_version": "smartci.native-cache-cleanup.v1",
+  "scope": "Two seed jobs and six PR comparison jobs, including the setup-error pair; excludes Smart CI development safety jobs. Parallel runner times are summed, not wall-clock experiment duration."
+}

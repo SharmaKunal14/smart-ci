@@ -1,0 +1,332 @@
+{
+  "arms": {
+    "candidate": {
+      "artifact_sha256": {
+        "candidate-pr.json": "bb51ea9778bcf18a6ece9d52c7a09be3c22df30f906d8cef6bfbfcc054ddf903",
+        "candidate-run.json": "fc7354d07ea836b049f893104a2875b15f19684dc5769913a43e0f0f2cf17469",
+        "candidate-run.log": "17ed50e285fd943b74dbdbbd54b692a2dd1d567acfbe60ffd359f099bcb30a96",
+        "candidate/cache-admission.json": "304869c2daf1cfee4bd55f42876058c9c0f411cddcedc8e11136712faf5c2862",
+        "candidate/cache-seed-run.json": "227dbdea9154413b651cc0b38449957f7852a5943d8e4ca6b56ec8661308c89a",
+        "candidate/cache-verified.json": "805d64f569cc1d0df74adab57a6f8b4ade0ccecb4e00033f8615489073c5d985",
+        "candidate/native-pr/execution/capture/native.bep.json": "03cd92fe4918e0dcfbe369b990632732050690bf2f6643328d59dab1b8e89a64",
+        "candidate/native-pr/execution/capture/native.log": "9dda465332004b24c5c675efef7bfb214ce62960b4e3cbbcb28cd3d0ec4a744d",
+        "candidate/native-pr/execution/execution.json": "e6ba12647de043418db62cab9b55bf287f77f73e0aaa35e6fb7595ab5373034b"
+      },
+      "base": "e101dfc59d30ce735c2f49484fe20b57c57df3b1",
+      "build_configurations": 326,
+      "build_only_targets": 324,
+      "cached_test_runs": 0,
+      "command_seconds": 165.86085526299996,
+      "conclusion": "failure",
+      "end_to_end_seconds": 209.0,
+      "event_at": "2026-11-26T10:20:11Z",
+      "failed_build_targets": [
+        "//absl/container:linked_hash_map_test",
+        "//absl/container:linked_hash_set_test"
+      ],
+      "head": "d88954e001f1141d74c3ddbbad01927a0515580f",
+      "native_runners": [
+        {
+          "count": 1086,
+          "name": "total"
+        },
+        {
+          "count": 781,
+          "execKind": "Remote",
+          "name": "disk cache hit"
+        },
+        {
+          "count": 303,
+          "name": "internal"
+        },
+        {
+          "count": 2,
+          "execKind": "Local",
+          "name": "processwrapper-sandbox"
+        }
+      ],
+      "native_timing": {
+        "actionsExecutionStartInMs": "4379",
+        "analysisPhaseTimeInMs": "4811",
+        "cpuTimeInMs": "32440",
+        "criticalPathTime": "6.160236862s",
+        "executionPhaseTimeInMs": "11759",
+        "wallTimeInMs": "16173"
+      },
+      "observed_container_pull_seconds": null,
+      "passed_test_targets": 0,
+      "planning_seconds": 0.4404709549999666,
+      "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/25",
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45800366705",
+      "runner_cpu": "Intel(R) Xeon(R) 6975P-C (4) @ 3.40 GHz",
+      "runner_seconds": 202.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 3.0
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 5.0
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 1.0
+        },
+        {
+          "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+          "seconds": 0.0
+        },
+        {
+          "name": "Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+          "seconds": 3.0
+        },
+        {
+          "name": "Install planner and prepare local command configuration",
+          "seconds": 3.0
+        },
+        {
+          "name": "Discover the current reviewed publisher map",
+          "seconds": 6.0
+        },
+        {
+          "name": "Discover the approved cache seed for the exact PR base",
+          "seconds": 1.0
+        },
+        {
+          "name": "Download the reviewed seed receipt independently of cache bytes",
+          "seconds": 1.0
+        },
+        {
+          "name": "Validate base, tool and profile identity before cache lookup",
+          "seconds": 0.0
+        },
+        {
+          "name": "Restore only the exact base cache",
+          "seconds": 4.0
+        },
+        {
+          "name": "Verify restored content against the independent trusted receipt",
+          "seconds": 0.0
+        },
+        {
+          "name": "Bound unused system crash processing on this disposable runner",
+          "seconds": 0.0
+        },
+        {
+          "name": "Bound the separate Apport crash-report hook",
+          "seconds": 1.0
+        },
+        {
+          "name": "Execute the native PR plan or independent full fallback",
+          "seconds": 167.0
+        },
+        {
+          "name": "Restore the Apport hook on the disposable runner",
+          "seconds": 0.0
+        },
+        {
+          "name": "Restore disposable runner policy",
+          "seconds": 0.0
+        },
+        {
+          "name": "Record cache admission independently of native results",
+          "seconds": 0.0
+        },
+        {
+          "name": "Publish native execution and map lifecycle evidence",
+          "seconds": 2.0
+        },
+        {
+          "name": "Post Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 0.0
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0
+        }
+      ],
+      "test_targets": 2,
+      "uncached_test_runs": 0,
+      "workflow_completed_at": "2026-11-26T10:23:40Z"
+    },
+    "control": {
+      "artifact_sha256": {
+        "control-pr.json": "42b34be1eb805efaeb920d0884150d88efc80e660ebc13af28e66e0bdc530cac",
+        "control-run.json": "bc4833b660424314896fa9fdd7e9316b54ec8f6c242188c5144a5aecbab49b9e",
+        "control-run.log": "afabe71500bf24689e3cf1be907a9379d63352417f794f196cdf00daf9f68c69",
+        "control/cache-admission.json": "304869c2daf1cfee4bd55f42876058c9c0f411cddcedc8e11136712faf5c2862",
+        "control/cache-seed-run.json": "227dbdea9154413b651cc0b38449957f7852a5943d8e4ca6b56ec8661308c89a",
+        "control/cache-verified.json": "805d64f569cc1d0df74adab57a6f8b4ade0ccecb4e00033f8615489073c5d985",
+        "control/native-control/execution.json": "b9965bdd3aac2d018ecbc46698dede7b4476eb489de489abcda2500076c43122",
+        "control/native-control/native.bep.json": "96184a4033e014ec06677b4b922f8c4f10af8c03af29b3add5ea5b4db03e1479"
+      },
+      "base": "e101dfc59d30ce735c2f49484fe20b57c57df3b1",
+      "build_configurations": 576,
+      "build_only_targets": 324,
+      "cached_test_runs": 363,
+      "command_seconds": 167.253672622,
+      "conclusion": "failure",
+      "end_to_end_seconds": 198.0,
+      "event_at": "2026-11-26T10:20:08Z",
+      "failed_build_targets": [
+        "//absl/container:linked_hash_map_test",
+        "//absl/container:linked_hash_set_test"
+      ],
+      "head": "ce5770f19255b52b0a4e8df83a3a203b4c0d8409",
+      "native_runners": [
+        {
+          "count": 2982,
+          "name": "total"
+        },
+        {
+          "count": 1655,
+          "execKind": "Remote",
+          "name": "disk cache hit"
+        },
+        {
+          "count": 1328,
+          "name": "internal"
+        },
+        {
+          "count": 2,
+          "execKind": "Local",
+          "name": "processwrapper-sandbox"
+        }
+      ],
+      "native_timing": {
+        "actionsExecutionStartInMs": "4442",
+        "analysisPhaseTimeInMs": "6098",
+        "cpuTimeInMs": "44620",
+        "criticalPathTime": "7.624647959s",
+        "executionPhaseTimeInMs": "14401",
+        "wallTimeInMs": "18882"
+      },
+      "observed_container_pull_seconds": 137.624775,
+      "passed_test_targets": 250,
+      "planning_seconds": null,
+      "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/24",
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45800358458",
+      "runner_cpu": "Intel(R) Xeon(R) 6975P-C (4) @ 2.76 GHz",
+      "runner_seconds": 192.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 3.0
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 5.0
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 1.0
+        },
+        {
+          "name": "Discover the approved cache seed for the exact PR base",
+          "seconds": 3.0
+        },
+        {
+          "name": "Download the reviewed seed receipt independently of cache bytes",
+          "seconds": 1.0
+        },
+        {
+          "name": "Validate base, tool and profile identity before cache lookup",
+          "seconds": 0.0
+        },
+        {
+          "name": "Restore only the exact base cache",
+          "seconds": 4.0
+        },
+        {
+          "name": "Verify restored content against the independent trusted receipt",
+          "seconds": 1.0
+        },
+        {
+          "name": "Bound unused system crash processing on this disposable runner",
+          "seconds": 0.0
+        },
+        {
+          "name": "Bound the separate Apport crash-report hook",
+          "seconds": 0.0
+        },
+        {
+          "name": "Run the independent complete native suite",
+          "seconds": 167.0
+        },
+        {
+          "name": "Restore the Apport hook on the disposable runner",
+          "seconds": 1.0
+        },
+        {
+          "name": "Restore disposable runner policy",
+          "seconds": 0.0
+        },
+        {
+          "name": "Record cache admission independently of native results",
+          "seconds": 0.0
+        },
+        {
+          "name": "Publish native execution and map lifecycle evidence",
+          "seconds": 1.0
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 1.0
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0
+        }
+      ],
+      "test_targets": 252,
+      "uncached_test_runs": 0,
+      "workflow_completed_at": "2026-11-26T10:23:26Z"
+    }
+  },
+  "changed_paths": [
+    "absl/container/internal/raw_linked_hash_set.h"
+  ],
+  "complete_git_trees_identical": true,
+  "fallback": [],
+  "limits": [
+    "One controlled warm pair, not a representative production average.",
+    "Seed creation and storage costs are separate; this controlled disk cache is not upstream private-cache behavior.",
+    "Cached test runs are repeated native executions, not individual C++ cases.",
+    "Native action counts include cache hits and internal actions; they are not uncached execution counts.",
+    "Different hosted CPU models, if present, confound causal latency attribution."
+  ],
+  "missed_native_failures": 0,
+  "model_calls": 0,
+  "plan_digest": "f4c87803fc99dada42cdef1fb98c8feae00e351e578b7d80f32b8629f4086c78",
+  "saving": {
+    "faster_in_this_pair": false,
+    "percent": -5.555555555555555,
+    "seconds": -11.0
+  },
+  "scenario": "regression",
+  "schema_version": "smartci.native-cache-comparison.v1",
+  "seed_run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45797438847",
+  "selected": [
+    "//absl/container:linked_hash_map_test",
+    "//absl/container:linked_hash_set_test"
+  ],
+  "source": "GitHub PR runs and downloaded native evidence",
+  "tool_revision": "d7a2eaab95f86f9d8ac9b546e82ac114cc5a26fa"
+}

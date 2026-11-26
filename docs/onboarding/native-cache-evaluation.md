@@ -1,11 +1,14 @@
-# Native cache comparison: next verification step
+# Native cache comparison and measured limits
 
-Status: cache adapter, bounded seed and consumer workflows implemented. The
-consumer revision passed [854 hosted safety tests and builds](https://github.com/SharmaKunal14/smart-ci/actions/runs/45793248434).
-The [seed run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45792537512)
-passed. The first regression pair ran warm full scope because workflow additions
-inside the PR correctly triggered fallback: native 198 seconds, Smart CI 204
-seconds. This is not a subset result; corrected source-only PRs are pending.
+Status: implemented and verified on the corrected source-only regression pair.
+The consumer revision passed [884 hosted safety tests and builds](https://github.com/SharmaKunal14/smart-ci/actions/runs/45797148522).
+Smart CI selected 2/252 test targets and preserved the same two compiler failures,
+but took **209 seconds versus 198 seconds native**. The passing pair also completed: **307 seconds Smart CI versus 289 seconds native**,
+with 1/252 test targets selected. Neither valid warm pair shows a speed benefit.
+
+The initial pair added workflows inside its PRs, correctly forcing full scope
+(native 198 seconds, Smart CI 204 seconds). That setup error and both seed costs
+are retained rather than discarded.
 The current public Abseil profile has no credentials for upstream's optional
 private cache. Its measured cold savings cannot establish savings in that private
 environment. On 26 November 2026, the fork's GitHub cache-usage API reported zero
@@ -141,3 +144,103 @@ scope (252 tests and 324 build-only targets). Their end-to-end times were 198 an
 it is not evidence of subset performance. The correction moves workflows onto
 the experimental base and discovers the later seed by base identity. The selector
 rule for in-PR workflow changes remains unchanged.
+
+## Corrected source-only regression
+
+Consumer workflows now exist on the experimental base before seeding. The
+standard-library discovery helper authenticates the producer at the exact PR base;
+no future run ID needs to be edited into the PR. The selector's workflow-change
+fallback rule is unchanged.
+
+The corrected [seed](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45797438847)
+passed all 252 native test targets and preserved 324 build-only targets. It took
+967 seconds from workflow creation to completion on an Intel Xeon Platinum 8370C
+host. It produced 858,019,906 raw bytes in 7,564 files and 112,954,696 compressed
+cache bytes. The original experiment cache was deleted before this seed, keeping
+only one cache. See the [corrected seed record](../benchmarks/abseil-cache-seed-corrected-2026-11-26.json).
+
+[Native PR #24](https://github.com/SharmaKunal14/abseil-cpp/pull/24) and
+[Smart CI PR #25](https://github.com/SharmaKunal14/abseil-cpp/pull/25) have identical
+Git trees and change only the hinted-insertion header. Both admitted the exact
+trusted seed. Smart CI selected the two linked-hash test targets, retained all
+324 build-only targets/configurations, and caught exactly the two compiler failures
+found by the complete native command. Neither selected target reached test
+execution because compilation failed. Both checks correctly remain red.
+
+Actual PR-created-to-completed-workflow times were **198 seconds native and
+209 seconds Smart CI**: no saving. Native Bazel reused 363 cached test runs across
+250 unaffected test targets. Both arms performed two local compile actions; the
+candidate mostly removed cache lookups and internal actions. Bazel wall time fell
+from 18.88 to 16.17 seconds, but the complete native command including container
+startup took 167.25/165.86 seconds. Planning took 0.44 seconds; the candidate also
+spent 3 seconds installing the planner and 6 seconds fetching its map. The native
+control's observed container download alone took 137.62 seconds.
+
+This is failure-feedback evidence, not passing-workload performance. Both hosts
+reported the same Xeon 6975P-C model, but one pair does not establish causal or
+representative performance. See the [regression record](../benchmarks/abseil-cache-regression-2026-11-26.json).
+
+## Passing warm comparison
+
+[Native PR #26](https://github.com/SharmaKunal14/abseil-cpp/pull/26) and
+[Smart CI PR #27](https://github.com/SharmaKunal14/abseil-cpp/pull/27) add empty-node
+hinted-insertion coverage to an existing test file. Their complete Git trees are
+identical. No tests, worker settings or build targets were removed. Both workflows
+passed; Smart CI selected the linked-hash-set target and preserved all 324 native
+build-only targets/configurations. The changed target genuinely executed in both
+arms: each has one uncached native test run. The full command reused 364 cached
+runs across the other 251 test targets. Counts describe native runs/targets, not
+individual C++ test cases.
+
+Actual PR-created-to-completed-workflow times were **289 seconds native and
+307 seconds Smart CI**, 18 seconds slower for Smart CI. Both arms performed three
+local native actions. The control ran on an AMD EPYC 9V45 and the candidate on an
+AMD EPYC 7763, so the exact 18-second difference is not a clean causal estimate.
+Nevertheless, this pair demonstrates no end-to-end saving and no reduction in
+local native action count. Planning took 0.70 seconds, map retrieval 6 seconds,
+and the complete native commands took 262.18/274.41 seconds. The control's observed
+container download took 230.20 seconds. See the
+[passing record](../benchmarks/abseil-cache-passing-2026-11-26.json).
+
+## Interpretation and verification
+
+This controlled cache experiment verifies cache admission, automatic seed discovery,
+source-only subset execution and preservation of the known regression. It does
+**not** demonstrate warm-CI savings. Native Bazel already avoids the unchanged
+work; selecting fewer targets mostly removed cached lookups, while adding planner
+installation, evidence retrieval and validation. This does not invalidate the
+observed cold results, but those cannot be sold as savings over an effective
+native cache. One regression and one test-coverage change are not a representative
+production distribution or a universal safety proof. Keep this profile experimental
+and prefer native cached execution unless a broader controlled measurement shows
+benefit; do not disable caching to manufacture one.
+
+The seed used for the corrected comparisons cost 967 seconds. The discarded setup
+also cost an earlier 686-second seed and a full-fallback pair; those records remain
+linked above. Only one experiment cache existed at a time. Both experiment caches
+were explicitly removed after their consumers completed; no storage allowance was
+increased. See [cleanup and aggregate native runner usage](../benchmarks/abseil-cache-cleanup-2026-11-26.json).
+
+To verify the completed GitHub evidence without running local benchmarks:
+
+1. Open PRs #24/#25 and their completed checks. Both are intentionally red on the
+   same hinted-insertion compiler defect. Open PRs #26/#27; both checks are green.
+2. Download the run artifacts from each Actions summary. Native artifacts are
+   `independent-native-1`; Smart CI artifacts are `automatic-native-1`.
+3. Check `cache-admission.json` (`warm_sample: true`) and `cache-seed-run.json`
+   (run `45797438847`, attempt 1). The verified cache fingerprint must match the
+   separate seed receipt. A cache-action success alone does not establish this.
+4. In candidate `native-pr/execution/plan.json`, verify `mode: subset`, empty
+   `fallback`, selected targets (two for #25, one for #27) and all 324 `build_only`
+   entries. In `execution.json` and `native.bep.json`, verify native exits and the
+   matching test/build configuration scope. The records above retain artifact
+   hashes and exact source/tool revisions.
+5. Compare each PR's actual `created_at` with its completed workflow `updatedAt`.
+   The JSON records also contain job/step times and CPUs; do not substitute only
+   test time for end-to-end latency.
+
+Artifacts have seven-day retention. The cache cleanup is intentional: reopening
+these PRs now would take the cold full fallback unless a new reviewed seed is
+created. Inspect the saved runs to verify these results; do not label a later
+cache miss as a warm replay. All PRs remain unmerged. No AWS deployment or model
+calls were made during this cache experiment.
