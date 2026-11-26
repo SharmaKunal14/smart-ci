@@ -15,6 +15,7 @@
         "//absl/container:linked_hash_set_test"
       ],
       "conclusion": "failure",
+      "cpu_evidence_sha256": "10313f17c6fc1fa75759c33fa292a3ba7b29280e8001c031f55b6dfdbe190d4f",
       "end_to_end_seconds": 333.0,
       "event_at": "2026-11-26T07:43:57Z",
       "event_kind": "opened",
@@ -24,6 +25,7 @@
       "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/16",
       "pr_metadata_sha256": "a50a9fcba6438bfc8ce442a272bf7a5bcf55fb03ab48b89cb2728aa9ad7eeeec",
       "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45777511387",
+      "runner_cpu": "Intel(R) Xeon(R) 6975P-C (4) @ 3.83 GHz",
       "runner_policy_restored": true,
       "runner_seconds": 326.0,
       "source_tree_digest": "edc27a45453dc59c062e3269d37d090011913fb90139baa8a138849686484215",
@@ -131,6 +133,7 @@
         "//absl/container:linked_hash_set_test"
       ],
       "conclusion": "failure",
+      "cpu_evidence_sha256": "2a23d45a48f3936f9e081194a5ee099170774faed40314c3387b8acef3117781",
       "end_to_end_seconds": 1080.0,
       "event_at": "2026-11-26T07:40:45Z",
       "event_kind": "opened",
@@ -140,6 +143,7 @@
       "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/15",
       "pr_metadata_sha256": "37e5a49fc0d7567f478ac129893acd0a8701fa2c6407a0d89d790f8a552d800e",
       "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45777124415",
+      "runner_cpu": "AMD EPYC 7763 64-Core (4) @ 3.24 GHz",
       "runner_policy_restored": true,
       "runner_seconds": 1073.0,
       "source_tree_digest": "edc27a45453dc59c062e3269d37d090011913fb90139baa8a138849686484215",
@@ -234,7 +238,8 @@
     "Candidate test execution count is zero because both selected test targets failed compilation; all selected builds were attempted.",
     "The full native keep-going profile executed and passed 250 other test targets, so the failure-feedback timing must not be pooled with passing-workload speed comparisons.",
     "Complete native events and exact build configurations were independently reconciled; no additional failing targets were observed.",
-    "Public cold-run profile only; the optional private upstream remote cache remains unmeasured."
+    "Public cold-run profile only; the optional private upstream remote cache remains unmeasured.",
+    "Runner CPU models differ between arms, as recorded from native logs. End-to-end differences are observed GitHub results, not isolated causal estimates of selector speedup. Source, container and Ubuntu label identity do not establish hardware identity."
   ],
   "matched_compile_failure_targets": 2,
   "missed_native_failures": 0,

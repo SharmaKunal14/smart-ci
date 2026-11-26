@@ -40,7 +40,10 @@ upstream's private service. See [Bazel's cache documentation](https://bazel.buil
    A missing cache is not a warm sample and must not be reported as one.
 6. **Measure the complete path.** Use actual PR event through completed workflow,
    including cache download/restore, setup, planning, execution and uploads.
-   Preserve slower attempts and report seed bytes, runner time and action counts.
+   Preserve slower attempts and report seed bytes, runner time, CPU model and
+   action counts. The cold full-fallback pair received different Intel/AMD hosts
+   under the same Ubuntu runner label. Record this confound; do not discard a slow
+   host or claim identical hardware because the container and runner label match.
    Failure-feedback measurements are separate from passing-workload comparisons;
    a passing warm case remains necessary before claiming passing warm-CI savings.
 

@@ -142,6 +142,14 @@ do not measure private remote-cache behavior, prove arbitrary dependency
 completeness, or establish failure detection: both PRs contain the passing fix.
 Separate regression and missing-map cases exercise those lifecycle boundaries.
 
+The native startup logs also expose different host CPUs within each pair:
+Intel Xeon 6975P-C versus AMD EPYC 9V45 in the first, and AMD EPYC 9V45 versus
+AMD EPYC 7763 in the repeat. Both arms have four visible processors, but the
+same Ubuntu label and pinned container do not control hardware or noisy neighbors.
+The recorded end-to-end savings are real observations; their exact percentages
+are not isolated causal estimates. The reduction from 2,988 to 1,092 executed
+Bazel actions independently establishes less work in these localized runs.
+
 ## Native regression preservation
 
 [PR #15](https://github.com/SharmaKunal14/abseil-cpp/pull/15) and
@@ -223,8 +231,10 @@ Both execute 2,995 Bazel actions. Native-command durations were 644.35 and 1,043
 seconds; the execution planner took 0.687 seconds. Almost all the elapsed-time
 difference is inside the native command, which includes container setup, rather
 than planner computation. Native build-event wall times also differ: 494.35 versus
-797.36 seconds. Identical source and command scope do not eliminate hosted-runner
-or image-download variation; this pair does not isolate their individual causes.
+797.36 seconds. The logs identify different host CPUs: Intel Xeon 6975P-C for
+native and AMD EPYC 7763 for Smart CI, both with four visible processors. Identical
+source, container and Ubuntu runner labels do not imply identical hardware. This
+pair does not isolate hardware, image-download and other execution effects.
 
 Inspect the plan, execution report and complete native events in `automatic-native-1`
 and compare them with `independent-native-1`. The

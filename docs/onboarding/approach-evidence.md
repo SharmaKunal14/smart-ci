@@ -26,6 +26,12 @@ selected 251/252 tests and took 924 s versus 640 s native. Preserve that negativ
 result rather than extrapolating the localized savings to all PRs. See the
 [native evidence and scope](native-build-graphs.md).
 
+Native startup logs show different CPU models within both passing Abseil pairs.
+The same Ubuntu runner label and container do not hold hardware constant. The
+34.0% and 31.4% values describe observed GitHub latency reductions, not isolated
+causal estimates. Fewer executed native actions (2,988 to 1,092) are separate
+evidence of reduced work. Preserve the runner identities and all timing attempts.
+
 The deterministic selector remains the authority in every approach. Missing or
 incompatible evidence requires reconstruction or full execution; an agent cannot
 remove mandatory tests, waive unresolved dependencies or turn its confidence into
@@ -39,8 +45,12 @@ claim that models cannot help.
 The new native runner now preserves the regression's two compiler failures and
 rebuilds a missing map from the passing base before restoring the broken PR head.
 See the [execution lifecycle evidence](bazel-execution.md#native-regression-preservation).
-Before broader rollout, finish its new-target/full-fallback and shared-change
-comparisons. Report reconstruction and
+The new-target/full-fallback comparison also passed: both arms discover all 253
+current targets, including the test absent from the saved map. It takes 665 seconds
+native versus 1,068 seconds Smart CI, performs identical work, and demonstrates
+no saving. Almost all elapsed difference is inside the native command; the two
+hosts have different CPUs. See the [fallback record](../benchmarks/abseil-automatic-fallback-2026-11-26.json).
+Before broader rollout, finish the shared-change comparison. Report reconstruction and
 enrollment costs separately and examine representative caching. The current public
 Abseil profile lacks credentials for its optional upstream private remote cache;
 the cold results do not describe that private environment. No merges, AWS

@@ -7,7 +7,8 @@
     "Counts are Bazel test targets, not individual test cases. All 324 native build-only targets remain.",
     "Native and Smart CI tool pins differ only by the exported schema file; executable code is byte-identical.",
     "New-runner regression, shared-change, live missing-map/fallback scenarios and repeated timing comparisons remain outstanding.",
-    "PR-to-result is PR created_at to completed run updatedAt, at GitHub one-second timestamp resolution."
+    "PR-to-result is PR created_at to completed run updatedAt, at GitHub one-second timestamp resolution.",
+    "Runner CPU models differ between arms, as recorded from native logs. End-to-end differences are observed GitHub results, not isolated causal estimates of selector speedup. Source, container and Ubuntu label identity do not establish hardware identity."
   ],
   "model_calls": 0,
   "native": {
@@ -21,6 +22,7 @@
     "build_only_targets": 324,
     "build_target_configurations": 576,
     "conclusion": "success",
+    "cpu_evidence_sha256": "0bbabb5fdcae673818a85c421271e2b6e2d0b1dfded80c7c384253040dca84bf",
     "head": "aa74e2664e67813fba1be1184e7d651c827305fd",
     "native_command_seconds": 609.4198704070001,
     "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/13",
@@ -29,6 +31,7 @@
     "pr_to_completed_seconds": 626.0,
     "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45771460665",
     "run_metadata_sha256": "bba8d102e1a9f006a85168825295e20bd6fe7ec0f6481b24796884db3fca37b2",
+    "runner_cpu": "Intel(R) Xeon(R) 6975P-C (4) @ 3.90 GHz",
     "runner_policy_restored": true,
     "runner_seconds": 620.0,
     "steps": [
@@ -121,6 +124,7 @@
     "build_only_targets": 324,
     "build_target_configurations": 326,
     "conclusion": "success",
+    "cpu_evidence_sha256": "f2d3618def42c4fd573d8aa1a98d3912bbc597256673371ba1b4505bdd2a0063",
     "fallback": [],
     "head": "dc8577003cf8dcd5984432619e3b79f79e961f54",
     "lifecycle": {
@@ -150,6 +154,7 @@
     },
     "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45772824303",
     "run_metadata_sha256": "5019ecfec7f428a622b63964cb57e7603fa7ecb929103552e9fe7f2f99248a1f",
+    "runner_cpu": "AMD EPYC 9V45 96-Core (4) @ 4.25 GHz",
     "runner_policy_restored": true,
     "runner_seconds": 406.0,
     "selected": [
