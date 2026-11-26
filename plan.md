@@ -28,10 +28,13 @@ and command configuration. A compatible authenticated bundle avoids both command
 missing, stale or tampered evidence triggers rebuilding. [Smart CI PR #17](https://github.com/SharmaKunal14/smart-ci/pull/17)
 has [727 passing hosted safety tests and successful builds](https://github.com/SharmaKunal14/smart-ci/actions/runs/45751951089).
 Fresh enrollment on [Abseil PR #12](https://github.com/SharmaKunal14/abseil-cpp/pull/12)
-has **not executed**: GitHub's dispatch endpoint returns HTTP 422, “Actions has been
-disabled for this repository,” while its permissions endpoint reports enabled=true.
-Reapplying that setting did not resolve the rejection. No new native outcome,
-onboarding cost or savings measurement exists for this collector. Artifact
+has **not executed**. Earlier dispatch requests returned HTTP 422, “Actions has been
+disabled for this repository,” despite enabled settings. Later inspection found
+two setup mistakes: a GitHub-reported merge conflict, now cleared, and a checkout
+inherited from the deliberately broken regression fixture. The head now matches
+the passing native baseline's application/test/build inputs. A bounded publisher
+push replaces the PR/manual trigger, but has not yet produced a run. No new native
+outcome, onboarding cost or savings measurement exists for this collector. Artifact
 acquisition/publication, automatic PR integration and representative warm-cache
 comparisons remain required; keep the full goal active.
 
