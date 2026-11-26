@@ -45,6 +45,7 @@ def run(
     capture_config: Path,
     execution_config: Path,
     output: Path,
+    publisher_capture: Path | None = None,
 ) -> dict[str, object]:
     # Validate exact revisions before they can become Git arguments.
     if not all(
@@ -73,7 +74,9 @@ def run(
         reusable_bundle(
             fetched / "bundle",
             receipt["manifest_digest"],
-            read_config(Path(__file__).with_name("publisher-capture.json")),
+            read_config(
+                publisher_capture or Path(__file__).with_name("publisher-capture.json")
+            ),
             repo,
             revision_tree(repo, base),
         )
@@ -116,6 +119,7 @@ def main() -> int:
         parser.add_argument("--" + name, type=Path, required=True)
     parser.add_argument("--base", required=True)
     parser.add_argument("--head", required=True)
+    parser.add_argument("--publisher-capture", type=Path)
     args = parser.parse_args()
     report = run(
         args.repo.resolve(),
@@ -125,6 +129,7 @@ def main() -> int:
         args.capture_config.resolve(),
         args.execution_config.resolve(),
         args.output.resolve(),
+        args.publisher_capture.resolve() if args.publisher_capture else None,
     )
     code = report["exit_code"]
     return (

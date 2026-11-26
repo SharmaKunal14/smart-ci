@@ -17,6 +17,7 @@ linked experiment records.
 | Runtime observation, Textual parser regression | Trigger-to-job result: 350 s native, 570 s observed; all 3,467 case identities/outcomes/skips matched, no omissions. [Run](https://github.com/SharmaKunal14/textual/actions/runs/45043961511), [record](../benchmarks/textual-scoped-runtime-2026-11-23.json). | Observed dependencies did not prove exclusive ownership of shared/thread activity. Both checks remained red for the actual defect. |
 | Bounded live investigator, evidence from Textual PR #11 | Three model calls, zero accepted new edges, unchanged full plan. The investigation/control workflow took 85 s and executed no Textual tests. [Run](https://github.com/SharmaKunal14/smart-ci/actions/runs/45062767011), [record](../benchmarks/textual-live-investigation-2026-11-23.json). | The controlled tool loop works, but this trial demonstrates no useful selection improvement or CI savings. It is disabled. |
 | Native Bazel graph plus authenticated map reuse, localized Abseil fix | PR-event-to-completed-workflow pairs: 626/413 s and 724/497 s native/Smart CI. Savings: 34.0% and 31.4%. Both selected 2/252 test targets and retained all 324 build-only targets. [First record](../benchmarks/abseil-automatic-execution-2026-11-26.json), [repeat record](../benchmarks/abseil-automatic-repeat-2026-11-26.json). | Two cold pairs show a useful, repeatable benefit for this workload. They do not establish a representative average or warm-cache benefit. |
+| Native Bazel graph with validated base disk cache, Abseil | Regression: 198 s native / 209 s Smart CI, 2/252 targets selected. Passing coverage change: 289/307 s, 1/252 selected. All 324 build-only targets retained. [Regression](../benchmarks/abseil-cache-regression-2026-11-26.json), [passing](../benchmarks/abseil-cache-passing-2026-11-26.json). | Neither warm pair saved time. Both arms performed the same local native actions; Bazel already reused unaffected results. The passing pair also used different CPUs. |
 
 The native approach has stronger declared dependency evidence for its supported
 source changes and can avoid substantial compilation as well as tests. It still
@@ -55,8 +56,10 @@ The new shared-change comparison now also passes: 251/252 tests selected, all
 native/Smart CI result is confounded by different AMD/Intel hosts and does not
 establish a substantial selection benefit. See the
 [shared-change record](../benchmarks/abseil-automatic-shared-2026-11-26.json).
-Before broader rollout, report reconstruction and
-enrollment costs separately and examine representative caching. The current public
+The controlled warm-cache experiment is now complete and negative for performance;
+see the [cache comparison](native-cache-evaluation.md). Before broader rollout,
+report reconstruction and enrollment costs separately and validate benefit on the
+actual native caching configuration. The current public
 Abseil profile lacks credentials for its optional upstream private remote cache;
 the cold results do not describe that private environment. No merges, AWS
 deployment or new model calls are needed for these remaining native checks.

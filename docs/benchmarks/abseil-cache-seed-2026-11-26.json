@@ -1,0 +1,95 @@
+{
+  "artifact_sha256": {
+    "cache-list.json": "33ebc2f057187883dd6473e5a48e8585907c326259edd34f45b63993b4d4171a",
+    "receipt/cache.json": "d91580cd88fb7c3adfe53dffd8d69c13d03d3bbe0beed6528f21b61d04a667ac",
+    "receipt/identity.json": "cb37b265da8ce52332a96e1b1539cc863d3cf764d18714d4e5edd93742566db1",
+    "seed-run.json": "4091437a1a5b929a057edec4ede5c0396760102f2eab3bc80871cdb17bcf4444",
+    "seed-run.log": "c93231dbe4bf5d8fd7b5eaa4efcce0881bc36a780f9df79b75ac7e3c6ff1b62b",
+    "seed/enrollment/bundle/manifest.json": "6e4cef3828f8307bd2d40d1fb42cef71eb13dd91ec05ba4a19bda525ae1173a1",
+    "seed/enrollment/bundle/native.bep.json": "40bec3ebed20444f521d8d321c686f2072e7573d78e48ef48fc52b8ebdd15b41",
+    "seed/enrollment/bundle/query.xml": "2f3f387104adb760848ba4ca55af9461f201f5d5835f53732e9751f07e7ff3fe",
+    "seed/enrollment/collection.json": "bcd4ef3adce06f473970ce2abd8b999ec6319c4fc2853351ff4c9a986a123d60"
+  },
+  "cache_content": {
+    "bytes": 858023104,
+    "files": 7564,
+    "schema_version": "1",
+    "tree_digest": "b8338f295619ef86baefbca9cd09e231d25b4c016e19722e138b014fa30845cf"
+  },
+  "cache_identity": {
+    "key": "smartci-native-v1-08f1bcddc9372a42496fea05a81f9d6b7ad6122d-e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6-25e32aba39624c70260b82c7aaf42adf6887f334",
+    "profile_sha256": "e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6",
+    "revision": "08f1bcddc9372a42496fea05a81f9d6b7ad6122d",
+    "schema_version": "1",
+    "tool_revision": "25e32aba39624c70260b82c7aaf42adf6887f334"
+  },
+  "cache_storage": {
+    "id": 11145401082,
+    "key": "smartci-native-v1-08f1bcddc9372a42496fea05a81f9d6b7ad6122d-e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6-25e32aba39624c70260b82c7aaf42adf6887f334",
+    "ref": "refs/heads/codex/native-cache-base",
+    "size_in_bytes": 112871152
+  },
+  "collection": {
+    "cache": "rejected",
+    "config_digest": "ec97bd733bc9e751348bab3a6e47f1744d00367cfd8c454369074e82ef0bf090",
+    "manifest_digest": "6e4cef3828f8307bd2d40d1fb42cef71eb13dd91ec05ba4a19bda525ae1173a1",
+    "map_revision": "08f1bcddc9372a42496fea05a81f9d6b7ad6122d",
+    "model_calls": 0,
+    "native_build_only_targets": 324,
+    "native_exit": 0,
+    "native_test_targets": 252,
+    "query_exit": 0,
+    "revision": "08f1bcddc9372a42496fea05a81f9d6b7ad6122d",
+    "schema_version": "smartci.bazel-collection.v1",
+    "status": "ready"
+  },
+  "commands": {
+    "native": {
+      "command_seconds": 637.021287725,
+      "error": null,
+      "exit_code": 0
+    },
+    "query": {
+      "command_seconds": 9.59107569799994,
+      "error": null,
+      "exit_code": 0
+    }
+  },
+  "compatible_map_reuse": {
+    "cache": "reused",
+    "config_digest": "ec97bd733bc9e751348bab3a6e47f1744d00367cfd8c454369074e82ef0bf090",
+    "manifest_digest": "6e4cef3828f8307bd2d40d1fb42cef71eb13dd91ec05ba4a19bda525ae1173a1",
+    "map_revision": "08f1bcddc9372a42496fea05a81f9d6b7ad6122d",
+    "model_calls": 0,
+    "native_build_only_targets": 324,
+    "native_exit": null,
+    "native_test_targets": 252,
+    "query_exit": null,
+    "revision": "08f1bcddc9372a42496fea05a81f9d6b7ad6122d",
+    "schema_version": "smartci.bazel-collection.v1",
+    "status": "ready"
+  },
+  "limits": [
+    "A fresh base-only enrollment, not a PR speed comparison. Its cost must be amortized.",
+    "Controlled disk cache on public hosted runners; not upstream private-cache behavior.",
+    "A successful cache upload does not prove consumer hit rate or time savings.",
+    "Only one cache was saved, below the 2 GiB raw-content cap. Cleanup follows the bounded comparison."
+  ],
+  "model_calls": 0,
+  "native_scope": {
+    "build_configurations": 576,
+    "build_only_targets": 324,
+    "passed_test_targets": 252
+  },
+  "revision": "08f1bcddc9372a42496fea05a81f9d6b7ad6122d",
+  "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45792537512",
+  "runner_cpu": "Intel(R) Xeon(R) 6975P-C (4) @ 3.84 GHz",
+  "runner_policy_restored": true,
+  "runner_seconds": 683.0,
+  "schema_version": "smartci.native-cache-seed.v1",
+  "source": "GitHub Actions run, downloaded native artifacts and cache API metadata",
+  "tool_revision": "25e32aba39624c70260b82c7aaf42adf6887f334",
+  "workflow_completed_at": "2026-11-26T09:41:32Z",
+  "workflow_created_at": "2026-11-26T09:30:06Z",
+  "workflow_seconds": 686.0
+}

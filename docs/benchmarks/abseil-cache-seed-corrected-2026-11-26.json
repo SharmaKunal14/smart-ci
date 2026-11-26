@@ -1,0 +1,112 @@
+{
+  "artifact_sha256": {
+    "cache-list.json": "bd2665a1e4729fd0ff46962d8522c475bbf13d85a340b19d754b6f3b1f8f73a6",
+    "receipt/cache.json": "805d64f569cc1d0df74adab57a6f8b4ade0ccecb4e00033f8615489073c5d985",
+    "receipt/identity.json": "59853975bd1de3e1a2c0660ab8aac641053a562adb38fcda5d8fe855b23ff409",
+    "seed-run.json": "6e6ee807b1f4e7e3e862546ed48fd8ec3b4bed5e3bdea08b9ef4e3e601cf6154",
+    "seed-run.log": "a28be440cebfbfad3eeef39e6a32ecd5a22d63f22af2b7c4d114c5fc3ee12f86",
+    "seed/enrollment/bundle/manifest.json": "df676ebc085c561675da9eea569c24f50d5abdb7a116f5b1bc7f05d7b9c65e00",
+    "seed/enrollment/bundle/native.bep.json": "ed2c53dc68c1fb6ef6834c4a01864b9b6994ebf71cdc815dbfb3abf96aa483b1",
+    "seed/enrollment/bundle/query.xml": "2f3f387104adb760848ba4ca55af9461f201f5d5835f53732e9751f07e7ff3fe",
+    "seed/enrollment/capture/native/native.log": "698c62a2abb086e91064a917b8561fcd230f7e7be4a42f54beb66021aa7166cf",
+    "seed/enrollment/collection.json": "907c427734d4e41fb1e78114d99c804152cceebb5d45822de81ff846ec17e28c"
+  },
+  "cache_content": {
+    "bytes": 858019906,
+    "files": 7564,
+    "schema_version": "1",
+    "tree_digest": "12ad48c0fdff50cb050cab5058f420f26c34dd68016e7a1e2ce45584743a48eb"
+  },
+  "cache_identity": {
+    "key": "smartci-native-v1-e101dfc59d30ce735c2f49484fe20b57c57df3b1-e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6-25e32aba39624c70260b82c7aaf42adf6887f334",
+    "profile_sha256": "e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6",
+    "revision": "e101dfc59d30ce735c2f49484fe20b57c57df3b1",
+    "schema_version": "1",
+    "tool_revision": "25e32aba39624c70260b82c7aaf42adf6887f334"
+  },
+  "cache_storage": {
+    "created_at": "2026-11-26T10:17:40.475125Z",
+    "id": 11147067505,
+    "key": "smartci-native-v1-e101dfc59d30ce735c2f49484fe20b57c57df3b1-e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6-25e32aba39624c70260b82c7aaf42adf6887f334",
+    "last_accessed_at": "2026-11-26T10:17:40.475125Z",
+    "ref": "refs/heads/codex/native-cache-base",
+    "size_in_bytes": 112954696,
+    "version": "21104d45a637519b20c640f9bb169051a0f2a2b9c9b6185358ed29e1f2689c62"
+  },
+  "collection": {
+    "cache": "rejected",
+    "config_digest": "ec97bd733bc9e751348bab3a6e47f1744d00367cfd8c454369074e82ef0bf090",
+    "manifest_digest": "df676ebc085c561675da9eea569c24f50d5abdb7a116f5b1bc7f05d7b9c65e00",
+    "map_revision": "e101dfc59d30ce735c2f49484fe20b57c57df3b1",
+    "model_calls": 0,
+    "native_build_only_targets": 324,
+    "native_exit": 0,
+    "native_test_targets": 252,
+    "query_exit": 0,
+    "revision": "e101dfc59d30ce735c2f49484fe20b57c57df3b1",
+    "schema_version": "smartci.bazel-collection.v1",
+    "status": "ready"
+  },
+  "commands": {
+    "native": {
+      "command_seconds": 920.8246686260001,
+      "error": null,
+      "exit_code": 0
+    },
+    "query": {
+      "command_seconds": 14.049961168999971,
+      "error": null,
+      "exit_code": 0
+    }
+  },
+  "compatible_map_reuse": {
+    "cache": "reused",
+    "config_digest": "ec97bd733bc9e751348bab3a6e47f1744d00367cfd8c454369074e82ef0bf090",
+    "manifest_digest": "df676ebc085c561675da9eea569c24f50d5abdb7a116f5b1bc7f05d7b9c65e00",
+    "map_revision": "e101dfc59d30ce735c2f49484fe20b57c57df3b1",
+    "model_calls": 0,
+    "native_build_only_targets": 324,
+    "native_exit": null,
+    "native_test_targets": 252,
+    "query_exit": null,
+    "revision": "e101dfc59d30ce735c2f49484fe20b57c57df3b1",
+    "schema_version": "smartci.bazel-collection.v1",
+    "status": "ready"
+  },
+  "limits": [
+    "Second seed required to correct experiment setup; retain first-seed and full-fallback costs.",
+    "Controlled disk cache, not upstream private-cache behavior.",
+    "Enrollment cost, not PR saving."
+  ],
+  "model_calls": 0,
+  "native_scope": {
+    "build_configurations": 576,
+    "build_only_targets": 324,
+    "passed_test_targets": 252
+  },
+  "previous_cache_cleanup": {
+    "deleted_at": "2026-11-26T10:01:20.018581+00:00",
+    "deleted_cache": {
+      "created_at": "2026-11-26T09:41:23.289046Z",
+      "id": 11145401082,
+      "key": "smartci-native-v1-08f1bcddc9372a42496fea05a81f9d6b7ad6122d-e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6-25e32aba39624c70260b82c7aaf42adf6887f334",
+      "last_accessed_at": "2026-11-26T09:45:15.128546Z",
+      "ref": "refs/heads/codex/native-cache-base",
+      "size_in_bytes": 112871152,
+      "version": "21104d45a637519b20c640f9bb169051a0f2a2b9c9b6185358ed29e1f2689c62"
+    },
+    "reason": "Replace only completed initial experiment seed after preserving full-fallback PR evidence",
+    "remaining_cache_count": 0
+  },
+  "revision": "e101dfc59d30ce735c2f49484fe20b57c57df3b1",
+  "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45797438847",
+  "runner_cpu": "Intel(R) Xeon(R) Platinum 8370C (4) @ 2.80 GHz",
+  "runner_policy_restored": true,
+  "runner_seconds": 963.0,
+  "schema_version": "smartci.native-cache-seed.v1",
+  "source": "GitHub Actions run, downloaded native artifacts and cache API metadata",
+  "tool_revision": "25e32aba39624c70260b82c7aaf42adf6887f334",
+  "workflow_completed_at": "2026-11-26T10:17:49Z",
+  "workflow_created_at": "2026-11-26T10:01:42Z",
+  "workflow_seconds": 967.0
+}
