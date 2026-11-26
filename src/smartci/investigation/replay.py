@@ -41,3 +41,64 @@ class ImportReplay:
             if location is None
             else {"kind": "inspect", **location.model_dump()}
         )
+
+
+class DiagnosticReplay:
+    """Offline tool-routing control, not evidence of LLM effectiveness.
+
+    Choose the process inspector for process gaps when trusted registration
+    advertises it. Feed observations back into verified positive proposals.
+    No diagnostic, including a successful inspection, can clear an unknown.
+    """
+
+    name = "rule-driven-diagnostic-replay-v1"
+
+    def __init__(self) -> None:
+        self.pending: list[dict[str, object]] = []
+        self.locations: list[dict[str, object]] | None = None
+
+    def next_action(self, context: str) -> str:
+        data = json.loads(context)
+        capabilities = {
+            item["adapter"]: item["relation"] for item in data["evidence_adapters"]
+        }
+        if self.locations is None:
+            paths = sorted(
+                {
+                    issue.split(":", 2)[1]
+                    for issue in data["unresolved"]
+                    if issue.startswith("DYNAMIC_PROCESS:")
+                    and len(issue.split(":", 2)) == 3
+                }
+            )[:4]
+            self.locations = [
+                {
+                    "kind": "inspect",
+                    "adapter": "python-process-script-v1",
+                    "revision": revision,
+                    "path": path,
+                }
+                for path in paths
+                for revision in sorted(set(data["comparison"].values()))
+                if "python-process-script-v1" in capabilities
+            ]
+        previous = data["previous"]
+        if previous and "facts" in previous:
+            observation = Observation.model_validate(previous)
+            self.pending.extend(
+                {
+                    "kind": "propose",
+                    "revision": observation.revision,
+                    "path": observation.path,
+                    "target": fact.target,
+                    "line": fact.line,
+                    "evidence": observation.evidence,
+                    "relation": capabilities[observation.adapter],
+                }
+                for fact in observation.facts[:2]
+            )
+        if self.pending:
+            return json.dumps(self.pending.pop(0))
+        return json.dumps(
+            self.locations.pop(0) if self.locations else {"kind": "finish"}
+        )

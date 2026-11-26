@@ -1,0 +1,71 @@
+{
+  "schema": "smartci.textual-process-evidence-record.v1",
+  "smartci_pr": "https://github.com/SharmaKunal14/smart-ci/pull/23",
+  "tool_head": "2fc38ddfe8dea50eb54e2f32226724b0ac8cb968",
+  "audit_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45811172563",
+  "audit_conclusion": "success",
+  "audit_job": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45811172563/job/139879141308",
+  "audit_runner_seconds": 41,
+  "artifact_name": "textual-process-evidence-1",
+  "artifact_sha256": {
+    "summary.json": "4362f7bbf34d583f8bfde0ee586341363f21b93563d79ab931d6c05d2853b3c3",
+    "control.json": "c6deb9296204c602e93eaa6fc7451878e57892332099c4c26ba8c59a93a0854f",
+    "candidate.json": "9246e249a3588bd9330262c107bd84b2650b607ea8ce3a9c488755d85406d61d"
+  },
+  "result": {
+    "schema_version": "smartci.process-evidence-audit.v1",
+    "run_id": "45811172563",
+    "run_attempt": "1",
+    "workflow_sha": "1006694a8519e46d24d395e6957f9e8583d52d40",
+    "source_pr": "https://github.com/SharmaKunal14/textual/pull/11",
+    "source_run": "https://github.com/SharmaKunal14/textual/actions/runs/45058699772",
+    "source_input_sha256": "e8188837095af250f14c13f312c226c745e7f64751a4fb922664d1af034a099b",
+    "input_digest": "0459db29342b0202eec27450bbdb66bcb9f53e3d20df463d4ab1231d5f07d546",
+    "base": "ae23055a7898901a3aa69229bf9359b110be739e",
+    "head": "b99f72e9691c85f18fd773df427cb5e7a493470d",
+    "control_new_edges": 0,
+    "candidate_new_versioned_edges": 2,
+    "unique_relationships": [
+      [
+        "tests/test_pipe.py",
+        "tests/deadlock.py"
+      ]
+    ],
+    "known_graph_reachability": {
+      "base": {
+        "before": 250,
+        "after": 251
+      },
+      "head": {
+        "before": 250,
+        "after": 251
+      }
+    },
+    "candidate_digest": "be9188629b1a48d740058f97f8c7c93842b1dc4b9ee9284941be4b73f7712151",
+    "deterministic_replay": true,
+    "unresolved_preserved": 14,
+    "selected_test_files": 251,
+    "execution": "full",
+    "fallback": [
+      "INCOMPLETE_EVIDENCE"
+    ],
+    "model_calls": 0,
+    "test_execution": "none; source-only investigation audit",
+    "speedup_demonstrated": false,
+    "model_effectiveness_measured": false
+  },
+  "initial_safety_check": {
+    "run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45811172491",
+    "conclusion": "failure",
+    "passed_tests": 918,
+    "failed_tests": 1,
+    "failure": "test_exported_schemas_match_models: optional adapter field missing from committed JSON schema",
+    "repair": "Regenerate exported investigation-action schema; verify repaired head in PR checks."
+  },
+  "limitations": [
+    "Replays pinned evidence from a real PR; this is not a new Textual test execution or CI performance comparison.",
+    "One unique missing relationship is verified at two revisions; all 14 unknowns and full fallback remain.",
+    "The provider is a rule-driven diagnostic control, not a live-model evaluation.",
+    "Known graph reachability grows from 250 to 251 files; no useful subset or savings is demonstrated."
+  ]
+}

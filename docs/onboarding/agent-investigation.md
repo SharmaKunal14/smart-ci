@@ -13,8 +13,10 @@ Replay remains the default. No AWS resource or merge is enabled.
    not assertions supplied by a model. Their digest binds the investigation.
 2. A provider chooses `search_paths`, `inspect`, `query_graph`, `propose`,
    `unresolved` or `finish` from the preceding observation. The shipped provider
-   is a **rule-driven mock**: it inspects configured locations and submits up to
-   two explicit import facts from each result. It is not an LLM simulation.
+   defaults to a **rule-driven mock**: it inspects configured locations and submits
+   up to two explicit import facts from each result. The optional diagnostic
+   replay routes process gaps to a registered process inspector. Neither replay
+   measures LLM reasoning or quality.
 3. The broker accepts only paths in the source catalog and exact base/head object
    IDs. It reads Git blobs with bounded commands and verifies content hashes. It
    never executes repository source, model-supplied commands or arbitrary tools.
@@ -24,8 +26,10 @@ Replay remains the default. No AWS resource or merge is enabled.
    comments cannot expand tool authority.
 4. An evidence adapter verifies positive claims. The first adapter recognizes
    explicit absolute Python imports resolving to exactly one local module under
-   configured roots. Relative/dynamic imports, plugins, subprocesses, resources
-   and attributes are unsupported. A real literal import establishes a possible
+   configured roots. A second, opt-in adapter recognizes bounded file-anchored
+   Python script arguments in process calls; see [process evidence](process-evidence.md).
+   Both are positive evidence only. General dynamic imports, plugin behavior,
+   process side effects, resources and attributes remain unresolved. A literal import establishes a possible
    relationship, not its exclusive ownership or necessity during every test.
 5. Only matching broker-generated observations can create accepted edges. Record
    source hash, revision, line, verifier, original graph status and graph version.

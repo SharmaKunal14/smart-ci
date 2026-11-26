@@ -100,6 +100,7 @@ def investigate(
                 "previous": previous,
                 "remaining_steps": limits.steps - step,
                 "authority": "propose_additions_only",
+                "evidence_adapters": broker.capabilities(),
             },
             sort_keys=True,
         )
