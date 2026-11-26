@@ -4,7 +4,7 @@ Updated: 26 November 2026
 
 Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Packaging selective execution and trusted baseline reuse remain unverified. The OnRecord TypeScript/Vitest pilot passed live GitHub PRs #29 (103 files / 440 cases, full fallback) and #30 (64 files / 280 cases, actual subset without fallback), with on-demand map rebuilding. Both remain unmerged; broader correctness and performance evaluation remain outstanding. No AWS resources. A separately approved bounded live investigation has now made three paid generation calls; see its evidence below.
 
-Current priority: verify the automatic native PR integration on live shared-change and new-target/full-fallback cases, then evaluate representative caching. A repeat on unchanged PRs #13/#14 also passed: **724 seconds native versus 497 seconds Smart CI** from actual reopened event to completed workflow (227 seconds / 31.4% faster), with a byte-identical plan. See the [repeat record](docs/benchmarks/abseil-automatic-repeat-2026-11-26.json). Its first real pair, Abseil PRs #13/#14, passed with **626 seconds native versus 413 seconds Smart CI from PR creation to completed workflow** (213 seconds / 34.0% faster). Smart CI discovered the current reviewed map without a saved run ID, selected 2/252 test targets, retained all 324 build-only targets, and reduced Bazel actions from 2,988 to 1,092. This is one cold-run pair replaying the same historical localized fix, not a representative average. See the [record](docs/benchmarks/abseil-automatic-execution-2026-11-26.json).
+Current priority: verify the automatic native PR integration on live shared-change and new-target/full-fallback cases, then evaluate representative caching. A repeat on unchanged PRs #13/#14 also passed: **724 seconds native versus 497 seconds Smart CI** from actual reopened event to completed workflow (227 seconds / 31.4% faster), with a byte-identical plan. See the [repeat record](docs/benchmarks/abseil-automatic-repeat-2026-11-26.json). Its first real pair, Abseil PRs #13/#14, passed with **626 seconds native versus 413 seconds Smart CI from PR creation to completed workflow** (213 seconds / 34.0% faster). Smart CI discovered the current reviewed map without a saved run ID, selected 2/252 test targets, retained all 324 build-only targets, and reduced Bazel actions from 2,988 to 1,092. Both pairs replay the same historical localized fix on cold runners; they are not a representative average. See the [record](docs/benchmarks/abseil-automatic-execution-2026-11-26.json).
 
 Historical evidence remains separate: the old standalone harness's PR #10 measured 655 seconds native versus 544 seconds Smart CI from the actual PR event to completed workflow (111 seconds / 16.9% faster). Earlier paired localized runs measured 1,061/315 seconds and 619/324 seconds from workflow trigger to job completion, with identical plans. These are repeated measurements of one historical source fix, not independent new scenarios.
 
@@ -66,8 +66,9 @@ new comparison replayed the historical localized fix on identical application
 trees. [Native run 45771460665](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45771460665)
 and [Smart CI run 45772824303](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45772824303)
 both passed, with the 626/413-second end-to-end result above. The first run is a
-compatible-map hit; the later repeat and regression cases above are verified, and successful reconstruction above are verified, while shared changes and new-target
-full fallback remain live-verification gates. Hosted safety checks passed 817 tests plus formatting,
+compatible-map hit. The later repeat, regression and successful reconstruction
+cases above are verified; shared changes and new-target full fallback remain
+live-verification gates. Hosted safety checks passed 817 tests plus formatting,
 lint, types and package builds. See [execution onboarding](docs/onboarding/bazel-execution.md).
 
 ### Active goal completion gates
