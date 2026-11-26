@@ -28,11 +28,19 @@ The [live subset PR](https://github.com/SharmaKunal14/slack-incidence-evidence/p
 
 ## Native Bazel evidence and planning
 
-The Abseil pilot has a verified one-job localized comparison: **655 seconds native
-versus 544 seconds Smart CI from PR event to completed workflow**, retaining all
-324 build-only targets while selecting 2/252 test targets. Broad changes showed no
-useful benefit. See the [native comparison](docs/onboarding/native-build-graphs.md)
-for exact GitHub runs, negative results, cold-cache limits and remaining work.
+The automatic Abseil integration's first real PR pair measured **626 seconds native
+versus 413 seconds Smart CI from PR creation to completed workflow**: 213 seconds /
+34.0% saved, selecting 2/252 test targets while retaining all 324 build-only targets.
+A repeat on unchanged PR code measured **724/497 seconds**, saving 31.4%, with a
+byte-identical plan and the same verified native scope.
+See the [execution comparison](docs/onboarding/bazel-execution.md#first-real-pr-comparison)
+for exact runs, audit artifacts and limits. These repeat one historical localized
+fix on cold runners, not a representative average. The earlier standalone harness
+measured 655/544 seconds for that fix; broad changes showed no useful benefit.
+The [approach comparison](docs/onboarding/approach-evidence.md) preserves the
+negative import, runtime and live-agent results alongside these native savings.
+The [earlier native comparison](docs/onboarding/native-build-graphs.md) retains those
+measurements and negative results.
 
 `smartci bazel pack` now packages validated native captures into revision/profile-bound
 bundles, and `smartci bazel plan` produces deterministic plans from an authenticated
@@ -42,7 +50,7 @@ rebuilds missing or incompatible maps, or reuses a validated compatible bundle.
 Its [fresh GitHub enrollment passed](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45764627612):
 252 native test targets passed, all 324 build-only targets were retained, and a
 compatible map was reused without rerunning native/query commands. This does not establish arbitrary-project
-compatibility or complete PR execution integration. See
+compatibility. See
 [automatic collection](docs/onboarding/bazel-collection.md) and the
 [bundle workflow](docs/onboarding/bazel-bundles.md)
 for commands, trust boundaries, full fallback and verification.
@@ -50,8 +58,21 @@ for commands, trust boundaries, full fallback and verification.
 without configured run IDs. It rejects unapproved publishers and invalid evidence;
 a miss requires rebuilding or full execution. A
 [separate hosted consumer passed](https://github.com/SharmaKunal14/smart-ci/actions/runs/45767540576),
-including repeatable subset/full plans and tampered-map fallback. Complete automatic
-PR execution remains to be integrated; these checks are not a new PR savings measurement.
+including repeatable subset/full plans and tampered-map fallback. Those planning
+checks are separate from the actual execution comparison above.
+
+[`smartci bazel execute`](docs/onboarding/bazel-execution.md) runs and reconciles
+the actual native test plan. The Abseil PR workflow retrieves a reviewed map or
+reconstructs missing evidence before execution. The first compatible-map
+PR comparison and repeat passed. Live regression checks preserve both native
+compiler failures; missing-map recovery rebuilds the base and restores the head.
+A new-target full-fallback pair also passes all 253 current tests, including the
+test absent from the saved map. Its 665/1,068-second result shows no saving.
+The broad shared-change comparison passes 251/252 tests and preserves build-only
+scope. Its 1,074/660-second result is confounded by different CPUs; only seven
+Bazel actions were avoided, so a substantial selection benefit is not established.
+Representative native-cache evaluation remains outstanding. See the execution
+guide for exact runs and evidence limits.
 
 ## Setup and verification
 

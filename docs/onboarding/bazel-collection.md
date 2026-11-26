@@ -115,6 +115,7 @@ from a reviewed GitHub publisher without hard-coded run IDs. Its transport check
 are tested with controlled API responses. Fresh native publication is now
 verified, as is [separate hosted retrieval and consumption](https://github.com/SharmaKunal14/smart-ci/actions/runs/45767540576).
 The consumer reproduced historical subset/full plans and tampered-map fallback;
-it did not execute new native tests. Complete PR runner integration remains
-required. A map or receipt
+it did not execute new native tests. The subsequent
+[native PR executor](bazel-execution.md) has a first passing compatible-map PR
+comparison; its live reconstruction/fallback cases remain to be verified. A map or receipt
 supplied by the PR is not trusted merely because its hashes match.

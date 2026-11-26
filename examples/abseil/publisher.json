@@ -1,0 +1,1 @@
+{"artifact_prefix":"native-enrollment","branch":"codex/native-collection-onboarding","event":"push","max_age_seconds":604800,"repository":"SharmaKunal14/abseil-cpp","schema_version":"1","workflow":".github/workflows/smartci-native-query.yml","workflow_digest":"56bf5bb109e9509c3eb85e1eb5470808039daf40c6395f0861b428a39ed909ba"}

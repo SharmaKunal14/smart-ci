@@ -1,0 +1,591 @@
+{
+  "arms": {
+    "candidate": {
+      "artifact_sha256": {
+        "native-pr/execution/capture/native.bep.json": "f1df3d3f7c3fd75b03e45c00f1734ebccee51f5103d44f5028e879932873f78a",
+        "native-pr/execution/execution.json": "6a8ef660961f97ee3565854921543b860b1c2f0cfb7936db60e0edb9d02e4cf0"
+      },
+      "bazel_action_cache_statistics": {
+        "loadTimeInMs": "1",
+        "missDetails": [
+          {},
+          {
+            "reason": "DIFFERENT_DEPS"
+          },
+          {
+            "reason": "DIFFERENT_ENVIRONMENT"
+          },
+          {
+            "reason": "DIFFERENT_FILES"
+          },
+          {
+            "reason": "CORRUPTED_CACHE_ENTRY"
+          },
+          {
+            "count": 2628,
+            "reason": "NOT_CACHED"
+          },
+          {
+            "count": 367,
+            "reason": "UNCONDITIONAL_EXECUTION"
+          },
+          {
+            "reason": "DIGEST_MISMATCH"
+          }
+        ],
+        "misses": 2995,
+        "saveTimeInMs": "5",
+        "sizeInBytes": "561464"
+      },
+      "bazel_actions": 2995,
+      "bazel_timing_metrics": {
+        "actionsExecutionStartInMs": "5668",
+        "analysisPhaseTimeInMs": "9354",
+        "cpuTimeInMs": "86460",
+        "criticalPathTime": "89.701545645s",
+        "executionPhaseTimeInMs": "791573",
+        "wallTimeInMs": "797356"
+      },
+      "build_configurations": 577,
+      "build_only_targets": 324,
+      "command_seconds": 1043.684350082,
+      "compile_failed_targets": [],
+      "conclusion": "success",
+      "cpu_evidence_sha256": "100e263b08c62d1b3c1e369add4d33b8a009c5c83833919a382e1470e58bf911",
+      "end_to_end_seconds": 1068.0,
+      "event_at": "2026-11-26T08:16:21Z",
+      "event_kind": "opened",
+      "event_sha256": "06f9f8274ae03ea8a7dbad6f4f2146063183af9e4d725c41b7a0330d93632890",
+      "head": "2a64a2d20ecad26feabf231995aa7247735967ba",
+      "log_sha256": "9183d1e335024f88af7934044b8e060de2fdaa8653e74290842ccd1dc4eda007",
+      "metadata_sha256": "e1f04232d28fb209c58db07d276721bffe4f14b3f85483d1d42326cbcc6fa385",
+      "planning_seconds": 0.6870356719999791,
+      "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/19",
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45781766957",
+      "runner_cpu": "AMD EPYC 7763 64-Core (4) @ 3.24 GHz",
+      "runner_policy_restored": true,
+      "runner_seconds": 1062.0,
+      "source_tree_digest": "eaf3950159f2c729d053ec4ed13c16e0af413c2196c9d133b70c598d9142ec61",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "seconds": 1.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 3.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+          "seconds": 1.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+          "seconds": 1.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Install planner and prepare local command configuration",
+          "seconds": 2.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Discover the current reviewed publisher map",
+          "seconds": 3.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Bound unused system crash processing on this disposable runner",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Bound the separate Apport crash-report hook",
+          "seconds": 1.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Execute the native PR plan or independent full fallback",
+          "seconds": 1046.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Restore the Apport hook on the disposable runner",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Restore disposable runner policy",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Publish native execution and map lifecycle evidence",
+          "seconds": 1.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+          "seconds": 1.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "seconds": 0.0
+        }
+      ],
+      "test_status_counts": {
+        "PASSED": 253
+      },
+      "test_targets_executed": 253,
+      "workflow_completed_at": "2026-11-26T08:34:09Z",
+      "workflow_created_at": "2026-11-26T08:16:24Z"
+    },
+    "control": {
+      "artifact_sha256": {
+        "native-control/execution.json": "752e0788b5dfe66e33581b31cc62894015d1441d38d8dcc896162acf00ec7925",
+        "native-control/native.bep.json": "102948a1cb627aa8439ad886af510c5c77b3fc3b97cca025bc9efdda981bcbaf"
+      },
+      "bazel_action_cache_statistics": {
+        "loadTimeInMs": "2",
+        "missDetails": [
+          {},
+          {
+            "reason": "DIFFERENT_DEPS"
+          },
+          {
+            "reason": "DIFFERENT_ENVIRONMENT"
+          },
+          {
+            "reason": "DIFFERENT_FILES"
+          },
+          {
+            "reason": "CORRUPTED_CACHE_ENTRY"
+          },
+          {
+            "count": 2628,
+            "reason": "NOT_CACHED"
+          },
+          {
+            "count": 367,
+            "reason": "UNCONDITIONAL_EXECUTION"
+          },
+          {
+            "reason": "DIGEST_MISMATCH"
+          }
+        ],
+        "misses": 2995,
+        "saveTimeInMs": "2",
+        "sizeInBytes": "560863"
+      },
+      "bazel_actions": 2995,
+      "bazel_timing_metrics": {
+        "actionsExecutionStartInMs": "3788",
+        "analysisPhaseTimeInMs": "6320",
+        "cpuTimeInMs": "57770",
+        "criticalPathTime": "63.469587093s",
+        "executionPhaseTimeInMs": "490495",
+        "wallTimeInMs": "494353"
+      },
+      "build_configurations": 577,
+      "build_only_targets": 324,
+      "command_seconds": 644.3495107480001,
+      "compile_failed_targets": [],
+      "conclusion": "success",
+      "cpu_evidence_sha256": "78934f01722611bd2a15f28725bf854d64a8009f38c8a106cdd32b4164f9a982",
+      "end_to_end_seconds": 665.0,
+      "event_at": "2026-11-26T08:16:18Z",
+      "event_kind": "opened",
+      "event_sha256": "295cb1ab92407e0715f64b0318e3d4ca0adb194169e0607bd4a739eb77aa10a4",
+      "head": "341e3f3c69734686a37cffb9fb07a066f331678a",
+      "log_sha256": "78934f01722611bd2a15f28725bf854d64a8009f38c8a106cdd32b4164f9a982",
+      "metadata_sha256": "4922d96e4314b41ee1b30cc0e500dc012016d8a167c02b34dd7c37651c3a384f",
+      "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/18",
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45781761990",
+      "runner_cpu": "Intel(R) Xeon(R) 6975P-C (4) @ 3.90 GHz",
+      "runner_policy_restored": true,
+      "runner_seconds": 657.0,
+      "source_tree_digest": "eaf3950159f2c729d053ec4ed13c16e0af413c2196c9d133b70c598d9142ec61",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "seconds": 3.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 5.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 1.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Bound unused system crash processing on this disposable runner",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Bound the separate Apport crash-report hook",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Run the independent complete native suite",
+          "seconds": 645.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Restore the Apport hook on the disposable runner",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Restore disposable runner policy",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Publish native execution and map lifecycle evidence",
+          "seconds": 1.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "seconds": 0.0
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "seconds": 1.0
+        }
+      ],
+      "test_status_counts": {
+        "PASSED": 253
+      },
+      "test_targets_executed": 253,
+      "workflow_completed_at": "2026-11-26T08:27:23Z",
+      "workflow_created_at": "2026-11-26T08:16:22Z"
+    }
+  },
+  "base": "55f65c8c4578d47905408693b37d9ba2672dd607",
+  "build_only_configurations_preserved": true,
+  "cached_inventory_test_count": 252,
+  "complete_git_trees_identical": true,
+  "fallback": [
+    "MAP_INPUTS_CHANGED",
+    "UNSUPPORTED_OR_RISK_CHANGE"
+  ],
+  "interpretation": "Full-fallback correctness verified; no speedup. The old map lists 252 tests but the independent full command discovers all 253 current tests. Both arms execute 2,995 actions. Most elapsed-time difference is inside the native command, not planning.",
+  "lifecycle": {
+    "map": "retrieved",
+    "rebuild": null
+  },
+  "limits": [
+    "One cold pair; runner, image download and native execution variance are not controlled by identical source trees.",
+    "Bazel target counts are not individual C++ test cases.",
+    "No actual native failures in this passing case; zero missed failures is an empty failure-set comparison, not a regression recall estimate.",
+    "Full fallback does not narrow execution to the old 252-target inventory.",
+    "No warm native cache, arbitrary repository compatibility or universal safety claim.",
+    "Observed runner CPUs differ: Intel Xeon 6975P-C native versus AMD EPYC 7763 candidate. Do not attribute timing variance solely to Smart CI."
+  ],
+  "missed_native_failures": 0,
+  "mode": "full",
+  "model_calls": 0,
+  "native_minus_smartci_seconds": -403.0,
+  "new_target": "//absl/container:linked_hash_node_insertion_test",
+  "plan_digest": "6d80629595185a3b725ff89343314cdad1e8b2da510ba267f3c5a18929a8e6d6",
+  "plan_sha256": "e120a232e6fdf6ec6dc3bc8f2d60ee86ea98dd6fe145c1348cf517f9c7d43ecc",
+  "production_omission_authorized": false,
+  "saving_percent": -60.6015037593985,
+  "scenario": "new-target-full-fallback",
+  "schema_version": "smartci.native-pr-comparison.v1",
+  "selected": [
+    "//absl/algorithm:algorithm_test",
+    "//absl/algorithm:container_test",
+    "//absl/base:atomic_hook_test",
+    "//absl/base:attributes_test",
+    "//absl/base:bit_cast_test",
+    "//absl/base:c_header_test",
+    "//absl/base:call_once_test",
+    "//absl/base:casts_test",
+    "//absl/base:config_test",
+    "//absl/base:cpu_detect_test",
+    "//absl/base:endian_test",
+    "//absl/base:errno_saver_test",
+    "//absl/base:exception_safety_testing_test",
+    "//absl/base:fast_type_id_test",
+    "//absl/base:hardening_test",
+    "//absl/base:iterator_traits_test",
+    "//absl/base:log_severity_test",
+    "//absl/base:low_level_alloc_test",
+    "//absl/base:no_destructor_test",
+    "//absl/base:nullability_default_nonnull_test",
+    "//absl/base:nullability_test",
+    "//absl/base:nullability_traits_test",
+    "//absl/base:optimization_test",
+    "//absl/base:poison_test",
+    "//absl/base:prefetch_test",
+    "//absl/base:raw_logging_test",
+    "//absl/base:scoped_set_env_test",
+    "//absl/base:spinlock_profiling_test",
+    "//absl/base:spinlock_test",
+    "//absl/base:strerror_test",
+    "//absl/base:sysinfo_test",
+    "//absl/base:thread_identity_test",
+    "//absl/base:throw_delegate_test",
+    "//absl/base:tracing_internal_strong_test",
+    "//absl/base:tracing_internal_weak_test",
+    "//absl/base:unique_small_name_test",
+    "//absl/cleanup:cleanup_test",
+    "//absl/container:btree_instantiate_test",
+    "//absl/container:btree_test",
+    "//absl/container:chunked_queue_test",
+    "//absl/container:common_policy_traits_test",
+    "//absl/container:compressed_tuple_test",
+    "//absl/container:container_memory_test",
+    "//absl/container:fixed_array_exception_safety_test",
+    "//absl/container:fixed_array_test",
+    "//absl/container:flat_hash_map_test",
+    "//absl/container:flat_hash_set_test",
+    "//absl/container:hash_function_defaults_test",
+    "//absl/container:hash_policy_testing_test",
+    "//absl/container:hash_policy_traits_test",
+    "//absl/container:hashtable_control_bytes_test",
+    "//absl/container:hashtablez_sampler_test",
+    "//absl/container:inlined_vector_exception_safety_test",
+    "//absl/container:inlined_vector_test",
+    "//absl/container:layout_test",
+    "//absl/container:linked_hash_map_test",
+    "//absl/container:linked_hash_set_test",
+    "//absl/container:node_hash_map_test",
+    "//absl/container:node_hash_set_test",
+    "//absl/container:node_slot_policy_test",
+    "//absl/container:raw_hash_set_allocator_test",
+    "//absl/container:raw_hash_set_resize_impl_test",
+    "//absl/container:raw_hash_set_test",
+    "//absl/container:sample_element_size_test",
+    "//absl/container:test_instance_tracker_test",
+    "//absl/container:unordered_map_test",
+    "//absl/container:unordered_set_test",
+    "//absl/crc:crc32c_test",
+    "//absl/crc:crc_cord_state_test",
+    "//absl/crc:crc_memcpy_test",
+    "//absl/crc:non_temporal_memcpy_test",
+    "//absl/debugging:bounded_utf8_length_sequence_test",
+    "//absl/debugging:decode_rust_punycode_test",
+    "//absl/debugging:demangle_rust_test",
+    "//absl/debugging:demangle_test",
+    "//absl/debugging:failure_signal_handler_test",
+    "//absl/debugging:leak_check_test",
+    "//absl/debugging:stack_consumption_test",
+    "//absl/debugging:stacktrace_test",
+    "//absl/debugging:symbolize_test",
+    "//absl/debugging:utf8_for_code_point_test",
+    "//absl/flags:commandlineflag_test",
+    "//absl/flags:config_test",
+    "//absl/flags:flag_test",
+    "//absl/flags:marshalling_test",
+    "//absl/flags:parse_test",
+    "//absl/flags:path_util_test",
+    "//absl/flags:program_name_test",
+    "//absl/flags:reflection_test",
+    "//absl/flags:sequence_lock_test",
+    "//absl/flags:usage_config_test",
+    "//absl/flags:usage_test",
+    "//absl/functional:any_invocable_test",
+    "//absl/functional:bind_back_test",
+    "//absl/functional:bind_front_test",
+    "//absl/functional:function_ref_test",
+    "//absl/functional:overload_test",
+    "//absl/hash:canonical_hash_test",
+    "//absl/hash:city_test",
+    "//absl/hash:hash_instantiated_test",
+    "//absl/hash:hash_test",
+    "//absl/hash:low_level_hash_test",
+    "//absl/log/internal:container_test",
+    "//absl/log/internal:fnmatch_test",
+    "//absl/log/internal:stderr_log_sink_test",
+    "//absl/log/internal:structured_proto_test",
+    "//absl/log:absl_check_test",
+    "//absl/log:absl_log_basic_test",
+    "//absl/log:check_test",
+    "//absl/log:die_if_null_test",
+    "//absl/log:flags_test",
+    "//absl/log:globals_test",
+    "//absl/log:log_basic_test",
+    "//absl/log:log_entry_test",
+    "//absl/log:log_format_test",
+    "//absl/log:log_macro_hygiene_test",
+    "//absl/log:log_modifier_methods_test",
+    "//absl/log:log_sink_test",
+    "//absl/log:log_streamer_test",
+    "//absl/log:scoped_mock_log_test",
+    "//absl/log:stripping_test",
+    "//absl/log:structured_test",
+    "//absl/log:vlog_is_on_test",
+    "//absl/memory:memory_test",
+    "//absl/meta:constexpr_testing_test",
+    "//absl/meta:requires_test",
+    "//absl/meta:type_traits_test",
+    "//absl/numeric:bits_test",
+    "//absl/numeric:int128_test",
+    "//absl/profiling:exponential_biased_test",
+    "//absl/profiling:periodic_sampler_test",
+    "//absl/profiling:sample_recorder_test",
+    "//absl/random/internal:chi_square_test",
+    "//absl/random/internal:distribution_test_util_test",
+    "//absl/random/internal:entropy_pool_test",
+    "//absl/random/internal:explicit_seed_seq_test",
+    "//absl/random/internal:fast_uniform_bits_test",
+    "//absl/random/internal:fastmath_test",
+    "//absl/random/internal:generate_real_test",
+    "//absl/random/internal:iostream_state_saver_test",
+    "//absl/random/internal:nonsecure_base_test",
+    "//absl/random/internal:pcg_engine_test",
+    "//absl/random/internal:randen_engine_test",
+    "//absl/random/internal:randen_hwaes_test",
+    "//absl/random/internal:randen_slow_test",
+    "//absl/random/internal:randen_test",
+    "//absl/random/internal:salted_seed_seq_test",
+    "//absl/random/internal:seed_material_test",
+    "//absl/random/internal:traits_test",
+    "//absl/random/internal:uniform_helper_test",
+    "//absl/random/internal:wide_multiply_test",
+    "//absl/random:bernoulli_distribution_test",
+    "//absl/random:beta_distribution_test",
+    "//absl/random:bit_gen_ref_test",
+    "//absl/random:discrete_distribution_test",
+    "//absl/random:distributions_test",
+    "//absl/random:examples_test",
+    "//absl/random:exponential_distribution_test",
+    "//absl/random:gaussian_distribution_test",
+    "//absl/random:generators_test",
+    "//absl/random:log_uniform_int_distribution_test",
+    "//absl/random:mock_distributions_test",
+    "//absl/random:mocking_bit_gen_test",
+    "//absl/random:poisson_distribution_test",
+    "//absl/random:seed_sequences_test",
+    "//absl/random:uniform_int_distribution_test",
+    "//absl/random:uniform_real_distribution_test",
+    "//absl/random:zipf_distribution_test",
+    "//absl/status:status_builder_test",
+    "//absl/status:status_macros_test",
+    "//absl/status:status_matchers_test",
+    "//absl/status:status_matchers_with_unqualified_macros_test",
+    "//absl/status:status_test",
+    "//absl/status:statusor_test",
+    "//absl/strings:append_and_overwrite_test",
+    "//absl/strings:ascii_test",
+    "//absl/strings:char_formatting_test",
+    "//absl/strings:charconv_bigint_test",
+    "//absl/strings:charconv_parse_test",
+    "//absl/strings:charconv_test",
+    "//absl/strings:charset_test",
+    "//absl/strings:cord_buffer_test",
+    "//absl/strings:cord_data_edge_test",
+    "//absl/strings:cord_rep_btree_navigator_test",
+    "//absl/strings:cord_rep_btree_reader_test",
+    "//absl/strings:cord_rep_btree_test",
+    "//absl/strings:cord_rep_crc_test",
+    "//absl/strings:cord_test",
+    "//absl/strings:cordz_functions_test",
+    "//absl/strings:cordz_handle_test",
+    "//absl/strings:cordz_info_statistics_test",
+    "//absl/strings:cordz_info_test",
+    "//absl/strings:cordz_sample_token_test",
+    "//absl/strings:cordz_test",
+    "//absl/strings:cordz_update_scope_test",
+    "//absl/strings:cordz_update_tracker_test",
+    "//absl/strings:damerau_levenshtein_distance_test",
+    "//absl/strings:escaping_test",
+    "//absl/strings:generic_printer_test",
+    "//absl/strings:has_absl_stringify_test",
+    "//absl/strings:has_ostream_operator_test",
+    "//absl/strings:match_test",
+    "//absl/strings:memutil_test",
+    "//absl/strings:numbers_test",
+    "//absl/strings:ostringstream_test",
+    "//absl/strings:pow10_helper_test",
+    "//absl/strings:resize_and_overwrite_test",
+    "//absl/strings:resize_uninitialized_test",
+    "//absl/strings:str_cat_test",
+    "//absl/strings:str_format_arg_test",
+    "//absl/strings:str_format_bind_test",
+    "//absl/strings:str_format_checker_test",
+    "//absl/strings:str_format_convert_test",
+    "//absl/strings:str_format_extension_test",
+    "//absl/strings:str_format_output_test",
+    "//absl/strings:str_format_parser_test",
+    "//absl/strings:str_format_test",
+    "//absl/strings:str_join_test",
+    "//absl/strings:str_replace_test",
+    "//absl/strings:str_split_test",
+    "//absl/strings:string_constant_test",
+    "//absl/strings:string_view_test",
+    "//absl/strings:stringify_stream_test",
+    "//absl/strings:strip_test",
+    "//absl/strings:substitute_test",
+    "//absl/strings:utf8_test",
+    "//absl/synchronization:barrier_test",
+    "//absl/synchronization:blocking_counter_test",
+    "//absl/synchronization:graphcycles_test",
+    "//absl/synchronization:kernel_timeout_internal_test",
+    "//absl/synchronization:lifetime_test",
+    "//absl/synchronization:mutex_method_pointer_test",
+    "//absl/synchronization:mutex_test",
+    "//absl/synchronization:notification_test",
+    "//absl/synchronization:per_thread_sem_test",
+    "//absl/synchronization:waiter_test",
+    "//absl/time/internal/cctz:civil_time_test",
+    "//absl/time/internal/cctz:time_zone_format_test",
+    "//absl/time/internal/cctz:time_zone_lookup_test",
+    "//absl/time/internal/cctz:time_zone_name_win_test",
+    "//absl/time/internal/cctz:time_zone_posix_test",
+    "//absl/time:clock_interface_test",
+    "//absl/time:flag_test",
+    "//absl/time:mock_clock_test",
+    "//absl/time:simulated_clock_test",
+    "//absl/time:time_test",
+    "//absl/types:any_span_test",
+    "//absl/types:compare_test",
+    "//absl/types:optional_ref_test",
+    "//absl/types:source_location_test",
+    "//absl/types:span_test",
+    "//absl/types:variant_test"
+  ],
+  "source": "Downloaded GitHub Actions artifacts and GitHub API event/run timestamps",
+  "tool": "7be5ead5096a33a2d2b6ab55d7f88242a31a311c"
+}
