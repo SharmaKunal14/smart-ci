@@ -1,0 +1,338 @@
+{
+  "artifact_sha256": {
+    "jobs.json": "ae9dee61394a89a63020bb208bbdb75d38ca77da80b9f225fce05f72f487db2c",
+    "run.json": "21aa64f88a4addeeedfa3b750143b379d506b1154df7246d89c9d865a800e5d7",
+    "textual-native-1/coverage.xml": "616a2f7770d9e64683d4907e5a6f1b4281116237e03637e9ee33f84359af38de",
+    "textual-native-1/execution.json": "a51157b190e7f4e8d2e990b610bc5722f63169526894a97c56282923406766ea",
+    "textual-native-1/junit.xml": "779433afb225fbcc51823e30ad3f7e6afcbf85b0928b85d90176699369607e69",
+    "textual-native-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+    "textual-observe-scoped-1/coverage.xml": "bcaeff6020c67ea4813eb9bd73a9ae89d121d4ea4170aafacb893f9d731d37a4",
+    "textual-observe-scoped-1/execution.json": "0d97b62b8ba9b254b55b25a34324b486cf91344835276962ce0b7d40b5dcca00",
+    "textual-observe-scoped-1/junit.xml": "ef2cef029c22e9a6b2f204331ffa865e94e0f0c49a65f06484eff56f1592ae47",
+    "textual-observe-scoped-1/observation.json": "35833aa7cf60a5d802d7261d6c91db7f50dc99da68a263df24e7190e8aa05f09",
+    "textual-observe-scoped-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+    "textual-observe-scoped-1/read-provenance.json": "ad898e956a7af72fc4deea12dfa3e200477c7528f304578d3ea37b080537842f"
+  },
+  "ci_savings_demonstrated": false,
+  "comparison": {
+    "attempt": 1,
+    "comparison": {
+      "actual_test_omissions": 0,
+      "case_identities_outcomes_and_skips_equal": true,
+      "mismatched_cases": [],
+      "observer_extra_feedback_seconds": 135.0,
+      "selective_ci_savings_demonstrated": false,
+      "total_runner_seconds": 821.0
+    },
+    "head": "5f9ab660537f109fa07ffe8f1d51c4abdf13365d",
+    "jobs": {
+      "native": {
+        "cases": 3467,
+        "conclusion": "success",
+        "execution": {
+          "base": "262053bcc8810714ca78295f0eedabe1c7884696",
+          "command_seconds": 298.48676135900007,
+          "execution": "full",
+          "exit_code": 0,
+          "harness_sha256": "d82625f0a360676035c31abe5b3ec1efd7f8abb757ecd09c9a93c6e27050e884",
+          "head": "5f9ab660537f109fa07ffe8f1d51c4abdf13365d",
+          "mode": "native",
+          "omission_authorized": false,
+          "planning_error": null,
+          "planning_seconds": 0.0,
+          "required_execution": "full",
+          "source_read_provenance": false,
+          "targets": null,
+          "test_seconds": 298.48673729000006
+        },
+        "execution_sha256": "a51157b190e7f4e8d2e990b610bc5722f63169526894a97c56282923406766ea",
+        "failed_cases": [],
+        "id": 140083041711,
+        "job_seconds": 343.0,
+        "junit_sha256": "779433afb225fbcc51823e30ad3f7e6afcbf85b0928b85d90176699369607e69",
+        "queue_seconds": 3.0,
+        "trigger_to_result_seconds": 346.0,
+        "url": "https://github.com/SharmaKunal14/textual/actions/runs/45870117385/job/140083041711"
+      },
+      "observe-scoped": {
+        "cases": 3467,
+        "conclusion": "success",
+        "execution": {
+          "base": "262053bcc8810714ca78295f0eedabe1c7884696",
+          "command_seconds": 434.317870146,
+          "execution": "full",
+          "exit_code": 0,
+          "harness_sha256": "d82625f0a360676035c31abe5b3ec1efd7f8abb757ecd09c9a93c6e27050e884",
+          "head": "5f9ab660537f109fa07ffe8f1d51c4abdf13365d",
+          "mode": "observe-scoped",
+          "omission_authorized": false,
+          "planning_error": null,
+          "planning_seconds": 0.0,
+          "required_execution": "full",
+          "source_read_provenance": true,
+          "targets": null,
+          "test_seconds": 434.31781304099997
+        },
+        "execution_sha256": "0d97b62b8ba9b254b55b25a34324b486cf91344835276962ce0b7d40b5dcca00",
+        "failed_cases": [],
+        "id": 140083042089,
+        "job_seconds": 478.0,
+        "junit_sha256": "ef2cef029c22e9a6b2f204331ffa865e94e0f0c49a65f06484eff56f1592ae47",
+        "queue_seconds": 3.0,
+        "trigger_to_result_seconds": 481.0,
+        "url": "https://github.com/SharmaKunal14/textual/actions/runs/45870117385/job/140083042089"
+      }
+    },
+    "limits": [
+      "one paired run",
+      "both paths execute the full suite",
+      "observation cannot prove future dependency completeness"
+    ],
+    "observation_digest": "f68a1ed30733a6ce8e6bbeb92be70298d088f4056e6b3816b76c35dc8ea7787b",
+    "observer_sha256": "38f5d50b0c67abb4b61b1c7e32fb6b2adcd607a7a9421e19ec7fff598bf8fbc9",
+    "run": "https://github.com/SharmaKunal14/textual/actions/runs/45870117385"
+  },
+  "coverage_reconciliation": {
+    "coverage_differences": [
+      {
+        "line": 187,
+        "native_covered": false,
+        "observed_covered": true,
+        "path": "demo/home.py"
+      },
+      {
+        "line": 188,
+        "native_covered": false,
+        "observed_covered": true,
+        "path": "demo/home.py"
+      }
+    ],
+    "interpretation": "Matching test outcomes does not establish identical execution paths.",
+    "native_covered": 27110,
+    "observed_covered": 27112,
+    "same_statement_inventory": true,
+    "statement_count": 31456
+  },
+  "decision": "Captured shared reads for both subjects are after-tests reporting activity with coverage/pytest_cov frames. Keep reporting work. Do not infer completeness from bounded stacks or promote the experimental subset; unobserved methods and background/dynamic behavior remain unresolved.",
+  "execution_required": "full",
+  "interpretation": "Temporal read origins only; reporting can affect CI status and must be preserved.",
+  "model_calls": 0,
+  "native_source_reference": "e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8",
+  "omission_authorized": false,
+  "paths": [
+    {
+      "events": [
+        {
+          "context": "@shared",
+          "lifecycle": "after_tests",
+          "path": "src/textual/_xterm_parser.py",
+          "stack": [
+            {
+              "family": "coverage"
+            },
+            {
+              "family": "pytest_cov"
+            },
+            {
+              "family": "other"
+            },
+            {
+              "family": "_pytest"
+            },
+            {
+              "family": "other"
+            }
+          ],
+          "stack_truncated": true
+        },
+        {
+          "context": "@phase:e09a9fa129fec7abff12959a2e730fd71ec820f40917514cdd31bb28328718d1",
+          "lifecycle": "before_tests",
+          "path": "src/textual/_xterm_parser.py",
+          "stack": [
+            {
+              "family": "importlib"
+            },
+            {
+              "family": "repository",
+              "line": 5,
+              "path": "tests/test_xterm_parser.py"
+            },
+            {
+              "family": "_pytest"
+            },
+            {
+              "family": "importlib"
+            },
+            {
+              "family": "_pytest"
+            },
+            {
+              "family": "other"
+            }
+          ],
+          "stack_truncated": true
+        },
+        {
+          "context": "@shared",
+          "lifecycle": "after_tests",
+          "path": "src/textual/_xterm_parser.py",
+          "stack": [
+            {
+              "family": "coverage"
+            },
+            {
+              "family": "pytest_cov"
+            },
+            {
+              "family": "other"
+            },
+            {
+              "family": "_pytest"
+            },
+            {
+              "family": "other"
+            },
+            {
+              "family": "_pytest"
+            }
+          ],
+          "stack_truncated": true
+        }
+      ],
+      "lifecycle_counts": {
+        "after_tests": 2,
+        "before_tests": 1
+      },
+      "path": "src/textual/_xterm_parser.py",
+      "stack_family_counts": {
+        "_pytest": 3,
+        "coverage": 2,
+        "importlib": 1,
+        "other": 3,
+        "pytest_cov": 2,
+        "repository": 1
+      },
+      "unique_open_records": 3
+    },
+    {
+      "events": [
+        {
+          "context": "@shared",
+          "lifecycle": "after_tests",
+          "path": "src/textual/widgets/_markdown.py",
+          "stack": [
+            {
+              "family": "coverage"
+            },
+            {
+              "family": "pytest_cov"
+            },
+            {
+              "family": "other"
+            },
+            {
+              "family": "_pytest"
+            },
+            {
+              "family": "other"
+            },
+            {
+              "family": "_pytest"
+            }
+          ],
+          "stack_truncated": true
+        },
+        {
+          "context": "@shared",
+          "lifecycle": "after_tests",
+          "path": "src/textual/widgets/_markdown.py",
+          "stack": [
+            {
+              "family": "coverage"
+            },
+            {
+              "family": "pytest_cov"
+            },
+            {
+              "family": "other"
+            },
+            {
+              "family": "_pytest"
+            },
+            {
+              "family": "other"
+            }
+          ],
+          "stack_truncated": true
+        },
+        {
+          "context": "@phase:e80403a357777dec6dc926d3f28378650b23bdd22be8d050b4ca72954d6741d4",
+          "lifecycle": "before_tests",
+          "path": "src/textual/widgets/_markdown.py",
+          "stack": [
+            {
+              "family": "importlib"
+            },
+            {
+              "family": "repository",
+              "line": 112,
+              "path": "src/textual/widgets/__init__.py"
+            },
+            {
+              "family": "importlib"
+            },
+            {
+              "family": "repository",
+              "line": 34,
+              "path": "tests/snapshot_tests/test_snapshots.py"
+            },
+            {
+              "family": "_pytest"
+            },
+            {
+              "family": "importlib"
+            },
+            {
+              "family": "_pytest"
+            }
+          ],
+          "stack_truncated": true
+        }
+      ],
+      "lifecycle_counts": {
+        "after_tests": 2,
+        "before_tests": 1
+      },
+      "path": "src/textual/widgets/_markdown.py",
+      "stack_family_counts": {
+        "_pytest": 3,
+        "coverage": 2,
+        "importlib": 1,
+        "other": 2,
+        "pytest_cov": 2,
+        "repository": 1
+      },
+      "unique_open_records": 3
+    }
+  ],
+  "production_execution": "full",
+  "provenance_digest": "1866206422edf8128754456647e29cec50ad3f84db90d5876123e6dce821a190",
+  "safety_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45869621585",
+  "safety_test_count": 1009,
+  "schema": "smartci.runtime-read-assessment.v1",
+  "source_pr": "https://github.com/SharmaKunal14/textual/pull/14",
+  "source_tree_changes_from_reference": [
+    ".github/workflows/smartci-pilot.yml",
+    ".smartci/read-origin-probe.txt",
+    ".smartci/runtime_candidate.py"
+  ],
+  "tool_pr": "https://github.com/SharmaKunal14/smart-ci/pull/26",
+  "tool_revision": "2496a169750f178460d2e3fcddbd98b55edd4f95",
+  "trace_summary": {
+    "completed_protocols": 3467,
+    "diagnostics": [],
+    "unique_records": 2093
+  },
+  "tracer_sha256": "0ba74a424da38d21a88d033209b13f1942a02f90e0a43bd6d044c2a6947ce5bd"
+}

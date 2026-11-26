@@ -2,14 +2,17 @@
 
 Updated: 27 November 2026
 
-Next Textual increment: [source-read provenance](docs/onboarding/runtime-read-provenance.md).
-The completed subset experiment leaves shared source reads unresolved. Add an
-optional bounded trace separating test protocols from post-test/reporting activity,
-verify it against an unchanged native full control on GitHub, and use that evidence
-to determine whether the reads can be handled without dropping independent CI
-work. Do not infer irrelevance from timing or library labels. No selection rule,
-production fallback or paid-call authorization changes; the model campaign stays
-disabled. This is targeted evidence collection, not another favorable-timing trial.
+Textual [source-read provenance](docs/onboarding/runtime-read-provenance.md) is now
+verified on [PR #14](https://github.com/SharmaKunal14/textual/pull/14),
+[run 45870117385](https://github.com/SharmaKunal14/textual/actions/runs/45870117385).
+Both unchanged full suites passed the same 3,467 cases. Captured shared reads of
+Markdown and parser source occurred after tests with coverage/reporting frames;
+collection reads came through imports. The bounded trace narrows the reporting
+unknown, not dependency completeness. Native/probe feedback was 346/481 seconds;
+this is investigation cost, not selective savings. Next, reporting/coverage must
+remain required CI work, while unobserved methods and shared/dynamic behavior still
+need supported contracts. Production full fallback is unchanged, and the model
+campaign stays disabled. Do not infer irrelevance from timing or library labels.
 
 Focused Textual comparison completed on real [PR #13](https://github.com/SharmaKunal14/textual/pull/13),
 [GitHub run 45865417885](https://github.com/SharmaKunal14/smart-ci/actions/runs/45865417885).

@@ -18,8 +18,9 @@ external frames contain only fixed library-family labels such as `coverage`,
 process arguments, arbitrary module names or external paths are persisted. Frames
 are inspected without importing repository code or requesting extra fixtures.
 Repeated records are deduplicated. The trace is bounded to 5,000 unique records and
-8 MiB of encoded event data; truncation or missing hooks becomes explicit evidence
-that cannot pass the assessment.
+8 MiB of encoded event data; record/byte-limit exhaustion or missing hooks becomes
+explicit evidence that cannot pass the assessment. Truncated stacks remain marked
+as incomplete in the assessment and cannot establish the absence of other callers.
 
 Lifecycle labels distinguish before tests, each test protocol, between protocols,
 after all collected protocols and session finish. Background-thread activity gets
@@ -63,8 +64,59 @@ bytes, wrong tracer hashes, incomplete protocols, trace diagnostics and malforme
 events. It preserves late native failures. Every assessment explicitly requires
 full execution and denies test omissions or CI savings.
 
-Hosted results are pending. This is a targeted dependency investigation, not
-another agent trial or evidence of improved selective performance. A result that
-attributes reads to reporting narrows one unknown but does not resolve unobserved
-methods, dynamic loading or background state. The next execution policy must
-preserve any reporting/build work and independently address those remaining gaps.
+## Completed GitHub probe
+
+[Textual PR #14](https://github.com/SharmaKunal14/textual/pull/14),
+[run 45870117385](https://github.com/SharmaKunal14/textual/actions/runs/45870117385),
+used tool `2496a169750f178460d2e3fcddbd98b55edd4f95` against source
+`5f9ab660537f109fa07ffe8f1d51c4abdf13365d`. Both full jobs passed all 3,467
+cases. The assessor reconciled every identity, outcome and skip detail, identical
+installed package profiles, exact observation bytes and tracer hash. The trace
+contains 2,093 unique records, all 3,467 completed protocols and no limit/hook
+diagnostics. No tests were omitted.
+
+Coverage statement inventories match (31,456 statements), but covered-line counts
+are 27,110 native versus 27,112 observed. Only `demo/home.py:187` and `:188` differ.
+The paired run does not isolate the cause. Matching case outcomes therefore does
+not establish identical execution paths or eliminate instrumentation effects.
+
+| Source | Before-test import records | After-test reporting records | During-test records |
+| --- | ---: | ---: | ---: |
+| `src/textual/widgets/_markdown.py` | 1 | 2 | 0 |
+| `src/textual/_xterm_parser.py` | 1 | 2 | 0 |
+
+The shared records for both subjects occurred after all test protocols. Their
+captured stacks contain `coverage` and `pytest_cov` frames. The collection reads
+contain import frames; Markdown's also records the widget loader and snapshot
+test module. These observations support reporting as the origin of the captured
+shared reads. Every displayed stack is truncated at the configured bound, so the
+report cannot exclude other callers or unobserved behavior.
+
+Native feedback took 346 seconds; full observation plus the probe took 481 seconds
+from workflow creation to each job's completion. Combined runner time was 821
+seconds. The 135-second difference includes the existing observer, the new probe
+and setup/runner variability; it does not isolate the new plugin's overhead.
+These are investigation costs, **not selective-CI savings**. The prior three-arm
+result remains unchanged and must not be replaced with this passing baseline.
+
+**Decision:** preserve reporting as separate required CI work; do not convert
+these source-read records into blanket test dependencies or silently discard
+them. Coverage thresholds and reporting exit status still need an execution
+contract before any refinement. Unobserved methods, dynamic loading and
+shared/background state remain unresolved; production full fallback is unchanged.
+No additional agent trial is justified by this result alone.
+
+The [durable evidence record](../benchmarks/textual-read-provenance-2026-11-27.json)
+contains exact job links, timings, trace records, source comparison and artifact
+hashes. [Hosted safety checks](https://github.com/SharmaKunal14/smart-ci/actions/runs/45869621585)
+passed 1,009 tests, formatting, lint, strict typing and package builds.
+[Smart CI PR #26](https://github.com/SharmaKunal14/smart-ci/pull/26) contains the
+implementation. Both PRs remain unmerged. No model calls or AWS deployment.
+
+For the command above, download the run's `textual-native-1` and
+`textual-observe-scoped-1` artifacts, preserving those directory names. Save
+`gh api repos/SharmaKunal14/textual/actions/runs/45870117385` as `run.json` and
+`gh api 'repos/SharmaKunal14/textual/actions/runs/45870117385/attempts/1/jobs?per_page=100'`
+as `jobs.json` alongside them. Use the pinned tool checkout's tracer file. Expected:
+matching outcomes, the counts above, `execution_required: full`, and
+`ci_savings_demonstrated: false`. Artifact retention is seven days.
