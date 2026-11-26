@@ -199,3 +199,35 @@ The [recovery record](../benchmarks/abseil-automatic-missing-map-2026-11-26.json
 retains revisions, native outcomes, timing scope and hashes. PR-generated maps
 remain audit artifacts, never trusted publisher replacements. Rebuilding is a
 safe recovery cost; routine compatible-map reuse remains the intended path.
+
+## A new test outside the saved map
+
+[PR #18](https://github.com/SharmaKunal14/abseil-cpp/pull/18) and
+[PR #19](https://github.com/SharmaKunal14/abseil-cpp/pull/19) have identical complete
+Git trees. They add a Bazel test target covering hinted insertion of empty node
+handles for linked hash maps and sets. Existing application code and tests remain
+unchanged. The saved map knows 252 tests; the new revision contains 253.
+
+Smart CI retrieves the map but detects changed build inputs. Its plan records
+`MAP_INPUTS_CHANGED` and `UNSUPPORTED_OR_RISK_CHANGE`, authorizes no omissions, and
+executes the independent full wildcard command. That command discovers and passes
+**all 253 current targets**, including `linked_hash_node_insertion_test`. Both
+arms retain all 324 build-only targets and the same 577 build configurations.
+The plan's old 252-target list is audit context, not a restriction on full execution.
+
+The [native run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45781761990)
+and [Smart CI run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45781766957)
+both passed. PR creation through completed workflow took **665 seconds native
+versus 1,068 seconds Smart CI**. This case verifies correctness and shows no saving.
+Both execute 2,995 Bazel actions. Native-command durations were 644.35 and 1,043.68
+seconds; the execution planner took 0.687 seconds. Almost all the elapsed-time
+difference is inside the native command, which includes container setup, rather
+than planner computation. Native build-event wall times also differ: 494.35 versus
+797.36 seconds. Identical source and command scope do not eliminate hosted-runner
+or image-download variation; this pair does not isolate their individual causes.
+
+Inspect the plan, execution report and complete native events in `automatic-native-1`
+and compare them with `independent-native-1`. The
+[record](../benchmarks/abseil-automatic-fallback-2026-11-26.json) retains exact source
+identities, event timestamps, build configurations, action counts and artifact
+hashes. No native failures occur in this passing case; that is not a recall test.
