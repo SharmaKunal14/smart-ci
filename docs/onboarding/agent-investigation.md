@@ -11,12 +11,15 @@ Replay remains the default. No AWS resource or merge is enabled.
 1. Supply revision-bound graphs, inventory, source digests, changes and protected
    policy in `smartci.investigation-input.v1`. These are trusted collector inputs,
    not assertions supplied by a model. Their digest binds the investigation.
-2. A provider chooses `search_paths`, `inspect`, `query_graph`, `propose`,
+2. A provider chooses `search_paths`, `inspect`, `compare_source`, `query_graph`, `propose`,
    `unresolved` or `finish` from the preceding observation. The shipped provider
    defaults to a **rule-driven mock**: it inspects configured locations and submits
    up to two explicit import facts from each result. The optional diagnostic
    replay routes process gaps to a registered process inspector. Neither replay
    measures LLM reasoning or quality.
+   The [change-scope tool](change-scope.md) compares exact base/head syntax to
+   distinguish body-only edits from module/definition changes. Its result is
+   advisory metadata, with no edge or omission authority.
 3. The broker accepts only paths in the source catalog and exact base/head object
    IDs. It reads Git blobs with bounded commands and verifies content hashes. It
    never executes repository source, model-supplied commands or arbitrary tools.
