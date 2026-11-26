@@ -5,6 +5,37 @@ candidate for Textual's real Markdown regression. It does **not** authorize
 production omissions. The deterministic production selector is unchanged; the
 independent native full job remains required. No model calls or AWS resources.
 
+## Focused three-arm comparison
+
+Use one real Markdown regression and one passing enrollment. Compare (1) the
+unchanged full suite, (2) the deterministic runtime candidate, and (3) that same
+candidate plus a bounded live investigation. Both Smart CI arms start with the
+same source revisions, runtime map, mandatory-process rules and available source
+inspection tools. Verified positive facts may add tests to the agent arm; a model
+cannot remove observed callers or promote evidence to production skip authority.
+The final candidate is a deterministic function of the initial evidence and
+accepted facts. Model generation itself is not deterministic.
+
+The incremental agent result is added facts, changed targets, missed native
+failures, model/tool time and complete CI time relative to the non-agent arm. A
+zero-change result is negative evidence for the agent's usefulness on this case.
+Runtime selection savings alone are not a model benefit, and replay is not a live
+agent. This is an addition-only experiment: it tests whether an agent finds
+relationships missing from the initial map, not whether it can beat that map by
+removing dependencies. Report this limitation explicitly.
+
+Proposed live scope: one investigation, at most four calls, at most 5,000 input
+and 1,000 output tokens per call, regular OpenAI API with public Textual source
+only. Reuse the existing ledger without resetting its three reservations. At its
+recorded conservative rates, at most US$0.36 additional reservation fits within
+the original US$5 campaign ceiling. Pricing must be reverified before admission.
+The campaign remains disabled until explicit reactivation approval. Model
+credentials must exist only in the investigation step and never in test execution.
+The existing key is in Smart CI's repository, not the Textual fork; run the three
+measurement arms in one Smart CI evaluation workflow against the same pinned real
+Textual PR. Report that workflow's full trigger-to-job times and distinguish them
+from automatic Textual-PR trigger latency, which this arrangement does not measure.
+
 ## Starting point and deliverables
 
 File-level import reachability reaches almost the entire Textual suite. The
