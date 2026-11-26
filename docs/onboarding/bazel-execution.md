@@ -119,3 +119,25 @@ variation remains included, and private remote-cache behavior is unmeasured. The
 not individual test-case counts. Repeat this path and verify live regression,
 shared-change and missing-map/full-fallback cases before making broader claims.
 Earlier Abseil measurements remain evidence for the previous pilot harness.
+
+## Repeat on unchanged PR code
+
+Reopening the same PRs produced a second independent pair on fresh runners:
+[native run 45775890117](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45775890117)
+took **724 seconds**, and
+[Smart CI run 45775903321](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45775903321)
+took **497 seconds**, measured from each actual reopened event through completed
+workflow. Both passed: **227 seconds / 31.4% saved**. The first pair remains
+626/413 seconds; no slower attempt was discarded.
+
+The second plan is byte-for-byte identical to the first. Independent reconciliation
+of complete native build events confirms 252 versus 2 passing test targets, all
+324 build-only targets and their configurations retained, and 2,988 versus 1,092
+Bazel actions. Both runners restored their crash-report settings. The map was
+retrieved without reconstruction. See the [repeat record](../benchmarks/abseil-automatic-repeat-2026-11-26.json)
+for event timestamps, per-step durations and artifact hashes.
+
+These two cold pairs demonstrate repeatability for one localized workload. They
+do not measure private remote-cache behavior, prove arbitrary dependency
+completeness, or establish failure detection: both PRs contain the passing fix.
+Separate regression and missing-map cases exercise those lifecycle boundaries.
