@@ -15,14 +15,18 @@ from pathlib import Path
 
 from diagnostics import run_profile, targeted_profile
 from evaluate import git_output, verify_checkout
+from native_cache import cache_arguments, validate_profile_options
 from query import prepare_archive, query_profile
 
 from smartci.bazel.bundle import LIMITS, canonical, parse_profile, read_bounded
 from smartci.bazel.collection import CaptureCommand, CaptureConfig
 
 
-def configure(profile_path: Path, output: Path) -> None:
+def configure(
+    profile_path: Path, output: Path, native_cache: Path | None = None
+) -> None:
     profile = parse_profile(profile_path.read_bytes())
+    validate_profile_options(profile.options_digest, native_cache)
     driver = str(Path(__file__).resolve())
     config = CaptureConfig(
         schema_version="1",
@@ -37,7 +41,8 @@ def configure(profile_path: Path, output: Path) -> None:
                     "{repo}",
                     "--capture",
                     "{capture}",
-                ],
+                ]
+                + (["--native-cache", str(native_cache)] if native_cache else []),
                 timeout_seconds=timeout,
             )
             for stage, timeout in [("native", 1380), ("query", 720)]
@@ -46,7 +51,9 @@ def configure(profile_path: Path, output: Path) -> None:
     output.write_bytes(canonical(config.model_dump()))
 
 
-def execute(stage: str, root: Path, capture: Path) -> int:
+def execute(
+    stage: str, root: Path, capture: Path, native_cache: Path | None = None
+) -> int:
     if not re.fullmatch(r"[/._a-zA-Z0-9-]+", str(capture)) or capture.is_relative_to(
         root
     ):
@@ -60,6 +67,7 @@ def execute(stage: str, root: Path, capture: Path) -> int:
         targeted_profile(raw, "full") if stage == "native" else query_profile(raw)
     )
     name = "smartci-collection-" + uuid.uuid4().hex
+    cache_mount, cache_option = cache_arguments(native_cache, root, capture)
     environment = {
         key: os.environ[key]
         for key in ("PATH", "HOME", "LANG", "TMPDIR")
@@ -71,12 +79,13 @@ def execute(stage: str, root: Path, capture: Path) -> int:
             "STD": "c++17",
             "COMPILATION_MODE": "fastbuild",
             "EXCEPTIONS_MODE": "-fno-exceptions",
-            "DOCKER_EXTRA_ARGS": f"--name {name} --mount type=bind,source={output},target=/evidence",
+            "DOCKER_EXTRA_ARGS": f"--name {name} --mount type=bind,source={output},target=/evidence"
+            + cache_mount,
         }
     )
     if stage == "native":
         environment["BAZEL_EXTRA_ARGS"] = (
-            "--build_event_json_file=/evidence/native.bep.json"
+            "--build_event_json_file=/evidence/native.bep.json" + cache_option
         )
     else:
         archive = prepare_archive(output, environment)
@@ -126,16 +135,19 @@ def main() -> int:
     parser.add_argument("--output", type=Path)
     parser.add_argument("--repo", type=Path)
     parser.add_argument("--capture", type=Path)
+    parser.add_argument("--native-cache", type=Path)
     args = parser.parse_args()
     if args.stage == "configure":
         if args.profile is None or args.output is None:
             parser.error("profile and output required")
-        configure(args.profile, args.output)
+        configure(args.profile, args.output, args.native_cache)
         return 0
     if args.repo is None or args.capture is None:
         parser.error("repo and capture required")
     try:
-        return execute(args.stage, args.repo.resolve(), args.capture.resolve())
+        return execute(
+            args.stage, args.repo.resolve(), args.capture.resolve(), args.native_cache
+        )
     except (OSError, ValueError, subprocess.SubprocessError):
         print(
             json.dumps({"status": "error", "code": "NATIVE_CAPTURE_DRIVER_FAILED"}),

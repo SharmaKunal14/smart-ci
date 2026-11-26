@@ -13,7 +13,11 @@ SPEC = importlib.util.spec_from_file_location(
 )
 assert SPEC is not None and SPEC.loader is not None
 baseline = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(baseline)
+sys.path.insert(0, str(Path(__file__).parents[1] / "examples/abseil"))
+try:
+    SPEC.loader.exec_module(baseline)
+finally:
+    sys.path.pop(0)
 
 
 @pytest.fixture(params=[baseline, portable_events], ids=["standalone", "packaged"])
@@ -212,7 +216,10 @@ def test_large_event_ids_reject_unknown_or_unbounded_forms(reader, defect):
 
 
 @pytest.mark.parametrize("code", [0, 3, 124])
-def test_native_profile_exit_and_timeout_are_preserved(tmp_path, monkeypatch, code):
+@pytest.mark.parametrize("cached", [False, True])
+def test_native_profile_exit_and_timeout_are_preserved(
+    tmp_path, monkeypatch, code, cached
+):
     root = tmp_path / "repo"
     root.mkdir()
     output = tmp_path / "evidence"
@@ -233,7 +240,14 @@ def test_native_profile_exit_and_timeout_are_preserved(tmp_path, monkeypatch, co
     monkeypatch.setattr(
         baseline.os, "environ", {"KOKORO_KEYSTORE_DIR": "not-available"}
     )
-    monkeypatch.setattr(sys, "argv", ["baseline", "--output", str(output)])
+    cache = tmp_path / "native-cache"
+    cache.mkdir()
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["baseline", "--output", str(output)]
+        + (["--native-cache", str(cache)] if cached else []),
+    )
     assert baseline.main() == code
     command, environment, timeout = calls[0]
     assert command == ["bash", "ci/linux_gcc-latest_libstdcxx_bazel.sh"]
@@ -242,6 +256,10 @@ def test_native_profile_exit_and_timeout_are_preserved(tmp_path, monkeypatch, co
     assert environment["STD"] == "c++17"
     assert environment["COMPILATION_MODE"] == "fastbuild"
     assert "cache_test_results" not in environment["BAZEL_EXTRA_ARGS"]
+    assert ("--disk_cache=/native-cache" in environment["BAZEL_EXTRA_ARGS"]) == cached
+    assert (
+        f"source={cache},target=/native-cache" in environment["DOCKER_EXTRA_ARGS"]
+    ) == cached
     assert json.loads((output / "execution.json").read_text())["exit_code"] == code
 
 

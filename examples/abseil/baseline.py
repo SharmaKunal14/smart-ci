@@ -10,6 +10,8 @@ import time
 import uuid
 from pathlib import Path
 
+from native_cache import cache_arguments
+
 
 def unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
     result: dict[str, object] = {}
@@ -179,6 +181,7 @@ def run_native(command: list[str], environment: dict[str, str], timeout: float) 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--native-cache", type=Path)
     args = parser.parse_args()
     root = Path.cwd().resolve()
     output = args.output.resolve()
@@ -190,6 +193,7 @@ def main() -> int:
     ):
         parser.error("new external output directory with simple path required")
     output.mkdir(parents=True, exist_ok=False)
+    cache_mount, cache_option = cache_arguments(args.native_cache, root, output)
     environment = dict(os.environ)
     container_name = "smartci-baseline-" + uuid.uuid4().hex
     for key in ("KOKORO_KEYSTORE_DIR", "KOKORO_GFILE_DIR", "ALTERNATE_OPTIONS"):
@@ -199,8 +203,10 @@ def main() -> int:
             "STD": "c++17",
             "COMPILATION_MODE": "fastbuild",
             "EXCEPTIONS_MODE": "-fno-exceptions",
-            "DOCKER_EXTRA_ARGS": f"--name {container_name} --mount type=bind,source={output},target=/evidence",
-            "BAZEL_EXTRA_ARGS": "--build_event_json_file=/evidence/native.bep.json",
+            "DOCKER_EXTRA_ARGS": f"--name {container_name} --mount type=bind,source={output},target=/evidence"
+            + cache_mount,
+            "BAZEL_EXTRA_ARGS": "--build_event_json_file=/evidence/native.bep.json"
+            + cache_option,
         }
     )
     started = time.monotonic()

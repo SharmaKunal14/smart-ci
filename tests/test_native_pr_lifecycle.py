@@ -18,8 +18,9 @@ SPEC.loader.exec_module(module)
 
 
 @pytest.mark.parametrize("cache", ["hit", "missing", "incompatible", "failed-rebuild"])
+@pytest.mark.parametrize("custom_publisher", [False, True])
 def test_native_pr_uses_validated_map_or_rebuilds_base_then_restores_head(
-    tmp_path, request, monkeypatch, cache
+    tmp_path, request, monkeypatch, cache, custom_publisher
 ):
     repo, base, head, config, _, _, _ = request.getfixturevalue("execution_case")
     execution = config()
@@ -29,7 +30,13 @@ def test_native_pr_uses_validated_map_or_rebuilds_base_then_restores_head(
         native=execution.full,
         query=execution.full,
     )
-    monkeypatch.setattr(module, "read_config", lambda _: capture_config)
+    config_reads = []
+
+    def read_config(path):
+        config_reads.append(path)
+        return capture_config
+
+    monkeypatch.setattr(module, "read_config", read_config)
     monkeypatch.setattr(module, "read_execution_config", lambda _: execution)
     fetched = tmp_path / "fetched"
     fetched.mkdir()
@@ -71,8 +78,11 @@ def test_native_pr_uses_validated_map_or_rebuilds_base_then_restores_head(
         tmp_path / "capture.json",
         tmp_path / "execution.json",
         tmp_path / "out",
+        tmp_path / "publisher.json" if custom_publisher else None,
     )
     assert report["status"] == "passed" and len(executions) == 1
+    if custom_publisher and cache != "missing":
+        assert tmp_path / "publisher.json" in config_reads
     assert collected == ([] if cache == "hit" else [base])
     if cache == "failed-rebuild":
         assert executions[0]["bundle_path"] is None
