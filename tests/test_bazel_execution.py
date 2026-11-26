@@ -219,6 +219,10 @@ def test_execution_reconciliation_rejects_scope_profile_and_evidence_mismatches(
     rows = [json.loads(line) for line in evidence(subset=True).splitlines()]
     if defect == "unexpected_test":
         rows = [json.loads(line) for line in evidence().splitlines()]
+        for row in rows:
+            for identifier in [row["id"], *row.get("children", [])]:
+                if "pattern" in identifier:
+                    identifier["pattern"]["pattern"] = ["...", "-//lib:b_test"]
     if defect == "build_only":
         rows = [r for r in rows if "//lib:binary" not in json.dumps(r["id"])]
         rows[0]["children"] = [
@@ -226,10 +230,14 @@ def test_execution_reconciliation_rejects_scope_profile_and_evidence_mismatches(
         ]
     if defect == "configuration":
         for row in rows:
-            if "targetCompleted" in row["id"]:
-                row["id"]["targetCompleted"]["configuration"]["id"] = "b" * 64
+            for identifier in [row["id"], *row.get("children", [])]:
+                if "targetCompleted" in identifier:
+                    identifier["targetCompleted"]["configuration"]["id"] = "b" * 64
     if defect == "patterns":
-        rows[1]["id"]["pattern"]["pattern"] = ["..."]
+        for row in rows:
+            for identifier in [row["id"], *row.get("children", [])]:
+                if "pattern" in identifier:
+                    identifier["pattern"]["pattern"] = ["..."]
     if defect == "version":
         rows[0]["started"]["buildToolVersion"] = "10.0.0"
     if defect == "options":
@@ -248,7 +256,14 @@ def test_execution_reconciliation_rejects_scope_profile_and_evidence_mismatches(
     expected = NativeInventory(
         {"//lib:a_test": ("a" * 64,), "//lib:binary": ("a" * 64,)}, ("//lib:a_test",)
     )
-    with pytest.raises(ValueError):
+    reason = (
+        "configuration scope differs"
+        if defect in {"unexpected_test", "build_only", "configuration"}
+        else "target patterns differ"
+        if defect == "patterns"
+        else None
+    )
+    with pytest.raises(ValueError, match=reason):
         reconcile_execution(
             raw,
             3 if defect == "exit" else 0,
