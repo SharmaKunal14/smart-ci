@@ -1,0 +1,10 @@
+{
+  "schema_version": "1",
+  "repository": "SharmaKunal14/abseil-cpp",
+  "bazel_version": "9.1.0",
+  "command_digest": "03239a4a9294eecfa5270d397cb0250824f8930e6dcc42c4fe37955ae0c2ade1",
+  "environment_digest": "e5298946537e8d27609f5e2915f154f7e84072e8cb404ca18d059196fc226c2f",
+  "options_digest": "10df8ca5ba46367b03a887aecaf3e8361c2dd235d783eedf0e813de5ba8d7623",
+  "query_mode": "unconfigured-deps-all",
+  "change_model": "reviewed-declared-cpp-inputs-v1"
+}
