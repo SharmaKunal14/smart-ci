@@ -35,6 +35,16 @@ onboarding cost or savings measurement exists for this collector. Artifact
 acquisition/publication, automatic PR integration and representative warm-cache
 comparisons remain required; keep the full goal active.
 
+The next transport increment adds `smartci bazel fetch`: discover successful
+approved publishers at an exact revision, authenticate workflow/run/artifact
+origin, validate the native bundle and command configuration, and emit an audited
+receipt without hard-coded run IDs. Untrusted/missing evidence remains a cache
+miss requiring collection or full execution. PR-produced maps cannot become
+trusted publishers. Its bounded API/ZIP checks are covered by controlled tests;
+successful fresh native publication/download and complete PR integration still
+need hosted verification after Abseil Actions is restored. No new performance
+result is claimed. See [artifact onboarding](docs/onboarding/bazel-artifacts.md).
+
 ### Active goal completion gates
 
 The active goal is broader than any single prototype. Keep it active until all of
