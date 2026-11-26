@@ -1,0 +1,74 @@
+{
+  "claim": "original-suite defect-detection control only; no generated-test or speedup result",
+  "generation_executed": false,
+  "jobs": {
+    "original-defect": {
+      "cases": 3467,
+      "failures": 0,
+      "job_seconds": 352.0,
+      "junit_sha256": "9890b4212eeabb89390fe8e87a92a56e06e177f5c9a68988fa3741cf330c42cc",
+      "passed": 3460,
+      "pytest_seconds": 300.51142144999994,
+      "skips": 7,
+      "source_commit": "f1a9d30986616a922871020df233f883ead8dc82",
+      "target_coverage": {
+        "body_end": 706,
+        "coverage_sha256": "36bc5aa4c1209782513f86ad75fa83b6388b6229724a90c5ad04ece9eb2095ef",
+        "definition_line": 693,
+        "executable_body_line_hits": {
+          "694": 0,
+          "695": 0,
+          "696": 0,
+          "697": 0,
+          "698": 0,
+          "699": 0,
+          "705": 0,
+          "706": 0
+        },
+        "method": "MarkdownTableContent._update_rows",
+        "path": "src/textual/widgets/_markdown.py",
+        "scope": "one pinned Linux Python 3.14 native-suite profile; not universal absence of tests"
+      },
+      "trigger_to_result_seconds": 354.0,
+      "url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45875657293/job/140101951055"
+    },
+    "original-working": {
+      "cases": 3467,
+      "failures": 0,
+      "job_seconds": 352.0,
+      "junit_sha256": "e18c1110b23044d116a4dcc160d0b158735681d3ba8ad5645ecd88a0d4e24918",
+      "passed": 3460,
+      "pytest_seconds": 302.142808338,
+      "skips": 7,
+      "source_commit": "e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8",
+      "target_coverage": {
+        "body_end": 706,
+        "coverage_sha256": "9ff8a4d69841009ab9bf0c028a915665bb818cff0e2de0f1138afab331daeae3",
+        "definition_line": 693,
+        "executable_body_line_hits": {
+          "694": 0,
+          "695": 0,
+          "696": 0,
+          "697": 0,
+          "698": 0,
+          "699": 0,
+          "705": 0,
+          "706": 0
+        },
+        "method": "MarkdownTableContent._update_rows",
+        "path": "src/textual/widgets/_markdown.py",
+        "scope": "one pinned Linux Python 3.14 native-suite profile; not universal absence of tests"
+      },
+      "trigger_to_result_seconds": 354.0,
+      "url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45875657293/job/140101950589"
+    }
+  },
+  "original_suite_detected_fixed_defect": false,
+  "run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45875657293",
+  "same_case_identities_outcomes_and_skips": true,
+  "same_environment_profile": true,
+  "schema": "smartci.generated-test-controls.v1",
+  "source_pr": "https://github.com/SharmaKunal14/textual/pull/15",
+  "source_scope": "one preselected artificial row-removal mutation, Linux/Python 3.14 native locked profile",
+  "tool_commit": "50b1a0f81c6417b4d38a27b355f77bb81cf68c32"
+}

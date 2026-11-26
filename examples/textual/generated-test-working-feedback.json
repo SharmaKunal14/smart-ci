@@ -1,0 +1,23 @@
+{
+  "coverage_sha256": "9d8d0ec753d605b07046e6932caa82b1de22dd02386708a662024cb0875faf31",
+  "failure_location": "tests/test_smartci_generated_markdown.py:26",
+  "failure_message": "AssertionError: assert [] == [MarkdownTabl...='cell row1')]\n  \n  Right contains 2 more items, first extra item: MarkdownTableCellContents(name='cell1.1', classes='cell row1')\n  \n  Full diff:\n  + []\n  - [\n  -     MarkdownTableCellContents(name='cell1.1', classes='cell row1'),\n  -     MarkdownTableCellContents(name='cell1.2', classes='cell row1'),\n  - ]",
+  "generation_digest": "443322512ea39f7b30d1df5b7e210ace82ec53ed4d9bc8320935a77317e9e97c",
+  "junit_sha256": "e02b69e8781d29a8deee849648247c245799f42a3210cddf7a53aa6e0bbefb14",
+  "previous_source": "import pytest\n\nfrom textual.app import App, ComposeResult\nfrom textual.widgets import Markdown\nfrom textual.widgets._markdown import MarkdownTableContent\n\n\nclass TableApp(App[None]):\n    def compose(self) -> ComposeResult:\n        yield Markdown()\n\n\n@pytest.mark.asyncio\nasync def test_append_completes_table_row_and_adds_another():\n    app = TableApp()\n    async with app.run_test():\n        markdown = app.query_one(Markdown)\n        await markdown.update('| Item | State |\\n| --- | --- |\\n| A | ready |\\n| B | pen')\n        table = markdown.query_one(MarkdownTableContent)\n        last = table.last_row\n        earlier = list(table.query_children(f'.cell.row{last - 1}'))\n        assert len(earlier) == 2\n\n        await markdown.append('ding |\\n| C | done |')\n\n        assert list(table.query_children(f'.cell.row{last - 1}')) == earlier\n        assert table.last_row == last + 1\n        for index, expected in [(last, ['B', 'pending']), (last + 1, ['C', 'done'])]:\n            cells = table.query_children(f'.cell.row{index}')\n            assert [cell.tooltip.plain for cell in cells] == expected\n",
+  "previous_source_sha256": "8be235aa45b8ed68d0351207d423a486a345b5309e5ab82ae161d628ad6aa8d6",
+  "revision": "e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8",
+  "schema_version": "smartci.textual-working-feedback.v1",
+  "target_body_line_hits": {
+    "694": 0,
+    "695": 0,
+    "696": 0,
+    "697": 0,
+    "698": 0,
+    "699": 0,
+    "705": 0,
+    "706": 0
+  },
+  "working_job": "generated-working",
+  "working_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45877497403"
+}
