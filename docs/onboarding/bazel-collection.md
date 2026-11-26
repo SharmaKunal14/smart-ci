@@ -72,6 +72,13 @@ The [status record](../benchmarks/bazel-collection-2026-11-26.json) separates th
 successful tool checks from the unexecuted native experiment. No onboarding
 duration, selective-execution result or new savings claim is available yet.
 
+Source-scope clarification: "unchanged" means relative to this enrollment PR's
+own base. That base is the pre-fix side of the earlier localized experiment and
+differs from the previous standalone native performance baseline in
+`absl/container/internal/raw_linked_hash_set.h`. The collector must establish its
+own complete passing native evidence; previous timing/results cannot substitute
+for this run.
+
 Collection executes build logic and tests. Use protected configuration and an
 isolated runner without persisted credentials. Only PATH, HOME, LANG and TMPDIR
 are inherited; environment filtering is not filesystem isolation. Adapters must
