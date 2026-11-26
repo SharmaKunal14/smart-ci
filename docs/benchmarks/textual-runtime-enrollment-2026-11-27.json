@@ -1,0 +1,78 @@
+{
+  "attempt": 1,
+  "comparison": {
+    "actual_test_omissions": 0,
+    "case_identities_outcomes_and_skips_equal": true,
+    "mismatched_cases": [],
+    "observer_extra_feedback_seconds": 141.0,
+    "selective_ci_savings_demonstrated": false,
+    "total_runner_seconds": 867.0
+  },
+  "head": "e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8",
+  "jobs": {
+    "native": {
+      "cases": 3467,
+      "conclusion": "success",
+      "execution": {
+        "base": "a36baf795c59100e4cf74109e0b5959f4ccae00d",
+        "command_seconds": 309.622569793,
+        "execution": "full",
+        "exit_code": 0,
+        "harness_sha256": "0dd498f7fdc8362caad992a80aef07ee653d0385346a4d9690d19b6d9f0e0420",
+        "head": "e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8",
+        "mode": "native",
+        "omission_authorized": false,
+        "planning_error": null,
+        "planning_seconds": 0.0,
+        "required_execution": "full",
+        "targets": null,
+        "test_seconds": 309.622534294
+      },
+      "execution_sha256": "befca32f7e552656480083866a13cf942a0ad5a531b02e197004ab6cbbb163fd",
+      "failed_cases": [],
+      "id": 140057277586,
+      "job_seconds": 363.0,
+      "junit_sha256": "e03d8a171984e90d38ea1e1113867bad6d2882849bee739aa1b7a619df92ca2e",
+      "queue_seconds": 3.0,
+      "trigger_to_result_seconds": 366.0,
+      "url": "https://github.com/SharmaKunal14/textual/actions/runs/45862622090/job/140057277586"
+    },
+    "observe-scoped": {
+      "cases": 3467,
+      "conclusion": "success",
+      "execution": {
+        "base": "a36baf795c59100e4cf74109e0b5959f4ccae00d",
+        "command_seconds": 442.45198823000004,
+        "execution": "full",
+        "exit_code": 0,
+        "harness_sha256": "0dd498f7fdc8362caad992a80aef07ee653d0385346a4d9690d19b6d9f0e0420",
+        "head": "e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8",
+        "mode": "observe-scoped",
+        "omission_authorized": false,
+        "planning_error": null,
+        "planning_seconds": 0.0,
+        "required_execution": "full",
+        "targets": null,
+        "test_seconds": 442.45195063999995
+      },
+      "execution_sha256": "e52dfeb536a9e5abe73267fbd7e6bfe2e6f095d09e443891c17898495025fc81",
+      "failed_cases": [],
+      "id": 140057277104,
+      "job_seconds": 504.0,
+      "junit_sha256": "96388da3bf077b5468421e9335cbb2eb55b14e994dce64a49088ce2bc1a5722e",
+      "queue_seconds": 3.0,
+      "trigger_to_result_seconds": 507.0,
+      "url": "https://github.com/SharmaKunal14/textual/actions/runs/45862622090/job/140057277104"
+    }
+  },
+  "limits": [
+    "one paired run",
+    "both paths execute the full suite",
+    "observation cannot prove future dependency completeness"
+  ],
+  "observation_digest": "8fb36e32f3ca041743970cc78d205689fe76a90ff8de06fd59a27070a9778dd6",
+  "observer_sha256": "38f5d50b0c67abb4b61b1c7e32fb6b2adcd607a7a9421e19ec7fff598bf8fbc9",
+  "purpose": "passing enrollment prerequisite; not selective execution or model effectiveness",
+  "run": "https://github.com/SharmaKunal14/textual/actions/runs/45862622090",
+  "source_pr": "https://github.com/SharmaKunal14/textual/pull/12"
+}

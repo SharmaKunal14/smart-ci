@@ -11,7 +11,12 @@ class OpenAIProvider:
     name = "openai:gpt-6.2-astra"
 
     def __init__(
-        self, transport: Transport, ledger: Ledger, investigation: str
+        self,
+        transport: Transport,
+        ledger: Ledger,
+        investigation: str,
+        *,
+        initial_context: dict[str, object] | None = None,
     ) -> None:
         self.transport, self.ledger, self.investigation = (
             transport,
@@ -47,6 +52,11 @@ class OpenAIProvider:
                 ),
             }
         ]
+        if initial_context is not None:
+            context = json.dumps(initial_context, sort_keys=True)
+            if len(context.encode()) > 8192:
+                raise ValueError("initial advisory context exceeds limit")
+            self.messages.append({"role": "user", "content": context})
 
     def accounting(self) -> dict[str, object]:
         return {

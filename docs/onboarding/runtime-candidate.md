@@ -29,12 +29,33 @@ and 1,000 output tokens per call, regular OpenAI API with public Textual source
 only. Reuse the existing ledger without resetting its three reservations. At its
 recorded conservative rates, at most US$0.36 additional reservation fits within
 the original US$5 campaign ceiling. Pricing must be reverified before admission.
-The campaign remains disabled until explicit reactivation approval. Model
+The user approved this one bounded investigation on 27 November 2026. Activation
+still waits for verified enrollment and hosted code checks. The ledger will retain
+its previous reservations and be capped at seven total calls/two investigations
+and US$0.63 total reservations, permitting at most four new calls/US$0.36. Model
 credentials must exist only in the investigation step and never in test execution.
 The existing key is in Smart CI's repository, not the Textual fork; run the three
 measurement arms in one Smart CI evaluation workflow against the same pinned real
 Textual PR. Report that workflow's full trigger-to-job times and distinguish them
 from automatic Textual-PR trigger latency, which this arrangement does not measure.
+
+The implementation builds an explicitly incomplete base graph from positive
+runtime observations and an empty head-runtime graph. It hashes exact Git source
+objects for the read-only broker; it does not claim old observations describe new
+execution. The model can inspect sources, compare change scope and propose
+registered positive facts. Applying an accepted edge independently repeats source
+verification, then adds any tests whose recorded dependency paths reach that edge
+and the changed source. No observed caller can be removed. Missing/unfinished
+agent evidence requires full experimental execution as well as the full control.
+
+Enrollment is now verified on [Textual PR #12](https://github.com/SharmaKunal14/textual/pull/12),
+[run 45862622090](https://github.com/SharmaKunal14/textual/actions/runs/45862622090):
+both paths passed 3,467 cases with identical identities, outcomes and skip details.
+Native feedback was 366 seconds; observed feedback 507 seconds. Combined runner
+time was 867 seconds. These are one-time enrollment costs, not selection savings.
+[Textual PR #13](https://github.com/SharmaKunal14/textual/pull/13) contains the exact
+historical Markdown regression with unchanged tests. Its three-arm result is
+pending; do not substitute enrollment success for that result.
 
 ## Starting point and deliverables
 

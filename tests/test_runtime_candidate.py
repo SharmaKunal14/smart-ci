@@ -1,5 +1,6 @@
 import importlib
 import json
+import shutil
 import subprocess
 from pathlib import Path
 from types import SimpleNamespace
@@ -216,3 +217,92 @@ def test_missing_map_executes_native_full_command_and_preserves_failure(
     execution = json.loads((output / "execution.json").read_text())
     assert execution["execution"] == "full"
     assert execution["planning_error"] == "CalledProcessError"
+
+
+@pytest.fixture
+def triple(experiment):
+    root, seed, runner, _ = experiment
+    run = json.loads((root / "run.json").read_text())
+    run.update(
+        repository={"full_name": "SharmaKunal14/smart-ci"},
+        head_repository={"full_name": "SharmaKunal14/smart-ci"},
+        path=".github/workflows/textual-runtime-comparison.yml",
+        head_sha="d" * 40,
+    )
+    write(root / "run.json", run)
+    jobs = json.loads((root / "jobs.json").read_text())
+    jobs["jobs"].append(jobs["jobs"][1] | {"name": "agent", "id": 3})
+    write(root / "jobs.json", jobs)
+    write(
+        root / "subject-pr.json",
+        {
+            "head": {"repo": {"full_name": runner.REPOSITORY}, "sha": "c" * 40},
+            "base": {"sha": "b" * 40},
+            "merged": False,
+            "html_url": "https://example.invalid/pr/1",
+        },
+    )
+    agent = root / "textual-agent-1"
+    shutil.copytree(root / "textual-candidate-1", agent)
+    execution = json.loads((agent / "execution.json").read_text())
+    execution["mode"] = "agent"
+    write(agent / "execution.json", execution)
+    comparator = importlib.import_module("compare_threeway")
+    candidate = json.loads((agent / "candidate.json").read_text())
+    write(agent / "initial-candidate.json", candidate)
+    inputs = {"source": "same public source"}
+    write(agent / "agent-input.json", inputs)
+    report = {
+        "input_digest": comparator.identity(inputs),
+        "provider": "openai:gpt-6.2-astra",
+        "evaluation_kind": "live_model_observation",
+        "model_calls": 1,
+        "accounting": {"model_calls": 1},
+        "final": {"execution": "full"},
+        "status": "finished",
+        "accepted_graph": {"evidence": []},
+    }
+    resign(report)
+    write(agent / "agent.json", report)
+    candidate.update(
+        initial_candidate_digest=candidate["digest"],
+        investigation_digest=report["digest"],
+    )
+    resign(candidate)
+    write(agent / "candidate.json", candidate)
+    write(agent / "agent-timing.json", {"preparation_and_model_seconds": 1})
+    return root, seed, comparator
+
+
+def test_threeway_separates_runtime_savings_from_agent_contribution(triple):
+    root, seed, comparator = triple
+    result = comparator.reconcile(root, seed)
+    assert set(result["jobs"]) == {"native", "candidate", "agent"}
+    assert result["agent_increment"]["accepted_new_edges"] == 0
+    assert result["agent_increment"]["additional_test_files"] == []
+    assert result["agent_increment"]["native_failures_recovered"] == []
+    assert not result["production_selective_savings_demonstrated"]
+
+
+@pytest.mark.parametrize("defect", ["replay", "different_evidence", "missing_full"])
+def test_threeway_rejects_false_model_comparisons(triple, defect):
+    root, seed, comparator = triple
+    if defect == "replay":
+        path = root / "textual-agent-1/agent.json"
+        data = json.loads(path.read_text())
+        data["model_calls"] = 0
+        resign(data)
+        write(path, data)
+    elif defect == "different_evidence":
+        path = root / "textual-agent-1/initial-candidate.json"
+        data = json.loads(path.read_text())
+        data["candidate_files"] = ["tests/test_other.py"]
+        resign(data)
+        write(path, data)
+    else:
+        path = root / "jobs.json"
+        data = json.loads(path.read_text())
+        data["jobs"] = data["jobs"][1:]
+        write(path, data)
+    with pytest.raises(ValueError):
+        comparator.reconcile(root, seed)

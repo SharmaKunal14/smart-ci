@@ -14,29 +14,45 @@ def failed(cases):
     return {key for key, value in cases.items() if value[0] in {"failure", "error"}}
 
 
-def compare(root, seed):
+def compare(root, seed, *, mode="candidate", subject_head=None):
+    if mode not in {"candidate", "agent"}:
+        raise ValueError("invalid measurement arm")
+    focused = subject_head is not None
     run = json.loads(read(root / "run.json"))
     jobs = json.loads(read(root / "jobs.json"))["jobs"]
+    expected_jobs = (
+        {"native", "candidate", "agent"} if focused else {"native", "candidate"}
+    )
+    if len(jobs) != len(expected_jobs) or {j["name"] for j in jobs} != expected_jobs:
+        raise ValueError("required native and experimental jobs missing")
+    jobs = [j for j in jobs if j["name"] in {"native", mode}]
+    expected_repository = "SharmaKunal14/smart-ci" if focused else REPOSITORY
+    expected_workflow = (
+        ".github/workflows/textual-runtime-comparison.yml"
+        if focused
+        else ".github/workflows/smartci-pilot.yml"
+    )
+    head = subject_head or run["head_sha"]
     if (
-        run["repository"]["full_name"] != REPOSITORY
-        or run["head_repository"]["full_name"] != REPOSITORY
-        or run["path"] != ".github/workflows/smartci-pilot.yml"
+        run["repository"]["full_name"] != expected_repository
+        or run["head_repository"]["full_name"] != expected_repository
+        or run["path"] != expected_workflow
         or run["status"] != "completed"
         or run["event"] != "pull_request"
         or run["run_attempt"] != 1
         or not re.fullmatch(r"[a-f0-9]{40}", run["head_sha"])
-        or len(jobs) != 2
-        or {j["name"] for j in jobs} != {"native", "candidate"}
+        or not re.fullmatch(r"[a-f0-9]{40}", head)
     ):
         raise ValueError("completed first-attempt candidate PR pair required")
     outcomes, executions, timing, profiles = {}, {}, {}, {}
+    candidate_mode = mode
     for job in jobs:
         mode = job["name"]
         folder = root / f"textual-{mode}-1"
         execution = json.loads(read(folder / "execution.json"))
         if (
             job["status"] != "completed"
-            or execution["head"] != run["head_sha"]
+            or execution["head"] != head
             or execution["mode"] != mode
             or execution["required_execution"] != "full"
             or execution["omission_authorized"] is not False
@@ -66,19 +82,20 @@ def compare(root, seed):
             "junit_sha256": hashlib.sha256(raw).hexdigest(),
             "execution": execution,
         }
-    native, selected = executions["native"], executions["candidate"]
+    mode = candidate_mode
+    native, selected = executions["native"], executions[mode]
     if (
         native["execution"] != "full"
         or native["targets"] is not None
         or native["planning_error"] is not None
         or native["base"] != selected["base"]
-        or profiles["native"] != profiles["candidate"]
+        or profiles["native"] != profiles[mode]
         or native["harness_sha256"] != selected["harness_sha256"]
     ):
         raise ValueError("native control or environment differs")
     seed_report = enrollment(seed, native["base"], profiles["native"])
     seeded_cases = junit(read(seed / "textual-native-1/junit.xml"))
-    full, subset = outcomes["native"], outcomes["candidate"]
+    full, subset = outcomes["native"], outcomes[mode]
     if full.keys() != seeded_cases.keys():
         raise ValueError("native inventory changed since enrollment")
     candidate = None
@@ -88,7 +105,7 @@ def compare(root, seed):
             raise ValueError("missing subset targets")
         expected = set(full)
     else:
-        candidate = json.loads(read(root / "textual-candidate-1/candidate.json"))
+        candidate = json.loads(read(root / f"textual-{mode}-1/candidate.json"))
         unsigned = {k: v for k, v in candidate.items() if k != "digest"}
         if (
             candidate["schema_version"] != "smartci.runtime-shadow-candidate.v1"
@@ -127,11 +144,12 @@ def compare(root, seed):
     missed = sorted("::".join(k) for k in failed(full) - failed(subset))
     potential = (
         timing["native"]["trigger_to_result_seconds"]
-        - timing["candidate"]["trigger_to_result_seconds"]
+        - timing[mode]["trigger_to_result_seconds"]
     )
     return {
         "run": run["html_url"],
-        "head": run["head_sha"],
+        "head": head,
+        "tool_revision": run["head_sha"] if focused else None,
         "jobs": timing,
         "enrollment_run": seed_report["run"],
         "candidate": candidate,
