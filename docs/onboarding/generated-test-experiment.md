@@ -1,6 +1,7 @@
 # One Textual generated-test experiment
 
-Status: prepared; live generation remains disabled pending a new, bounded approval.
+Status: generation and original-suite controls completed on GitHub. The exact
+proposal is under verification; the campaign and automatic trigger are disabled.
 This experiment replaces the proposed parser-selection trial. It evaluates added
 test coverage and defect detection, not test-selection speed or general agent quality.
 
@@ -94,6 +95,39 @@ tokens, and a cumulative US$0.99 reservation cap. Set
 and trigger one PR event. The workflow disables the campaign afterward without
 erasing reservations; disable the workflow variable after that run as well.
 The later reviewed-test jobs use no model key and need no paid-call activation.
+
+The additional one-investigation approval was received on 2026-11-27 (Sydney).
+Generation consumed all four new reservations, then disabled the campaign. No
+new call allowance remains in this experiment. `verify-one` enables only the two
+reviewed-test jobs; neither full controls nor model generation are repeated.
+
+## Recorded results so far
+
+[Original-suite control run](https://github.com/SharmaKunal14/smart-ci/actions/runs/45875657293):
+working and defective source each produced 3,460 passes, seven identical
+skip/expected-failure outcomes, and zero failures. All 3,467 identities and native
+package profiles matched. Both runs still recorded zero hits on the eight
+reported executable body lines. Each job took 352 seconds, or 354 seconds from
+workflow creation to completion. The original suite missed this specific defect.
+See the [control record](../benchmarks/textual-generated-test-controls-2026-11-27.json).
+
+[Generation run](https://github.com/SharmaKunal14/smart-ci/actions/runs/45876697306):
+the agent read two unchanged implementation excerpts and one native test excerpt,
+then submitted one test. Four live calls consumed 10,531 input and 560 output
+tokens; the standard uncached usage estimate is US$0.106648, not a provider invoice.
+US$0.36 remains reserved; the cumulative ledger has eleven reservations totaling
+US$0.99 and is disabled. Model/tool time was 32.180 seconds; preparation plus
+model/tools was 35.897 seconds. These internal GitHub timings exclude runner setup;
+the final report will include the entire generation job as well.
+
+The [exact proposal and transcript](../benchmarks/textual-generated-test-proposal-2026-11-27.json)
+are preserved. [Textual PR #16](https://github.com/SharmaKunal14/textual/pull/16)
+contains its unedited bytes, committed as
+`181d67627cfbb89a4be69b2d9923e307f2d6fcd3`, with SHA-256
+`8be235aa45b8ed68d0351207d423a486a345b5309e5ab82ae161d628ad6aa8d6`.
+The test uses public `Markdown.update` and `Markdown.append`, with private widget
+state/tooltip assertions. Review found no external I/O, mocking, skipping, or
+changes to the method under test. This review is not a passing execution result.
 
 No AWS, merges, changes to production selection, or weakened full-suite fallback.
 Local mocked tests verify the experiment's plumbing only; they are not model

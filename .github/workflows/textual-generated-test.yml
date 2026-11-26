@@ -13,6 +13,8 @@ env:
   BASE_SHA: e6b3a6962a1ecd2ea20facbd2560d68a65c0fbd8
   DEFECT_SHA: f1a9d30986616a922871020df233f883ead8dc82
   ENROLLMENT_RUN: '45862622090'
+  GENERATED_SHA: 181d67627cfbb89a4be69b2d9923e307f2d6fcd3
+  GENERATED_FILE_SHA256: 8be235aa45b8ed68d0351207d423a486a345b5309e5ab82ae161d628ad6aa8d6
 jobs:
   generate:
     if: >-
@@ -73,6 +75,79 @@ jobs:
         with:
           name: textual-generated-proposal-${{ github.run_attempt }}
           path: ${{ runner.temp }}/proposal
+          retention-days: 14
+          if-no-files-found: error
+  reviewed-test:
+    if: >-
+      github.repository == 'SharmaKunal14/smart-ci' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.head_ref == 'codex/textual-agent-generated-test' &&
+      github.run_attempt == 1 &&
+      vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'verify-one'
+    name: generated-${{ matrix.revision }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        revision: [working, defect]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: tool
+          persist-credentials: false
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: SharmaKunal14/textual
+          ref: ${{ matrix.revision == 'working' && env.BASE_SHA || env.DEFECT_SHA }}
+          fetch-depth: 0
+          path: app
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - name: Install unchanged native locked profile
+        working-directory: app
+        run: |
+          pipx install poetry==1.7.1
+          poetry env use "$pythonLocation/bin/python"
+          poetry install --no-interaction --extras syntax
+      - name: Record profile and copy the reviewed test without changing its bytes
+        working-directory: app
+        env:
+          SOURCE_SHA: ${{ matrix.revision == 'working' && env.BASE_SHA || env.DEFECT_SHA }}
+        run: |
+          poetry run python ../tool/examples/textual/runtime_candidate.py --mode profile \
+            --base "$BASE_SHA" --head "$SOURCE_SHA" --output "$RUNNER_TEMP/results"
+          git diff --exit-code
+          test ! -e tests/test_smartci_generated_markdown.py
+          git show "$GENERATED_SHA:tests/test_smartci_generated_markdown.py" > "$RUNNER_TEMP/reviewed-test.py"
+          echo "$GENERATED_FILE_SHA256  $RUNNER_TEMP/reviewed-test.py" | sha256sum --check
+          cp "$RUNNER_TEMP/reviewed-test.py" tests/test_smartci_generated_markdown.py
+          mkdir -p "$RUNNER_TEMP/results/generated" "$RUNNER_TEMP/results/surrounding"
+      - name: Run the exact generated test alone with independent coverage
+        working-directory: app
+        run: |
+          poetry run python -m pytest tests/test_smartci_generated_markdown.py -v \
+            --cov=./src/textual --cov-report=term-missing \
+            --cov-report="xml:$RUNNER_TEMP/results/generated/coverage.xml" \
+            --junitxml="$RUNNER_TEMP/results/generated/junit.xml"
+      - name: Run existing surrounding Markdown tests on working source
+        if: always() && matrix.revision == 'working'
+        working-directory: app
+        run: |
+          poetry run python -m pytest tests/test_markdown.py tests/test_markdownviewer.py \
+            tests/snapshot_tests/test_snapshots.py -k markdown -v \
+            --cov=./src/textual --cov-report=term-missing \
+            --cov-report="xml:$RUNNER_TEMP/results/surrounding/coverage.xml" \
+            --junitxml="$RUNNER_TEMP/results/surrounding/junit.xml"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: textual-generated-${{ matrix.revision }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/results
           retention-days: 14
           if-no-files-found: error
   original-suite:

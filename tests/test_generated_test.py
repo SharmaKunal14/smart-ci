@@ -109,9 +109,11 @@ def test_source_access_rejects_model_mutations_and_arbitrary_paths(generator):
 
 def test_workflow_never_executes_generated_code_with_model_credentials():
     workflow = Path(".github/workflows/textual-generated-test.yml").read_text()
-    generation, controls = workflow.split("  original-suite:")
+    generation, execution = workflow.split("  reviewed-test:")
+    reviewed, controls = execution.split("  original-suite:")
     assert workflow.count("secrets.OPENAI_API_KEY") == 1
-    assert "OPENAI_API_KEY" not in controls
+    assert "OPENAI_API_KEY" not in execution and "GITHUB_TOKEN" not in execution
+    assert "sha256sum --check" in reviewed
     assert "--mode native" in controls
     assert "poetry" not in generation and "pytest" not in generation
     assert "vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'generate-one'" in generation
