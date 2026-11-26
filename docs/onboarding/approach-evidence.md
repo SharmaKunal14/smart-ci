@@ -36,8 +36,11 @@ needs a new mechanically verifiable dependency contract, not just a stronger
 prompt. This is an inference from the current verifier and trial, not a general
 claim that models cannot help.
 
-Before broader rollout, finish the new native runner's regression, missing-map,
-new-target/full-fallback and shared-change comparisons. Report reconstruction and
+The new native runner now preserves the regression's two compiler failures and
+rebuilds a missing map from the passing base before restoring the broken PR head.
+See the [execution lifecycle evidence](bazel-execution.md#native-regression-preservation).
+Before broader rollout, finish its new-target/full-fallback and shared-change
+comparisons. Report reconstruction and
 enrollment costs separately and examine representative caching. The current public
 Abseil profile lacks credentials for its optional upstream private remote cache;
 the cold results do not describe that private environment. No merges, AWS

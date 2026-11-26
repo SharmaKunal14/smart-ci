@@ -169,3 +169,33 @@ These are failure-feedback measurements on a keep-going profile, not passing-run
 timings or a general recall estimate. Keep them separate from the two passing
 comparison pairs. A small replay cannot establish that every future regression
 will be caught.
+
+## Missing-map recovery on a real PR
+
+[PR #17](https://github.com/SharmaKunal14/abseil-cpp/pull/17) deliberately withholds
+the cached artifact on one allowlisted experiment branch. Its source is identical
+to the regression control. [Run 45778502438](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45778502438)
+records `map: rebuilt` and `rebuild: ready`: the base full suite passed all 252 test
+targets, retaining 324 build-only targets, and the dependency query completed.
+The reconstructed manifest's anchor matches the actual base Git tree.
+
+Execution then restored the distinct PR head, selected the same two linked-hash
+tests, and failed on both compiler errors. Complete native events retain every
+build-only configuration and match the existing native control's failure set.
+The check correctly remains red; a passing base enrollment cannot make a broken
+head green. This verifies successful reconstruction and restoration, not the
+separate failed-reconstruction/full-fallback branch.
+
+The entire PR-to-workflow lifecycle took **801 seconds (13m 21s)**. Base native
+execution took 623.48 seconds, the query 9.44 seconds, and head execution 137.43
+seconds. The remaining elapsed time includes setup, planning, uploads and cleanup.
+Head execution shares the runner and already-pulled image with enrollment; that
+137-second subprocess is not a standalone cold-workflow benchmark. The native
+failure reference is reused from PR #15, not a fresh independent timing pair.
+
+Inspect `native-pr/rebuild/collection.json`, `rebuild/bundle/manifest.json`,
+`lifecycle.json`, and `execution/{plan,execution}.json` in `automatic-native-1`.
+The [recovery record](../benchmarks/abseil-automatic-missing-map-2026-11-26.json)
+retains revisions, native outcomes, timing scope and hashes. PR-generated maps
+remain audit artifacts, never trusted publisher replacements. Rebuilding is a
+safe recovery cost; routine compatible-map reuse remains the intended path.
