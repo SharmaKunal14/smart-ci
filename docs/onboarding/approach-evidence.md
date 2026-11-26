@@ -50,7 +50,12 @@ current targets, including the test absent from the saved map. It takes 665 seco
 native versus 1,068 seconds Smart CI, performs identical work, and demonstrates
 no saving. Almost all elapsed difference is inside the native command; the two
 hosts have different CPUs. See the [fallback record](../benchmarks/abseil-automatic-fallback-2026-11-26.json).
-Before broader rollout, finish the shared-change comparison. Report reconstruction and
+The new shared-change comparison now also passes: 251/252 tests selected, all
+324 build-only targets retained, and only seven fewer actions. Its 1,074/660-second
+native/Smart CI result is confounded by different AMD/Intel hosts and does not
+establish a substantial selection benefit. See the
+[shared-change record](../benchmarks/abseil-automatic-shared-2026-11-26.json).
+Before broader rollout, report reconstruction and
 enrollment costs separately and examine representative caching. The current public
 Abseil profile lacks credentials for its optional upstream private remote cache;
 the cold results do not describe that private environment. No merges, AWS

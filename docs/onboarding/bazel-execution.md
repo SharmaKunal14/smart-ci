@@ -241,3 +241,39 @@ and compare them with `independent-native-1`. The
 [record](../benchmarks/abseil-automatic-fallback-2026-11-26.json) retains exact source
 identities, event timestamps, build configurations, action counts and artifact
 hashes. No native failures occur in this passing case; that is not a recall test.
+
+## Broad shared change and timing confounds
+
+[PR #20](https://github.com/SharmaKunal14/abseil-cpp/pull/20) and
+[PR #21](https://github.com/SharmaKunal14/abseil-cpp/pull/21) replay the broad
+shared-hash change previously evaluated with the older harness. Their complete
+Git trees are identical. Smart CI automatically selects 251/252 test targets,
+retains all 324 build-only targets and has no fallback. Complete build events
+verify the selected outcomes and configuration identities against the full control.
+
+| GitHub measurement | Native | Smart CI |
+| --- | ---: | ---: |
+| PR creation to completed workflow | 1,074 s | 660 s |
+| Passed test targets | 252 | 251 |
+| Required build-only targets | 324 | 324 |
+| Executed Bazel actions | 2,988 | 2,981 |
+| Native-command duration | 1,055.95 s | 628.02 s |
+| Bazel build-event wall time | 806.86 s | 479.68 s |
+
+The [native run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45783506412)
+and [Smart CI run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45784651098)
+both passed. Smart CI finished 414 seconds sooner, an observed 38.5% difference.
+**Do not attribute that percentage to test selection.** Only seven actions
+(0.234%) were avoided, and the native runner used AMD EPYC 7763 while the candidate
+used Intel Xeon 6975P-C. Different hardware and container/setup variation are
+confounded with the selection treatment. The planner itself took 0.420 seconds.
+The older harness's 640/924-second negative result remains recorded; neither pair
+establishes a substantial selection benefit for a change that reaches almost all
+tests. This newer result verifies automatic planning and execution correctness.
+
+Download `independent-native-1` and `automatic-native-1` from those runs. Compare
+`native-control/native.bep.json` with `native-pr/execution/capture/native.bep.json`,
+and inspect the candidate's plan and lifecycle report. The
+[comparison record](../benchmarks/abseil-automatic-shared-2026-11-26.json) includes
+source identities, CPU models, event timestamps, scope and evidence hashes. All
+observed native outcomes pass; this case does not estimate failure recall.

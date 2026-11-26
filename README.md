@@ -68,8 +68,11 @@ PR comparison and repeat passed. Live regression checks preserve both native
 compiler failures; missing-map recovery rebuilds the base and restores the head.
 A new-target full-fallback pair also passes all 253 current tests, including the
 test absent from the saved map. Its 665/1,068-second result shows no saving.
-The broad shared-change comparison and representative native-cache evaluation
-remain outstanding. See the execution guide for exact runs and evidence limits.
+The broad shared-change comparison passes 251/252 tests and preserves build-only
+scope. Its 1,074/660-second result is confounded by different CPUs; only seven
+Bazel actions were avoided, so a substantial selection benefit is not established.
+Representative native-cache evaluation remains outstanding. See the execution
+guide for exact runs and evidence limits.
 
 ## Setup and verification
 
