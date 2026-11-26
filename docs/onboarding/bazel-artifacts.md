@@ -110,7 +110,23 @@ Focused transport tests exercise origin mismatches, PR-origin rejection, expired
 or tampered artifacts, archive bounds, failed collection receipts, profile/command
 changes, subprocess time/output limits and redacted misses. The existing full
 safety workflow runs these tests and the package build on each tool PR. These
-tests use controlled API responses and synthetic native evidence; successful live
-download and consumption of a fresh Abseil map remain to be verified after its
-Actions activation problem is resolved. The enrollment PR has no run as of this
-change. No new native execution or savings result is claimed.
+tests use controlled API responses and synthetic native evidence. The
+[fresh Abseil publisher passed](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45764627612);
+the separate consumer workflow in `.github/workflows/native-map-handoff.yml` now
+checks discovery without a configured run ID, stable receipts, actual source-tree
+binding, compatible reuse, repeated plans for historical PRs #10/#11, preservation
+of all build-only targets, and full fallback for tampered evidence.
+[GitHub run 45767540576 passed](https://github.com/SharmaKunal14/smart-ci/actions/runs/45767540576)
+at tool head `d955e55d3f3cec858d5e617a9d65fa20985689fe`. The localized case selected
+2/252 test targets; the risky change selected full execution, and a modified query
+artifact forced `MISSING_INVALID_OR_INCOMPATIBLE_NATIVE_EVIDENCE`. All 324 build-only
+targets remained in both known-PR plans. Repeated receipts and plans were identical.
+The [evidence record](../benchmarks/bazel-handoff-2026-11-26.json) includes publisher
+provenance and artifact hashes. This job did not execute native tests or measure a
+new PR speedup; the default paired authority still requires independent full control.
+
+The verifier binds the reviewed Linux producer's exact command paths, including
+`.venv/bin/python3`, independently of the consumer's interpreter and workspace.
+Generating a new consumer-local configuration would correctly fail the command
+identity check. The expected configuration is constructed from reviewed inputs,
+not accepted from the downloaded artifact. No command identity check is relaxed.

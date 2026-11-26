@@ -39,16 +39,19 @@ bundles, and `smartci bazel plan` produces deterministic plans from an authentic
 bundle digest. These installed CLI commands have no repository-specific run pins.
 `smartci bazel collect` now runs reviewed native capture commands and automatically
 rebuilds missing or incompatible maps, or reuses a validated compatible bundle.
-Its hosted safety tests pass; fresh Abseil enrollment is still awaiting resolution
-of a GitHub Actions enablement error. This does not establish arbitrary-project
+Its [fresh GitHub enrollment passed](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45764627612):
+252 native test targets passed, all 324 build-only targets were retained, and a
+compatible map was reused without rerunning native/query commands. This does not establish arbitrary-project
 compatibility or complete PR execution integration. See
 [automatic collection](docs/onboarding/bazel-collection.md) and the
 [bundle workflow](docs/onboarding/bazel-bundles.md)
 for commands, trust boundaries, full fallback and verification.
 `smartci bazel fetch` adds [trusted GitHub artifact discovery](docs/onboarding/bazel-artifacts.md)
 without configured run IDs. It rejects unapproved publishers and invalid evidence;
-a miss requires rebuilding or full execution. Fresh live native map retrieval
-and complete automatic PR integration remain unverified.
+a miss requires rebuilding or full execution. A
+[separate hosted consumer passed](https://github.com/SharmaKunal14/smart-ci/actions/runs/45767540576),
+including repeatable subset/full plans and tampered-map fallback. Complete automatic
+PR execution remains to be integrated; these checks are not a new PR savings measurement.
 
 ## Setup and verification
 

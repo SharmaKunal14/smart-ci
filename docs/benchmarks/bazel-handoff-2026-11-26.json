@@ -1,0 +1,83 @@
+{
+  "conclusion": "success",
+  "evidence_sha256": {
+    "capture-config.json": "d3df5eeb4a611ef4c11d4a0ffb759c1d483ad516530cebf55fe7a71cd7bd8c9c",
+    "fetched/fetch.json": "585d222e5117757ec3c31b4c3e8e49dd286e23367e202b203234ec502ce553df",
+    "pr-10-1.json": "262c42e34ff91ae53961d56796bce515cd923d441b9ee5ceca3396889c8ae342",
+    "pr-11-1.json": "93c9c4944963499a91b0cb24470efd334d93edb7502dbdb3ed30f40fc0c53c8e",
+    "publisher.json": "c94c498af6e721c9baa01c4f84f6129855addfd5b5556852db1cb6203dcaffee",
+    "tampered-1.json": "0e607cb55a10cf16d5cad753b10363973954b1b89e984305f7586b089c9cb618",
+    "verification.json": "25a1fe631c3d44243bf3aa2a91a1807bebecb05fd4dec03f5c1a4301d6d9032a"
+  },
+  "head": "d955e55d3f3cec858d5e617a9d65fa20985689fe",
+  "limitations": [
+    "Planning replay of historical Abseil PR revisions, not new native test execution or performance measurement.",
+    "Default paired authority requires independent full control; this verifier does not authorize production omissions.",
+    "One reviewed GCC/Bazel C++17 fastbuild profile; no arbitrary-project compatibility claim.",
+    "Full automatic PR execution and a new end-to-end savings comparison remain outstanding."
+  ],
+  "pr": "https://github.com/SharmaKunal14/smart-ci/pull/20",
+  "run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45767540576",
+  "safety": {
+    "format": true,
+    "head": "d955e55d3f3cec858d5e617a9d65fa20985689fe",
+    "lint": true,
+    "log_sha256": "41031aea9491104c1004e9bbc5d045006fccb15e0cd39bf6a7daeceec3ee571a",
+    "run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45767540503",
+    "sdist_and_wheel": true,
+    "tests_passed": 791,
+    "types": true
+  },
+  "schema_version": "smartci.native-handoff-evidence.v1",
+  "verification": {
+    "cases": [
+      {
+        "base": "6caf49f391bac80d83d81ad925cd29ae75872f3e",
+        "digest": "70212b168794a5b2cc67305453a44c24d1d0823b022f081f8d390e44c6a0b572",
+        "fallback": [],
+        "head": "2745f8c71cfe5e04081b68e3cab6bea4fab069e6",
+        "mode": "subset",
+        "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/10",
+        "selected": 2
+      },
+      {
+        "base": "2745f8c71cfe5e04081b68e3cab6bea4fab069e6",
+        "digest": "a2762584a69e0d2923864c37172e2fcddc8566f3f920e2cd198421dadc287f4f",
+        "fallback": [
+          "MAP_INPUTS_CHANGED",
+          "UNSUPPORTED_OR_RISK_CHANGE"
+        ],
+        "head": "2d5a7985bfe983dc080a5dd62db3fdf203f526ff",
+        "mode": "full",
+        "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/11",
+        "selected": 252
+      }
+    ],
+    "compatible_reuse_validated": true,
+    "model_calls": 0,
+    "native_build_only_targets": 324,
+    "native_test_execution": false,
+    "native_test_targets": 252,
+    "performance_measurement": false,
+    "publisher": {
+      "archive_digest": "69d7263c33f0d6560af8d67615b467a1dd88e5451601da85fdc4e5ed8fdeb06b",
+      "artifact_id": 15091334618,
+      "config_digest": "d3df5eeb4a611ef4c11d4a0ffb759c1d483ad516530cebf55fe7a71cd7bd8c9c",
+      "manifest_digest": "51ff2469ab7671530a93b24379faa07176dc9ea102a0f50b188915f8ce6ce640",
+      "map_revision": "622fd1c2829655d595ffeca8656382ff305a5ddb",
+      "publisher_digest": "c94c498af6e721c9baa01c4f84f6129855addfd5b5556852db1cb6203dcaffee",
+      "repository": "SharmaKunal14/abseil-cpp",
+      "revision": "622fd1c2829655d595ffeca8656382ff305a5ddb",
+      "run_attempt": 1,
+      "run_id": 45764627612,
+      "schema_version": "smartci.bazel-fetch.v1",
+      "status": "ready"
+    },
+    "repeat_plans_identical": true,
+    "schema_version": "smartci.native-handoff-verification.v1",
+    "status": "passed",
+    "tampered_map_fallback": [
+      "MISSING_INVALID_OR_INCOMPATIBLE_NATIVE_EVIDENCE"
+    ]
+  }
+}
