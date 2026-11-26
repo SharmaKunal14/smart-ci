@@ -23,14 +23,30 @@ from .models import (
 
 class Broker:
     def __init__(
-        self, root: Path, inputs: Inputs, adapter: EvidenceAdapter, limits: Limits
+        self,
+        root: Path,
+        inputs: Inputs,
+        adapter: EvidenceAdapter,
+        limits: Limits,
+        *,
+        additional_adapters: tuple[EvidenceAdapter, ...] = (),
     ) -> None:
         self.root = root
         self.inputs = inputs.model_copy(deep=True)
         self.adapter = adapter
+        available = (adapter, *additional_adapters)
+        self.adapters = {item.name: item for item in available}
+        if len(available) > 8 or len(self.adapters) != len(available):
+            raise ValueError("invalid or duplicate evidence adapter registration")
         self.limit = limits.source_bytes
         self.bytes_read = 0
         self.observations: dict[str, Observation] = {}
+
+    def capabilities(self) -> list[dict[str, str]]:
+        return [
+            {"adapter": name, "relation": adapter.relation}
+            for name, adapter in sorted(self.adapters.items())
+        ]
 
     def graph(self, revision: str) -> Graph:
         if revision not in self.inputs.sources:
@@ -78,16 +94,19 @@ class Broker:
         }
 
     def inspect(self, action: Inspect) -> Observation:
+        adapter = self.adapters.get(action.adapter or self.adapter.name)
+        if adapter is None:
+            raise ValueError("evidence adapter not registered")
         raw = self._read(action)
         graph = self.graph(action.revision)
         source_digest = hashlib.sha256(raw).hexdigest()
-        facts = self.adapter.inspect(action.path, raw, set(graph.owners))
+        facts = adapter.inspect(action.path, raw, set(graph.owners))
         record = {
             "revision": action.revision,
             "path": action.path,
             "source_digest": source_digest,
-            "adapter": self.adapter.name,
-            "adapter_digest": self.adapter.identity(),
+            "adapter": adapter.name,
+            "adapter_digest": adapter.identity(),
             "facts": [fact.model_dump() for fact in facts[:64]],
             "facts_truncated": len(facts) > 64,
         }
@@ -97,14 +116,19 @@ class Broker:
 
     def verify(self, action: Propose) -> Accepted:
         observation = self.observations.get(action.evidence)
-        if observation is None or (
-            observation.revision != action.revision
-            or observation.path != action.path
-            or action.relation != self.adapter.relation
-            or observation.adapter_digest != self.adapter.identity()
-            or not any(
-                f.target == action.target and f.line == action.line
-                for f in observation.facts
+        adapter = self.adapters.get(observation.adapter) if observation else None
+        if (
+            observation is None
+            or adapter is None
+            or (
+                observation.revision != action.revision
+                or observation.path != action.path
+                or action.relation != adapter.relation
+                or observation.adapter_digest != adapter.identity()
+                or not any(
+                    f.target == action.target and f.line == action.line
+                    for f in observation.facts
+                )
             )
         ):
             raise ValueError("claim lacks verified matching evidence")
@@ -113,7 +137,7 @@ class Broker:
         graph = self.graph(action.revision)
         return Accepted(
             **action.model_dump(),
-            verifier=self.adapter.name,
+            verifier=adapter.name,
             verifier_digest=observation.adapter_digest,
             source_digest=observation.source_digest,
             already_recorded=graph.owners[action.target]

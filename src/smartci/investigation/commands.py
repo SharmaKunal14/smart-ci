@@ -17,8 +17,9 @@ from .github_budget import GitHubBudget
 from .http import HTTPS
 from .models import Inputs, Limits, Location
 from .openai_provider import OpenAIProvider
+from .process_scripts import PythonProcessScripts
 from .public_scope import validate_public_scope
-from .replay import ImportReplay
+from .replay import DiagnosticReplay, ImportReplay
 
 
 def command(args: argparse.Namespace) -> int:
@@ -31,6 +32,8 @@ def command(args: argparse.Namespace) -> int:
         ]
         limits = Limits()
         provider: Provider = ImportReplay(locations)
+        if args.provider == "diagnostic-replay":
+            provider = DiagnosticReplay()
         if args.provider == "openai":
             if (
                 not all(
@@ -59,7 +62,15 @@ def command(args: argparse.Namespace) -> int:
             limits = Limits(steps=4, seconds=120)
         report = investigate(
             inputs,
-            Broker(args.repo, inputs, PythonImports(args.module_root), limits),
+            Broker(
+                args.repo,
+                inputs,
+                PythonImports(args.module_root),
+                limits,
+                additional_adapters=(PythonProcessScripts(),)
+                if getattr(args, "enable_process_inspection", False) is True
+                else (),
+            ),
             provider,
             limits,
         )
@@ -89,7 +100,16 @@ def add_parser(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None
     parser.add_argument("--module-root", action="append", required=True)
     parser.add_argument("--focus", action="append", default=[])
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--provider", choices=["replay", "openai"], default="replay")
+    parser.add_argument(
+        "--provider",
+        choices=["replay", "diagnostic-replay", "openai"],
+        default="replay",
+    )
+    parser.add_argument(
+        "--enable-process-inspection",
+        action="store_true",
+        help="register bounded positive script-argument inspection; no process execution",
+    )
     parser.add_argument("--campaign")
     parser.add_argument("--budget-repository")
     parser.add_argument("--budget-branch")

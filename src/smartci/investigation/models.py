@@ -86,6 +86,7 @@ class Location(Strict):
 
 class Inspect(Location):
     kind: Literal["inspect"]
+    adapter: str | None = Field(default=None, pattern=r"^[a-z][a-z0-9_-]{0,63}$")
 
 
 class ReadSource(Location):
