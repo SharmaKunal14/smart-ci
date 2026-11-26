@@ -1,0 +1,61 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "repository": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9_][A-Za-z0-9_.-]{0,99}$",
+      "title": "Repository",
+      "type": "string"
+    },
+    "branch": {
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_./-]{0,199}$",
+      "title": "Branch",
+      "type": "string"
+    },
+    "workflow": {
+      "pattern": "^\\.github/workflows/[A-Za-z0-9_-]+\\.ya?ml$",
+      "title": "Workflow",
+      "type": "string"
+    },
+    "workflow_digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Workflow Digest",
+      "type": "string"
+    },
+    "event": {
+      "default": "push",
+      "enum": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "title": "Event",
+      "type": "string"
+    },
+    "artifact_prefix": {
+      "pattern": "^[A-Za-z0-9_-]{1,100}$",
+      "title": "Artifact Prefix",
+      "type": "string"
+    },
+    "max_age_seconds": {
+      "default": 604800,
+      "maximum": 604800,
+      "minimum": 1,
+      "title": "Max Age Seconds",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "repository",
+    "branch",
+    "workflow",
+    "workflow_digest",
+    "artifact_prefix"
+  ],
+  "title": "Publisher",
+  "type": "object"
+}

@@ -3,6 +3,9 @@
 import argparse
 import json
 import re
+import subprocess
+import zipfile
+import zlib
 from pathlib import Path
 
 from smartci.git_changes import git
@@ -21,6 +24,7 @@ from .bundle import (
 from .collection import collect, read_config
 from .graph import QueryError
 from .planning import MAX_TREE_BYTES, parse_tree
+from .transport import fetch, read_publisher
 
 GIT_OPTIONS = ("--no-replace-objects", "-c", "core.fsmonitor=false")
 
@@ -30,6 +34,14 @@ def add_parser(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None
         "bazel", help="validated native Bazel evidence and planning"
     )
     commands = parent.add_subparsers(dest="bazel_command", required=True)
+    retrieval = commands.add_parser(
+        "fetch",
+        help="discover and validate a native map from a trusted GitHub publisher",
+    )
+    retrieval.add_argument("--publisher", type=Path, required=True)
+    retrieval.add_argument("--revision", required=True)
+    retrieval.add_argument("--config", type=Path, required=True)
+    retrieval.add_argument("--output", type=Path, required=True)
     collection = commands.add_parser(
         "collect", help="collect or safely reuse native evidence from trusted commands"
     )
@@ -195,6 +207,41 @@ def plan_command(args: argparse.Namespace) -> int:
 
 
 def command(args: argparse.Namespace) -> int:
+    if args.bazel_command == "fetch":
+        try:
+            output = args.output.resolve()
+            if any(
+                path.resolve().is_relative_to(output)
+                for path in (args.publisher, args.config)
+            ):
+                raise QueryError("retrieval output overlaps trusted inputs")
+            report = fetch(
+                read_publisher(args.publisher),
+                args.revision,
+                read_config(args.config),
+                output,
+            )
+        except (
+            OSError,
+            ValueError,
+            TypeError,
+            KeyError,
+            AttributeError,
+            RecursionError,
+            subprocess.SubprocessError,
+            zipfile.BadZipFile,
+            zlib.error,
+            EOFError,
+            NotImplementedError,
+        ):
+            print(
+                json.dumps(
+                    {"status": "miss", "code": "UNTRUSTED_OR_UNAVAILABLE_NATIVE_MAP"}
+                )
+            )
+            return 2
+        print(json.dumps(report))
+        return 0
     if args.bazel_command == "collect":
         try:
             if (args.reuse_bundle is None) != (args.expected_digest is None):
