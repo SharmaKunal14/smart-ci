@@ -3,6 +3,7 @@
     "Action": {
       "discriminator": {
         "mapping": {
+          "compare_source": "#/$defs/CompareSource",
           "finish": "#/$defs/Finish",
           "inspect": "#/$defs/Inspect",
           "propose": "#/$defs/Propose",
@@ -21,6 +22,9 @@
           "$ref": "#/$defs/ReadSource"
         },
         {
+          "$ref": "#/$defs/CompareSource"
+        },
+        {
           "$ref": "#/$defs/Search"
         },
         {
@@ -36,6 +40,27 @@
           "$ref": "#/$defs/Finish"
         }
       ]
+    },
+    "CompareSource": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "compare_source",
+          "title": "Kind",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 1024,
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "path"
+      ],
+      "title": "CompareSource",
+      "type": "object"
     },
     "Finish": {
       "additionalProperties": false,

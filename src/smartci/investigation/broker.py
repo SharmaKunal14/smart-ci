@@ -7,8 +7,10 @@ from smartci.git_changes import git
 from smartci.selection import Graph, digest
 
 from .adapters import EvidenceAdapter
+from .change_scope import compare
 from .models import (
     Accepted,
+    CompareSource,
     Inputs,
     Inspect,
     Limits,
@@ -113,6 +115,25 @@ class Broker:
         observation = Observation.model_validate(record | {"evidence": digest(record)})
         self.observations[observation.evidence] = observation
         return observation
+
+    def compare_source(self, action: CompareSource) -> dict[str, object]:
+        if action.path not in self.inputs.changes.paths:
+            raise ValueError("comparison path not part of recorded change")
+        revisions = {"base": self.inputs.base.commit, "head": self.inputs.head.commit}
+        # The caller cannot substitute either revision or assert source identity.
+        # Added/deleted/unmapped sources are unsupported by this initial tool.
+        if any(action.path not in self.graph(r).owners for r in revisions.values()):
+            raise ValueError("comparison needs both catalogued source versions")
+        raw = {
+            side: self._read(Location(revision=revision, path=action.path))
+            for side, revision in revisions.items()
+        }
+        result = compare(action.path, raw["base"], raw["head"]) | {
+            "comparison": revisions
+        }
+        # This report is deliberately not registered as positive edge evidence.
+        # It cannot validate a proposal or certify an absence of dependencies.
+        return result | {"digest": digest(result)}
 
     def verify(self, action: Propose) -> Accepted:
         observation = self.observations.get(action.evidence)

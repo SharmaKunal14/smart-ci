@@ -19,7 +19,7 @@ from .models import Inputs, Limits, Location
 from .openai_provider import OpenAIProvider
 from .process_scripts import PythonProcessScripts
 from .public_scope import validate_public_scope
-from .replay import DiagnosticReplay, ImportReplay
+from .replay import ChangeScopeReplay, DiagnosticReplay, ImportReplay
 
 
 def command(args: argparse.Namespace) -> int:
@@ -34,6 +34,8 @@ def command(args: argparse.Namespace) -> int:
         provider: Provider = ImportReplay(locations)
         if args.provider == "diagnostic-replay":
             provider = DiagnosticReplay()
+        if args.provider == "scope-replay":
+            provider = ChangeScopeReplay()
         if args.provider == "openai":
             if (
                 not all(
@@ -102,7 +104,7 @@ def add_parser(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument(
         "--provider",
-        choices=["replay", "diagnostic-replay", "openai"],
+        choices=["replay", "diagnostic-replay", "scope-replay", "openai"],
         default="replay",
     )
     parser.add_argument(

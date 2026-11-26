@@ -102,3 +102,24 @@ class DiagnosticReplay:
         return json.dumps(
             self.locations.pop(0) if self.locations else {"kind": "finish"}
         )
+
+
+class ChangeScopeReplay:
+    """Bounded offline scope inspection; no inference or omission authority."""
+
+    name = "rule-driven-change-scope-replay-v1"
+
+    def __init__(self) -> None:
+        self.paths: list[str] | None = None
+
+    def next_action(self, context: str) -> str:
+        if self.paths is None:
+            data = json.loads(context)
+            self.paths = sorted(
+                {p for p in data["changed_paths"] if p.endswith(".py")}
+            )[:4]
+        return json.dumps(
+            {"kind": "compare_source", "path": self.paths.pop(0)}
+            if self.paths
+            else {"kind": "finish"}
+        )
