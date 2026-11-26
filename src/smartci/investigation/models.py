@@ -95,6 +95,16 @@ class ReadSource(Location):
     lines: int = Field(ge=1, le=80)
 
 
+class CompareSource(Strict):
+    kind: Literal["compare_source"]
+    path: str = Field(max_length=1024)
+
+    @field_validator("path")
+    @classmethod
+    def path_valid(cls, value: str) -> str:
+        return TestUnit.relative_path(value)
+
+
 class Search(Strict):
     kind: Literal["search_paths"]
     query: str = Field(min_length=1, max_length=128)
@@ -128,7 +138,14 @@ class Finish(Strict):
 
 
 type Action = Annotated[
-    Inspect | ReadSource | Search | Query | Propose | Unresolved | Finish,
+    Inspect
+    | ReadSource
+    | CompareSource
+    | Search
+    | Query
+    | Propose
+    | Unresolved
+    | Finish,
     Field(discriminator="kind"),
 ]
 

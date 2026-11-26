@@ -11,6 +11,7 @@ from .broker import Broker
 from .models import (
     Accepted,
     ActionEnvelope,
+    CompareSource,
     Finish,
     Inputs,
     Inspect,
@@ -135,6 +136,8 @@ def investigate(
                 result = broker.inspect(action).model_dump()
             elif isinstance(action, ReadSource):
                 result = broker.read_source(action)
+            elif isinstance(action, CompareSource):
+                result = broker.compare_source(action)
             elif isinstance(action, Search):
                 result = broker.search(action)
             elif isinstance(action, Query):
