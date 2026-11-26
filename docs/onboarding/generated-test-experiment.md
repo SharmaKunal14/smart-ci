@@ -1,10 +1,11 @@
 # One Textual generated-test experiment
 
-The first attempt was negative: the unedited generated test failed on both
-working and defective source and did not execute `_update_rows`. A single bounded
-repair cycle is prepared but has not been approved or run. The campaign and
-experiment trigger remain disabled. This evaluates added coverage and defect
-detection, not test-selection speed or general agent quality.
+Both the original attempt and the one approved repair were negative. The original
+test failed on working and defective source. The revised test failed on working
+source before executing `_update_rows`, so its held-out evaluation was not
+admitted. All approved repair calls are consumed; the campaign and experiment
+triggers are disabled. This evaluates added coverage and defect detection, not
+test-selection speed or general agent quality.
 
 ## Fixed scope and provenance
 
@@ -68,10 +69,65 @@ merely from this identity assertion. Initial semantic review did not catch the
 setup/path problem; actual execution invalidated the proposal. No test edits or
 extra calls were used to turn the first attempt into a success.
 
-## Prepared generate/execute/inspect/revise cycle
+## Verified repair GitHub results
 
-This is one controlled repair of that first failed attempt, not an unbounded
-self-fixing agent or a new diagnostic framework.
+The user explicitly approved one repair investigation on 27 November 2026
+(Australia/Sydney). The agent received the original test, working-code failure
+and zero-hit coverage report, with read-only access to the pinned public source.
+The held-out mutation and defective-run results were excluded. It inspected
+`Markdown.append`, the table update dispatch and test paths, then submitted a
+revision on its fourth call. The complete [repair proposal and transcript](../benchmarks/textual-generated-test-repair-proposal-2026-11-27.json)
+are preserved independently of the original proposal.
+
+The revised test is frozen at Textual commit
+`8954efa2d402c22be382dc3a92a7f05cab865663`, file SHA-256
+`3f4db313d52e6d09b658fe48c4a16cfadb90e04da14648c8f6ebefc723cecffe`.
+No human/Codex edits or formatting changes were made to either generated test.
+The revision mounts a table through `Markdown.update`, then intends to call
+the real private `_update_rows` method directly and verify preserved, replaced
+and added row values. This is a method-level test, not verification of the
+public `Markdown.append` dispatch.
+
+| Repair stage | Result | Job time | Workflow creation to result |
+| --- | --- | ---: | ---: |
+| Agent repair | Four API calls produced one revision | 87s | 90s |
+| Revised test, working source | 1 failure; 0/8 target-body lines executed; 42 surrounding native tests passed separately | 66s | 69s |
+| Revised test, held-out defect | Not run: working-source acceptance failed | — | — |
+
+Sources: [repair generation](https://github.com/SharmaKunal14/smart-ci/actions/runs/45887385150),
+[working verification](https://github.com/SharmaKunal14/smart-ci/actions/runs/45887826034),
+and the [reconciled repair result](../benchmarks/textual-generated-test-repair-result-2026-11-27.json).
+The working environment exactly matched the earlier original-suite control.
+
+The failure is `AttributeError: 'str' object has no attribute 'plain'` at revised
+test line 24, called by its initial assertion at line 26. The helper assumes that
+every cell tooltip is a `Content` object. The existing table composition sets
+initial tooltips to `cell.plain` strings, and the widget stores that value without
+conversion. The test therefore fails before calling the target. This is a
+generated-test type assumption, not evidence of a baseline Textual defect. Source
+review flagged the mismatch while the working job was running; CI confirmed it.
+The earlier append-after-update behavior remains a separate unresolved question.
+
+The repair used 12,385 input and 557 output tokens: **US$0.121360 estimated** at
+the checked standard uncached rates, not an invoice. The US$0.36 reservation
+remains charged against the campaign allowance. Model/tool time was 36.607s;
+preparation plus model/tools was 44.887s within the 87s generation job. Both jobs
+consumed **153 runner seconds**, including setup. Their separate trigger-to-result
+times sum to 159s; actual wall time from repair workflow creation to working-job
+completion was **293s**, including operator review and publication of the frozen
+test. These numbers exclude Smart CI's safety-check jobs and are not autonomous
+product latency. Original generation plus repair used an estimated US$0.228008.
+
+**Conclusion:** this bounded feedback iteration did not produce a valid test,
+add target coverage, or demonstrate agent value or CI savings. It does not prove
+that every agentic approach will fail. The workflow was operator-orchestrated,
+with source-read tools and one repair iteration; it was not an unrestricted agent
+with command execution. No further repair is authorized by this allowance.
+
+## Bounded generate/execute/inspect/revise procedure
+
+This was one controlled repair of that first failed attempt. Steps 1–4 ran;
+step 5 was correctly withheld after the working-source failure.
 
 1. **Inspect working feedback.** The strict
    [working-feedback record](../../examples/textual/generated-test-working-feedback.json)
@@ -118,24 +174,27 @@ trigger is closed after each admitted stage. The original `generate-one` and
 combined `verify-one` runs remain reproducible from their recorded older tool
 commits; the current workflow only admits the staged repair path.
 
-## Proposed repair allowance; not yet approved
+## Approved repair allowance; consumed and disabled
 
-The existing `textual-public-20261123` campaign is disabled with eleven retained
-reservations totaling US$0.99. All previously approved calls have been consumed.
-Resuming the goal is not paid-call authorization.
+Before approval, `textual-public-20261123` was disabled with eleven retained
+reservations totaling US$0.99. Explicit approval added one investigation with four
+call slots and US$0.36 of reservations. All eleven earlier records were preserved.
+After the repair, the campaign is disabled with fifteen reservations totaling
+US$1.35 and no remaining authorized call slots. All three live experiment
+variables are `disabled`. Resuming the goal is not new paid-call authorization.
 
-Proposed: **one repair investigation, at most four calls, US$0.36 additional
+Approved: **one repair investigation, at most four calls, US$0.36 additional
 reservations within the original US$5 ceiling**. Each call reserves at most 5,000
 input and 1,000 output tokens. The four-call total is 20,000 input and 4,000 output
 tokens. The source/tool loop has a 120s check and the containing model step a
 four-minute timeout; network failures and uncertain calls are not retried or
 refunded. Invalid output or exhaustion stops the attempt.
 
-Only after explicit approval, recheck
-[official pricing](https://developers.openai.com/api/docs/pricing) and conditionally
-update the existing ledger to fifteen total reservations, four investigations,
+After explicit approval, [official pricing](https://developers.openai.com/api/docs/pricing)
+was checked at 2026-11-26 19:56 UTC (27 November in Sydney). A conditional ledger
+update allowed fifteen total reservations, four investigations,
 75,000 reserved input and 15,000 output tokens, with a cumulative US$1.35 reservation
-cap. Retain every old reservation. The reservation uses US$10 input and US$40 output
+cap, retaining every old reservation. The reservation uses US$10 input and US$40 output
 per million tokens; the last checked standard uncached input rate was US$8. Do not
 activate if current rates exceed the reserved rates. No new provider or Codex
 authentication is introduced.
