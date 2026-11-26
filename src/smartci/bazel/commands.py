@@ -22,6 +22,7 @@ from .bundle import (
     sha256,
 )
 from .collection import collect, read_config
+from .execution import execute, read_execution_config
 from .graph import QueryError
 from .planning import MAX_TREE_BYTES, parse_tree
 from .transport import fetch, read_publisher
@@ -34,6 +35,18 @@ def add_parser(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None
         "bazel", help="validated native Bazel evidence and planning"
     )
     commands = parent.add_subparsers(dest="bazel_command", required=True)
+    execution = commands.add_parser(
+        "execute", help="derive and execute a native PR plan from trusted evidence"
+    )
+    execution.add_argument("--repo", type=Path, required=True)
+    execution.add_argument("--base", required=True)
+    execution.add_argument("--head", required=True)
+    execution.add_argument("--config", type=Path, required=True)
+    execution.add_argument("--output", type=Path, required=True)
+    execution.add_argument("--bundle", type=Path)
+    execution.add_argument("--expected-digest")
+    execution.add_argument("--must-run", action="append", default=[])
+    execution.add_argument("--force-full", action="store_true")
     retrieval = commands.add_parser(
         "fetch",
         help="discover and validate a native map from a trusted GitHub publisher",
@@ -207,6 +220,49 @@ def plan_command(args: argparse.Namespace) -> int:
 
 
 def command(args: argparse.Namespace) -> int:
+    if args.bazel_command == "execute":
+        try:
+            output = args.output.resolve()
+            if args.config.resolve().is_relative_to(output):
+                raise QueryError("execution output overlaps trusted configuration")
+            report = execute(
+                args.repo.resolve(),
+                args.base,
+                args.head,
+                read_execution_config(args.config),
+                output,
+                bundle_path=args.bundle.resolve() if args.bundle is not None else None,
+                expected_digest=args.expected_digest,
+                must_run=tuple(args.must_run),
+                force_full=args.force_full,
+            )
+        except (
+            OSError,
+            ValueError,
+            TypeError,
+            KeyError,
+            AttributeError,
+            RecursionError,
+        ):
+            print(
+                json.dumps(
+                    {"status": "error", "code": "INVALID_NATIVE_EXECUTION_INPUT"}
+                )
+            )
+            return 2
+        print(
+            json.dumps(
+                {key: report[key] for key in ("status", "mode", "exit_code", "error")}
+            )
+        )
+        code = report["exit_code"]
+        return (
+            code
+            if isinstance(code, int) and 0 < code <= 255
+            else 0
+            if report["status"] == "passed"
+            else 1
+        )
     if args.bazel_command == "fetch":
         try:
             output = args.output.resolve()

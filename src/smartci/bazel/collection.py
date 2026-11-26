@@ -98,7 +98,7 @@ def run_command(command: CaptureCommand, repo: Path, capture: Path) -> int:
                 try:
                     return process.wait(timeout=min(15, remaining))
                 except subprocess.TimeoutExpired:
-                    print("Native evidence collection is still running...", flush=True)
+                    print("Native command is still running...", flush=True)
         finally:
             # Kill the group even if its leader exited while a child was alive.
             try:
