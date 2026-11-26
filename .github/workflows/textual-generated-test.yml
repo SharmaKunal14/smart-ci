@@ -81,7 +81,7 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.head_ref == 'codex/textual-agent-generated-test' &&
       github.run_attempt == 1 &&
-      vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'generate-one'
+      vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'controls-only'
     name: original-${{ matrix.revision }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20

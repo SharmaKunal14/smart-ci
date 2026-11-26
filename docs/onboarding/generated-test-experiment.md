@@ -36,15 +36,18 @@ defect branch are not model inputs.
 
 ## Procedure and acceptance
 
-1. **Generate once on GitHub.** Reuse the existing regular Responses API transport,
+1. **Run unchanged controls before model approval.** With the workflow variable
+   set to `controls-only`, two GitHub jobs run the existing full native suite
+   with its locked dependencies on working and defective source. Preserve test
+   identities, outcomes, coverage, package profiles, commit IDs and timing. These
+   jobs receive no model credentials and include no generated test. The generation
+   job is skipped, so this step cannot make model calls.
+2. **Generate once on GitHub after approval.** Reuse the existing regular Responses API transport,
    durable ledger and four-call bounds. Save accepted actions, source observations,
    the exact proposed file, its hash, token accounting and model/tool elapsed time.
    This stage never imports Textual or executes generated code. Syntax parsing is
    only an initial check, not a security or semantic review.
-2. **Run unchanged controls.** Two GitHub jobs run the existing full native suite
-   with its locked dependencies on working and defective source. Preserve test
-   identities, outcomes, coverage, package profiles, commit IDs and timing. These
-   jobs receive no model credentials and include no generated test.
+   The control jobs are skipped during generation, avoiding duplicate full runs.
 3. **Review the unedited proposal.** Check that assertions express the intended
    behavior, the test really exercises the target, and it does not skip, xfail,
    patch the target, manipulate coverage, or access external services or secrets.

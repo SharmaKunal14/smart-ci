@@ -140,6 +140,7 @@ def propose(provider, broker: Broker, initial: dict[str, object], output: Path):
             if time.monotonic() - started > 120:
                 report["status"] = "time_limit"
                 break
+            print(f"Requesting agent action {step + 1}/4...", flush=True)
             action = Action.model_validate_json(provider.next_action(context)).root
             event = {"step": step, "action": action.model_dump()}
             report["events"].append(event)
@@ -190,6 +191,7 @@ def main():
     if os.environ.get("SMARTCI_DISABLE_MODEL_CALLS") != "0":
         raise ValueError("live invocation not explicitly enabled")
     output.mkdir(parents=True, exist_ok=False)
+    print("Validating saved GitHub coverage and pinned source...", flush=True)
     environment = json.loads(read(args.enrollment / "textual-native-1/profile.json"))
     enrollment(args.enrollment, BASE, environment)
     observed = ObservedRun.model_validate_json(
