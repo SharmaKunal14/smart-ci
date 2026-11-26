@@ -1,0 +1,152 @@
+{
+  "arms": {
+    "candidate": {
+      "artifact_sha256": {
+        "cache-admission.json": "304869c2daf1cfee4bd55f42876058c9c0f411cddcedc8e11136712faf5c2862",
+        "cache-verified.json": "d91580cd88fb7c3adfe53dffd8d69c13d03d3bbe0beed6528f21b61d04a667ac",
+        "native-pr/execution/capture/native.bep.json": "c500ec4b4e5d174a3a433c8f210374637824dd780dd1c698ac7731c4e9a7d5af",
+        "native-pr/execution/execution.json": "a2824968755d4ae447c2e5aeaf3a2115e83dd30b1e4dab1731519b4ef25c3f28"
+      },
+      "build_configurations": 576,
+      "build_only_targets": 324,
+      "cache_admission": {
+        "CACHE_HIT": "true",
+        "IDENTITY": "success",
+        "RECEIPT": "success",
+        "VERIFIED": "success",
+        "warm_sample": true
+      },
+      "cached_test_runs": 363,
+      "command_seconds": 169.77382818000007,
+      "compile_failed_targets": [
+        "//absl/container:linked_hash_map_test",
+        "//absl/container:linked_hash_set_test"
+      ],
+      "conclusion": "failure",
+      "end_to_end_seconds": 204.0,
+      "event_at": "2026-11-26T09:44:49Z",
+      "head": "7bb7c81053aefea2cecae39f46b2f3f080a397b3",
+      "native_runners": [
+        {
+          "count": 2982,
+          "name": "total"
+        },
+        {
+          "count": 1655,
+          "execKind": "Remote",
+          "name": "disk cache hit"
+        },
+        {
+          "count": 1328,
+          "name": "internal"
+        },
+        {
+          "count": 2,
+          "execKind": "Local",
+          "name": "processwrapper-sandbox"
+        }
+      ],
+      "native_timing": {
+        "actionsExecutionStartInMs": "3774",
+        "analysisPhaseTimeInMs": "6168",
+        "cpuTimeInMs": "47510",
+        "criticalPathTime": "7.112858951s",
+        "executionPhaseTimeInMs": "16364",
+        "wallTimeInMs": "20178"
+      },
+      "planning_seconds": 0.4438138479999907,
+      "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/23",
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45794833158",
+      "runner_cpu": "Intel(R) Xeon(R) 6975P-C (4) @ 3.85 GHz",
+      "test_targets_with_cached_results": 250,
+      "workflow_completed_at": "2026-11-26T09:48:13Z"
+    },
+    "control": {
+      "artifact_sha256": {
+        "cache-admission.json": "304869c2daf1cfee4bd55f42876058c9c0f411cddcedc8e11136712faf5c2862",
+        "cache-verified.json": "d91580cd88fb7c3adfe53dffd8d69c13d03d3bbe0beed6528f21b61d04a667ac",
+        "native-control/execution.json": "abfe7b887d968d666e404a824cc28a1c377559a96da99927371c56cb8167c2d7",
+        "native-control/native.bep.json": "322e09acbb6a4b1248237c8e511c595aa13d91b2b423f5951d8699ead32a7836"
+      },
+      "build_configurations": 576,
+      "build_only_targets": 324,
+      "cache_admission": {
+        "CACHE_HIT": "true",
+        "IDENTITY": "success",
+        "RECEIPT": "success",
+        "VERIFIED": "success",
+        "warm_sample": true
+      },
+      "cached_test_runs": 363,
+      "command_seconds": 167.419748971,
+      "compile_failed_targets": [
+        "//absl/container:linked_hash_map_test",
+        "//absl/container:linked_hash_set_test"
+      ],
+      "conclusion": "failure",
+      "end_to_end_seconds": 198.0,
+      "event_at": "2026-11-26T09:44:43Z",
+      "head": "9b371075fdb3aa5dc3f58d8b209477cc4958a1fe",
+      "native_runners": [
+        {
+          "count": 2982,
+          "name": "total"
+        },
+        {
+          "count": 1655,
+          "execKind": "Remote",
+          "name": "disk cache hit"
+        },
+        {
+          "count": 1328,
+          "name": "internal"
+        },
+        {
+          "count": 2,
+          "execKind": "Local",
+          "name": "processwrapper-sandbox"
+        }
+      ],
+      "native_timing": {
+        "actionsExecutionStartInMs": "5323",
+        "analysisPhaseTimeInMs": "6031",
+        "cpuTimeInMs": "45210",
+        "criticalPathTime": "5.910956927s",
+        "executionPhaseTimeInMs": "15367",
+        "wallTimeInMs": "20724"
+      },
+      "planning_seconds": null,
+      "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/22",
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45794818352",
+      "runner_cpu": "Intel(R) Xeon(R) 6975P-C (4) @ 3.90 GHz",
+      "test_targets_with_cached_results": 250,
+      "workflow_completed_at": "2026-11-26T09:48:01Z"
+    }
+  },
+  "changed_paths": [
+    ".github/workflows/native-cache-control.yml",
+    ".github/workflows/native-cache-pr.yml",
+    "absl/container/internal/raw_linked_hash_set.h"
+  ],
+  "complete_git_trees_identical": true,
+  "fallback": [
+    "UNSUPPORTED_OR_RISK_CHANGE"
+  ],
+  "interpretation": "Setup error prevented a subset: adding workflows within the PR correctly required full execution. Preserve this as a real full-fallback cache result, not a subset benchmark.",
+  "limits": [
+    "Both arms run full scope; no subset or selection benefit was tested.",
+    "Failure-feedback timing is not passing-workload performance.",
+    "Cached test-run counts include native repeated runs, not individual C++ test cases.",
+    "No arbitrary-repository, warm production-cache or universal safety claim."
+  ],
+  "missed_native_failures": 0,
+  "model_calls": 0,
+  "production_omission_authorized": false,
+  "scenario": "workflow-addition-full-fallback-with-regression",
+  "schema_version": "smartci.native-cache-comparison.v1",
+  "seed_revision": "08f1bcddc9372a42496fea05a81f9d6b7ad6122d",
+  "seed_run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45792537512",
+  "selected_count": 252,
+  "source": "GitHub PR runs and downloaded native evidence",
+  "tool_revision": "f38b19d18a9c6c8d9c790a2c171203ab60fd7319"
+}

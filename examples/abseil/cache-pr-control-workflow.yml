@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   test:
-    if: github.head_ref == 'codex/native-cache-regression-control' && github.event.pull_request.head.repo.full_name == github.repository
+    if: (github.head_ref == 'codex/native-cache-regression-v2-control' || github.head_ref == 'codex/native-cache-passing-control') && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -28,14 +28,26 @@ jobs:
           ref: REVIEWED_TOOL_COMMIT
           path: tool
           persist-credentials: false
+      - name: Discover the approved cache seed for the exact PR base
+        id: seed
+        continue-on-error: true
+        timeout-minutes: 2
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          python3 tool/examples/abseil/cache_seed_run.py \
+            --publisher tool/examples/abseil/cache-publisher.json --revision "$BASE" \
+            --output "$RUNNER_TEMP/cache-seed-run.json"
       - name: Download the reviewed seed receipt independently of cache bytes
         id: receipt
+        if: steps.seed.outcome == 'success'
         continue-on-error: true
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           repository: SharmaKunal14/abseil-cpp
-          run-id: REVIEWED_SEED_RUN_ID
-          name: native-cache-receipt-1
+          run-id: ${{ steps.seed.outputs.run_id }}
+          name: native-cache-receipt-${{ steps.seed.outputs.run_attempt }}
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/native-cache-receipt
       - name: Validate base, tool and profile identity before cache lookup
@@ -184,6 +196,7 @@ jobs:
             ${{ runner.temp }}/native-control
             ${{ runner.temp }}/runner-policy
             ${{ runner.temp }}/cache-admission.json
+            ${{ runner.temp }}/cache-seed-run.json
             ${{ runner.temp }}/cache-verified.json
             ${{ runner.temp }}/native-cache-receipt
           retention-days: 7

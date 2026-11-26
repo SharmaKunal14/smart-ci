@@ -3,8 +3,9 @@
 Status: cache adapter, bounded seed and consumer workflows implemented. The
 consumer revision passed [854 hosted safety tests and builds](https://github.com/SharmaKunal14/smart-ci/actions/runs/45793248434).
 The [seed run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45792537512)
-passed, and the first real regression PR pair is running. No warm-cache speed
-result is claimed yet.
+passed. The first regression pair ran warm full scope because workflow additions
+inside the PR correctly triggered fallback: native 198 seconds, Smart CI 204
+seconds. This is not a subset result; corrected source-only PRs are pending.
 The current public Abseil profile has no credentials for upstream's optional
 private cache. Its measured cold savings cannot establish savings in that private
 environment. On 26 November 2026, the fork's GitHub cache-usage API reported zero
@@ -36,7 +37,9 @@ upstream's private service. See [Bazel's cache documentation](https://bazel.buil
    base seed on a fresh runner. Native caching must remain enabled in both arms.
    Keep at most two native jobs active. Cap the seed and each comparison job at
    25 minutes; start with one seed and one regression pair, then at most one
-   passing comparison pair after checking correctness. This uses the second pair
+   passing comparison pair after checking correctness. The initial pair exposed a
+   setup error (workflow additions forced full scope); retain it and separately
+   account for the corrected base seed and source-only comparison. This uses the second pair
    for normal passing feedback rather than extrapolating from compilation failure.
    No larger runners, AWS deployment or model calls.
 5. **Verify what actually happened.** Require an authenticated cache hit and
@@ -87,10 +90,13 @@ and uploads a separate cache receipt plus the existing authenticated map evidenc
 It retains the original full test command, compiler, worker policy and cleanup.
 It does not execute PR source. `cache-pr-control-workflow.yml` and
 `cache-pr-candidate-workflow.yml` both use read-only cache access and the exact seed
-identity. They independently download a receipt from one reviewed seed run, bind
-it to the actual PR base, producer tool revision and profile bytes, then verify
-the entire restored content digest. The one reviewed seed-run reference is an
-experiment control, not a new requirement for ordinary map discovery.
+identity. A standard-library helper authenticates the approved seed workflow bytes at the
+actual PR base, then validates a successful same-repository push run at that exact
+SHA and approved branch, within seven days. Both arms download the receipt for
+that run and attempt, bind it to the base, producer tool revision and profile, then
+verify the entire restored content digest. The independent baseline does not
+install the planner. Workflow files are installed on the experimental base before
+seeding; a source-only PR must not modify those controls.
 
 The candidate still discovers/authenticates its dependency map through `bazel
 fetch`, using the actual base revision and `cache-publisher.json`. Its publisher
@@ -127,5 +133,11 @@ hashes, native scope and the exact cache ID for cleanup.
 [Native PR #22](https://github.com/SharmaKunal14/abseil-cpp/pull/22) and
 [Smart CI PR #23](https://github.com/SharmaKunal14/abseil-cpp/pull/23) replay the same
 known compiler regression against this seed. Their complete Git trees are identical;
-both should stay red on the two real compiler failures. Cache admission and native
-cache-hit evidence must pass before their timing can be classified as warm.
+both remained red on the same two real compiler failures, with zero missed native
+failures. Both admitted the trusted cache and recorded 1,655 native disk-cache hits.
+However, adding the consumer workflows inside these PRs correctly selected full
+scope (252 tests and 324 build-only targets). Their end-to-end times were 198 and
+204 seconds. Preserve this [full-fallback record](../benchmarks/abseil-cache-fallback-2026-11-26.json);
+it is not evidence of subset performance. The correction moves workflows onto
+the experimental base and discovers the later seed by base identity. The selector
+rule for in-PR workflow changes remains unchanged.
