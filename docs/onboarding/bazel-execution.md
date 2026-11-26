@@ -141,3 +141,31 @@ These two cold pairs demonstrate repeatability for one localized workload. They
 do not measure private remote-cache behavior, prove arbitrary dependency
 completeness, or establish failure detection: both PRs contain the passing fix.
 Separate regression and missing-map cases exercise those lifecycle boundaries.
+
+## Native regression preservation
+
+[PR #15](https://github.com/SharmaKunal14/abseil-cpp/pull/15) and
+[PR #16](https://github.com/SharmaKunal14/abseil-cpp/pull/16) have identical complete
+Git trees. They restore the historical `.first` error in hinted node insertion,
+without changing existing tests. Both pin tool `7be5ead` and use the same reviewed
+compiler and native keep-going profile.
+
+The [full control](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45777124415)
+and [selected run](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45777511387)
+both **failed**, as they should. Their native logs identify the same two compilation
+failures in `linked_hash_map_test` and `linked_hash_set_test`: no member named
+`first`, at `raw_linked_hash_set.h:457:36`. Full execution passed 250 other test
+targets. The candidate selected only those two targets; neither reached test
+execution because compilation failed. It did not convert these failures to green.
+
+Independent reconciliation verifies complete build events, identical failed-target
+sets and retention of all 324 build-only targets/configurations. There are zero
+unmatched native failures in this case. The map was retrieved without rebuilding.
+The [record](../benchmarks/abseil-automatic-regression-2026-11-26.json) includes
+source identities, diagnostic evidence, hashes and exact native scope.
+
+PR-to-completed-workflow feedback was 1,080 seconds native and 333 seconds selected.
+These are failure-feedback measurements on a keep-going profile, not passing-run
+timings or a general recall estimate. Keep them separate from the two passing
+comparison pairs. A small replay cannot establish that every future regression
+will be caught.
