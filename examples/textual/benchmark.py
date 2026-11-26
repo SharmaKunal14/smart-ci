@@ -127,6 +127,20 @@ def selected_targets(path: Path) -> list[str] | None:
     return sorted(set(value))
 
 
+def native_command(python: str, output: Path, targets: list[str] | None) -> list[str]:
+    return [
+        python,
+        "-m",
+        "pytest",
+        *(targets or ["tests"]),
+        "-v",
+        "--cov=./src/textual",
+        f"--cov-report=xml:{output / 'coverage.xml'}",
+        "--cov-report=term-missing",
+        f"--junitxml={output / 'junit.xml'}",
+    ]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -197,17 +211,7 @@ def main() -> int:
         planning_seconds = time.monotonic() - plan_started
     print(f"Executing {'subset' if targets else 'full native suite'}...", flush=True)
     test_started = time.monotonic()
-    command = [
-        sys.executable,
-        "-m",
-        "pytest",
-        *(targets or ["tests"]),
-        "-v",
-        "--cov=./src/textual",
-        f"--cov-report=xml:{output / 'coverage.xml'}",
-        "--cov-report=term-missing",
-        f"--junitxml={output / 'junit.xml'}",
-    ]
+    command = native_command(sys.executable, output, targets)
     observing = args.mode in {"observe", "observe-scoped"}
     if observing:
         command.extend(

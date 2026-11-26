@@ -1,6 +1,21 @@
 # Smart CI: implementation and deployment plan
 
-Updated: 26 November 2026
+Updated: 27 November 2026
+
+Focused experiment: compare one real Textual change in three arms: unchanged full
+suite, deterministic planning without an agent, and planning with a live agent.
+Both Smart CI arms must start with the same evidence and deterministic selection
+policy. Measure missed failures and complete GitHub CI time, including model/tool
+overhead. Runtime mapping alone and fixture replay do not demonstrate agent value.
+Do not expand Abseil or add unrelated infrastructure. The live campaign remains
+disabled; preparing this experiment does not authorize additional paid calls.
+
+Active prerequisite: [runtime candidate evaluation](docs/onboarding/runtime-candidate.md).
+Join verified body-only edits to a fresh passing runtime observation, retain
+process callers, and execute the resulting experimental candidate alongside a
+mandatory native full control on a real Textual PR. Production selection and full
+fallback remain unchanged. Unobserved methods, shared state and source readers
+remain unresolved; this is a falsifiable shadow experiment, not safe-skip approval.
 
 Status: Phases 1–5 have local implementations. The packaging PR's Smart CI job completed a live full-fallback run and reconciled 62,423 passing cases; the overall workflow failed in other jobs. Packaging selective execution and trusted baseline reuse remain unverified. The OnRecord TypeScript/Vitest pilot passed live GitHub PRs #29 (103 files / 440 cases, full fallback) and #30 (64 files / 280 cases, actual subset without fallback), with on-demand map rebuilding. Both remain unmerged; broader correctness and performance evaluation remain outstanding. No AWS resources. A separately approved bounded live investigation has now made three paid generation calls; see its evidence below.
 
