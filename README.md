@@ -31,10 +31,14 @@ The [live subset PR](https://github.com/SharmaKunal14/slack-incidence-evidence/p
 The automatic Abseil integration's first real PR pair measured **626 seconds native
 versus 413 seconds Smart CI from PR creation to completed workflow**: 213 seconds /
 34.0% saved, selecting 2/252 test targets while retaining all 324 build-only targets.
+A repeat on unchanged PR code measured **724/497 seconds**, saving 31.4%, with a
+byte-identical plan and the same verified native scope.
 See the [execution comparison](docs/onboarding/bazel-execution.md#first-real-pr-comparison)
-for exact runs, audit artifacts and limits. This repeats one historical localized
+for exact runs, audit artifacts and limits. These repeat one historical localized
 fix on cold runners, not a representative average. The earlier standalone harness
 measured 655/544 seconds for that fix; broad changes showed no useful benefit.
+The [approach comparison](docs/onboarding/approach-evidence.md) preserves the
+negative import, runtime and live-agent results alongside these native savings.
 The [earlier native comparison](docs/onboarding/native-build-graphs.md) retains those
 measurements and negative results.
 
