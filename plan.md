@@ -2,6 +2,18 @@
 
 Updated: 27 November 2026
 
+Textual [source-read provenance](docs/onboarding/runtime-read-provenance.md) is now
+verified on [PR #14](https://github.com/SharmaKunal14/textual/pull/14),
+[run 45870117385](https://github.com/SharmaKunal14/textual/actions/runs/45870117385).
+Both unchanged full suites passed the same 3,467 cases. Captured shared reads of
+Markdown and parser source occurred after tests with coverage/reporting frames;
+collection reads came through imports. The bounded trace narrows the reporting
+unknown, not dependency completeness. Native/probe feedback was 346/481 seconds;
+this is investigation cost, not selective savings. Next, reporting/coverage must
+remain required CI work, while unobserved methods and shared/dynamic behavior still
+need supported contracts. Production full fallback is unchanged, and the model
+campaign stays disabled. Do not infer irrelevance from timing or library labels.
+
 Focused Textual comparison completed on real [PR #13](https://github.com/SharmaKunal14/textual/pull/13),
 [GitHub run 45865417885](https://github.com/SharmaKunal14/smart-ci/actions/runs/45865417885).
 Native full feedback: 413 seconds / 3,467 cases. Deterministic experimental

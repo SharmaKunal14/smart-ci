@@ -89,7 +89,10 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--enrollment", type=Path)
     parser.add_argument("--planner-python")
+    parser.add_argument("--trace-source-reads", action="store_true")
     args = parser.parse_args()
+    if args.trace_source_reads and args.mode != "observe-scoped":
+        parser.error("source-read tracing requires full scoped observation")
     root, output = Path.cwd().resolve(), args.output.resolve()
     if output.is_relative_to(root):
         parser.error("output must be outside source checkout")
@@ -198,6 +201,15 @@ def main():
                 "--smartci-observation-contexts",
             ]
         )
+        if args.trace_source_reads:
+            command.extend(
+                [
+                    "-p",
+                    "smartci.adapters.runtime_reads",
+                    "--smartci-read-provenance",
+                    str(output / "read-provenance.json"),
+                ]
+            )
     test_started = time.monotonic()
     try:
         code = subprocess.run(command, check=False, timeout=900).returncode
@@ -218,6 +230,7 @@ def main():
             "exit_code": code,
             "required_execution": "full",
             "omission_authorized": False,
+            "source_read_provenance": args.trace_source_reads,
             "harness_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         },
     )
