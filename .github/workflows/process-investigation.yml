@@ -1,0 +1,61 @@
+name: Verify Textual process evidence
+on:
+  pull_request:
+    branches: [codex/native-cache-evaluation]
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: process-evidence-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  audit:
+    if: >-
+      github.repository == 'SharmaKunal14/smart-ci' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.head_ref == 'codex/agent-process-evidence'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          path: tool
+          persist-credentials: false
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: SharmaKunal14/textual
+          ref: b99f72e9691c85f18fd773df427cb5e7a493470d
+          fetch-depth: 0
+          persist-credentials: false
+          path: subject
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        with:
+          version: '0.11.6'
+          enable-cache: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          repository: SharmaKunal14/textual
+          run-id: 45058699772
+          name: textual-assisted-replay-1
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/source-evidence
+      - name: Audit tool routing, source identity and unchanged safety
+        working-directory: tool
+        run: |
+          uv sync --frozen
+          uv run --frozen python scripts/verify_process_investigation.py \
+            --artifact "$RUNNER_TEMP/source-evidence/investigation-input.json" \
+            --repo "$GITHUB_WORKSPACE/subject" \
+            --output "$RUNNER_TEMP/process-evidence"
+      - name: Retain source-only audit
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: textual-process-evidence-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/process-evidence
+          retention-days: 7
+          if-no-files-found: error
