@@ -1,9 +1,52 @@
 """Resolve supported package structure without guessing opaque dependencies."""
 
+import subprocess
+import sys
+
 from test_discovery import analyse, environment
 
 from smartci.discovery.models import PythonConfig
 from smartci.discovery.python_graph import Analysis
+
+
+def test_hyphenated_module_matches_native_importlib_and_retains_edges(tmp_path):
+    files = {
+        "app/__init__.py": "",
+        "app/helper.py": "VALUE = 7\n",
+        "app/auto-table.py": "from .helper import VALUE\n",
+        "app/entry.py": "from importlib import import_module\nmodule = import_module('app.auto-table')\n",
+    }
+    for path, source in files.items():
+        destination = tmp_path / path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_text(source)
+    subprocess.run(
+        [
+            sys.executable,
+            "-I",
+            "-c",
+            (
+                "import sys, importlib; sys.path.insert(0, sys.argv[1]); "
+                "assert importlib.import_module('app.auto-table').VALUE == 7"
+            ),
+            str(tmp_path),
+        ],
+        check=True,
+        timeout=10,
+    )
+    result = analyse(files)
+    assert not result.gaps
+    assert "app/auto-table.py" in result.dependencies["app/entry.py"]
+    assert "app/helper.py" in result.dependencies["app/auto-table.py"]
+    assert "app/__init__.py" in result.dependencies["app/auto-table.py"]
+    files["app/auto-table.py"] += "exec(source)\n"
+    assert "DYNAMIC_CODE" in {g.code for g in analyse(files).gaps}
+
+
+def test_ambiguous_module_spelling_remains_unsupported():
+    assert "UNSUPPORTED_MODULE_NAME" in {
+        g.code for g in analyse({"app/__init__.py": "", "app/bad..py": ""}).gaps
+    }
 
 
 def test_namespace_below_regular_package_resolves_before_visiting_imports():

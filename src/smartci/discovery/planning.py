@@ -5,10 +5,58 @@ from pathlib import Path
 
 from smartci.adapters.suite import current_clean_head
 from smartci.git_changes import changes_from_git
-from smartci.selection import Changes, Report, SelectionPolicy, fallback, finish, select
+from smartci.selection import (
+    Changes,
+    Report,
+    SelectionPolicy,
+    digest,
+    fallback,
+    finish,
+    select,
+)
 
 from .collector import implementation_digest
 from .models import Snapshot
+
+
+def required_full_from_head(
+    root: Path, base_commit: str, head: Snapshot, policy: SelectionPolicy
+) -> Report | None:
+    """Avoid base discovery only when validated head evidence requires full tests.
+
+    None means both revision maps are still required. This path never authorizes
+    a subset and never fabricates a base snapshot or claims base completeness.
+    """
+    if current_clean_head(root) != head.graph.commit:
+        raise ValueError("stale or dirty head snapshot")
+    if head.repository != policy.repository:
+        raise ValueError("repository mismatch")
+    if head.provenance.implementation_digest != implementation_digest():
+        raise ValueError("collector version mismatch")
+    changes = changes_from_git(root, base_commit, head.graph.commit, head.repository)
+    if changes.base != base_commit:
+        raise ValueError("exact merge base required")
+    if head.graph.complete and head.inventory.complete:
+        return None
+    result = fallback("INCOMPLETE_EVIDENCE", head.inventory)
+    result.comparison = {"base": base_commit, "head": head.graph.commit}
+    result.evidence = {
+        "changes": digest(changes.model_dump()),
+        "inventory": digest(head.inventory.model_dump()),
+        "head_graph": digest(head.graph.model_dump()),
+        "head_snapshot": head.digest,
+        "policy": digest(policy.model_dump()),
+    }
+    result.warnings = [
+        "BASE_DISCOVERY_SKIPPED:HEAD_REQUIRES_FULL",
+        *sorted(
+            f"COLLECTION_GAP:{g.code}:{g.path or 'environment'}:{g.line}"
+            for g in head.provenance.gaps
+        ),
+    ]
+    for test in head.inventory.tests:
+        result.reasons[test.id].append(f"TEST_FILE:{test.path}")
+    return finish(result)
 
 
 def dependency_paths(

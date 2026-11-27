@@ -59,13 +59,19 @@ def compare(root, repo):
             "execution": execution,
         }
     native, smart = executions["native"], executions["smart"]
+    deferred = smart.get("reporting_deferred", False)
+    if (
+        type(deferred) is not bool
+        or native.get("reporting_deferred", False) != deferred
+    ):
+        raise ValueError("reporting configuration differs between arms")
     if (
         native["targets"] is not None
         or native["execution"] != "full"
         or native["planning_error"] is not None
         or profiles["native"] != profiles["smart"]
         or native["harness_sha256"] != smart["harness_sha256"]
-        or smart["reporting_exit"] != 0
+        or smart["reporting_exit"] != (None if deferred else 0)
     ):
         raise ValueError("baseline, environment or reporting mismatch")
     folder = root / "textual-smart-1"
@@ -93,27 +99,38 @@ def compare(root, repo):
         }
     if set(cases["smart"]) != expected:
         raise ValueError("executed cases differ from expected native inventory")
-    gaps = json.loads(read(folder / "coverage-gaps.json"))
-    proof = Receipt.model_validate_json(read(folder / "coverage-receipt.json"))
-    if proof.run_url != run["html_url"] or proof.execution_scope != smart["execution"]:
-        raise ValueError("coverage origin or scope mismatch")
-    if (
-        proof.test_count != len(cases["smart"])
-        or not proof.inventory_reconciled
-        or proof.exit_code != smart["exit_code"]
-    ):
-        raise ValueError("coverage inventory not reconciled")
-    recomputed = report(
-        repo,
-        repository,
-        smart["base"],
-        smart["head"],
-        digest(profiles["smart"]),
-        read(folder / "coverage.xml"),
-        proof,
-    )
-    if gaps != recomputed:
-        raise ValueError("coverage report does not reproduce from GitHub artifacts")
+    gaps = None
+    if deferred:
+        if smart["reporting_seconds"] != 0 or any(
+            (folder / name).exists()
+            for name in ("coverage-gaps.json", "coverage-receipt.json")
+        ):
+            raise ValueError("unexpected reporting work in deferred run")
+    else:
+        gaps = json.loads(read(folder / "coverage-gaps.json"))
+        proof = Receipt.model_validate_json(read(folder / "coverage-receipt.json"))
+        if (
+            proof.run_url != run["html_url"]
+            or proof.execution_scope != smart["execution"]
+        ):
+            raise ValueError("coverage origin or scope mismatch")
+        if (
+            proof.test_count != len(cases["smart"])
+            or not proof.inventory_reconciled
+            or proof.exit_code != smart["exit_code"]
+        ):
+            raise ValueError("coverage inventory not reconciled")
+        recomputed = report(
+            repo,
+            repository,
+            smart["base"],
+            smart["head"],
+            digest(profiles["smart"]),
+            read(folder / "coverage.xml"),
+            proof,
+        )
+        if gaps != recomputed:
+            raise ValueError("coverage report does not reproduce from GitHub artifacts")
     missed = sorted(
         "::".join(k) for k in failed(cases["native"]) - failed(cases["smart"])
     )
@@ -134,6 +151,7 @@ def compare(root, repo):
         "selected_files": len(selection.selected),
         "selection": selection.model_dump(),
         "coverage_gaps": gaps,
+        "reporting_deferred": deferred,
         "comparison": {
             "missed_native_failures": missed,
             "mismatched_selected_outcomes": mismatch,

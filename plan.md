@@ -2,6 +2,28 @@
 
 Updated: 27 November 2026
 
+Latest CI-efficiency iteration: [Smart CI PR #29](https://github.com/SharmaKunal14/smart-ci/pull/29)
+fixes a false hyphenated-module rejection and skips redundant base discovery
+when a validated incomplete head already requires full tests. It preserves all
+dependency edges, native collection checks and conservative fallback; optional
+coverage reporting is deferred in the timed comparison. Real Textual PR #17/#18
+now spend 18.66/19.17 seconds planning instead of 36.27/36.11 seconds, but still
+run all 251 files / 3,467 case outcomes. Native/Smart CI feedback is 355/381 and
+369/379 seconds: **still slower, no useful subset**. Thirteen genuine gaps remain;
+the native outcomes match with no missed observed failures. See the
+[cause trace and verification steps](docs/onboarding/textual-planning-efficiency.md)
+and [GitHub evidence](docs/benchmarks/textual-planning-efficiency-2026-11-27.json).
+Do not treat reduced planning cost as completion of the selection-speedup goal.
+
+Delivery decision: customers will integrate a **GitHub Action backed by the same
+reusable Smart CI CLI**. They add a small workflow change and minimal repository
+configuration; the Action installs and invokes the pinned CLI. Customers do not
+operate a separate CLI service. Keep the current priority on supported
+dependency evidence and measured end-to-end GitHub savings before expanding
+Action packaging. Installation convenience is not performance evidence. No
+GitHub App, SaaS service, AWS infrastructure or model calls are part of this
+delivery decision. The Action is a required delivery interface, not yet shipped.
+
 Current direction: retire automatic test generation/repair and make **no more paid
 model calls**. Keep every model campaign disabled and preserve the honest negative
 [generation/repair results](docs/onboarding/generated-test-experiment.md). Prior
@@ -345,6 +367,41 @@ The workspace was initially empty. Phase 1 now provides a Git repository, offlin
 Repository checkout, Git analysis, native test discovery, dependency collection and test execution stay on the existing CI runners. The repository continues to own its installation steps, containers, databases, services, environment matrix and full-suite command. Smart CI should not require rewriting tests, upgrading the repository to the example's tool versions, or reorganising source directories to resemble `examples/polyglot/`.
 
 Onboarding records the existing full command and runner configuration before adding selection. Adapters translate stable selected IDs into validated native runner arguments; remote manifests and future model output cannot supply executable commands. If preserving native behaviour requires an adapter extension, verify that extension first. Unsupported suites continue through their native full-suite path. Repository-wide fallback remains the default unless independent suite boundaries have been explicitly verified.
+
+### Customer delivery: Action backed by the CLI
+
+The GitHub Action is a thin, versioned adapter around the reusable engine, not a
+second implementation of selection. Package it after the supported-scope
+performance gate has evidence; do not expand it while an unresolved collector
+bottleneck prevents useful selection.
+
+- The customer adds a pinned Action reference and minimal configuration for the
+  supported native runner, project location and existing independent full-suite
+  invocation. Their existing language/environment/service setup stays intact.
+- The Action installs an exact CLI release and verifies its integrity, supplies
+  validated repository/PR base and head context, invokes deterministic planning,
+  then runs the supported native selection or required full fallback. Customers
+  do not separately install or operate the CLI in GitHub workflows.
+- Native failures and incomplete execution remain visible failures. Missing,
+  invalid or unsupported evidence cannot authorize omissions or an empty green
+  run. The Action reports selection reasons, executed cases, fallback cause and
+  timings, with bounded artifacts and a job summary.
+- Use minimum token permissions, pinned dependencies, no model credentials and
+  no write privileges merely to run tests. Workflow/configuration inputs and PR
+  content remain untrusted at their respective boundaries; remote artifacts
+  cannot supply executable commands or relax protected policy.
+- The same CLI remains available for local diagnosis and other CI vendors.
+  Verify Action/CLI plan parity, preserved native outcomes and safe fallback for
+  missing context, installation/integrity failures and unsupported runners. A
+  broken wrapper must not suppress the existing full-test check.
+
+Delivery verification requires a clean existing-repository workflow using only
+the Action plus minimal configuration, without manual CLI installation. Compare
+its actual trigger-to-result time against the equivalent unchanged full suite,
+including CLI installation and all Action overhead. An easier install or a
+successful fallback run does not satisfy the useful-subset/performance gate.
+
+### Evidence lifecycle on existing runners
 
 The integration stores bounded inventory, graph, selection and result artifacts using existing CI storage. Dependency maps are source-analysis results, distinct from complete full-run validation records. Validate source/repository/revision identity, provenance, completeness, environment and digests before reuse. If a compatible cached map is absent, expired or unavailable, reconstruct it from the exact source revision in an isolated environment; do not make cache availability a prerequisite for selection. Failed reconstruction or insufficient evidence requires the independent full suite, never an empty selection. Untrusted PR artifacts cannot overwrite trusted caches or authorize weaker policy. Full-run promotion/validation records retain their separate protected-origin and complete-result requirements. No shared database is required.
 

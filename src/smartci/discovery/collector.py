@@ -6,6 +6,7 @@ import json
 import os
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 from smartci.adapters.runners import AdapterError, Runner, Unit, invoke, read_bounded
@@ -203,8 +204,21 @@ def environment_gaps(analysis: Analysis, runner: Runner) -> list[Gap]:
 
 
 def collect(
-    root: Path, config: PythonConfig, python: str | None = None
+    root: Path,
+    config: PythonConfig,
+    python: str | None = None,
+    *,
+    timings: dict[str, float] | None = None,
 ) -> tuple[Snapshot, Runner, list[Unit]]:
+    previous = time.monotonic()
+
+    def mark(stage: str) -> None:
+        nonlocal previous
+        now = time.monotonic()
+        if timings is not None:
+            timings[stage] = now - previous
+        previous = now
+
     root = root.resolve(strict=True)
     python = python or sys.executable
     if (
@@ -222,7 +236,10 @@ def collect(
     paths = tracked_files(root, commit)
     files = read_sources(root, paths, config)
     configs = configuration(root, paths)
-    env = environment(root, python, probe_names(files, config), configs)
+    names = probe_names(files, config)
+    mark("read_and_probe_inputs")
+    env = environment(root, python, names, configs)
+    mark("environment")
     runner = Runner(
         "pytest",
         root,
@@ -232,8 +249,10 @@ def collect(
         pytest_granularity=config.granularity,
     )
     units = runner.discover()
+    mark("native_collection")
     initial_cases = runner.pytest_cases
     repeated = runner.discover()
+    mark("native_collection_repeat")
     gaps = []
     if units != repeated or initial_cases != runner.pytest_cases:
         gaps.append(Gap(code="UNSTABLE_DISCOVERY"))
@@ -248,6 +267,7 @@ def collect(
     analysis.shared_inputs({u.path for u in units})
     gaps.extend(analysis.gaps)
     gaps.extend(environment_gaps(analysis, runner))
+    mark("dependency_analysis")
     ignored = git(
         root,
         "ls-files",
@@ -269,6 +289,7 @@ def collect(
         or configuration(root, paths) != configs
     ):
         raise AdapterError("inputs changed during collection")
+    mark("verify_unchanged_inputs")
     tests = [
         TestUnit(id=u.id, runner="pytest", granularity=config.granularity, path=u.path)
         for u in units
@@ -322,4 +343,6 @@ def collect(
         "graph": graph.model_dump(),
         "provenance": provenance.model_dump(),
     }
-    return Snapshot.model_validate({**data, "digest": digest(data)}), runner, units
+    snapshot = Snapshot.model_validate({**data, "digest": digest(data)})
+    mark("build_snapshot")
+    return snapshot, runner, units
