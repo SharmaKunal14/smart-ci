@@ -3,6 +3,7 @@
 import importlib.util
 import io
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -234,6 +235,28 @@ def test_bootstrap_executes_reviewed_full_when_cli_not_ready(
     monkeypatch.setattr(bootstrap, "state_root", lambda: state)
     monkeypatch.setenv("CLI_READY", "false")
     assert bootstrap.execute() == 7
+
+
+def test_installer_failure_fallback_needs_no_installed_python_packages(
+    tmp_path, action_case
+):
+    repo, _, _, repository, event, _ = action_case
+    value = control.context(repo, event, repository, "pull_request")
+    runner = tmp_path / "runner"
+    runner.mkdir()
+    state = runner / "smartci-native-action"
+    control.prepare(value, ".smartci/native.json", state)
+    # -S prevents site-packages loading: this fallback must not need pydantic,
+    # the installed CLI or an editable source installation.
+    result = subprocess.run(
+        [sys.executable, "-I", "-S", str(ROOT / "action/bootstrap.py"), "execute"],
+        env={"RUNNER_TEMP": str(runner), "CLI_READY": "false", "PATH": "/usr/bin:/bin"},
+        capture_output=True,
+        timeout=20,
+        check=False,
+    )
+    assert result.returncode == 7
+    assert control.read_object(state / "fallback.json")["exit_code"] == 7
 
 
 def test_bootstrap_does_not_hide_installed_cli_failure(
