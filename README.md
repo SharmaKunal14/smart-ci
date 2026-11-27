@@ -1,6 +1,6 @@
 # Smart CI
 
-The current milestone is a [GitHub Action backed by the reusable CLI](docs/onboarding/github-action.md), starting with reviewed native Bazel profiles. It is an alpha delivery path, not universal repository compatibility. Model campaigns remain disabled.
+The current milestone is a [GitHub Action backed by the reusable CLI](docs/onboarding/github-action.md), starting with reviewed native Bazel profiles. The pinned alpha passed real GitHub comparisons: 897/509 seconds native/Action for a localized fix, selecting 2/252 Bazel test targets while retaining all 324 build-only targets. This is a cold-profile result, not universal repository compatibility or warm-cache benefit. Model campaigns remain disabled.
 
 Phases 1–4 provide a local CLI, versioned contracts, conservative selection,
 read-only Git analysis, audit reports, pytest/Vitest/Maven adapters, and automatic
