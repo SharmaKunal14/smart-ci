@@ -51,7 +51,7 @@ def test_receipt_does_not_certify_partial_or_contradictory_results(pair, tmp_pat
                 {
                     "commit": execution["head"],
                     "native_cases_digest": pair.canonical_digest(ids),
-                    "native_case_count": len(ids),
+                    "cases": len(ids),
                 }
             )
         )
