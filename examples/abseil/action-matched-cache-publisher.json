@@ -1,0 +1,10 @@
+{
+  "schema_version": "1",
+  "repository": "SharmaKunal14/abseil-cpp",
+  "branch": "codex/action-matched-base",
+  "workflow": ".github/workflows/action-matched-enroll.yml",
+  "workflow_digest": "688b2913e4ccb7f96cce2c257468fa20d86eb708dbd1085a4a885430a948c457",
+  "artifact_prefix": "smartci-native-map",
+  "event": "push",
+  "max_age_seconds": 604800
+}

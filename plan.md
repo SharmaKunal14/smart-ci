@@ -1,8 +1,24 @@
 # Smart CI: implementation and deployment plan
 
-Updated: 27 November 2026
+Updated: 28 November 2026
 
-Latest evaluation: the published Action/CLI completed one fresh cache/map seed
+Latest controlled evaluation: four real PRs ran full control and the unchanged
+published Action sequentially on the same VM, with independent identical native
+cache restores and balanced order. Full/Smart arm intervals were **48.1/50.9,
+40.4/57.3, 42.4/60.9 and 67.5/66.5 seconds**. Three losses and one small gain give
+**9.9 seconds median paired slowdown**; the predeclared performance gate failed.
+Both reran the same two uncached targets/eight local actions; selection reduced
+cached/analysis work, while Action setup cost exceeded native savings. Whole
+joint PR times were 264/263/267/404 seconds, not standalone product latencies.
+The five benchmark jobs including the fresh seed consumed 1,861 runner-seconds.
+Read [all GitHub evidence, controls, costs and limits](docs/benchmarks/native-action-matched-2026-11-28.md).
+No useful warm-cache operating range or lifecycle amortization is established.
+Broader cases, base-refresh trials and a second repository remain deferred; this
+negative result must not be replaced with a more favorable workload. Safety
+rules, native semantics and the published Action/CLI are unchanged. Cache cleanup
+is verified; all model gates remain disabled. No merges or AWS deployments.
+
+Previous separate-job evaluation: the published Action/CLI completed one fresh cache/map seed
 and three real warm native-cache PR pairs without changing selection rules or
 tests. Native/Smart CI PR times were **313/389, 329/223 and 312/226 seconds**;
 median paired saving was 86 seconds, with one 76-second loss. All six runs reused

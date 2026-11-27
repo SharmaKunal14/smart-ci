@@ -2,13 +2,17 @@
 
 The current milestone is a [GitHub Action backed by the reusable CLI](docs/onboarding/github-action.md), starting with reviewed native Bazel profiles. Model campaigns remain disabled.
 
-The latest [three-pair GitHub warm-cache evaluation](docs/benchmarks/native-action-warm-2026-11-27.md)
-measured **313/389, 329/223 and 312/226 seconds** native/Action. Two pairs were
-faster, but different CPUs and container setup dominated the differences. Both
-arms reran the same two test targets and eight local native actions; no
-attributable warm-cache benefit or lifecycle ROI is established. The bounded
-first gate is complete; broader scenarios and base-refresh evaluation remain
-deferred. Earlier cold-run savings below are separate evidence.
+The latest [controlled same-VM GitHub comparison](docs/benchmarks/native-action-matched-2026-11-28.md)
+found **no reliable benefit on the warm Abseil profile**. Full/Smart arm times
+were **48.1/50.9, 40.4/57.3, 42.4/60.9 and 67.5/66.5 seconds**: three losses,
+one small gain, and a **9.9-second median paired slowdown**. Both approaches
+reran the same two uncached tests and eight local actions. Each pair matched
+hardware, setup and independently restored native caches. The report includes
+whole joint PR times, the 31m01s benchmark compute cost, order effects and limits;
+arm times are not standalone PR latencies. The performance gate failed.
+Earlier [mixed separate-job results](docs/benchmarks/native-action-warm-2026-11-27.md)
+and cold-run savings remain separate evidence. Broader evaluation and lifecycle
+ROI remain unproven.
 
 Automatic enrollment is now included: one approved-branch full run publishes a
 validated map; the next eligible PR reuses it through the same Action. The earlier
