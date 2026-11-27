@@ -1,0 +1,1322 @@
+{
+  "aws_deployment": false,
+  "benchmarked_tool_commit": "72c5c8125b3dbd6655cac40b88f12654f8e7afca",
+  "comparisons": [
+    {
+      "application_test_lockfile_identity": {
+        "poetry.lock": "d2a52c58ce67945cbf73c6025c32b4afe8d50b64",
+        "pyproject.toml": "22a015ad9dc9b00dfd6409d94a8968dad0ab6ae3",
+        "src": "eaf5713db2f497e2bdc46fa01105d11686143ece",
+        "tests": "1e6bafe08b3734a32b93d908eb2e702f4cf414c8"
+      },
+      "artifact_sha256": {
+        "jobs.json": "26748e5f81fe27648238c1fafef6caee7a57fdb8a8dc7474130ef7df7a9d04a3",
+        "run.json": "36919ba934bf000b176cc280bab796923a583688f7b0f2f8ea93192eb068088b",
+        "subject-pr.json": "7b3ccf32d4cf068f4e469ce11e340f54eaa51674d948f1a9bd345e45fcf61720",
+        "textual-native-1/coverage.xml": "e716ce676a408cbf8f2e275a922b13747ae65d210ac93cae35c805400820bd62",
+        "textual-native-1/execution.json": "6d10310459c1a2dd172f37816839a8320aefa3ac051d2fb63082e97ca684ab3f",
+        "textual-native-1/junit.xml": "42781eaf2682afc714325af35110d4c2afe15f1a9c50e955afb2efe24422bea1",
+        "textual-native-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+        "textual-smart-1/coverage.xml": "a910bf81b2b068a4183eb3858a471a91d78db6eb15a6f2d5a65fe902c01dd201",
+        "textual-smart-1/execution.json": "be94df8d599edb9b1b9f9018463a39e3bcec23629a1de5cc9e5238ad2f1a19ac",
+        "textual-smart-1/head-cases.json": "bcbaac985bee8117b8fd102de30d6fd0deae59f6c19e9fbd16746d5e014e86f3",
+        "textual-smart-1/head-compatibility.json": "c8699cefa1627ec81bdec4e59aa1c341ba1544781eb58917667350dc90488582",
+        "textual-smart-1/junit.xml": "ca4a224f492fa9d8469b852fbcd0b1b6d16ac5f35147f329bf97bb4569570b7e",
+        "textual-smart-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+        "textual-smart-1/selection.json": "24d5a28880f300503146a30321a4695035dcc2309f403c9c8315b21eb44e97d2"
+      },
+      "base": "ef9ac376479097c8b6dee9c7fec8db744c9045f1",
+      "base_discovery_skipped": true,
+      "collection_stage_seconds": {
+        "build_snapshot": 1.152941162000019,
+        "dependency_analysis": 2.923769825000022,
+        "environment": 0.3653225380000009,
+        "native_collection": 6.501446969999989,
+        "native_collection_repeat": 5.552047135999999,
+        "read_and_probe_inputs": 0.9428259379999986,
+        "verify_unchanged_inputs": 0.09403971499997965
+      },
+      "comparison": {
+        "matched": true,
+        "mismatched_selected_outcomes": [],
+        "missed_native_failures": [],
+        "runner_seconds": 731.0,
+        "selection_benefit_demonstrated": false,
+        "smart_path_faster": false,
+        "smart_path_seconds_saved": -26.0,
+        "tests_omitted": 0,
+        "whole_validation_workflow_seconds": 381.0
+      },
+      "coverage_gaps": null,
+      "head": "4da0a1934906fb02e03e77a4fd564c55ccd798a1",
+      "head_dependency_gaps": [
+        {
+          "code": "CUSTOM_IMPORT_PATH",
+          "line": 63,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "CUSTOM_IMPORT_PATH",
+          "line": 109,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "DYNAMIC_ATTRIBUTE_HOOK",
+          "line": 102,
+          "path": "src/textual/widgets/__init__.py"
+        },
+        {
+          "code": "DYNAMIC_CODE",
+          "line": 183,
+          "path": "src/textual/_doc.py"
+        },
+        {
+          "code": "DYNAMIC_CODE",
+          "line": 65,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 111,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 19,
+          "path": "src/textual/_tree_sitter.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 1590,
+          "path": "src/textual/app.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 112,
+          "path": "src/textual/widgets/__init__.py"
+        },
+        {
+          "code": "DYNAMIC_PROCESS",
+          "line": 16,
+          "path": "tests/test_pipe.py"
+        },
+        {
+          "code": "UNRESOLVED_IMPORT",
+          "line": 8,
+          "path": "src/textual/demo/_project_stargazer_updater.py"
+        },
+        {
+          "code": "UNRESOLVED_IMPORT",
+          "line": 67,
+          "path": "tests/test_gc.py"
+        },
+        {
+          "code": "UNREVIEWED_PYTEST_PLUGIN",
+          "line": 0,
+          "path": null
+        }
+      ],
+      "jobs": {
+        "native": {
+          "cases": 3467,
+          "execution": {
+            "base": "ef9ac376479097c8b6dee9c7fec8db744c9045f1",
+            "command_seconds": 303.037551203,
+            "execution": "full",
+            "exit_code": 1,
+            "harness_sha256": "610c3cf1636652becc293c6c20de10b064cb387a146ed185f7910f34d11451cd",
+            "head": "4da0a1934906fb02e03e77a4fd564c55ccd798a1",
+            "measured_command_seconds": 303.352498459,
+            "mode": "native",
+            "model_calls": 0,
+            "planning_error": null,
+            "planning_seconds": 0.0,
+            "reporting_deferred": true,
+            "reporting_exit": null,
+            "reporting_seconds": 0.0,
+            "targets": null,
+            "test_seconds": 303.03753804800004
+          },
+          "failures": [
+            "tests.snapshot_tests.test_snapshots::test_markdown_stream_switch_theme"
+          ],
+          "job_seconds": 352.0,
+          "trigger_to_result_seconds": 355.0,
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45938297800/job/140306493086"
+        },
+        "smart": {
+          "cases": 3467,
+          "execution": {
+            "base": "ef9ac376479097c8b6dee9c7fec8db744c9045f1",
+            "command_seconds": 327.02398837600003,
+            "execution": "full",
+            "exit_code": 1,
+            "harness_sha256": "610c3cf1636652becc293c6c20de10b064cb387a146ed185f7910f34d11451cd",
+            "head": "4da0a1934906fb02e03e77a4fd564c55ccd798a1",
+            "measured_command_seconds": 327.08065198500003,
+            "mode": "smart",
+            "model_calls": 0,
+            "planning_error": null,
+            "planning_seconds": 18.664072395999995,
+            "reporting_deferred": true,
+            "reporting_exit": null,
+            "reporting_seconds": 0.0,
+            "targets": null,
+            "test_seconds": 308.359891997
+          },
+          "failures": [
+            "tests.snapshot_tests.test_snapshots::test_markdown_stream_switch_theme"
+          ],
+          "job_seconds": 379.0,
+          "trigger_to_result_seconds": 381.0,
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45938297800/job/140306492581"
+        }
+      },
+      "limits": [
+        "One pair per scenario; runner variance is not eliminated.",
+        "Full-control job is validation overhead, not a deployment prerequisite of the production selector.",
+        "Zero missed observed failures cannot prove unexecuted behavior correct.",
+        "Coverage reporting never changes test selection; model calls remain disabled."
+      ],
+      "planning_seconds_reduced": 17.60527497400011,
+      "pr": "https://github.com/SharmaKunal14/textual/pull/17",
+      "previous": {
+        "head": "4259686a3cbfb3fd4d16c28326cb25d921b62b19",
+        "native_trigger_to_result_seconds": 368.0,
+        "planning_seconds": 36.269347370000105,
+        "reporting_seconds": 0.4311991670001589,
+        "run": "https://github.com/SharmaKunal14/textual/actions/runs/45935882128",
+        "smart_trigger_to_result_seconds": 393.0
+      },
+      "profile": {
+        "implementation": "CPython",
+        "instrumentation_exclusion": "smartci only; installed without dependencies",
+        "machine": "x86_64",
+        "packages": [
+          [
+            "aiohappyeyeballs",
+            "2.6.1"
+          ],
+          [
+            "aiohttp",
+            "3.13.1"
+          ],
+          [
+            "aiohttp-jinja2",
+            "1.6"
+          ],
+          [
+            "aiosignal",
+            "1.4.0"
+          ],
+          [
+            "anyio",
+            "4.11.0"
+          ],
+          [
+            "attrs",
+            "25.4.0"
+          ],
+          [
+            "babel",
+            "2.17.0"
+          ],
+          [
+            "backrefs",
+            "5.9"
+          ],
+          [
+            "black",
+            "24.4.2"
+          ],
+          [
+            "cachecontrol",
+            "0.14.3"
+          ],
+          [
+            "certifi",
+            "2025.10.5"
+          ],
+          [
+            "cfgv",
+            "3.4.0"
+          ],
+          [
+            "charset-normalizer",
+            "3.4.4"
+          ],
+          [
+            "click",
+            "8.1.8"
+          ],
+          [
+            "colorama",
+            "0.4.6"
+          ],
+          [
+            "coverage",
+            "7.10.7"
+          ],
+          [
+            "distlib",
+            "0.4.0"
+          ],
+          [
+            "execnet",
+            "2.1.1"
+          ],
+          [
+            "filelock",
+            "3.19.1"
+          ],
+          [
+            "frozenlist",
+            "1.8.0"
+          ],
+          [
+            "ghp-import",
+            "2.1.0"
+          ],
+          [
+            "gitdb",
+            "4.0.12"
+          ],
+          [
+            "gitpython",
+            "3.1.45"
+          ],
+          [
+            "griffe",
+            "0.32.3"
+          ],
+          [
+            "h11",
+            "0.14.0"
+          ],
+          [
+            "httpcore",
+            "0.16.3"
+          ],
+          [
+            "httpx",
+            "0.23.3"
+          ],
+          [
+            "identify",
+            "2.6.15"
+          ],
+          [
+            "idna",
+            "3.11"
+          ],
+          [
+            "iniconfig",
+            "2.1.0"
+          ],
+          [
+            "isort",
+            "5.13.2"
+          ],
+          [
+            "jinja2",
+            "3.1.6"
+          ],
+          [
+            "linkify-it-py",
+            "2.0.3"
+          ],
+          [
+            "markdown",
+            "3.9"
+          ],
+          [
+            "markdown-it-py",
+            "3.0.0"
+          ],
+          [
+            "markupsafe",
+            "3.0.3"
+          ],
+          [
+            "mdit-py-plugins",
+            "0.4.2"
+          ],
+          [
+            "mdurl",
+            "0.1.2"
+          ],
+          [
+            "mergedeep",
+            "1.3.4"
+          ],
+          [
+            "mkdocs",
+            "1.6.1"
+          ],
+          [
+            "mkdocs-autorefs",
+            "1.4.3"
+          ],
+          [
+            "mkdocs-exclude",
+            "1.0.2"
+          ],
+          [
+            "mkdocs-get-deps",
+            "0.2.0"
+          ],
+          [
+            "mkdocs-git-revision-date-localized-plugin",
+            "1.4.7"
+          ],
+          [
+            "mkdocs-material",
+            "9.6.22"
+          ],
+          [
+            "mkdocs-material-extensions",
+            "1.3.1"
+          ],
+          [
+            "mkdocs-rss-plugin",
+            "1.17.4"
+          ],
+          [
+            "mkdocstrings",
+            "0.20.0"
+          ],
+          [
+            "mkdocstrings-python",
+            "1.3.0"
+          ],
+          [
+            "msgpack",
+            "1.1.2"
+          ],
+          [
+            "multidict",
+            "6.7.0"
+          ],
+          [
+            "mypy",
+            "1.18.2"
+          ],
+          [
+            "mypy-extensions",
+            "1.1.0"
+          ],
+          [
+            "nodeenv",
+            "1.9.1"
+          ],
+          [
+            "packaging",
+            "25.0"
+          ],
+          [
+            "paginate",
+            "0.5.7"
+          ],
+          [
+            "pathspec",
+            "0.12.1"
+          ],
+          [
+            "pip",
+            "26.0.1"
+          ],
+          [
+            "platformdirs",
+            "4.4.0"
+          ],
+          [
+            "pluggy",
+            "1.6.0"
+          ],
+          [
+            "pre-commit",
+            "2.21.0"
+          ],
+          [
+            "propcache",
+            "0.4.1"
+          ],
+          [
+            "pygments",
+            "2.19.2"
+          ],
+          [
+            "pymdown-extensions",
+            "10.16.1"
+          ],
+          [
+            "pytest",
+            "8.4.2"
+          ],
+          [
+            "pytest-asyncio",
+            "1.2.0"
+          ],
+          [
+            "pytest-cov",
+            "5.0.0"
+          ],
+          [
+            "pytest-textual-snapshot",
+            "1.1.0"
+          ],
+          [
+            "pytest-xdist",
+            "3.8.0"
+          ],
+          [
+            "python-dateutil",
+            "2.9.0.post0"
+          ],
+          [
+            "pytz",
+            "2025.2"
+          ],
+          [
+            "pyyaml",
+            "6.0.3"
+          ],
+          [
+            "pyyaml-env-tag",
+            "1.1"
+          ],
+          [
+            "requests",
+            "2.32.5"
+          ],
+          [
+            "rfc3986",
+            "1.5.0"
+          ],
+          [
+            "rich",
+            "14.2.0"
+          ],
+          [
+            "six",
+            "1.17.0"
+          ],
+          [
+            "smmap",
+            "5.0.2"
+          ],
+          [
+            "sniffio",
+            "1.3.1"
+          ],
+          [
+            "syrupy",
+            "4.8.0"
+          ],
+          [
+            "textual",
+            "8.2.8"
+          ],
+          [
+            "textual-dev",
+            "1.8.0"
+          ],
+          [
+            "textual-serve",
+            "1.1.2"
+          ],
+          [
+            "tree-sitter",
+            "0.25.2"
+          ],
+          [
+            "tree-sitter-bash",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-css",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-go",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-html",
+            "0.23.2"
+          ],
+          [
+            "tree-sitter-java",
+            "0.23.5"
+          ],
+          [
+            "tree-sitter-javascript",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-json",
+            "0.24.8"
+          ],
+          [
+            "tree-sitter-markdown",
+            "0.5.1"
+          ],
+          [
+            "tree-sitter-python",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-regex",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-rust",
+            "0.24.0"
+          ],
+          [
+            "tree-sitter-sql",
+            "0.3.11"
+          ],
+          [
+            "tree-sitter-toml",
+            "0.7.0"
+          ],
+          [
+            "tree-sitter-xml",
+            "0.7.0"
+          ],
+          [
+            "tree-sitter-yaml",
+            "0.7.2"
+          ],
+          [
+            "types-setuptools",
+            "67.8.0.0"
+          ],
+          [
+            "typing-extensions",
+            "4.15.0"
+          ],
+          [
+            "uc-micro-py",
+            "1.0.3"
+          ],
+          [
+            "urllib3",
+            "2.5.0"
+          ],
+          [
+            "virtualenv",
+            "20.35.3"
+          ],
+          [
+            "watchdog",
+            "6.0.0"
+          ],
+          [
+            "yarl",
+            "1.22.0"
+          ]
+        ],
+        "platform": "linux",
+        "profile": "pytest-tests-verbose-native-coverage-v1",
+        "python": "3.14.10"
+      },
+      "reporting_deferred": true,
+      "run": "https://github.com/SharmaKunal14/textual/actions/runs/45938297800",
+      "scenario": "regression",
+      "schema_version": "smartci.coverage-pair.v1",
+      "selected_files": 251,
+      "selection": {
+        "digest": "f04368c8daab4d13473904926ad9fdfd8fd0767cbfced7f4d60d641781e6f639",
+        "execution": "full",
+        "fallback": [
+          "INCOMPLETE_EVIDENCE"
+        ],
+        "mode": "full",
+        "warnings": [
+          "BASE_DISCOVERY_SKIPPED:HEAD_REQUIRES_FULL",
+          "COLLECTION_GAP:CUSTOM_IMPORT_PATH:src/textual/_import_app.py:109",
+          "COLLECTION_GAP:CUSTOM_IMPORT_PATH:src/textual/_import_app.py:63",
+          "COLLECTION_GAP:DYNAMIC_ATTRIBUTE_HOOK:src/textual/widgets/__init__.py:102",
+          "COLLECTION_GAP:DYNAMIC_CODE:src/textual/_doc.py:183",
+          "COLLECTION_GAP:DYNAMIC_CODE:src/textual/_import_app.py:65",
+          "COLLECTION_GAP:DYNAMIC_IMPORT:src/textual/_import_app.py:111",
+          "COLLECTION_GAP:DYNAMIC_IMPORT:src/textual/_tree_sitter.py:19",
+          "COLLECTION_GAP:DYNAMIC_IMPORT:src/textual/app.py:1590",
+          "COLLECTION_GAP:DYNAMIC_IMPORT:src/textual/widgets/__init__.py:112",
+          "COLLECTION_GAP:DYNAMIC_PROCESS:tests/test_pipe.py:16",
+          "COLLECTION_GAP:UNRESOLVED_IMPORT:src/textual/demo/_project_stargazer_updater.py:8",
+          "COLLECTION_GAP:UNRESOLVED_IMPORT:tests/test_gc.py:67",
+          "COLLECTION_GAP:UNREVIEWED_PYTEST_PLUGIN:environment:0"
+        ]
+      }
+    },
+    {
+      "application_test_lockfile_identity": {
+        "poetry.lock": "d2a52c58ce67945cbf73c6025c32b4afe8d50b64",
+        "pyproject.toml": "22a015ad9dc9b00dfd6409d94a8968dad0ab6ae3",
+        "src": "e107d5dd38d6f3fc6528e81bb238707036e419a6",
+        "tests": "1e6bafe08b3734a32b93d908eb2e702f4cf414c8"
+      },
+      "artifact_sha256": {
+        "jobs.json": "e90c5b8ea4527cda745eca5b0154bd3870c1d039ca7e579b2170419f87e0d2c2",
+        "run.json": "50bda51908b1aebfe1c08c1d842acc29ed8b10463ab41e29eb27de563d7fed1b",
+        "subject-pr.json": "c44ad6741e85c758f34854e8628f704dba1a1e8f4f0cf69536561c2cc305e41c",
+        "textual-native-1/coverage.xml": "428106147b7c284cadb27b0c8b804d5c50a8f7751c4417beb102977d148cecad",
+        "textual-native-1/execution.json": "6fc5678b98b874c3ffebe744323274686ef92513444de941b0c65ae4ddd7b5c5",
+        "textual-native-1/junit.xml": "cdbf7798584bd676b31ada062e322f75de08f9a99ec0fe6c7a80244a79f7ce94",
+        "textual-native-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+        "textual-smart-1/coverage.xml": "692046bafdda74f5793327199a330706bacf78e2e8201b713c30302fd435ee45",
+        "textual-smart-1/execution.json": "397f7e606b4f2b7cfb4e57f7db6a89ed30c0e1c1f2c8d31f8fdb1b1fc7a1bb49",
+        "textual-smart-1/head-cases.json": "bcbaac985bee8117b8fd102de30d6fd0deae59f6c19e9fbd16746d5e014e86f3",
+        "textual-smart-1/head-compatibility.json": "673c96f861a70c9e23984751274aca6d71e5c795789524db739dfb99900d3558",
+        "textual-smart-1/junit.xml": "2f4fa63b439c0367b2c264669482b1f01829d65c8a8029e62178ef07195eebeb",
+        "textual-smart-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+        "textual-smart-1/selection.json": "c4e634603a1e72ad1fb2135ef85de3b856da01a2bfa13007ee2734ac4226b451"
+      },
+      "base": "ef9ac376479097c8b6dee9c7fec8db744c9045f1",
+      "base_discovery_skipped": true,
+      "collection_stage_seconds": {
+        "build_snapshot": 1.1394999599999949,
+        "dependency_analysis": 2.904340485000006,
+        "environment": 0.36564476000000923,
+        "native_collection": 7.056383970000013,
+        "native_collection_repeat": 5.501808917999995,
+        "read_and_probe_inputs": 0.9515259629999946,
+        "verify_unchanged_inputs": 0.09444281599999726
+      },
+      "comparison": {
+        "matched": true,
+        "mismatched_selected_outcomes": [],
+        "missed_native_failures": [],
+        "runner_seconds": 742.0,
+        "selection_benefit_demonstrated": false,
+        "smart_path_faster": false,
+        "smart_path_seconds_saved": -10.0,
+        "tests_omitted": 0,
+        "whole_validation_workflow_seconds": 380.0
+      },
+      "coverage_gaps": null,
+      "head": "70aeda3397033239312f5018579ec2e60943cd89",
+      "head_dependency_gaps": [
+        {
+          "code": "CUSTOM_IMPORT_PATH",
+          "line": 63,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "CUSTOM_IMPORT_PATH",
+          "line": 109,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "DYNAMIC_ATTRIBUTE_HOOK",
+          "line": 102,
+          "path": "src/textual/widgets/__init__.py"
+        },
+        {
+          "code": "DYNAMIC_CODE",
+          "line": 183,
+          "path": "src/textual/_doc.py"
+        },
+        {
+          "code": "DYNAMIC_CODE",
+          "line": 65,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 111,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 19,
+          "path": "src/textual/_tree_sitter.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 1590,
+          "path": "src/textual/app.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 112,
+          "path": "src/textual/widgets/__init__.py"
+        },
+        {
+          "code": "DYNAMIC_PROCESS",
+          "line": 16,
+          "path": "tests/test_pipe.py"
+        },
+        {
+          "code": "UNRESOLVED_IMPORT",
+          "line": 8,
+          "path": "src/textual/demo/_project_stargazer_updater.py"
+        },
+        {
+          "code": "UNRESOLVED_IMPORT",
+          "line": 67,
+          "path": "tests/test_gc.py"
+        },
+        {
+          "code": "UNREVIEWED_PYTEST_PLUGIN",
+          "line": 0,
+          "path": null
+        }
+      ],
+      "jobs": {
+        "native": {
+          "cases": 3467,
+          "execution": {
+            "base": "ef9ac376479097c8b6dee9c7fec8db744c9045f1",
+            "command_seconds": 306.76775109500005,
+            "execution": "full",
+            "exit_code": 0,
+            "harness_sha256": "610c3cf1636652becc293c6c20de10b064cb387a146ed185f7910f34d11451cd",
+            "head": "70aeda3397033239312f5018579ec2e60943cd89",
+            "measured_command_seconds": 306.931638888,
+            "mode": "native",
+            "model_calls": 0,
+            "planning_error": null,
+            "planning_seconds": 0.0,
+            "reporting_deferred": true,
+            "reporting_exit": null,
+            "reporting_seconds": 0.0,
+            "targets": null,
+            "test_seconds": 306.76774022800004
+          },
+          "failures": [],
+          "job_seconds": 366.0,
+          "trigger_to_result_seconds": 369.0,
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45938296049/job/140306488052"
+        },
+        "smart": {
+          "cases": 3467,
+          "execution": {
+            "base": "ef9ac376479097c8b6dee9c7fec8db744c9045f1",
+            "command_seconds": 314.255929556,
+            "execution": "full",
+            "exit_code": 0,
+            "harness_sha256": "610c3cf1636652becc293c6c20de10b064cb387a146ed185f7910f34d11451cd",
+            "head": "70aeda3397033239312f5018579ec2e60943cd89",
+            "measured_command_seconds": 314.313152215,
+            "mode": "smart",
+            "model_calls": 0,
+            "planning_error": null,
+            "planning_seconds": 19.165537821000015,
+            "reporting_deferred": true,
+            "reporting_exit": null,
+            "reporting_seconds": 0.0,
+            "targets": null,
+            "test_seconds": 295.090365272
+          },
+          "failures": [],
+          "job_seconds": 376.0,
+          "trigger_to_result_seconds": 379.0,
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45938296049/job/140306487260"
+        }
+      },
+      "limits": [
+        "One pair per scenario; runner variance is not eliminated.",
+        "Full-control job is validation overhead, not a deployment prerequisite of the production selector.",
+        "Zero missed observed failures cannot prove unexecuted behavior correct.",
+        "Coverage reporting never changes test selection; model calls remain disabled."
+      ],
+      "planning_seconds_reduced": 16.939719550999996,
+      "pr": "https://github.com/SharmaKunal14/textual/pull/18",
+      "previous": {
+        "head": "b0b691187a666e7bdfe8acda9aca40e26a334d73",
+        "native_trigger_to_result_seconds": 360.0,
+        "planning_seconds": 36.10525737200001,
+        "reporting_seconds": 0.43211886800003185,
+        "run": "https://github.com/SharmaKunal14/textual/actions/runs/45935883746",
+        "smart_trigger_to_result_seconds": 397.0
+      },
+      "profile": {
+        "implementation": "CPython",
+        "instrumentation_exclusion": "smartci only; installed without dependencies",
+        "machine": "x86_64",
+        "packages": [
+          [
+            "aiohappyeyeballs",
+            "2.6.1"
+          ],
+          [
+            "aiohttp",
+            "3.13.1"
+          ],
+          [
+            "aiohttp-jinja2",
+            "1.6"
+          ],
+          [
+            "aiosignal",
+            "1.4.0"
+          ],
+          [
+            "anyio",
+            "4.11.0"
+          ],
+          [
+            "attrs",
+            "25.4.0"
+          ],
+          [
+            "babel",
+            "2.17.0"
+          ],
+          [
+            "backrefs",
+            "5.9"
+          ],
+          [
+            "black",
+            "24.4.2"
+          ],
+          [
+            "cachecontrol",
+            "0.14.3"
+          ],
+          [
+            "certifi",
+            "2025.10.5"
+          ],
+          [
+            "cfgv",
+            "3.4.0"
+          ],
+          [
+            "charset-normalizer",
+            "3.4.4"
+          ],
+          [
+            "click",
+            "8.1.8"
+          ],
+          [
+            "colorama",
+            "0.4.6"
+          ],
+          [
+            "coverage",
+            "7.10.7"
+          ],
+          [
+            "distlib",
+            "0.4.0"
+          ],
+          [
+            "execnet",
+            "2.1.1"
+          ],
+          [
+            "filelock",
+            "3.19.1"
+          ],
+          [
+            "frozenlist",
+            "1.8.0"
+          ],
+          [
+            "ghp-import",
+            "2.1.0"
+          ],
+          [
+            "gitdb",
+            "4.0.12"
+          ],
+          [
+            "gitpython",
+            "3.1.45"
+          ],
+          [
+            "griffe",
+            "0.32.3"
+          ],
+          [
+            "h11",
+            "0.14.0"
+          ],
+          [
+            "httpcore",
+            "0.16.3"
+          ],
+          [
+            "httpx",
+            "0.23.3"
+          ],
+          [
+            "identify",
+            "2.6.15"
+          ],
+          [
+            "idna",
+            "3.11"
+          ],
+          [
+            "iniconfig",
+            "2.1.0"
+          ],
+          [
+            "isort",
+            "5.13.2"
+          ],
+          [
+            "jinja2",
+            "3.1.6"
+          ],
+          [
+            "linkify-it-py",
+            "2.0.3"
+          ],
+          [
+            "markdown",
+            "3.9"
+          ],
+          [
+            "markdown-it-py",
+            "3.0.0"
+          ],
+          [
+            "markupsafe",
+            "3.0.3"
+          ],
+          [
+            "mdit-py-plugins",
+            "0.4.2"
+          ],
+          [
+            "mdurl",
+            "0.1.2"
+          ],
+          [
+            "mergedeep",
+            "1.3.4"
+          ],
+          [
+            "mkdocs",
+            "1.6.1"
+          ],
+          [
+            "mkdocs-autorefs",
+            "1.4.3"
+          ],
+          [
+            "mkdocs-exclude",
+            "1.0.2"
+          ],
+          [
+            "mkdocs-get-deps",
+            "0.2.0"
+          ],
+          [
+            "mkdocs-git-revision-date-localized-plugin",
+            "1.4.7"
+          ],
+          [
+            "mkdocs-material",
+            "9.6.22"
+          ],
+          [
+            "mkdocs-material-extensions",
+            "1.3.1"
+          ],
+          [
+            "mkdocs-rss-plugin",
+            "1.17.4"
+          ],
+          [
+            "mkdocstrings",
+            "0.20.0"
+          ],
+          [
+            "mkdocstrings-python",
+            "1.3.0"
+          ],
+          [
+            "msgpack",
+            "1.1.2"
+          ],
+          [
+            "multidict",
+            "6.7.0"
+          ],
+          [
+            "mypy",
+            "1.18.2"
+          ],
+          [
+            "mypy-extensions",
+            "1.1.0"
+          ],
+          [
+            "nodeenv",
+            "1.9.1"
+          ],
+          [
+            "packaging",
+            "25.0"
+          ],
+          [
+            "paginate",
+            "0.5.7"
+          ],
+          [
+            "pathspec",
+            "0.12.1"
+          ],
+          [
+            "pip",
+            "26.0.1"
+          ],
+          [
+            "platformdirs",
+            "4.4.0"
+          ],
+          [
+            "pluggy",
+            "1.6.0"
+          ],
+          [
+            "pre-commit",
+            "2.21.0"
+          ],
+          [
+            "propcache",
+            "0.4.1"
+          ],
+          [
+            "pygments",
+            "2.19.2"
+          ],
+          [
+            "pymdown-extensions",
+            "10.16.1"
+          ],
+          [
+            "pytest",
+            "8.4.2"
+          ],
+          [
+            "pytest-asyncio",
+            "1.2.0"
+          ],
+          [
+            "pytest-cov",
+            "5.0.0"
+          ],
+          [
+            "pytest-textual-snapshot",
+            "1.1.0"
+          ],
+          [
+            "pytest-xdist",
+            "3.8.0"
+          ],
+          [
+            "python-dateutil",
+            "2.9.0.post0"
+          ],
+          [
+            "pytz",
+            "2025.2"
+          ],
+          [
+            "pyyaml",
+            "6.0.3"
+          ],
+          [
+            "pyyaml-env-tag",
+            "1.1"
+          ],
+          [
+            "requests",
+            "2.32.5"
+          ],
+          [
+            "rfc3986",
+            "1.5.0"
+          ],
+          [
+            "rich",
+            "14.2.0"
+          ],
+          [
+            "six",
+            "1.17.0"
+          ],
+          [
+            "smmap",
+            "5.0.2"
+          ],
+          [
+            "sniffio",
+            "1.3.1"
+          ],
+          [
+            "syrupy",
+            "4.8.0"
+          ],
+          [
+            "textual",
+            "8.2.8"
+          ],
+          [
+            "textual-dev",
+            "1.8.0"
+          ],
+          [
+            "textual-serve",
+            "1.1.2"
+          ],
+          [
+            "tree-sitter",
+            "0.25.2"
+          ],
+          [
+            "tree-sitter-bash",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-css",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-go",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-html",
+            "0.23.2"
+          ],
+          [
+            "tree-sitter-java",
+            "0.23.5"
+          ],
+          [
+            "tree-sitter-javascript",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-json",
+            "0.24.8"
+          ],
+          [
+            "tree-sitter-markdown",
+            "0.5.1"
+          ],
+          [
+            "tree-sitter-python",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-regex",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-rust",
+            "0.24.0"
+          ],
+          [
+            "tree-sitter-sql",
+            "0.3.11"
+          ],
+          [
+            "tree-sitter-toml",
+            "0.7.0"
+          ],
+          [
+            "tree-sitter-xml",
+            "0.7.0"
+          ],
+          [
+            "tree-sitter-yaml",
+            "0.7.2"
+          ],
+          [
+            "types-setuptools",
+            "67.8.0.0"
+          ],
+          [
+            "typing-extensions",
+            "4.15.0"
+          ],
+          [
+            "uc-micro-py",
+            "1.0.3"
+          ],
+          [
+            "urllib3",
+            "2.5.0"
+          ],
+          [
+            "virtualenv",
+            "20.35.3"
+          ],
+          [
+            "watchdog",
+            "6.0.0"
+          ],
+          [
+            "yarl",
+            "1.22.0"
+          ]
+        ],
+        "platform": "linux",
+        "profile": "pytest-tests-verbose-native-coverage-v1",
+        "python": "3.14.10"
+      },
+      "reporting_deferred": true,
+      "run": "https://github.com/SharmaKunal14/textual/actions/runs/45938296049",
+      "scenario": "unobserved",
+      "schema_version": "smartci.coverage-pair.v1",
+      "selected_files": 251,
+      "selection": {
+        "digest": "b38267b81c08e4ccadfa843b9925475bc92e9464c4dd1b41503476a226f1443f",
+        "execution": "full",
+        "fallback": [
+          "INCOMPLETE_EVIDENCE"
+        ],
+        "mode": "full",
+        "warnings": [
+          "BASE_DISCOVERY_SKIPPED:HEAD_REQUIRES_FULL",
+          "COLLECTION_GAP:CUSTOM_IMPORT_PATH:src/textual/_import_app.py:109",
+          "COLLECTION_GAP:CUSTOM_IMPORT_PATH:src/textual/_import_app.py:63",
+          "COLLECTION_GAP:DYNAMIC_ATTRIBUTE_HOOK:src/textual/widgets/__init__.py:102",
+          "COLLECTION_GAP:DYNAMIC_CODE:src/textual/_doc.py:183",
+          "COLLECTION_GAP:DYNAMIC_CODE:src/textual/_import_app.py:65",
+          "COLLECTION_GAP:DYNAMIC_IMPORT:src/textual/_import_app.py:111",
+          "COLLECTION_GAP:DYNAMIC_IMPORT:src/textual/_tree_sitter.py:19",
+          "COLLECTION_GAP:DYNAMIC_IMPORT:src/textual/app.py:1590",
+          "COLLECTION_GAP:DYNAMIC_IMPORT:src/textual/widgets/__init__.py:112",
+          "COLLECTION_GAP:DYNAMIC_PROCESS:tests/test_pipe.py:16",
+          "COLLECTION_GAP:UNRESOLVED_IMPORT:src/textual/demo/_project_stargazer_updater.py:8",
+          "COLLECTION_GAP:UNRESOLVED_IMPORT:tests/test_gc.py:67",
+          "COLLECTION_GAP:UNREVIEWED_PYTEST_PLUGIN:environment:0"
+        ]
+      }
+    }
+  ],
+  "date": "2026-11-27",
+  "limits": [
+    "Exactly one repeated pair per fixed scenario, not a representative average; hosted runner variation remains.",
+    "The same source, test and lockfile trees were verified, with identical native inventory, import and dependency-edge digests.",
+    "One false module-name gap is removed; all 13 other gaps remain. No manual plugin exemptions, directory exclusions or test changes.",
+    "Zero missed observed failures includes one failure on the historical regression and no failures on the artificial uncovered-change control; it is not general safety proof.",
+    "Previous reporting failures and all preceding comparisons are preserved in textual-coverage-report-2026-11-27.json."
+  ],
+  "merges": false,
+  "model_calls": 0,
+  "runner_seconds": 1473.0,
+  "safety_checks": {
+    "format_lint_types_build": "passed",
+    "run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45938224971",
+    "tests_passed": 1065
+  },
+  "schema": "smartci.textual-planning-efficiency.v1",
+  "timing_scope": "Workflow creation to job completion, plus started-to-completed job duration; includes queue, setup, discovery/planning, native pytest and artifact upload. Excludes event-delivery latency before run creation, operator time and separate tool safety checks. Optional advisory reporting is deferred; original native coverage options stay unchanged.",
+  "tool_pr": "https://github.com/SharmaKunal14/smart-ci/pull/29",
+  "verdict": "Planning is approximately halved, but both pairs still execute the full suite and are slower than their paired native controls. A safe useful Textual subset remains unsupported."
+}

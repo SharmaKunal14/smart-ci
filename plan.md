@@ -2,6 +2,19 @@
 
 Updated: 27 November 2026
 
+Latest CI-efficiency iteration: [Smart CI PR #29](https://github.com/SharmaKunal14/smart-ci/pull/29)
+fixes a false hyphenated-module rejection and skips redundant base discovery
+when a validated incomplete head already requires full tests. It preserves all
+dependency edges, native collection checks and conservative fallback; optional
+coverage reporting is deferred in the timed comparison. Real Textual PR #17/#18
+now spend 18.66/19.17 seconds planning instead of 36.27/36.11 seconds, but still
+run all 251 files / 3,467 case outcomes. Native/Smart CI feedback is 355/381 and
+369/379 seconds: **still slower, no useful subset**. Thirteen genuine gaps remain;
+the native outcomes match with no missed observed failures. See the
+[cause trace and verification steps](docs/onboarding/textual-planning-efficiency.md)
+and [GitHub evidence](docs/benchmarks/textual-planning-efficiency-2026-11-27.json).
+Do not treat reduced planning cost as completion of the selection-speedup goal.
+
 Current direction: retire automatic test generation/repair and make **no more paid
 model calls**. Keep every model campaign disabled and preserve the honest negative
 [generation/repair results](docs/onboarding/generated-test-experiment.md). Prior
