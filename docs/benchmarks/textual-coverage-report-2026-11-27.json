@@ -1,0 +1,1728 @@
+{
+  "aws_deployment": false,
+  "benchmarked_tool_commit": "12324ce9502b75a514bb598993ef0941a029ef8c",
+  "campaign_enabled": false,
+  "comparisons": [
+    {
+      "artifact_sha256": {
+        "jobs.json": "6c49c4a327fe9c343deb976861c470608a60ff626a6075e853f053ad5523249e",
+        "run.json": "8504c70a4719d7e98fa7e9a53f89550b7d8e568066dccc0575185c2db81a2d6c",
+        "subject-pr.json": "1bd631a93dedf244b1fae4446b92f2367c7680949507db2de78ae6be267c4300",
+        "textual-native-1/coverage.xml": "95903bd768c5e14c0e3df27f42d9094dfafa2cd8cc38b2b13dc3e9e35d560b72",
+        "textual-native-1/execution.json": "959b4ff664153a8a86ded4d24c8005206139ab43e15f233b7a08b85e600160ed",
+        "textual-native-1/junit.xml": "6d0dfb4e71eace2eb31410a35fa5ec1618ef6410680bab95e121024b1e17dfc8",
+        "textual-native-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+        "textual-smart-1/coverage-gaps.json": "da4801efeac80cc1c860a15b51198a984e3ccdf8b27318b9d06c76a67eeb485e",
+        "textual-smart-1/coverage-receipt.json": "d246235de34243a1318a19c64b23bfff655a520dd10fafc0d272460d30fa43a8",
+        "textual-smart-1/coverage.xml": "88be08aa75d76eef6abdc6518d9cba9ee57f880e9c1b4e165049bed021b145f2",
+        "textual-smart-1/execution.json": "b8dea7aff9de825a4d0edd648af2faff39e6a9a41c56ca51e8e1639ee7241677",
+        "textual-smart-1/head-cases.json": "bcbaac985bee8117b8fd102de30d6fd0deae59f6c19e9fbd16746d5e014e86f3",
+        "textual-smart-1/head-compatibility.json": "51e67e5539af373cf2acc6fb4f2cc51e79bf169d5498f66f1dd258a5c838456e",
+        "textual-smart-1/junit.xml": "eaf083b9f4f03549e30bbfcfa67a017aa5c6c7e364557037bea1d08b551b834f",
+        "textual-smart-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+        "textual-smart-1/selection.json": "d150adf6bb98681338b3108ba3ba49647059176093bf236c55ea999249cbba49"
+      },
+      "base": "bb1ca171d3f5d92a2059c090d9f95be32d2dec44",
+      "comparison": {
+        "matched": true,
+        "mismatched_selected_outcomes": [],
+        "missed_native_failures": [],
+        "runner_seconds": 754.0,
+        "selection_benefit_demonstrated": false,
+        "smart_path_faster": false,
+        "smart_path_seconds_saved": -25.0,
+        "tests_omitted": 0,
+        "whole_validation_workflow_seconds": 393.0
+      },
+      "coverage_gaps": {
+        "comparison": {
+          "base": "bb1ca171d3f5d92a2059c090d9f95be32d2dec44",
+          "head": "4259686a3cbfb3fd4d16c28326cb25d921b62b19"
+        },
+        "digest": "dc3393799e66842b82f797bbcb3d81d4cb9483ae4b89023799abab571026c7b1",
+        "environment": "3ef35c4ddd5c54a15ecc690aa803312e57d0861fdeef15e07c2b15883a5dd6b7",
+        "evidence": {
+          "coverage_sha256": "88be08aa75d76eef6abdc6518d9cba9ee57f880e9c1b4e165049bed021b145f2",
+          "environment": "3ef35c4ddd5c54a15ecc690aa803312e57d0861fdeef15e07c2b15883a5dd6b7",
+          "execution_scope": "full",
+          "exit_code": 1,
+          "inventory_reconciled": true,
+          "repository": "SharmaKunal14/textual",
+          "revision": "4259686a3cbfb3fd4d16c28326cb25d921b62b19",
+          "run_url": "https://github.com/SharmaKunal14/textual/actions/runs/45935882128",
+          "schema_version": "smartci.coverage-receipt.v1",
+          "source_prefix": "src/textual",
+          "test_count": 3467
+        },
+        "evidence_status": "validated_receipt",
+        "findings": [
+          {
+            "action": null,
+            "changed_head_lines": [
+              701,
+              938,
+              943
+            ],
+            "path": "src/textual/widgets/_markdown.py",
+            "reported_executable_changed_lines": [
+              938,
+              943
+            ],
+            "status": "observed_execution",
+            "zero_hit_lines": []
+          }
+        ],
+        "limits": [
+          "Zero hits mean no observed execution in this run and environment, not that no test exists.",
+          "Full execution does not validate behavior it never exercises; line hits do not prove assertion quality.",
+          "Missing lines, excluded code and deleted lines are not measured zero coverage.",
+          "Receipts must come from a trusted runner; local hashes and bindings do not authenticate their publisher."
+        ],
+        "omission_authorized": false,
+        "repository": "SharmaKunal14/textual",
+        "schema_version": "smartci.coverage-gaps.v1",
+        "selection_changed": false
+      },
+      "head": "4259686a3cbfb3fd4d16c28326cb25d921b62b19",
+      "head_dependency_gaps": [
+        {
+          "code": "CUSTOM_IMPORT_PATH",
+          "line": 63,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "CUSTOM_IMPORT_PATH",
+          "line": 109,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "DYNAMIC_ATTRIBUTE_HOOK",
+          "line": 102,
+          "path": "src/textual/widgets/__init__.py"
+        },
+        {
+          "code": "DYNAMIC_CODE",
+          "line": 183,
+          "path": "src/textual/_doc.py"
+        },
+        {
+          "code": "DYNAMIC_CODE",
+          "line": 65,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 111,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 19,
+          "path": "src/textual/_tree_sitter.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 1590,
+          "path": "src/textual/app.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 112,
+          "path": "src/textual/widgets/__init__.py"
+        },
+        {
+          "code": "DYNAMIC_PROCESS",
+          "line": 16,
+          "path": "tests/test_pipe.py"
+        },
+        {
+          "code": "UNRESOLVED_IMPORT",
+          "line": 8,
+          "path": "src/textual/demo/_project_stargazer_updater.py"
+        },
+        {
+          "code": "UNRESOLVED_IMPORT",
+          "line": 67,
+          "path": "tests/test_gc.py"
+        },
+        {
+          "code": "UNREVIEWED_PYTEST_PLUGIN",
+          "line": 0,
+          "path": null
+        },
+        {
+          "code": "UNSUPPORTED_MODULE_NAME",
+          "line": 0,
+          "path": "tests/snapshot_tests/snapshot_apps/auto-table.py"
+        }
+      ],
+      "jobs": {
+        "native": {
+          "cases": 3467,
+          "execution": {
+            "base": "bb1ca171d3f5d92a2059c090d9f95be32d2dec44",
+            "command_seconds": 316.43713286,
+            "execution": "full",
+            "exit_code": 1,
+            "harness_sha256": "e562f1ad1f59d85adb019939043a9f76856fdcd0e75b127f8fa3e6eb00246677",
+            "head": "4259686a3cbfb3fd4d16c28326cb25d921b62b19",
+            "measured_command_seconds": 316.75226241999997,
+            "mode": "native",
+            "model_calls": 0,
+            "planning_error": null,
+            "planning_seconds": 0.0,
+            "reporting_exit": null,
+            "reporting_seconds": 0.0,
+            "targets": null,
+            "test_seconds": 316.43711113899997
+          },
+          "failures": [
+            "tests.snapshot_tests.test_snapshots::test_markdown_stream_switch_theme"
+          ],
+          "job_seconds": 365.0,
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "seconds": 2.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 25.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Install unchanged native locked profile",
+              "seconds": 14.0
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Install isolated selector and native collection plugin",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "failure",
+              "name": "Execute native baseline or production selector and advisory report",
+              "seconds": 318.0
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Show coverage gaps without changing native test outcome",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "seconds": 2.0
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "seconds": 0.0
+            }
+          ],
+          "trigger_to_result_seconds": 368.0,
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45935882128/job/140298869008"
+        },
+        "smart": {
+          "cases": 3467,
+          "execution": {
+            "base": "bb1ca171d3f5d92a2059c090d9f95be32d2dec44",
+            "command_seconds": 336.2396227910001,
+            "execution": "full",
+            "exit_code": 1,
+            "harness_sha256": "e562f1ad1f59d85adb019939043a9f76856fdcd0e75b127f8fa3e6eb00246677",
+            "head": "4259686a3cbfb3fd4d16c28326cb25d921b62b19",
+            "measured_command_seconds": 336.72725672699994,
+            "mode": "smart",
+            "model_calls": 0,
+            "planning_error": null,
+            "planning_seconds": 36.269347370000105,
+            "reporting_exit": 0,
+            "reporting_seconds": 0.4311991670001589,
+            "targets": null,
+            "test_seconds": 299.97024505599984
+          },
+          "failures": [
+            "tests.snapshot_tests.test_snapshots::test_markdown_stream_switch_theme"
+          ],
+          "job_seconds": 389.0,
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "seconds": 1.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 23.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 1.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Install unchanged native locked profile",
+              "seconds": 13.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 1.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+              "seconds": 1.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Install isolated selector and native collection plugin",
+              "seconds": 4.0
+            },
+            {
+              "conclusion": "failure",
+              "name": "Execute native baseline or production selector and advisory report",
+              "seconds": 338.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Show coverage gaps without changing native test outcome",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "seconds": 1.0
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Post Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 1.0
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "seconds": 0.0
+            }
+          ],
+          "trigger_to_result_seconds": 393.0,
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45935882128/job/140298869266"
+        }
+      },
+      "limits": [
+        "One pair per scenario; runner variance is not eliminated.",
+        "Full-control job is validation overhead, not a deployment prerequisite of the production selector.",
+        "Zero missed observed failures cannot prove unexecuted behavior correct.",
+        "Coverage reporting never changes test selection; model calls remain disabled."
+      ],
+      "pr": "https://github.com/SharmaKunal14/textual/pull/17",
+      "profile": {
+        "implementation": "CPython",
+        "instrumentation_exclusion": "smartci only; installed without dependencies",
+        "machine": "x86_64",
+        "packages": [
+          [
+            "aiohappyeyeballs",
+            "2.6.1"
+          ],
+          [
+            "aiohttp",
+            "3.13.1"
+          ],
+          [
+            "aiohttp-jinja2",
+            "1.6"
+          ],
+          [
+            "aiosignal",
+            "1.4.0"
+          ],
+          [
+            "anyio",
+            "4.11.0"
+          ],
+          [
+            "attrs",
+            "25.4.0"
+          ],
+          [
+            "babel",
+            "2.17.0"
+          ],
+          [
+            "backrefs",
+            "5.9"
+          ],
+          [
+            "black",
+            "24.4.2"
+          ],
+          [
+            "cachecontrol",
+            "0.14.3"
+          ],
+          [
+            "certifi",
+            "2025.10.5"
+          ],
+          [
+            "cfgv",
+            "3.4.0"
+          ],
+          [
+            "charset-normalizer",
+            "3.4.4"
+          ],
+          [
+            "click",
+            "8.1.8"
+          ],
+          [
+            "colorama",
+            "0.4.6"
+          ],
+          [
+            "coverage",
+            "7.10.7"
+          ],
+          [
+            "distlib",
+            "0.4.0"
+          ],
+          [
+            "execnet",
+            "2.1.1"
+          ],
+          [
+            "filelock",
+            "3.19.1"
+          ],
+          [
+            "frozenlist",
+            "1.8.0"
+          ],
+          [
+            "ghp-import",
+            "2.1.0"
+          ],
+          [
+            "gitdb",
+            "4.0.12"
+          ],
+          [
+            "gitpython",
+            "3.1.45"
+          ],
+          [
+            "griffe",
+            "0.32.3"
+          ],
+          [
+            "h11",
+            "0.14.0"
+          ],
+          [
+            "httpcore",
+            "0.16.3"
+          ],
+          [
+            "httpx",
+            "0.23.3"
+          ],
+          [
+            "identify",
+            "2.6.15"
+          ],
+          [
+            "idna",
+            "3.11"
+          ],
+          [
+            "iniconfig",
+            "2.1.0"
+          ],
+          [
+            "isort",
+            "5.13.2"
+          ],
+          [
+            "jinja2",
+            "3.1.6"
+          ],
+          [
+            "linkify-it-py",
+            "2.0.3"
+          ],
+          [
+            "markdown",
+            "3.9"
+          ],
+          [
+            "markdown-it-py",
+            "3.0.0"
+          ],
+          [
+            "markupsafe",
+            "3.0.3"
+          ],
+          [
+            "mdit-py-plugins",
+            "0.4.2"
+          ],
+          [
+            "mdurl",
+            "0.1.2"
+          ],
+          [
+            "mergedeep",
+            "1.3.4"
+          ],
+          [
+            "mkdocs",
+            "1.6.1"
+          ],
+          [
+            "mkdocs-autorefs",
+            "1.4.3"
+          ],
+          [
+            "mkdocs-exclude",
+            "1.0.2"
+          ],
+          [
+            "mkdocs-get-deps",
+            "0.2.0"
+          ],
+          [
+            "mkdocs-git-revision-date-localized-plugin",
+            "1.4.7"
+          ],
+          [
+            "mkdocs-material",
+            "9.6.22"
+          ],
+          [
+            "mkdocs-material-extensions",
+            "1.3.1"
+          ],
+          [
+            "mkdocs-rss-plugin",
+            "1.17.4"
+          ],
+          [
+            "mkdocstrings",
+            "0.20.0"
+          ],
+          [
+            "mkdocstrings-python",
+            "1.3.0"
+          ],
+          [
+            "msgpack",
+            "1.1.2"
+          ],
+          [
+            "multidict",
+            "6.7.0"
+          ],
+          [
+            "mypy",
+            "1.18.2"
+          ],
+          [
+            "mypy-extensions",
+            "1.1.0"
+          ],
+          [
+            "nodeenv",
+            "1.9.1"
+          ],
+          [
+            "packaging",
+            "25.0"
+          ],
+          [
+            "paginate",
+            "0.5.7"
+          ],
+          [
+            "pathspec",
+            "0.12.1"
+          ],
+          [
+            "pip",
+            "26.0.1"
+          ],
+          [
+            "platformdirs",
+            "4.4.0"
+          ],
+          [
+            "pluggy",
+            "1.6.0"
+          ],
+          [
+            "pre-commit",
+            "2.21.0"
+          ],
+          [
+            "propcache",
+            "0.4.1"
+          ],
+          [
+            "pygments",
+            "2.19.2"
+          ],
+          [
+            "pymdown-extensions",
+            "10.16.1"
+          ],
+          [
+            "pytest",
+            "8.4.2"
+          ],
+          [
+            "pytest-asyncio",
+            "1.2.0"
+          ],
+          [
+            "pytest-cov",
+            "5.0.0"
+          ],
+          [
+            "pytest-textual-snapshot",
+            "1.1.0"
+          ],
+          [
+            "pytest-xdist",
+            "3.8.0"
+          ],
+          [
+            "python-dateutil",
+            "2.9.0.post0"
+          ],
+          [
+            "pytz",
+            "2025.2"
+          ],
+          [
+            "pyyaml",
+            "6.0.3"
+          ],
+          [
+            "pyyaml-env-tag",
+            "1.1"
+          ],
+          [
+            "requests",
+            "2.32.5"
+          ],
+          [
+            "rfc3986",
+            "1.5.0"
+          ],
+          [
+            "rich",
+            "14.2.0"
+          ],
+          [
+            "six",
+            "1.17.0"
+          ],
+          [
+            "smmap",
+            "5.0.2"
+          ],
+          [
+            "sniffio",
+            "1.3.1"
+          ],
+          [
+            "syrupy",
+            "4.8.0"
+          ],
+          [
+            "textual",
+            "8.2.8"
+          ],
+          [
+            "textual-dev",
+            "1.8.0"
+          ],
+          [
+            "textual-serve",
+            "1.1.2"
+          ],
+          [
+            "tree-sitter",
+            "0.25.2"
+          ],
+          [
+            "tree-sitter-bash",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-css",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-go",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-html",
+            "0.23.2"
+          ],
+          [
+            "tree-sitter-java",
+            "0.23.5"
+          ],
+          [
+            "tree-sitter-javascript",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-json",
+            "0.24.8"
+          ],
+          [
+            "tree-sitter-markdown",
+            "0.5.1"
+          ],
+          [
+            "tree-sitter-python",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-regex",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-rust",
+            "0.24.0"
+          ],
+          [
+            "tree-sitter-sql",
+            "0.3.11"
+          ],
+          [
+            "tree-sitter-toml",
+            "0.7.0"
+          ],
+          [
+            "tree-sitter-xml",
+            "0.7.0"
+          ],
+          [
+            "tree-sitter-yaml",
+            "0.7.2"
+          ],
+          [
+            "types-setuptools",
+            "67.8.0.0"
+          ],
+          [
+            "typing-extensions",
+            "4.15.0"
+          ],
+          [
+            "uc-micro-py",
+            "1.0.3"
+          ],
+          [
+            "urllib3",
+            "2.5.0"
+          ],
+          [
+            "virtualenv",
+            "20.35.3"
+          ],
+          [
+            "watchdog",
+            "6.0.0"
+          ],
+          [
+            "yarl",
+            "1.22.0"
+          ]
+        ],
+        "platform": "linux",
+        "profile": "pytest-tests-verbose-native-coverage-v1",
+        "python": "3.14.10"
+      },
+      "run": "https://github.com/SharmaKunal14/textual/actions/runs/45935882128",
+      "scenario": "regression",
+      "schema_version": "smartci.coverage-pair.v1",
+      "selected_files": 251,
+      "selection": {
+        "digest": "4e0949dcb9d4c7a34563252aa764353f9ad98ae82bbe46638834170adccd1da4",
+        "execution": "full",
+        "fallback": [
+          "INCOMPLETE_EVIDENCE"
+        ],
+        "mode": "full"
+      }
+    },
+    {
+      "artifact_sha256": {
+        "jobs.json": "f7933cd0fe939e4ff69ac7855aa8993d7f9e5271d20bcb9c046d189880acaf72",
+        "run.json": "c2d5c2e981c988a96de4967ad3757a02b94cdd3ed39dc4873b0c6f1de44a2140",
+        "subject-pr.json": "28b04313d1653cfab9539fcffd2446d06749141b48690c0370ae1c14341ae15e",
+        "textual-native-1/coverage.xml": "e51ffbe172567afa1444bfd8184339edeb4826ccdbf7a3b675a0bb8353b3dd59",
+        "textual-native-1/execution.json": "21ae6b408e655133f2f3a8870f0572ed4b6f8fd88dd0cce03c70d7a33584f048",
+        "textual-native-1/junit.xml": "cf2cdffd6ee938c538b9bbbde22863bae18c32df36ff9b56e197eee421f7ead9",
+        "textual-native-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+        "textual-smart-1/coverage-gaps.json": "404befac715477ed020456b4d39aabfb4d67dd654ce5e0cbaa8db00dd5b1a546",
+        "textual-smart-1/coverage-receipt.json": "7baa5daee21f1670a62213b8ee2e6231d149302424a558dec0219fc43bd1a26c",
+        "textual-smart-1/coverage.xml": "60ea9f9bb0be236a684e5e6d87c434b05b8ebb4a8b151de522dbe96187453561",
+        "textual-smart-1/execution.json": "b02829d144bec287e108b27281bfebb9036cc4087b3b28b71d8d6d780f67f459",
+        "textual-smart-1/head-cases.json": "bcbaac985bee8117b8fd102de30d6fd0deae59f6c19e9fbd16746d5e014e86f3",
+        "textual-smart-1/head-compatibility.json": "3a776f72d60e8398b437bde0a89edfb43fde7bfbee98164ebbd0e3a92a459d80",
+        "textual-smart-1/junit.xml": "1e920bbda498f45df8ba30b0c0410e0229c7dc0a59ad44e0be1be78901119443",
+        "textual-smart-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+        "textual-smart-1/selection.json": "4fd096bf27b1711d99d68a7a0961454febce42c8e4f3c7bfe10b8518664eb6a3"
+      },
+      "base": "bb1ca171d3f5d92a2059c090d9f95be32d2dec44",
+      "comparison": {
+        "matched": true,
+        "mismatched_selected_outcomes": [],
+        "missed_native_failures": [],
+        "runner_seconds": 751.0,
+        "selection_benefit_demonstrated": false,
+        "smart_path_faster": false,
+        "smart_path_seconds_saved": -37.0,
+        "tests_omitted": 0,
+        "whole_validation_workflow_seconds": 397.0
+      },
+      "coverage_gaps": {
+        "comparison": {
+          "base": "bb1ca171d3f5d92a2059c090d9f95be32d2dec44",
+          "head": "b0b691187a666e7bdfe8acda9aca40e26a334d73"
+        },
+        "digest": "c0966277493f5bfde29504b510129390b42b495fdb71547ac1af1eb2186e1505",
+        "environment": "3ef35c4ddd5c54a15ecc690aa803312e57d0861fdeef15e07c2b15883a5dd6b7",
+        "evidence": {
+          "coverage_sha256": "60ea9f9bb0be236a684e5e6d87c434b05b8ebb4a8b151de522dbe96187453561",
+          "environment": "3ef35c4ddd5c54a15ecc690aa803312e57d0861fdeef15e07c2b15883a5dd6b7",
+          "execution_scope": "full",
+          "exit_code": 0,
+          "inventory_reconciled": true,
+          "repository": "SharmaKunal14/textual",
+          "revision": "b0b691187a666e7bdfe8acda9aca40e26a334d73",
+          "run_url": "https://github.com/SharmaKunal14/textual/actions/runs/45935883746",
+          "schema_version": "smartci.coverage-receipt.v1",
+          "source_prefix": "src/textual",
+          "test_count": 3467
+        },
+        "evidence_status": "validated_receipt",
+        "findings": [
+          {
+            "action": "Add appropriate behavioral tests and rerun coverage.",
+            "changed_head_lines": [
+              695
+            ],
+            "path": "src/textual/widgets/_markdown.py",
+            "reported_executable_changed_lines": [
+              695
+            ],
+            "status": "no_observed_execution",
+            "zero_hit_lines": [
+              695
+            ]
+          }
+        ],
+        "limits": [
+          "Zero hits mean no observed execution in this run and environment, not that no test exists.",
+          "Full execution does not validate behavior it never exercises; line hits do not prove assertion quality.",
+          "Missing lines, excluded code and deleted lines are not measured zero coverage.",
+          "Receipts must come from a trusted runner; local hashes and bindings do not authenticate their publisher."
+        ],
+        "omission_authorized": false,
+        "repository": "SharmaKunal14/textual",
+        "schema_version": "smartci.coverage-gaps.v1",
+        "selection_changed": false
+      },
+      "head": "b0b691187a666e7bdfe8acda9aca40e26a334d73",
+      "head_dependency_gaps": [
+        {
+          "code": "CUSTOM_IMPORT_PATH",
+          "line": 63,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "CUSTOM_IMPORT_PATH",
+          "line": 109,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "DYNAMIC_ATTRIBUTE_HOOK",
+          "line": 102,
+          "path": "src/textual/widgets/__init__.py"
+        },
+        {
+          "code": "DYNAMIC_CODE",
+          "line": 183,
+          "path": "src/textual/_doc.py"
+        },
+        {
+          "code": "DYNAMIC_CODE",
+          "line": 65,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 111,
+          "path": "src/textual/_import_app.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 19,
+          "path": "src/textual/_tree_sitter.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 1590,
+          "path": "src/textual/app.py"
+        },
+        {
+          "code": "DYNAMIC_IMPORT",
+          "line": 112,
+          "path": "src/textual/widgets/__init__.py"
+        },
+        {
+          "code": "DYNAMIC_PROCESS",
+          "line": 16,
+          "path": "tests/test_pipe.py"
+        },
+        {
+          "code": "UNRESOLVED_IMPORT",
+          "line": 8,
+          "path": "src/textual/demo/_project_stargazer_updater.py"
+        },
+        {
+          "code": "UNRESOLVED_IMPORT",
+          "line": 67,
+          "path": "tests/test_gc.py"
+        },
+        {
+          "code": "UNREVIEWED_PYTEST_PLUGIN",
+          "line": 0,
+          "path": null
+        },
+        {
+          "code": "UNSUPPORTED_MODULE_NAME",
+          "line": 0,
+          "path": "tests/snapshot_tests/snapshot_apps/auto-table.py"
+        }
+      ],
+      "jobs": {
+        "native": {
+          "cases": 3467,
+          "execution": {
+            "base": "bb1ca171d3f5d92a2059c090d9f95be32d2dec44",
+            "command_seconds": 309.58818330099996,
+            "execution": "full",
+            "exit_code": 0,
+            "harness_sha256": "e562f1ad1f59d85adb019939043a9f76856fdcd0e75b127f8fa3e6eb00246677",
+            "head": "b0b691187a666e7bdfe8acda9aca40e26a334d73",
+            "measured_command_seconds": 309.752740945,
+            "mode": "native",
+            "model_calls": 0,
+            "planning_error": null,
+            "planning_seconds": 0.0,
+            "reporting_exit": null,
+            "reporting_seconds": 0.0,
+            "targets": null,
+            "test_seconds": 309.588169079
+          },
+          "failures": [],
+          "job_seconds": 357.0,
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "seconds": 2.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 24.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Install unchanged native locked profile",
+              "seconds": 14.0
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Install isolated selector and native collection plugin",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Execute native baseline or production selector and advisory report",
+              "seconds": 311.0
+            },
+            {
+              "conclusion": "skipped",
+              "name": "Show coverage gaps without changing native test outcome",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "seconds": 1.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 1.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "seconds": 0.0
+            }
+          ],
+          "trigger_to_result_seconds": 360.0,
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45935883746/job/140298874270"
+        },
+        "smart": {
+          "cases": 3467,
+          "execution": {
+            "base": "bb1ca171d3f5d92a2059c090d9f95be32d2dec44",
+            "command_seconds": 336.65223242499997,
+            "execution": "full",
+            "exit_code": 0,
+            "harness_sha256": "e562f1ad1f59d85adb019939043a9f76856fdcd0e75b127f8fa3e6eb00246677",
+            "head": "b0b691187a666e7bdfe8acda9aca40e26a334d73",
+            "measured_command_seconds": 337.14159668499997,
+            "mode": "smart",
+            "model_calls": 0,
+            "planning_error": null,
+            "planning_seconds": 36.10525737200001,
+            "reporting_exit": 0,
+            "reporting_seconds": 0.43211886800003185,
+            "targets": null,
+            "test_seconds": 300.546946256
+          },
+          "failures": [],
+          "job_seconds": 394.0,
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "seconds": 2.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 25.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Install unchanged native locked profile",
+              "seconds": 15.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 1.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+              "seconds": 1.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Install isolated selector and native collection plugin",
+              "seconds": 4.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Execute native baseline or production selector and advisory report",
+              "seconds": 338.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Show coverage gaps without changing native test outcome",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "seconds": 2.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "seconds": 0.0
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "seconds": 0.0
+            }
+          ],
+          "trigger_to_result_seconds": 397.0,
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45935883746/job/140298873950"
+        }
+      },
+      "limits": [
+        "One pair per scenario; runner variance is not eliminated.",
+        "Full-control job is validation overhead, not a deployment prerequisite of the production selector.",
+        "Zero missed observed failures cannot prove unexecuted behavior correct.",
+        "Coverage reporting never changes test selection; model calls remain disabled."
+      ],
+      "pr": "https://github.com/SharmaKunal14/textual/pull/18",
+      "profile": {
+        "implementation": "CPython",
+        "instrumentation_exclusion": "smartci only; installed without dependencies",
+        "machine": "x86_64",
+        "packages": [
+          [
+            "aiohappyeyeballs",
+            "2.6.1"
+          ],
+          [
+            "aiohttp",
+            "3.13.1"
+          ],
+          [
+            "aiohttp-jinja2",
+            "1.6"
+          ],
+          [
+            "aiosignal",
+            "1.4.0"
+          ],
+          [
+            "anyio",
+            "4.11.0"
+          ],
+          [
+            "attrs",
+            "25.4.0"
+          ],
+          [
+            "babel",
+            "2.17.0"
+          ],
+          [
+            "backrefs",
+            "5.9"
+          ],
+          [
+            "black",
+            "24.4.2"
+          ],
+          [
+            "cachecontrol",
+            "0.14.3"
+          ],
+          [
+            "certifi",
+            "2025.10.5"
+          ],
+          [
+            "cfgv",
+            "3.4.0"
+          ],
+          [
+            "charset-normalizer",
+            "3.4.4"
+          ],
+          [
+            "click",
+            "8.1.8"
+          ],
+          [
+            "colorama",
+            "0.4.6"
+          ],
+          [
+            "coverage",
+            "7.10.7"
+          ],
+          [
+            "distlib",
+            "0.4.0"
+          ],
+          [
+            "execnet",
+            "2.1.1"
+          ],
+          [
+            "filelock",
+            "3.19.1"
+          ],
+          [
+            "frozenlist",
+            "1.8.0"
+          ],
+          [
+            "ghp-import",
+            "2.1.0"
+          ],
+          [
+            "gitdb",
+            "4.0.12"
+          ],
+          [
+            "gitpython",
+            "3.1.45"
+          ],
+          [
+            "griffe",
+            "0.32.3"
+          ],
+          [
+            "h11",
+            "0.14.0"
+          ],
+          [
+            "httpcore",
+            "0.16.3"
+          ],
+          [
+            "httpx",
+            "0.23.3"
+          ],
+          [
+            "identify",
+            "2.6.15"
+          ],
+          [
+            "idna",
+            "3.11"
+          ],
+          [
+            "iniconfig",
+            "2.1.0"
+          ],
+          [
+            "isort",
+            "5.13.2"
+          ],
+          [
+            "jinja2",
+            "3.1.6"
+          ],
+          [
+            "linkify-it-py",
+            "2.0.3"
+          ],
+          [
+            "markdown",
+            "3.9"
+          ],
+          [
+            "markdown-it-py",
+            "3.0.0"
+          ],
+          [
+            "markupsafe",
+            "3.0.3"
+          ],
+          [
+            "mdit-py-plugins",
+            "0.4.2"
+          ],
+          [
+            "mdurl",
+            "0.1.2"
+          ],
+          [
+            "mergedeep",
+            "1.3.4"
+          ],
+          [
+            "mkdocs",
+            "1.6.1"
+          ],
+          [
+            "mkdocs-autorefs",
+            "1.4.3"
+          ],
+          [
+            "mkdocs-exclude",
+            "1.0.2"
+          ],
+          [
+            "mkdocs-get-deps",
+            "0.2.0"
+          ],
+          [
+            "mkdocs-git-revision-date-localized-plugin",
+            "1.4.7"
+          ],
+          [
+            "mkdocs-material",
+            "9.6.22"
+          ],
+          [
+            "mkdocs-material-extensions",
+            "1.3.1"
+          ],
+          [
+            "mkdocs-rss-plugin",
+            "1.17.4"
+          ],
+          [
+            "mkdocstrings",
+            "0.20.0"
+          ],
+          [
+            "mkdocstrings-python",
+            "1.3.0"
+          ],
+          [
+            "msgpack",
+            "1.1.2"
+          ],
+          [
+            "multidict",
+            "6.7.0"
+          ],
+          [
+            "mypy",
+            "1.18.2"
+          ],
+          [
+            "mypy-extensions",
+            "1.1.0"
+          ],
+          [
+            "nodeenv",
+            "1.9.1"
+          ],
+          [
+            "packaging",
+            "25.0"
+          ],
+          [
+            "paginate",
+            "0.5.7"
+          ],
+          [
+            "pathspec",
+            "0.12.1"
+          ],
+          [
+            "pip",
+            "26.0.1"
+          ],
+          [
+            "platformdirs",
+            "4.4.0"
+          ],
+          [
+            "pluggy",
+            "1.6.0"
+          ],
+          [
+            "pre-commit",
+            "2.21.0"
+          ],
+          [
+            "propcache",
+            "0.4.1"
+          ],
+          [
+            "pygments",
+            "2.19.2"
+          ],
+          [
+            "pymdown-extensions",
+            "10.16.1"
+          ],
+          [
+            "pytest",
+            "8.4.2"
+          ],
+          [
+            "pytest-asyncio",
+            "1.2.0"
+          ],
+          [
+            "pytest-cov",
+            "5.0.0"
+          ],
+          [
+            "pytest-textual-snapshot",
+            "1.1.0"
+          ],
+          [
+            "pytest-xdist",
+            "3.8.0"
+          ],
+          [
+            "python-dateutil",
+            "2.9.0.post0"
+          ],
+          [
+            "pytz",
+            "2025.2"
+          ],
+          [
+            "pyyaml",
+            "6.0.3"
+          ],
+          [
+            "pyyaml-env-tag",
+            "1.1"
+          ],
+          [
+            "requests",
+            "2.32.5"
+          ],
+          [
+            "rfc3986",
+            "1.5.0"
+          ],
+          [
+            "rich",
+            "14.2.0"
+          ],
+          [
+            "six",
+            "1.17.0"
+          ],
+          [
+            "smmap",
+            "5.0.2"
+          ],
+          [
+            "sniffio",
+            "1.3.1"
+          ],
+          [
+            "syrupy",
+            "4.8.0"
+          ],
+          [
+            "textual",
+            "8.2.8"
+          ],
+          [
+            "textual-dev",
+            "1.8.0"
+          ],
+          [
+            "textual-serve",
+            "1.1.2"
+          ],
+          [
+            "tree-sitter",
+            "0.25.2"
+          ],
+          [
+            "tree-sitter-bash",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-css",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-go",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-html",
+            "0.23.2"
+          ],
+          [
+            "tree-sitter-java",
+            "0.23.5"
+          ],
+          [
+            "tree-sitter-javascript",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-json",
+            "0.24.8"
+          ],
+          [
+            "tree-sitter-markdown",
+            "0.5.1"
+          ],
+          [
+            "tree-sitter-python",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-regex",
+            "0.25.0"
+          ],
+          [
+            "tree-sitter-rust",
+            "0.24.0"
+          ],
+          [
+            "tree-sitter-sql",
+            "0.3.11"
+          ],
+          [
+            "tree-sitter-toml",
+            "0.7.0"
+          ],
+          [
+            "tree-sitter-xml",
+            "0.7.0"
+          ],
+          [
+            "tree-sitter-yaml",
+            "0.7.2"
+          ],
+          [
+            "types-setuptools",
+            "67.8.0.0"
+          ],
+          [
+            "typing-extensions",
+            "4.15.0"
+          ],
+          [
+            "uc-micro-py",
+            "1.0.3"
+          ],
+          [
+            "urllib3",
+            "2.5.0"
+          ],
+          [
+            "virtualenv",
+            "20.35.3"
+          ],
+          [
+            "watchdog",
+            "6.0.0"
+          ],
+          [
+            "yarl",
+            "1.22.0"
+          ]
+        ],
+        "platform": "linux",
+        "profile": "pytest-tests-verbose-native-coverage-v1",
+        "python": "3.14.10"
+      },
+      "run": "https://github.com/SharmaKunal14/textual/actions/runs/45935883746",
+      "scenario": "unobserved",
+      "schema_version": "smartci.coverage-pair.v1",
+      "selected_files": 251,
+      "selection": {
+        "digest": "fbded2c683dea70691839681b0c1a629137e3ad1ff81ed373e24f2b892483364",
+        "execution": "full",
+        "fallback": [
+          "INCOMPLETE_EVIDENCE"
+        ],
+        "mode": "full"
+      }
+    }
+  ],
+  "corrected_comparisons_runner_seconds": 1505.0,
+  "date": "2026-11-27",
+  "generation_retired": true,
+  "historical_reservations_retained": 15,
+  "initial_comparisons_runner_seconds": 1551.0,
+  "initial_reporting_failures": [
+    {
+      "artifact_sha256": {
+        "jobs.json": "1d853f6a652cb02100e6049f219d4f6dd5e6d9ba43800e2a87526f2170363001",
+        "run.json": "548327f4e605f347705976cc75f72f895301bbe7f74c73e4e829911f1d166693",
+        "subject-pr.json": "6b13ade1caf28b05d40988c215b3a53bc064c8da76ebc7bad8bbb3d85a9a898d",
+        "textual-native-1/coverage.xml": "000f51e22e59e4b7ed0e62c868fc6c2c1c120976f5efb58f8e824a5631bdadf7",
+        "textual-native-1/execution.json": "2140e0763e4fe57cb0158856999b93480026982b099d059d3810d47beee5fd5c",
+        "textual-native-1/junit.xml": "4ee778f11e5c0a263b5b8356d220f60ffdc0e1b84817c52edc9a223951720b11",
+        "textual-native-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+        "textual-smart-1/coverage-gaps.json": "0df134a26e8856f1e9e34c7c4563883469e9eab16f7abe402865780f561a9edb",
+        "textual-smart-1/coverage.xml": "29d897a09520b86ee2091829718bd553a3481d26f400863a104b6a832443824d",
+        "textual-smart-1/execution.json": "a1f9624e34365910974865c8e6043f758984e3d02656ccdaeac726f885bda247",
+        "textual-smart-1/head-cases.json": "bcbaac985bee8117b8fd102de30d6fd0deae59f6c19e9fbd16746d5e014e86f3",
+        "textual-smart-1/head-compatibility.json": "da53f298cea1e41c9da99c9585fea2b86cca3a8d60016acda3e707c92668170b",
+        "textual-smart-1/junit.xml": "a33a41c75951a88966bb23eded099dab921b3e89f5ef95383f965585c5a75843",
+        "textual-smart-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+        "textual-smart-1/selection.json": "47aa32a028b305a4720170d4d3240c533fc74c10405aba9cf7d9fd273dcb4914"
+      },
+      "head": "681785a1904f3c64ea697d828abdfee798405ec6",
+      "jobs": {
+        "native": {
+          "cases": 3467,
+          "failures": [
+            "tests.snapshot_tests.test_snapshots::test_markdown_stream_switch_theme"
+          ],
+          "job_seconds": 369.0,
+          "trigger_to_result_seconds": 371.0,
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45934838943/job/140295534785"
+        },
+        "smart": {
+          "cases": 3467,
+          "failures": [
+            "tests.snapshot_tests.test_snapshots::test_markdown_stream_switch_theme"
+          ],
+          "job_seconds": 409.0,
+          "trigger_to_result_seconds": 411.0,
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45934838943/job/140295535025"
+        }
+      },
+      "reporting_error": {
+        "error_type": "KeyError"
+      },
+      "run": "https://github.com/SharmaKunal14/textual/actions/runs/45934838943",
+      "scenario": "regression",
+      "verification": "Rejected: adapter read native_case_count but collector publishes cases; report emitted missing evidence. No fabricated zero-hit claim."
+    },
+    {
+      "artifact_sha256": {
+        "jobs.json": "306870ee3c04261f2d87aa569a259c5530e49a28fc286c3653300592cbe1c938",
+        "run.json": "53bed3283f85220bd30c81a0aa3fac63fc29253a013d24c3d25fe42b5ea7d8e1",
+        "subject-pr.json": "6e5c63353c2a23bbd23e1419537171fd18a5847b34044606496a85f816fe80fd",
+        "textual-native-1/coverage.xml": "eba3fbb2488466aeba5a37e7e90545650b44eb9679ecb9b495262a833a7f4ac5",
+        "textual-native-1/execution.json": "7c043f2c64444087f9a3726c40321171a8940b6c6e4c5f48e9fa8bf54af0d1fe",
+        "textual-native-1/junit.xml": "9180ad697ad1cef3c38d3d950b59c2daa61525face36a1d265f509fee410b800",
+        "textual-native-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+        "textual-smart-1/coverage-gaps.json": "9d8e63907e1dbde5df273647f10d9afb3721894ca25d7b0939ad749e3d7b2838",
+        "textual-smart-1/coverage.xml": "f4ba1e9e6385803627ae4c522f2fd626972b04223f6917be7af2b29d25c46ee2",
+        "textual-smart-1/execution.json": "418c491677ccaa5b83c6f28fbe5bb48e78b16650279cbcfb3c336fa3bfac671c",
+        "textual-smart-1/head-cases.json": "bcbaac985bee8117b8fd102de30d6fd0deae59f6c19e9fbd16746d5e014e86f3",
+        "textual-smart-1/head-compatibility.json": "e3f6102c5355a61b5698018895a9a5e2437cf349e4a48df5ef7849f78b2de7b3",
+        "textual-smart-1/junit.xml": "8e2f4763c77d530ac995c3f6f373559cabd6be39e442e7feb5696b5651d17aa7",
+        "textual-smart-1/profile.json": "02a9b9e6a57f3f0ddd5cf6341ae3823dca939edabcb5f1cf1775feb4de543644",
+        "textual-smart-1/selection.json": "74582f4a1c238294ab7376b30e1350a7d4f61cc200afe76ea659391994290bad"
+      },
+      "head": "60928182d180a71d33b28b970e47b65beaddfe05",
+      "jobs": {
+        "native": {
+          "cases": 3467,
+          "failures": [],
+          "job_seconds": 362.0,
+          "trigger_to_result_seconds": 365.0,
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45934847514/job/140295563049"
+        },
+        "smart": {
+          "cases": 3467,
+          "failures": [],
+          "job_seconds": 411.0,
+          "trigger_to_result_seconds": 414.0,
+          "url": "https://github.com/SharmaKunal14/textual/actions/runs/45934847514/job/140295563374"
+        }
+      },
+      "reporting_error": {
+        "error_type": "KeyError"
+      },
+      "run": "https://github.com/SharmaKunal14/textual/actions/runs/45934847514",
+      "scenario": "unobserved",
+      "verification": "Rejected: adapter read native_case_count but collector publishes cases; report emitted missing evidence. No fabricated zero-hit claim."
+    }
+  ],
+  "limits": [
+    "Two fixed scenarios, not a representative speedup average; independent hosted runners vary.",
+    "No observed execution at a pinned revision/environment is not proof that no test exists.",
+    "The passing artificial mutation demonstrates an observed coverage gap, not validated behavior.",
+    "Full fallback protects against unsupported dependency assumptions; these measurements do not justify removing it.",
+    "Coverage receipts bind trusted artifacts but do not independently authenticate their publisher.",
+    "Original generation/repair proposals and negative results remain preserved; no further model approval is reused."
+  ],
+  "merges": false,
+  "model_calls": 0,
+  "native_command": "python -m pytest tests -v --cov=./src/textual --cov-report=xml:OUTPUT/coverage.xml --cov-report=term-missing --junitxml=OUTPUT/junit.xml",
+  "production_selector_changed": false,
+  "safety_checks": {
+    "conclusion": "success",
+    "url": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45935777337"
+  },
+  "schema": "smartci.changed-coverage-evaluation.v1",
+  "scope": "Two real Textual PRs; unchanged existing tests, native command and dependency lockfile; existing production selector and full fallback. Historical regression and artificial uncovered-line control.",
+  "timing_scope": "GitHub workflow creation through each completed job, including queue, checkout, setup, collection/planning, native tests, advisory reporting and artifact upload. Whole validation workflow and runner sum are reported separately. Excludes event delivery before workflow creation, operator time and separate tool safety-check jobs.",
+  "tool_pr": "https://github.com/SharmaKunal14/smart-ci/pull/28",
+  "verdict": "Coverage reporting verified; production selective speedup not demonstrated. Both comparisons retain full fallback and are slower. No cases omitted and no missed observed full-suite failures."
+}

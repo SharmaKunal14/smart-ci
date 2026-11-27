@@ -6,6 +6,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
+from . import coverage_gaps
 from .adapters.results import RunReport
 from .adapters.suite import SuiteConfig, discover, execute, manifest
 from .bazel import commands as bazel_commands
@@ -95,6 +96,19 @@ def main() -> int:
     investigation_commands.add_parser(sub)
     ts_commands.add_parser(sub)
     bazel_commands.add_parser(sub)
+    gaps = sub.add_parser(
+        "coverage-gaps",
+        help="report changed-line coverage; never select or generate tests",
+    )
+    gaps.add_argument("--repo", type=Path, required=True)
+    gaps.add_argument("--repository", required=True)
+    gaps.add_argument("--base", required=True)
+    gaps.add_argument("--head", required=True)
+    gaps.add_argument("--environment", type=Path, required=True)
+    gaps.add_argument("--receipt", type=Path)
+    gaps.add_argument("--coverage", type=Path)
+    gaps.add_argument("--output", type=Path, required=True)
+    gaps.add_argument("--audit", type=Path, required=True)
     validate = sub.add_parser(
         "validate", help="validate a manifest; does not run tests"
     )
@@ -151,6 +165,8 @@ def main() -> int:
         if command == "run":
             adapter.add_argument("--decision", type=Path)
     args = parser.parse_args()
+    if args.command == "coverage-gaps":
+        return coverage_command(args)
     if args.command == "bazel":
         return bazel_commands.command(args)
     if args.command == "investigate":
@@ -195,6 +211,58 @@ def read_input(path: Path) -> bytes:
     if len(data) > MAX_BYTES:
         raise InputError("input exceeds limit")
     return data
+
+
+def coverage_command(args: argparse.Namespace) -> int:
+    try:
+        outputs = {args.output.resolve(), args.audit.resolve()}
+        inputs = (args.environment, args.receipt, args.coverage)
+        if len(outputs) != 2 or any(p and p.resolve() in outputs for p in inputs):
+            raise ValueError("output aliases input")
+        environment = json.loads(read_input(args.environment))
+        if not isinstance(environment, dict):
+            raise TypeError("environment object required")
+        receipt = (
+            coverage_gaps.Receipt.model_validate_json(read_input(args.receipt))
+            if args.receipt
+            else None
+        )
+        raw = None
+        if args.coverage:
+            with args.coverage.open("rb") as stream:
+                raw = stream.read(coverage_gaps.MAX_XML + 1)
+        result = coverage_gaps.report(
+            args.repo,
+            args.repository,
+            args.base,
+            args.head,
+            digest(environment),
+            raw,
+            receipt,
+        )
+        atomic_write(args.audit, coverage_gaps.markdown(result))
+        atomic_write(args.output, json.dumps(result, sort_keys=True, indent=2) + "\n")
+    except (OSError, ValueError, TypeError):
+        print(
+            json.dumps(
+                {
+                    "status": "error",
+                    "code": "COVERAGE_REPORT_UNAVAILABLE",
+                    "omission_authorized": False,
+                }
+            )
+        )
+        return 2
+    print(
+        json.dumps(
+            {
+                "evidence_status": result["evidence_status"],
+                "digest": result["digest"],
+                "omission_authorized": False,
+            }
+        )
+    )
+    return 0
 
 
 def select_command(args: argparse.Namespace) -> int:
