@@ -16,8 +16,9 @@ from urllib.parse import urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from smartci.action_control import (
-    context,
     full_fallback,
+    invocation_context,
+    map_source,
     prepare,
     read_object,
     relative,
@@ -64,15 +65,29 @@ def stage():
     )
     if not repo.is_relative_to(workspace):
         raise ValueError("checkout must be inside the workspace")
-    value = context(
+    value, invocation = invocation_context(
         repo,
         Path(os.environ["GITHUB_EVENT_PATH"]),
         os.environ["GITHUB_REPOSITORY"],
         os.environ["GITHUB_EVENT_NAME"],
+        workflow_ref=os.environ["GITHUB_WORKFLOW_REF"],
+        workflow_sha=os.environ["GITHUB_WORKFLOW_SHA"],
+        ref=os.environ["GITHUB_REF"],
+        sha=os.environ["GITHUB_SHA"],
     )
-    prepare(value, os.environ["CONFIG_PATH"], state_root(), ROOT)
+    policy = prepare(
+        value, os.environ["CONFIG_PATH"], state_root(), ROOT, invocation=invocation
+    )
+    operation = "enroll" if invocation["event"] == "push" else "pr"
+    prefix = (
+        map_source(policy["maps"])["artifact_prefix"]
+        if operation == "enroll"
+        else "unused"
+    )
     with open(os.environ["GITHUB_OUTPUT"], "a") as stream:
-        stream.write(f"state={state_root()}\n")
+        stream.write(
+            f"state={state_root()}\noperation={operation}\nmap-prefix={prefix}\n"
+        )
 
 
 def install():
@@ -187,7 +202,14 @@ def summary():
         "No validated execution report",
     )
     native = state / "native-pr/execution"
-    if (native / "execution.json").is_file():
+    enrollment = state / "enrollment/collection.json"
+    if enrollment.is_file():
+        record = read_object(enrollment)
+        mode = "full"
+        status = "passed" if record.get("status") == "ready" else "failed"
+        selected = str(record.get("native_test_targets", "unknown"))
+        fallback = "Approved-branch map enrollment; full native validation and query."
+    elif (native / "execution.json").is_file():
         execution = read_object(native / "execution.json")
         plan = read_object(native / "plan.json")
         if execution.get("mode") in {"full", "subset"}:
@@ -203,6 +225,10 @@ def summary():
         mode = "full"
         status = "passed" if record.get("exit_code") == 0 else "failed"
         fallback = "CLI unavailable; independent full native command"
+        if (state / "invocation.json").is_file() and read_object(
+            state / "invocation.json"
+        ).get("event") == "push":
+            fallback += "; no dependency map published"
     with open(os.environ["GITHUB_OUTPUT"], "a") as stream:
         stream.write(f"mode={mode}\nstatus={status}\nselected-tests={selected}\n")
     with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as stream:
