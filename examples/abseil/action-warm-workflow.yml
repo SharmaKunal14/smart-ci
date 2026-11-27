@@ -1,0 +1,388 @@
+---
+name: Published Action warm enrollment and selection
+permissions:
+  contents: read
+  actions: read
+cache-mode: none
+concurrency:
+  group: action-warm-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  collect:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/codex/action-warm-base'
+      && github.repository == 'SharmaKunal14/abseil-cpp'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      with:
+        ref: "${{ github.sha }}"
+        path: source
+        fetch-depth: 0
+        persist-credentials: false
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      with:
+        repository: SharmaKunal14/smart-ci
+        ref: e780aeb00eb5b81c35b062c65734067c03279754
+        path: tool
+        persist-credentials: false
+    - name: Prepare one isolated cache directory and exact key
+      id: seed
+      env:
+        REVISION: "${{ github.sha }}"
+      run: |
+        mkdir "$RUNNER_TEMP/native-cache"
+        python3 - <<'PYCODE'
+        import hashlib, os, subprocess
+        from pathlib import Path
+        profile = Path('tool/examples/abseil/cache-profile.json').read_bytes()
+        revision = os.environ['REVISION']
+        tool = subprocess.check_output(['git', '-C', 'tool', 'rev-parse', 'HEAD'], text=True).strip()
+        if any(len(r) != 40 or set(r) - set('0123456789abcdef') for r in (revision, tool)):
+            raise SystemExit('Exact reviewed revisions required')
+        key = 'smartci-native-v1-' + revision + '-' + hashlib.sha256(profile).hexdigest() + '-' + tool
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
+            stream.write('key=' + key + '\n')
+        PYCODE
+    - name: Bound unused system crash processing on this disposable runner
+      id: cores
+      run: |
+        mkdir "$RUNNER_TEMP/runner-policy"
+        lscpu --json > "$RUNNER_TEMP/runner-policy/cpu.json"
+        systemd-analyze cat-config systemd/coredump.conf > "$RUNNER_TEMP/runner-policy/before.conf"
+        python3 - <<'PY'
+        from pathlib import Path
+        value = Path('/proc/sys/kernel/core_pattern').read_text()
+        if not value.startswith('|/usr/lib/systemd/systemd-coredump '):
+            raise SystemExit('Unexpected core handler; no profile change performed')
+        PY
+        test ! -e /etc/systemd/coredump.conf.d/90-smartci-baseline.conf
+        printf '[Coredump]\nStorage=none\nProcessSizeMax=0\n' > "$RUNNER_TEMP/runner-policy/90-smartci-baseline.conf"
+        sudo install -d -m 0755 /etc/systemd/coredump.conf.d
+        sudo install -m 0644 "$RUNNER_TEMP/runner-policy/90-smartci-baseline.conf" /etc/systemd/coredump.conf.d/90-smartci-baseline.conf
+        echo 'created=true' >> "$GITHUB_OUTPUT"
+        if systemctl is-active --quiet systemd-coredumpd.service; then
+          sudo systemctl reload systemd-coredumpd.service
+        fi
+        systemd-analyze cat-config systemd/coredump.conf > "$RUNNER_TEMP/runner-policy/effective.conf"
+        python3 - <<'PY'
+        import configparser, os
+        from pathlib import Path
+        config = configparser.ConfigParser(strict=False, interpolation=None)
+        config.read(Path(os.environ['RUNNER_TEMP']) / 'runner-policy/effective.conf')
+        if dict(config['Coredump']).get('storage') != 'none' or config['Coredump'].get('ProcessSizeMax') != '0':
+            raise SystemExit('Crash-processing policy did not take effect')
+        PY
+    - name: Bound the separate Apport crash-report hook
+      id: apport
+      run: |
+        systemctl cat systemd-coredump@.service > "$RUNNER_TEMP/runner-policy/systemd-coredump-unit.txt"
+        systemctl cat apport-coredump-hook@.service > "$RUNNER_TEMP/runner-policy/apport-unit.txt"
+        systemctl show systemd-coredump@smartci-probe.service --property=OnSuccess --value > "$RUNNER_TEMP/runner-policy/on-success.txt"
+        systemctl show apport-coredump-hook@smartci-probe.service --property=ExecStart --value > "$RUNNER_TEMP/runner-policy/apport-command.txt"
+        python3 - <<'PY'
+        import os
+        from pathlib import Path
+        root = Path(os.environ['RUNNER_TEMP']) / 'runner-policy'
+        if 'apport-coredump-hook@smartci-probe.service' not in (root / 'on-success.txt').read_text().split():
+            raise SystemExit('Expected Apport hook not installed; no mask performed')
+        command = (root / 'apport-command.txt').read_text()
+        if 'path=/usr/share/apport/apport ;' not in command or '--from-systemd-coredump smartci-probe' not in command:
+            raise SystemExit('Unexpected Apport command; no mask performed')
+        PY
+        test "$(systemctl show apport-coredump-hook@smartci-probe.service --property=LoadState --value)" = loaded
+        test ! -e /run/systemd/system/apport-coredump-hook@.service
+        test ! -L /run/systemd/system/apport-coredump-hook@.service
+        sudo systemctl mask --runtime apport-coredump-hook@.service
+        echo 'created=true' >> "$GITHUB_OUTPUT"
+        systemctl show apport-coredump-hook@smartci-probe.service --property=LoadState --value > "$RUNNER_TEMP/runner-policy/apport-effective.txt"
+        test "$(cat "$RUNNER_TEMP/runner-policy/apport-effective.txt")" = masked
+    - name: Enroll using the published Action and native cached profile
+      uses: SharmaKunal14/smart-ci@e780aeb00eb5b81c35b062c65734067c03279754
+      with:
+        path: source
+    - name: Bound and fingerprint cache contents before publication
+      env:
+        REVISION: "${{ github.sha }}"
+        CACHE_KEY: "${{ steps.seed.outputs.key }}"
+      run: |
+        mkdir "$RUNNER_TEMP/native-cache-receipt"
+        python3 tool/examples/abseil/native_cache.py --directory "$RUNNER_TEMP/native-cache" --output "$RUNNER_TEMP/native-cache-receipt/cache.json"
+        python3 - <<'PYCODE'
+        import hashlib, json, os, subprocess
+        from pathlib import Path
+        data = {'schema_version': '1', 'revision': os.environ['REVISION'],
+                'key': os.environ['CACHE_KEY'],
+                'profile_sha256': hashlib.sha256(Path('tool/examples/abseil/cache-profile.json').read_bytes()).hexdigest(),
+                'tool_revision': subprocess.check_output(['git','-C','tool','rev-parse','HEAD'],text=True).strip()}
+        (Path(os.environ['RUNNER_TEMP'])/'native-cache-receipt/identity.json').write_text(json.dumps(data, sort_keys=True)+'\n')
+        PYCODE
+    - name: Require unused cache storage before saving this experiment
+      env:
+        GH_TOKEN: "${{ github.token }}"
+      run: |
+        gh api repos/SharmaKunal14/abseil-cpp/actions/cache/usage > "$RUNNER_TEMP/cache-usage-before.json"
+        python3 - <<'PYCODE'
+        import json, os
+        from pathlib import Path
+        usage = json.loads((Path(os.environ['RUNNER_TEMP'])/'cache-usage-before.json').read_bytes())
+        if usage.get('active_caches_size_in_bytes') != 0 or usage.get('active_caches_count') != 0:
+            raise SystemExit('One-cache experiment requires empty cache storage; no limit is increased')
+        PYCODE
+    - name: Save only the bounded reviewed base cache
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+      timeout-minutes: 3
+      with:
+        path: "${{ runner.temp }}/native-cache"
+        key: "${{ steps.seed.outputs.key }}"
+    - name: Publish independent cache receipt
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: native-cache-receipt-${{ github.run_attempt }}
+        path: "${{ runner.temp }}/native-cache-receipt"
+        if-no-files-found: error
+        retention-days: 7
+    - name: Restore the Apport hook on the disposable runner
+      if: always() && steps.apport.outputs.created == 'true'
+      run: |
+        sudo systemctl unmask --runtime apport-coredump-hook@.service
+        systemctl show apport-coredump-hook@smartci-probe.service --property=LoadState --value > "$RUNNER_TEMP/runner-policy/apport-restored.txt"
+        test "$(cat "$RUNNER_TEMP/runner-policy/apport-restored.txt")" = loaded
+        systemctl cat apport-coredump-hook@.service > "$RUNNER_TEMP/runner-policy/apport-restored-unit.txt"
+        cmp "$RUNNER_TEMP/runner-policy/apport-unit.txt" "$RUNNER_TEMP/runner-policy/apport-restored-unit.txt"
+    - name: Restore disposable runner policy
+      if: always() && steps.cores.outputs.created == 'true'
+      run: |
+        sudo rm /etc/systemd/coredump.conf.d/90-smartci-baseline.conf
+        if systemctl is-active --quiet systemd-coredumpd.service; then
+          sudo systemctl reload systemd-coredumpd.service
+        fi
+        systemd-analyze cat-config systemd/coredump.conf > "$RUNNER_TEMP/runner-policy/restored.conf"
+        cmp "$RUNNER_TEMP/runner-policy/before.conf" "$RUNNER_TEMP/runner-policy/restored.conf"
+    - name: Publish seed runner and storage evidence
+      if: always()
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: warm-seed-cost-${{ github.run_attempt }}
+        path: |-
+          ${{ runner.temp }}/runner-policy
+          ${{ runner.temp }}/cache-usage-before.json
+        retention-days: 7
+        if-no-files-found: error
+    cache-mode: write-only
+  test:
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'codex/action-warm-smart-')
+      && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    cache-mode: read
+    steps:
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      with:
+        ref: "${{ github.event.pull_request.head.sha }}"
+        path: source
+        fetch-depth: 0
+        persist-credentials: false
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      with:
+        repository: SharmaKunal14/smart-ci
+        ref: e780aeb00eb5b81c35b062c65734067c03279754
+        path: tool
+        persist-credentials: false
+    - name: Discover the approved cache seed for the exact PR base
+      id: seed
+      continue-on-error: true
+      timeout-minutes: 2
+      env:
+        GH_TOKEN: "${{ github.token }}"
+        BASE: "${{ github.event.pull_request.base.sha }}"
+      run: |
+        python3 - <<'PYCODE'
+        import os,sys
+        from pathlib import Path
+        sys.path.insert(0,str(Path('tool/src').resolve()))
+        from smartci.action_control import context,base_file
+        value=context(Path('source').resolve(),Path(os.environ['GITHUB_EVENT_PATH']),os.environ['GITHUB_REPOSITORY'],os.environ['GITHUB_EVENT_NAME'])
+        if value['base']!=os.environ['BASE']:
+            raise SystemExit('Exact PR base required')
+        raw=base_file(value,'.smartci/cache-publisher.json')
+        if len(raw)>16384:
+            raise SystemExit('Oversized publisher policy')
+        (Path(os.environ['RUNNER_TEMP'])/'approved-publisher.json').write_bytes(raw)
+        PYCODE
+        python3 tool/examples/abseil/cache_seed_run.py \
+          --publisher "$RUNNER_TEMP/approved-publisher.json" --revision "$BASE" \
+          --output "$RUNNER_TEMP/cache-seed-run.json"
+    - name: Download the reviewed seed receipt independently of cache bytes
+      id: receipt
+      if: steps.seed.outcome == 'success'
+      continue-on-error: true
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+      with:
+        repository: SharmaKunal14/abseil-cpp
+        run-id: "${{ steps.seed.outputs.run_id }}"
+        name: native-cache-receipt-${{ steps.seed.outputs.run_attempt }}
+        github-token: "${{ github.token }}"
+        path: "${{ runner.temp }}/native-cache-receipt"
+    - name: Validate base, tool and profile identity before cache lookup
+      id: identity
+      if: steps.receipt.outcome == 'success'
+      continue-on-error: true
+      env:
+        BASE: "${{ github.event.pull_request.base.sha }}"
+      run: |
+        mkdir "$RUNNER_TEMP/native-cache"
+        python3 - <<'PYCODE'
+        import hashlib, json, os
+        from pathlib import Path
+        path = Path(os.environ['RUNNER_TEMP'])/'native-cache-receipt/identity.json'
+        if path.stat().st_size > 4096:
+            raise SystemExit('Oversized seed identity')
+        base = os.environ['BASE']
+        if len(base) != 40 or set(base) - set('0123456789abcdef'):
+            raise SystemExit('Exact base required')
+        profile = hashlib.sha256(Path('tool/examples/abseil/cache-profile.json').read_bytes()).hexdigest()
+        producer = 'e780aeb00eb5b81c35b062c65734067c03279754'
+        key = 'smartci-native-v1-' + base + '-' + profile + '-' + producer
+        expected = {'schema_version':'1','revision':base,'key':key,'profile_sha256':profile,'tool_revision':producer}
+        if json.loads(path.read_bytes()) != expected:
+            raise SystemExit('Seed identity does not match the reviewed base/profile')
+        with open(os.environ['GITHUB_OUTPUT'],'a') as output:
+            output.write('key=' + key + '\n')
+        PYCODE
+    - name: Restore only the exact base cache
+      id: cache
+      if: steps.identity.outcome == 'success'
+      continue-on-error: true
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+      timeout-minutes: 3
+      with:
+        path: "${{ runner.temp }}/native-cache"
+        key: "${{ steps.identity.outputs.key }}"
+    - name: Verify restored content against the independent trusted receipt
+      id: verified
+      if: steps.cache.outputs.cache-hit == 'true'
+      continue-on-error: true
+      timeout-minutes: 3
+      run: |
+        python3 tool/examples/abseil/native_cache.py --directory "$RUNNER_TEMP/native-cache" \
+          --expected "$RUNNER_TEMP/native-cache-receipt/cache.json" --output "$RUNNER_TEMP/cache-verified.json"
+    - name: Bound unused system crash processing on this disposable runner
+      id: cores
+      run: |
+        mkdir "$RUNNER_TEMP/runner-policy"
+        lscpu --json > "$RUNNER_TEMP/runner-policy/cpu.json"
+        systemd-analyze cat-config systemd/coredump.conf > "$RUNNER_TEMP/runner-policy/before.conf"
+        python3 - <<'PY'
+        from pathlib import Path
+        value = Path('/proc/sys/kernel/core_pattern').read_text()
+        if not value.startswith('|/usr/lib/systemd/systemd-coredump '):
+            raise SystemExit('Unexpected core handler; no profile change performed')
+        PY
+        test ! -e /etc/systemd/coredump.conf.d/90-smartci-baseline.conf
+        printf '[Coredump]\nStorage=none\nProcessSizeMax=0\n' > "$RUNNER_TEMP/runner-policy/90-smartci-baseline.conf"
+        sudo install -d -m 0755 /etc/systemd/coredump.conf.d
+        sudo install -m 0644 "$RUNNER_TEMP/runner-policy/90-smartci-baseline.conf" /etc/systemd/coredump.conf.d/90-smartci-baseline.conf
+        echo 'created=true' >> "$GITHUB_OUTPUT"
+        if systemctl is-active --quiet systemd-coredumpd.service; then
+          sudo systemctl reload systemd-coredumpd.service
+        fi
+        systemd-analyze cat-config systemd/coredump.conf > "$RUNNER_TEMP/runner-policy/effective.conf"
+        python3 - <<'PY'
+        import configparser, os
+        from pathlib import Path
+        config = configparser.ConfigParser(strict=False, interpolation=None)
+        config.read(Path(os.environ['RUNNER_TEMP']) / 'runner-policy/effective.conf')
+        if dict(config['Coredump']).get('storage') != 'none' or config['Coredump'].get('ProcessSizeMax') != '0':
+            raise SystemExit('Crash-processing policy did not take effect')
+        PY
+    - name: Bound the separate Apport crash-report hook
+      id: apport
+      run: |
+        systemctl cat systemd-coredump@.service > "$RUNNER_TEMP/runner-policy/systemd-coredump-unit.txt"
+        systemctl cat apport-coredump-hook@.service > "$RUNNER_TEMP/runner-policy/apport-unit.txt"
+        systemctl show systemd-coredump@smartci-probe.service --property=OnSuccess --value > "$RUNNER_TEMP/runner-policy/on-success.txt"
+        systemctl show apport-coredump-hook@smartci-probe.service --property=ExecStart --value > "$RUNNER_TEMP/runner-policy/apport-command.txt"
+        python3 - <<'PY'
+        import os
+        from pathlib import Path
+        root = Path(os.environ['RUNNER_TEMP']) / 'runner-policy'
+        if 'apport-coredump-hook@smartci-probe.service' not in (root / 'on-success.txt').read_text().split():
+            raise SystemExit('Expected Apport hook not installed; no mask performed')
+        command = (root / 'apport-command.txt').read_text()
+        if 'path=/usr/share/apport/apport ;' not in command or '--from-systemd-coredump smartci-probe' not in command:
+            raise SystemExit('Unexpected Apport command; no mask performed')
+        PY
+        test "$(systemctl show apport-coredump-hook@smartci-probe.service --property=LoadState --value)" = loaded
+        test ! -e /run/systemd/system/apport-coredump-hook@.service
+        test ! -L /run/systemd/system/apport-coredump-hook@.service
+        sudo systemctl mask --runtime apport-coredump-hook@.service
+        echo 'created=true' >> "$GITHUB_OUTPUT"
+        systemctl show apport-coredump-hook@smartci-probe.service --property=LoadState --value > "$RUNNER_TEMP/runner-policy/apport-effective.txt"
+        test "$(cat "$RUNNER_TEMP/runner-policy/apport-effective.txt")" = masked
+    - name: Run the published Action with the verified native cache
+      if: steps.verified.outcome == 'success'
+      uses: SharmaKunal14/smart-ci@e780aeb00eb5b81c35b062c65734067c03279754
+      with:
+        path: source
+    - name: Run independent cold full fallback when cache admission fails
+      if: steps.verified.outcome != 'success'
+      working-directory: source
+      run: python3 "$GITHUB_WORKSPACE/tool/examples/abseil/baseline.py" --output "$RUNNER_TEMP/native-full-fallback"
+    - name: Restore the Apport hook on the disposable runner
+      if: always() && steps.apport.outputs.created == 'true'
+      run: |
+        sudo systemctl unmask --runtime apport-coredump-hook@.service
+        systemctl show apport-coredump-hook@smartci-probe.service --property=LoadState --value > "$RUNNER_TEMP/runner-policy/apport-restored.txt"
+        test "$(cat "$RUNNER_TEMP/runner-policy/apport-restored.txt")" = loaded
+        systemctl cat apport-coredump-hook@.service > "$RUNNER_TEMP/runner-policy/apport-restored-unit.txt"
+        cmp "$RUNNER_TEMP/runner-policy/apport-unit.txt" "$RUNNER_TEMP/runner-policy/apport-restored-unit.txt"
+    - name: Restore disposable runner policy
+      if: always() && steps.cores.outputs.created == 'true'
+      run: |
+        sudo rm /etc/systemd/coredump.conf.d/90-smartci-baseline.conf
+        if systemctl is-active --quiet systemd-coredumpd.service; then
+          sudo systemctl reload systemd-coredumpd.service
+        fi
+        systemd-analyze cat-config systemd/coredump.conf > "$RUNNER_TEMP/runner-policy/restored.conf"
+        cmp "$RUNNER_TEMP/runner-policy/before.conf" "$RUNNER_TEMP/runner-policy/restored.conf"
+    - name: Record cache admission independently of native results
+      if: always()
+      env:
+        RECEIPT: "${{ steps.receipt.outcome }}"
+        IDENTITY: "${{ steps.identity.outcome }}"
+        CACHE_HIT: "${{ steps.cache.outputs.cache-hit }}"
+        VERIFIED: "${{ steps.verified.outcome }}"
+      run: |
+        python3 - <<'PYCODE'
+        import json,os
+        from pathlib import Path
+        data={k:os.environ[k] for k in ['RECEIPT','IDENTITY','CACHE_HIT','VERIFIED']}
+        data['warm_sample']=all(data[k]=='success' for k in ['RECEIPT','IDENTITY','VERIFIED']) and data['CACHE_HIT']=='true'
+        (Path(os.environ['RUNNER_TEMP'])/'cache-admission.json').write_text(json.dumps(data,sort_keys=True)+'\n')
+        PYCODE
+    - name: Publish native execution and map lifecycle evidence
+      if: always()
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: warm-cache-${{ github.run_attempt }}
+        path: |
+          ${{ runner.temp }}/native-full-fallback
+          ${{ runner.temp }}/runner-policy
+          ${{ runner.temp }}/cache-admission.json
+          ${{ runner.temp }}/cache-seed-run.json
+          ${{ runner.temp }}/cache-verified.json
+          ${{ runner.temp }}/native-cache-receipt
+        retention-days: 7
+        if-no-files-found: error
+'on':
+  push:
+    branches:
+    - codex/action-warm-base
+  pull_request:
+    branches:
+    - codex/action-warm-base
+    types:
+    - opened
+    - synchronize
+    - reopened

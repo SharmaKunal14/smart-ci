@@ -1,0 +1,10 @@
+{
+  "schema_version": "1",
+  "repository": "SharmaKunal14/abseil-cpp",
+  "branch": "codex/action-warm-base",
+  "workflow": ".github/workflows/action-warm.yml",
+  "workflow_digest": "12c3f24657461a5452e6e264866c9debb5bbdfb4b463badbfeceff8798f67738",
+  "artifact_prefix": "smartci-native-map",
+  "event": "push",
+  "max_age_seconds": 604800
+}
