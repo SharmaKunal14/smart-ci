@@ -2,6 +2,17 @@
 
 Updated: 27 November 2026
 
+Current milestone (explicitly reprioritized): **native build graphs and GitHub Action delivery**.
+Textual remains an unsupported selective profile; it is no longer the acceptance
+repository for this milestone. Ship the existing Bazel lifecycle through the same
+CLI and a pinned composite Action. Verify installation, base-owned configuration,
+authenticated map reuse/reconstruction, native failure propagation and a real PR
+comparison. The first bundled adapter is the reviewed Abseil GCC/C++17 profile,
+not arbitrary Bazel projects. Cold-run savings and warm-cache losses must remain
+separate; the new delivery interface itself does not establish a speed benefit.
+See [the Action delivery guide](docs/onboarding/github-action.md). No model calls,
+merges, AWS work or unrelated features are authorized.
+
 Latest scoped-fallback iteration: [finite import expansion](docs/onboarding/scoped-import-fallback.md)
 records every possible target of a verified inline tuple import and uses the
 existing base/head transitive selection rules. It introduces no scope exemptions.

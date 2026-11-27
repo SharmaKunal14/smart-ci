@@ -1,5 +1,7 @@
 # Smart CI
 
+The current milestone is a [GitHub Action backed by the reusable CLI](docs/onboarding/github-action.md), starting with reviewed native Bazel profiles. It is an alpha delivery path, not universal repository compatibility. Model campaigns remain disabled.
+
 Phases 1–4 provide a local CLI, versioned contracts, conservative selection,
 read-only Git analysis, audit reports, pytest/Vitest/Maven adapters, and automatic
 Python dependency discovery with revision-bound deterministic planning.
@@ -71,7 +73,7 @@ test absent from the saved map. Its 665/1,068-second result shows no saving.
 The broad shared-change comparison passes 251/252 tests and preserves build-only
 scope. Its 1,074/660-second result is confounded by different CPUs; only seven
 Bazel actions were avoided, so a substantial selection benefit is not established.
-Representative native-cache evaluation remains outstanding. See the execution
+Warm-cache comparisons showed no savings: 198/209 seconds and 289/307 seconds native/Smart CI; see [the cache evaluation](docs/onboarding/native-cache-evaluation.md). See the execution
 guide for exact runs and evidence limits.
 
 ## Setup and verification

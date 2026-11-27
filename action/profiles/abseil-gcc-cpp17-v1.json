@@ -1,0 +1,93 @@
+{
+  "schema_version": "1",
+  "files": [],
+  "capture": {
+    "schema_version": "1",
+    "profile": {
+      "schema_version": "1",
+      "repository": "SharmaKunal14/abseil-cpp",
+      "bazel_version": "9.1.0",
+      "command_digest": "03239a4a9294eecfa5270d397cb0250824f8930e6dcc42c4fe37955ae0c2ade1",
+      "environment_digest": "e5298946537e8d27609f5e2915f154f7e84072e8cb404ca18d059196fc226c2f",
+      "options_digest": "10df8ca5ba46367b03a887aecaf3e8361c2dd235d783eedf0e813de5ba8d7623",
+      "query_mode": "unconfigured-deps-all",
+      "change_model": "reviewed-declared-cpp-inputs-v1"
+    },
+    "native": {
+      "argv": [
+        "/usr/bin/env",
+        "python3",
+        "{action}/examples/abseil/collection_driver.py",
+        "native",
+        "--repo",
+        "{repo}",
+        "--capture",
+        "{capture}"
+      ],
+      "timeout_seconds": 1380
+    },
+    "query": {
+      "argv": [
+        "/usr/bin/env",
+        "python3",
+        "{action}/examples/abseil/collection_driver.py",
+        "query",
+        "--repo",
+        "{repo}",
+        "--capture",
+        "{capture}"
+      ],
+      "timeout_seconds": 720
+    }
+  },
+  "execution": {
+    "schema_version": "1",
+    "profile": {
+      "schema_version": "1",
+      "repository": "SharmaKunal14/abseil-cpp",
+      "bazel_version": "9.1.0",
+      "command_digest": "03239a4a9294eecfa5270d397cb0250824f8930e6dcc42c4fe37955ae0c2ade1",
+      "environment_digest": "e5298946537e8d27609f5e2915f154f7e84072e8cb404ca18d059196fc226c2f",
+      "options_digest": "10df8ca5ba46367b03a887aecaf3e8361c2dd235d783eedf0e813de5ba8d7623",
+      "query_mode": "unconfigured-deps-all",
+      "change_model": "reviewed-declared-cpp-inputs-v1"
+    },
+    "subset_options_digest": "924ebed1d0ffc56fc3a7fe4c4d96ba1881aa27b9ba95566916b282cd771b5ef2",
+    "full": {
+      "argv": [
+        "/usr/bin/env",
+        "python3",
+        "{action}/examples/abseil/execution_driver.py",
+        "full",
+        "--repo",
+        "{repo}",
+        "--capture",
+        "{capture}"
+      ],
+      "timeout_seconds": 1380
+    },
+    "subset": {
+      "argv": [
+        "/usr/bin/env",
+        "python3",
+        "{action}/examples/abseil/execution_driver.py",
+        "subset",
+        "--repo",
+        "{repo}",
+        "--capture",
+        "{capture}"
+      ],
+      "timeout_seconds": 1380
+    }
+  },
+  "fallback": {
+    "argv": [
+      "/usr/bin/env",
+      "python3",
+      "{action}/examples/abseil/baseline.py",
+      "--output",
+      "{capture}/full"
+    ],
+    "timeout_seconds": 1380
+  }
+}

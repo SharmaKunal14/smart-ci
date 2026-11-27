@@ -36,4 +36,19 @@ jobs:
       - name: Verify safety, formatting and types
         run: make check
       - name: Build distributable
-        run: uv build
+        run: |
+          uv build
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          pin = json.loads(Path('action/cli-release.json').read_text())
+          wheel = Path('dist') / pin['wheel']
+          assert hashlib.sha256(wheel.read_bytes()).hexdigest() == pin['sha256'], 'CLI release pin differs from tested wheel'
+          PY
+      - name: Retain tested release artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: smartci-distributions
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error
