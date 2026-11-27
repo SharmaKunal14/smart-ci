@@ -24,8 +24,10 @@ read-only in PR jobs. Full control retains native affected-work reuse.
 
 Pull and inspect the same digest-pinned upstream compiler image before either
 arm. This common setup is timed and charged, not silently excluded. Clear Linux
-filesystem page/dentry/inode caches before each arm's native command using the
-same bounded ephemeral-runner operation; include that operation in arm time.
+filesystem page/dentry/inode caches before each arm's main invocation (the full
+command or complete Action) using the same bounded ephemeral-runner operation;
+include that operation in arm time. The Action's own installation/planning follows
+this reset and counts naturally; native-start memory state is not separately reset.
 Record CPU, VM boot identity hash, memory/disk availability, source revision,
 cache fingerprints, image digest, execution order and native events. Run neither
 arm concurrently with the other. Balance order because CPU scheduling and other
