@@ -221,7 +221,11 @@ class Analysis:
                 continue
             name = module_name(path, self.config, paths)
             self.names[path] = name
-            if not name or not all(p.isidentifier() for p in name.split(".")):
+            # importlib supports hyphenated filenames even though an import
+            # statement cannot spell them. Retain their normal file/import edges.
+            if not name or not all(
+                p.replace("-", "_").isidentifier() for p in name.split(".")
+            ):
                 self.gap("UNSUPPORTED_MODULE_NAME", path)
             if name in self.modules:
                 self.gap("AMBIGUOUS_MODULE", path)
