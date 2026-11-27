@@ -1,6 +1,7 @@
 import importlib.util
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -76,3 +77,55 @@ def test_workflow_never_exposes_model_credentials_or_changes_test_commands():
     assert "persist-credentials: true" not in workflow
     assert "coverage_pair.py" in workflow
     assert "continue-on-error" not in workflow
+    assert "--skip-coverage-report" in workflow
+
+
+@pytest.mark.parametrize("native_exit", [0, 1])
+def test_deferred_report_never_runs_and_preserves_native_exit(
+    pair, tmp_path, monkeypatch, native_exit
+):
+    root, output = tmp_path / "repo", tmp_path / "output"
+    root.mkdir()
+    monkeypatch.chdir(root)
+    head = "b" * 40
+    monkeypatch.setattr(pair, "profile", lambda: {"python": "fixture"})
+    monkeypatch.setattr(pair.subprocess, "check_output", lambda *a, **kw: head.encode())
+    commands = []
+
+    def command(argv, **kwargs):
+        commands.append(argv)
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(pair.subprocess, "run", command)
+
+    def native(argv):
+        (output / "execution.json").write_text(
+            json.dumps({"exit_code": native_exit, "execution": "full"})
+        )
+        return native_exit
+
+    monkeypatch.setattr(pair.benchmark, "main", native)
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "pair",
+            "--mode",
+            "smart",
+            "--base",
+            "a" * 40,
+            "--head",
+            head,
+            "--output",
+            str(output),
+            "--planner-python",
+            "/tool/bin/python",
+            "--skip-coverage-report",
+        ],
+    )
+    assert pair.main() == native_exit
+    assert all(cmd == ["git", "diff", "--exit-code", "HEAD"] for cmd in commands)
+    execution = json.loads((output / "execution.json").read_text())
+    assert execution["reporting_deferred"] is True
+    assert execution["reporting_seconds"] == 0
+    assert execution["reporting_exit"] is None
+    assert execution["exit_code"] == native_exit
