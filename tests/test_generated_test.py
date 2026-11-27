@@ -116,7 +116,9 @@ def test_workflow_never_executes_generated_code_with_model_credentials():
     assert "sha256sum --check" in reviewed
     assert "--mode native" in controls
     assert "poetry" not in generation and "pytest" not in generation
-    assert "vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'repair-one'" in generation
+    assert (
+        "if: ${{ false }}" in generation
+    )  # Retired; prior approvals cannot reactivate it.
     assert "disable_model_campaign.py" in generation
     assert "persist-credentials: true" not in workflow
 

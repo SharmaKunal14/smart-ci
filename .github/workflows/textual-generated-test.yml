@@ -17,12 +17,8 @@ env:
   GENERATED_FILE_SHA256: 3f4db313d52e6d09b658fe48c4a16cfadb90e04da14648c8f6ebefc723cecffe
 jobs:
   generate:
-    if: >-
-      github.repository == 'SharmaKunal14/smart-ci' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      github.head_ref == 'codex/textual-agent-generated-test' &&
-      github.run_attempt == 1 &&
-      vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'repair-one'
+    # Retired by user direction. Historical workflows and artifacts remain in Git.
+    if: ${{ false }}
     runs-on: ubuntu-24.04
     timeout-minutes: 8
     permissions:
@@ -79,13 +75,7 @@ jobs:
           retention-days: 14
           if-no-files-found: error
   reviewed-test:
-    if: >-
-      github.repository == 'SharmaKunal14/smart-ci' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      github.head_ref == 'codex/textual-agent-generated-test' &&
-      github.run_attempt == 1 &&
-      (vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'verify-working' ||
-       vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'verify-heldout')
+    if: ${{ false }}
     name: generated-${{ matrix.revision }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -160,12 +150,7 @@ jobs:
           retention-days: 14
           if-no-files-found: error
   original-suite:
-    if: >-
-      github.repository == 'SharmaKunal14/smart-ci' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      github.head_ref == 'codex/textual-agent-generated-test' &&
-      github.run_attempt == 1 &&
-      vars.SMARTCI_TEXTUAL_GENERATION_TRIAL == 'controls-only'
+    if: ${{ false }}
     name: original-${{ matrix.revision }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20

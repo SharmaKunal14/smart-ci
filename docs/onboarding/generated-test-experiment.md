@@ -1,5 +1,10 @@
 # One Textual generated-test experiment
 
+**Retired:** the user replaced generation/repair with
+[deterministic coverage-gap reporting](coverage-gaps.md). The workflow jobs are
+hard-disabled on the reporting branch, all model campaigns remain disabled, and
+prior approvals must not be reused. This document preserves historical evidence.
+
 Both the original attempt and the one approved repair were negative. The original
 test failed on working and defective source. The revised test failed on working
 source before executing `_update_rows`, so its held-out evaluation was not

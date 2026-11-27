@@ -2,6 +2,27 @@
 
 Updated: 27 November 2026
 
+Current direction: retire automatic test generation/repair and make **no more paid
+model calls**. Keep every model campaign disabled and preserve the honest negative
+[generation/repair results](docs/onboarding/generated-test-experiment.md). Prior
+approvals do not authorize another investigation. The next deliverable is the
+minimal [deterministic coverage-gap report](docs/onboarding/coverage-gaps.md): flag
+changed executable lines with no observed execution at the exact revision and
+environment, distinguish missing/stale evidence from measured zero, and ask the
+developer to add appropriate behavioral tests. Reporting never changes selection
+or weakens full fallback. Full execution does not validate unexecuted behavior.
+
+Return to the core selection goal with two bounded real Textual PR comparisons:
+unchanged native full-suite command versus the existing production Smart CI
+selector, covering the historical Markdown regression and an explicitly labeled
+uncovered-method mutation. Measure actual GitHub end-to-end job time including
+setup, discovery, planning, execution and reporting; reconcile actual cases and
+missed failures against the full control. Report positive or negative results,
+including full-fallback overhead. Do not substitute an experimental runtime
+subset's speed for production savings. No merges, AWS work or unrelated
+infrastructure. The earlier experiment descriptions below are historical and do
+not override this direction.
+
 Textual [source-read provenance](docs/onboarding/runtime-read-provenance.md) is now
 verified on [PR #14](https://github.com/SharmaKunal14/textual/pull/14),
 [run 45870117385](https://github.com/SharmaKunal14/textual/actions/runs/45870117385).
