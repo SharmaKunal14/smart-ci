@@ -2,6 +2,14 @@
 
 The current milestone is a [GitHub Action backed by the reusable CLI](docs/onboarding/github-action.md), starting with reviewed native Bazel profiles. The pinned alpha passed real GitHub comparisons: 897/509 seconds native/Action for a localized fix, selecting 2/252 Bazel test targets while retaining all 324 build-only targets. This is a cold-profile result, not universal repository compatibility or warm-cache benefit. Model campaigns remain disabled.
 
+Automatic enrollment is now included: one approved-branch full run publishes a
+validated map; the next eligible PR reuses it through the same Action. The latest
+real pair measured **986/322 seconds** native/Action from PR creation to result,
+with 2/252 targets executed. Including the extra enrollment job, total runner
+usage was **982/980 seconds** Smart/native: faster PR feedback, no one-cycle compute
+saving. See [the exact setup, evidence and limitations](docs/onboarding/github-action.md#automatic-enrollment-and-next-pr-reuse-cli-020a2).
+
+
 Phases 1–4 provide a local CLI, versioned contracts, conservative selection,
 read-only Git analysis, audit reports, pytest/Vitest/Maven adapters, and automatic
 Python dependency discovery with revision-bound deterministic planning.

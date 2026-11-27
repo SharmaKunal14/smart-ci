@@ -4,17 +4,21 @@ The Action bootstrap also uses this module when CLI installation fails. Only
 the reviewed base revision can supply policy, adapter files and the full command.
 """
 
+import hashlib
 import json
 import re
 import subprocess
 import tempfile
 from pathlib import Path, PurePosixPath
-from typing import TypedDict, cast
+from typing import Literal, TypedDict, cast
 
 from smartci.native_process import run_argv
 
 MAX_FILE = 2 * 1024 * 1024
 REPOSITORY = r"[A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9_][A-Za-z0-9_.-]{0,99}"
+BRANCH = r"[A-Za-z0-9_][A-Za-z0-9_./-]{0,199}"
+WORKFLOW = r"\.github/workflows/[A-Za-z0-9_-]+\.ya?ml"
+ARTIFACT_PREFIX = r"[A-Za-z0-9_-]{1,100}"
 GIT = [
     "git",
     "--no-replace-objects",
@@ -30,6 +34,113 @@ class Context(TypedDict):
     base: str
     head: str
     repo: str
+
+
+class Invocation(TypedDict):
+    event: Literal["pull_request", "push"]
+    branch: str
+    workflow: str
+
+
+def invocation_context(
+    repo: Path,
+    event: Path,
+    repository: str,
+    event_name: str,
+    *,
+    workflow_ref: str,
+    workflow_sha: str,
+    ref: str,
+    sha: str,
+) -> tuple[Context, Invocation]:
+    """Separate ordinary PR execution from an explicitly enrolled push origin."""
+    if not re.fullmatch(REPOSITORY, repository):
+        raise ValueError("invalid repository")
+    prefix = repository + "/"
+    if not workflow_ref.startswith(prefix):
+        raise ValueError("same-repository workflow required")
+    workflow, separator, workflow_source = workflow_ref[len(prefix) :].partition("@")
+    if not separator or not re.fullmatch(WORKFLOW, workflow):
+        raise ValueError("regular workflow identity required")
+    payload = read_object(event)
+    if event_name == "pull_request":
+        if (
+            workflow_source != ref
+            or not re.fullmatch(r"refs/pull/[1-9][0-9]*/merge", ref)
+            or revision(workflow_sha) != revision(sha)
+        ):
+            raise ValueError("ordinary pull_request workflow context required")
+        value = context(repo, event, repository, event_name)
+        branch = object_value(object_value(payload["pull_request"])["base"]).get("ref")
+    elif event_name == "push":
+        if (
+            object_value(payload.get("repository")).get("full_name") != repository
+            or payload.get("deleted") is not False
+            or payload.get("ref") != ref
+            or not ref.startswith("refs/heads/")
+            or workflow_source != ref
+            or revision(payload.get("after")) != revision(sha)
+            or revision(workflow_sha) != sha
+        ):
+            raise ValueError("exact same-repository branch push required")
+        branch = ref.removeprefix("refs/heads/")
+        value = {"repository": repository, "base": sha, "head": sha, "repo": str(repo)}
+        verify_head(value)
+    else:
+        raise ValueError("ordinary pull_request or approved push required")
+    if not isinstance(branch, str) or not re.fullmatch(BRANCH, branch):
+        raise ValueError("bounded branch identity required")
+    return value, validate_invocation(
+        {"event": event_name, "branch": branch, "workflow": workflow}
+    )
+
+
+def validate_invocation(value: object) -> Invocation:
+    data = object_value(value)
+    if (
+        set(data) != {"event", "branch", "workflow"}
+        or data["event"] not in {"push", "pull_request"}
+        or not isinstance(data["branch"], str)
+        or not re.fullmatch(BRANCH, data["branch"])
+        or not isinstance(data["workflow"], str)
+        or not re.fullmatch(WORKFLOW, data["workflow"])
+    ):
+        raise ValueError("invalid Action invocation")
+    return cast(Invocation, data)
+
+
+def map_source(value: object) -> dict[str, object]:
+    data = object_value(value)
+    if not {"branch", "workflow"} <= data.keys() or data.keys() - {
+        "branch",
+        "workflow",
+        "artifact_prefix",
+    }:
+        raise ValueError("invalid map source configuration")
+    result = {"artifact_prefix": "smartci-native-map", **data}
+    for key, pattern in (
+        ("branch", BRANCH),
+        ("workflow", WORKFLOW),
+        ("artifact_prefix", ARTIFACT_PREFIX),
+    ):
+        item = result[key]
+        if not isinstance(item, str) or not re.fullmatch(pattern, item):
+            raise ValueError("invalid map source identity")
+    return result
+
+
+def publisher_policy(value: Context, source: dict[str, object]) -> dict[str, object]:
+    source = map_source(source)
+    workflow = cast(str, source["workflow"])
+    return {
+        "schema_version": "1",
+        "repository": value["repository"],
+        "branch": source["branch"],
+        "workflow": workflow,
+        "workflow_digest": hashlib.sha256(base_file(value, workflow)).hexdigest(),
+        "artifact_prefix": source["artifact_prefix"],
+        "event": "push",
+    }
 
 
 def object_value(value: object) -> dict[str, object]:
@@ -143,7 +254,12 @@ def base_file(value: Context, path: str) -> bytes:
 
 
 def prepare(
-    value: Context, configuration: str, output: Path, action_root: Path | None = None
+    value: Context,
+    configuration: str,
+    output: Path,
+    action_root: Path | None = None,
+    *,
+    invocation: Invocation | None = None,
 ) -> dict[str, object]:
     repo = Path(value["repo"])
     if output.is_relative_to(repo) or repo.is_relative_to(output):
@@ -163,6 +279,7 @@ def prepare(
                 "publisher",
                 "publisher_capture",
                 "must_run",
+                "maps",
             }
         ):
             raise ValueError("unsupported native profile configuration")
@@ -170,7 +287,7 @@ def prepare(
         for section in ("capture", "execution"):
             profile = object_value(object_value(preset[section])["profile"])
             profile["repository"] = value["repository"]
-        for key in ("publisher", "publisher_capture", "must_run"):
+        for key in ("publisher", "publisher_capture", "must_run", "maps"):
             if key in policy:
                 preset[key] = policy[key]
         policy = preset
@@ -179,10 +296,26 @@ def prepare(
         "publisher",
         "publisher_capture",
         "must_run",
+        "maps",
     }:
         raise ValueError("unsupported Action configuration fields")
     if policy["schema_version"] != "1":
         raise ValueError("unsupported Action configuration version")
+    maps = map_source(policy["maps"]) if policy.get("maps") is not None else None
+    if maps is not None and (
+        policy.get("publisher") is not None
+        or policy.get("publisher_capture") is not None
+    ):
+        raise ValueError("choose automatic maps or an explicit publisher")
+    if invocation is not None:
+        invocation = validate_invocation(invocation)
+        if invocation["event"] == "push" and (
+            maps is None
+            or value["base"] != value["head"]
+            or invocation["branch"] != maps["branch"]
+            or invocation["workflow"] != maps["workflow"]
+        ):
+            raise ValueError("push origin is not approved for map enrollment")
     files = policy["files"]
     if (
         not isinstance(files, list)
@@ -191,8 +324,7 @@ def prepare(
     ):
         raise ValueError("bounded unique control file list required")
     output.mkdir(mode=0o700, exist_ok=False)
-    control = output / "control"
-    control.mkdir()
+    content: dict[str, bytes] = {}
     total = 0
     for item in files:
         name = relative(item)
@@ -200,6 +332,20 @@ def prepare(
         total += len(data)
         if total > 8 * 1024 * 1024:
             raise ValueError("control files exceed aggregate limit")
+        content[name] = data
+    control = output / "control"
+    if maps is not None and content:
+        # Automatic reuse also binds base-owned adapter bytes. Changing a script
+        # changes its capture command path/digest even if its filename is stable.
+        identities = {
+            name: hashlib.sha256(data).hexdigest() for name, data in content.items()
+        }
+        digest = hashlib.sha256(
+            json.dumps(identities, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        control /= digest
+    control.mkdir(parents=True)
+    for name, data in content.items():
         destination = control / name
         destination.parent.mkdir(parents=True, exist_ok=True)
         with destination.open("xb") as stream:
@@ -216,6 +362,8 @@ def prepare(
     expand_command(object_value(policy["fallback"]), control, action_root)
     write(output / "context.json", dict(value))
     write(output / "policy.json", policy)
+    if invocation is not None:
+        write(output / "invocation.json", dict(invocation))
     return policy
 
 

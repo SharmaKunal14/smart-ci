@@ -2,16 +2,16 @@ name: Smart CI native tests
 description: Deterministic Bazel test selection using a pinned reusable Smart CI CLI
 inputs:
   path:
-    description: Clean PR head checkout, relative to GITHUB_WORKSPACE
+    description: Clean PR head or approved push checkout, relative to GITHUB_WORKSPACE
     default: '.'
   config:
-    description: Repository configuration read from the PR base revision
+    description: Configuration read from the PR base or approved push revision
     default: '.smartci/native.json'
   token:
     description: Read-only token used only to retrieve approved map evidence
     default: ${{ github.token }}
   force-full:
-    description: Run the independent full command without rebuilding or selecting
+    description: PR-only option to run the independent full command without rebuilding or selecting
     default: 'false'
 outputs:
   mode:
@@ -30,7 +30,7 @@ runs:
       continue-on-error: true
       with:
         python-version: '3.14'
-    - name: Read reviewed base configuration and verify PR context
+    - name: Read reviewed configuration and verify event context
       id: context
       shell: bash
       env:
@@ -51,11 +51,12 @@ runs:
       continue-on-error: true
       shell: bash
       env:
-        GH_TOKEN: ${{ inputs.token }}
+        GH_TOKEN: ${{ github.event_name == 'pull_request' && inputs.token || '' }}
         CLI_PYTHON: ${{ steps.install.outputs.python }}
         ACTION_STATE: ${{ steps.context.outputs.state }}
       run: '"$CLI_PYTHON" -I -m smartci.cli github-action prepare --state "$ACTION_STATE"'
     - name: Execute native selection or independent full fallback
+      id: execute
       shell: bash
       env:
         ACTION_ROOT: ${{ github.action_path }}
@@ -69,6 +70,17 @@ runs:
       env:
         ACTION_ROOT: ${{ github.action_path }}
       run: python3 -I "$ACTION_ROOT/action/bootstrap.py" summary
+    - name: Publish approved-branch dependency map
+      if: steps.context.outputs.operation == 'enroll' && steps.install.outcome == 'success' && steps.prepare.outcome == 'success' && steps.execute.outcome == 'success'
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: ${{ steps.context.outputs.map-prefix }}-${{ github.run_attempt }}
+        path: |
+          ${{ steps.context.outputs.state }}/enrollment/bundle
+          ${{ steps.context.outputs.state }}/enrollment/collection.json
+          ${{ steps.context.outputs.state }}/publication.json
+        retention-days: 7
+        if-no-files-found: error
     - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
       if: always() && steps.context.outcome == 'success'
       with:
@@ -79,5 +91,9 @@ runs:
           ${{ steps.context.outputs.state }}/fallback.json
           ${{ steps.context.outputs.state }}/map/fetch.json
           ${{ steps.context.outputs.state }}/fetch-error.json
+          ${{ steps.context.outputs.state }}/enrollment/collection.json
+          ${{ steps.context.outputs.state }}/enrollment/capture
+          ${{ steps.context.outputs.state }}/publication.json
+          ${{ steps.context.outputs.state }}/publisher.json
         retention-days: 7
         if-no-files-found: warn

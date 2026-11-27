@@ -2,6 +2,20 @@
 
 Updated: 27 November 2026
 
+Verified automatic enrollment: [Smart CI PR #32](https://github.com/SharmaKunal14/smart-ci/pull/32)
+and CLI 0.2.0a2 put initial full native capture and next-PR selection behind the
+same Action. A fresh GitHub enrollment passed (252 test targets / 324 build-only;
+671 s workflow). The next real same-revision pair took **986/322 s** from PR
+creation to completed native/Action results; 2/252 test targets actually ran,
+all required build-only targets remained, and the new map was retrieved without
+reconstruction or fallback. This passing case has no failures with which to
+estimate recall. Including an additional enrollment job, runner usage was
+**982 s versus 980 s native**: faster PR feedback, no net one-cycle compute saving.
+Different CPU models and prior negative warm-cache results limit extrapolation.
+See [the enrollment evidence](docs/benchmarks/native-action-enrollment-2026-11-27.json)
+and [setup/verification guide](docs/onboarding/github-action.md). Hosted release
+checks passed 1,153 tests. No merges, paid model calls or AWS work.
+
 Verified native Action milestone: [Smart CI PR #31](https://github.com/SharmaKunal14/smart-ci/pull/31)
 and the pinned CLI 0.2.0a1 prerelease deliver the reviewed Bazel lifecycle through
 one Action step. Real Abseil passing PRs measured **897/509 s** native/Action;
@@ -232,19 +246,19 @@ insufficient:
    from actual hosted evidence. Do not equate fewer diagnostics with completeness
    or select a favorable timing retry. A supported adapter does not establish
    support for arbitrary repositories or languages.
-5. Deliver and verify the bounded adaptive investigation workflow described below:
-   choose tools based on observations, retain evidence and enforce authority
-   outside the agent. Selection remains deterministic; an agent cannot remove
-   required tests, waive gaps or promote its confidence to completeness evidence.
-   The existing fixture provider is not a live agent. A separate bounded live
-   evaluation now has a US$5 ceiling, at most 24 calls and six investigations.
-   Admission controls and public-source routing must pass verification first.
+5. Preserve the bounded adaptive investigation workflow and its actual hosted
+   evidence, including negative results. The prior live Textual trial added no
+   accepted edges or selection benefit. Model proposals never waive mandatory
+   tests, unresolved dependencies or evidence validation. Following the user's
+   later explicit direction, all campaigns remain disabled and no further paid
+   calls are authorized; the old US$5 ceiling is not reusable permission. Native
+   Action delivery does not depend on another live-model trial.
 
-No merges or AWS deployment are authorized. Paid calls are authorized only within
-the separately approved ceiling and verified controls, not by this goal alone.
-Agentic investigation is a goal requirement, while cloud hosting remains optional.
-The older sections that defer agents describe implementation order, not permission
-to mark this new goal complete without its agentic component.
+No merges or AWS deployment are authorized. The current accepted milestone is
+native build graphs and Action delivery. Prior agent experiments are preserved
+as an approach comparison, not claimed as a demonstrated agent speed benefit.
+The remaining deployment phases below are historical plans, not permission to
+expand the current milestone or reactivate model spending.
 
 The native-build-graph work begins with Abseil's unmodified GCC/Bazel C++17
 fastbuild profile on a fresh GitHub runner. Its public pinned image is large and

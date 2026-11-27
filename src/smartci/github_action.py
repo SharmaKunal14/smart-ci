@@ -9,12 +9,31 @@ from urllib.parse import quote
 
 from pydantic import Field, model_validator
 
-from .action_control import Context, read_object, revision, write
+from .action_control import (
+    ARTIFACT_PREFIX,
+    BRANCH,
+    WORKFLOW,
+    Context,
+    Invocation,
+    publisher_policy,
+    read_object,
+    revision,
+    validate_invocation,
+    write,
+)
 from .bazel.bundle import StrictModel, canonical
-from .bazel.collection import CaptureCommand, CaptureConfig
+from .bazel.collection import CaptureCommand, CaptureConfig, collect
 from .bazel.execution import ExecutionConfig
 from .bazel.lifecycle import run
 from .bazel.transport import Publisher, api, fetch, parse_object
+
+
+class MapSource(StrictModel):
+    branch: str = Field(pattern="^" + BRANCH + "$")
+    workflow: str = Field(pattern="^" + WORKFLOW + "$")
+    artifact_prefix: str = Field(
+        default="smartci-native-map", pattern="^" + ARTIFACT_PREFIX + "$"
+    )
 
 
 class ActionPolicy(StrictModel):
@@ -26,9 +45,14 @@ class ActionPolicy(StrictModel):
     publisher: Publisher | None = None
     publisher_capture: CaptureConfig | None = None
     must_run: list[str] = Field(default_factory=list, max_length=10000)
+    maps: MapSource | None = None
 
     @model_validator(mode="after")
     def consistent(self) -> Self:
+        if self.maps is not None and (
+            self.publisher is not None or self.publisher_capture is not None
+        ):
+            raise ValueError("automatic maps cannot override an explicit publisher")
         if self.capture.profile != self.execution.profile:
             raise ValueError("capture and execution profiles differ")
         if (self.publisher is None) != (self.publisher_capture is None):
@@ -68,23 +92,56 @@ def load(state: Path) -> tuple[Context, ActionPolicy]:
     return context, policy
 
 
+def invocation(state: Path) -> Invocation | None:
+    path = state / "invocation.json"
+    return validate_invocation(read_object(path)) if path.exists() else None
+
+
+def enrolling(state: Path, context: Context, policy: ActionPolicy) -> bool:
+    event = invocation(state)
+    if event is None or event["event"] == "pull_request":
+        return False
+    if (
+        policy.maps is None
+        or context["base"] != context["head"]
+        or event["branch"] != policy.maps.branch
+        or event["workflow"] != policy.maps.workflow
+    ):
+        raise ValueError("unapproved map publication origin")
+    return True
+
+
 def prepare(state: Path) -> None:
     """Validate control-plane inputs and fetch evidence; execute no repository code."""
-    _, policy = load(state)
+    context, policy = load(state)
+    is_enrollment = enrolling(state, context, policy)
     for name, value in (("capture", policy.capture), ("execution", policy.execution)):
         with (state / f"{name}.json").open("xb") as stream:
             stream.write(canonical(value.model_dump()))
-    if policy.publisher_capture is not None:
+    publisher = policy.publisher
+    publisher_capture = policy.publisher_capture
+    if policy.maps is not None:
+        publisher = Publisher.model_validate(
+            publisher_policy(context, policy.maps.model_dump())
+        )
+        publisher_capture = policy.capture
+        write(state / "publisher.json", publisher.model_dump())
+    if publisher_capture is not None:
         with (state / "publisher-capture.json").open("xb") as stream:
-            stream.write(canonical(policy.publisher_capture.model_dump()))
-    if policy.publisher is None or policy.publisher_capture is None:
+            stream.write(canonical(publisher_capture.model_dump()))
+    if is_enrollment:
+        print(
+            "Approved branch push; full native enrollment will publish a fresh map.",
+            flush=True,
+        )
+        return
+    if publisher is None or publisher_capture is None:
         print(
             "No publisher configured; PR execution will reconstruct or run full.",
             flush=True,
         )
         return
     try:
-        publisher = policy.publisher
         pointer = parse_object(
             api(
                 f"repos/{publisher.repository}/git/ref/heads/{quote(publisher.branch, safe='')}"
@@ -94,7 +151,7 @@ def prepare(state: Path) -> None:
         if not isinstance(obj, dict) or obj.get("type") != "commit":
             raise ValueError("publisher must reference a commit")
         target = revision(obj.get("sha"))
-        fetch(publisher, target, policy.publisher_capture, state / "map")
+        fetch(publisher, target, publisher_capture, state / "map")
         print("Retrieved and authenticated the reviewed native map.", flush=True)
     except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError):
         write(
@@ -108,6 +165,26 @@ def prepare(state: Path) -> None:
 
 def execute(state: Path, force_full: bool = False) -> int:
     context, policy = load(state)
+    if enrolling(state, context, policy):
+        if force_full:
+            raise ValueError("force-full is a PR execution option")
+        report = collect(
+            Path(context["repo"]), context["head"], policy.capture, state / "enrollment"
+        )
+        if report["status"] != "ready":
+            return 1
+        write(
+            state / "publication.json",
+            {
+                "schema_version": "smartci.native-action-publication.v1",
+                "repository": context["repository"],
+                "revision": context["head"],
+                "manifest_digest": report["manifest_digest"],
+                "config_digest": report["config_digest"],
+                "model_calls": 0,
+            },
+        )
+        return 0
     report = run(
         Path(context["repo"]),
         context["base"],
@@ -117,7 +194,7 @@ def execute(state: Path, force_full: bool = False) -> int:
         state / "execution.json",
         state / "native-pr",
         state / "publisher-capture.json"
-        if policy.publisher_capture is not None
+        if policy.publisher_capture is not None or policy.maps is not None
         else None,
         must_run=tuple(policy.must_run),
         force_full=force_full,

@@ -88,6 +88,33 @@
       "title": "ExecutionConfig",
       "type": "object"
     },
+    "MapSource": {
+      "additionalProperties": false,
+      "properties": {
+        "branch": {
+          "pattern": "^[A-Za-z0-9_][A-Za-z0-9_./-]{0,199}$",
+          "title": "Branch",
+          "type": "string"
+        },
+        "workflow": {
+          "pattern": "^\\.github/workflows/[A-Za-z0-9_-]+\\.ya?ml$",
+          "title": "Workflow",
+          "type": "string"
+        },
+        "artifact_prefix": {
+          "default": "smartci-native-map",
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Artifact Prefix",
+          "type": "string"
+        }
+      },
+      "required": [
+        "branch",
+        "workflow"
+      ],
+      "title": "MapSource",
+      "type": "object"
+    },
     "Profile": {
       "additionalProperties": false,
       "properties": {
@@ -261,6 +288,17 @@
       "maxItems": 10000,
       "title": "Must Run",
       "type": "array"
+    },
+    "maps": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MapSource"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "required": [
