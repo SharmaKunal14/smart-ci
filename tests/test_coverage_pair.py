@@ -43,8 +43,25 @@ def test_receipt_does_not_certify_partial_or_contradictory_results(pair, tmp_pat
         '<testsuites><testsuite tests="1" failures="0" errors="0" skipped="0"><testcase classname="tests.test_a" name="test_one"/></testsuite></testsuites>'
     )
     execution = {"head": "a" * 40, "exit_code": 0, "targets": None, "execution": "full"}
+
+    def collection():
+        ids = json.loads((tmp_path / "head-cases.json").read_text())
+        (tmp_path / "head-compatibility.json").write_text(
+            json.dumps(
+                {
+                    "commit": execution["head"],
+                    "native_cases_digest": pair.canonical_digest(ids),
+                    "native_case_count": len(ids),
+                }
+            )
+        )
+
+    collection()
     assert pair.receipt(tmp_path, execution, {}, "123")["inventory_reconciled"] is False
     (tmp_path / "head-cases.json").write_text(json.dumps(["tests/test_a.py::test_one"]))
+    with pytest.raises(ValueError, match="inventory revision or digest"):
+        pair.receipt(tmp_path, execution, {}, "123")
+    collection()
     assert pair.receipt(tmp_path, execution, {}, "123")["inventory_reconciled"] is True
     execution["exit_code"] = 124
     assert pair.receipt(tmp_path, execution, {}, "123")["inventory_reconciled"] is False

@@ -97,7 +97,11 @@ def compare(root, repo):
     proof = Receipt.model_validate_json(read(folder / "coverage-receipt.json"))
     if proof.run_url != run["html_url"] or proof.execution_scope != smart["execution"]:
         raise ValueError("coverage origin or scope mismatch")
-    if proof.test_count != len(cases["smart"]) or not proof.inventory_reconciled:
+    if (
+        proof.test_count != len(cases["smart"])
+        or not proof.inventory_reconciled
+        or proof.exit_code != smart["exit_code"]
+    ):
         raise ValueError("coverage inventory not reconciled")
     recomputed = report(
         repo,
