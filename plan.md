@@ -2,13 +2,20 @@
 
 Updated: 27 November 2026
 
-Current scoped-fallback work: [finite import expansion](docs/onboarding/scoped-import-fallback.md)
+Latest scoped-fallback iteration: [finite import expansion](docs/onboarding/scoped-import-fallback.md)
 records every possible target of a verified inline tuple import and uses the
 existing base/head transitive selection rules. It introduces no scope exemptions.
-Textual's remaining 13 gaps do not meet this contract; retain full execution and
-rerun the same GitHub PR comparisons without changing native source/tests.
+Textual's remaining 13 gaps do not meet this contract. The real PR #17/#18 reruns
+retained full execution: all 251 files / 3,467 case outcomes, no missed observed
+failures. Native/Smart CI trigger-to-result was **360/440 s** and **324/372 s**:
+80 and 48 seconds slower. The graph/import/inventory evidence is unchanged;
+the supported grammar does not help this Textual configuration. See
+[the exact GitHub evidence](docs/benchmarks/textual-scoped-imports-2026-11-27.json)
+and unmerged [PR #30](https://github.com/SharmaKunal14/smart-ci/pull/30).
+The CI-savings objective remains unmet; further repetitions need a justified
+dependency boundary first. No paid calls, merges or AWS work are authorized.
 
-Latest CI-efficiency iteration: [Smart CI PR #29](https://github.com/SharmaKunal14/smart-ci/pull/29)
+Previous CI-efficiency iteration: [Smart CI PR #29](https://github.com/SharmaKunal14/smart-ci/pull/29)
 fixes a false hyphenated-module rejection and skips redundant base discovery
 when a validated incomplete head already requires full tests. It preserves all
 dependency edges, native collection checks and conservative fallback; optional

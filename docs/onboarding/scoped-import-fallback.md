@@ -56,6 +56,62 @@ native commands, with only the shared Smart CI commit pin updated. Expected
 result: full fallback remains. Record actual end-to-end results even if negative;
 unit fixtures demonstrate behavior, not real repository savings.
 
+## Verified GitHub results — 27 November 2026
+
+**No Textual selection benefit or end-to-end time saving was demonstrated.**
+The two real PR comparisons used tool commit
+`6d72bb8a049aaa7fde8e51fc12951a31ae020d0b`, shared base
+`a1fcda61bfce39f2f503ca7042c115b59b485e0f`, and the existing unchanged native
+commands. All source, test, dependency-lock and native inventory identities were
+verified. Both strict artifact comparisons passed.
+
+| Real PR / GitHub run | Native trigger → result | Smart CI trigger → result | Native / Smart job duration | Difference |
+| --- | ---: | ---: | ---: | ---: |
+| [#17 historical regression](https://github.com/SharmaKunal14/textual/actions/runs/45944242876) | 360 s | 440 s | 358 / 438 s | **80 s slower** |
+| [#18 uncovered-change control](https://github.com/SharmaKunal14/textual/actions/runs/45944241674) | 324 s | 372 s | 322 / 369 s | **48 s slower** |
+
+Both Smart CI plans selected all **251/251 files**. Each native execution reported
+**3,467 case outcomes, including seven native skips**, with zero Smart CI
+omissions and `INCOMPLETE_EVIDENCE`. PR #17's only failure
+was `tests.snapshot_tests.test_snapshots::test_markdown_stream_switch_theme` in
+both arms: 3,459 passed, seven skipped, one failed, and no missed full-control
+failure. PR #18 had 3,460 passed and seven skipped in both arms, so there were no
+observed failures against which to measure recall. Its green result does not
+validate the changed unexercised method.
+
+Planning took **28.48 s** on #17 and **18.32 s** on #18. Native collection and
+its repeat consumed 18.45 / 11.91 s respectively; dependency analysis consumed
+4.29 / 2.79 s. Native-versus-Smart test execution itself was 314.55 / 351.30 s
+on #17 and 285.23 / 299.51 s on #18. Consequently the entire 80/48-second loss
+cannot be attributed to planning alone: setup and full-test durations also
+differed. One pair per scenario does not isolate runner variation or establish
+an average slowdown. There is nonetheless no omitted test work to credit as a
+selection benefit.
+
+The source, import, dependency-edge and native-case digests match the preceding
+run for each scenario; the same 13 gaps and six plugins remain. There were no
+bounded-import audit entries. The new grammar therefore did not help this
+Textual configuration. Sibling-script and optional-diagnostic imports need
+supported resolution contexts; lazy dispatch needs a verified target contract;
+runtime code/path loaders, subprocess effects and global plugin behavior remain
+unbounded by the available evidence. This does not prove they can never be
+bounded, but it provides no justification for safe omissions now.
+
+The complete validation workflows took 440 and 372 seconds; their four jobs
+consumed 1,487 runner-seconds in total. Trigger timing starts at GitHub workflow
+creation and includes queue/setup/planning/tests/upload, but excludes earlier
+event-delivery latency and the separate tool safety workflow. Optional coverage
+reporting remained deferred and native coverage options were unchanged. Results,
+revision/environment bindings and artifact hashes are preserved in the
+[evidence record](../benchmarks/textual-scoped-imports-2026-11-27.json).
+
+[Smart CI PR #30](https://github.com/SharmaKunal14/smart-ci/pull/30) remains an
+unmerged draft. Its benchmarked commit passed
+[1,099 hosted tests, formatting, linting, typing and package builds](https://github.com/SharmaKunal14/smart-ci/actions/runs/45943773486).
+All model campaign switches remain disabled; this iteration made zero model
+calls and no AWS changes. Repeating these same Textual comparisons without a
+new, justified dependency boundary would not establish product value.
+
 ## Verification
 
 Run `uv sync --frozen`, `make check`, and `uv build`. Focused checks are
