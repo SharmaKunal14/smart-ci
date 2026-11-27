@@ -22,7 +22,10 @@ exact wheel version and SHA-256. Do not use the moving development branch.
 
 ```yaml
 on:
+  push:
+    branches: [main]
   pull_request:
+    branches: [main]
 permissions:
   contents: read
   actions: read
@@ -33,30 +36,55 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
           persist-credentials: false
       # Preserve the existing native toolchain/environment preparation here.
-      - uses: SharmaKunal14/smart-ci@b2160a7e5c3571dc9bcc1ec7fdd34ad886a2e542
+      - uses: SharmaKunal14/smart-ci@REVIEWED_ACTION_SHA
 ```
 
 For the bundled profile, `.smartci/native.json` starts as:
 
 ```json
-{"schema_version":"1","profile":"abseil-gcc-cpp17-v1"}
+{
+  "schema_version": "1",
+  "profile": "abseil-gcc-cpp17-v1",
+  "maps": {"branch": "main", "workflow": ".github/workflows/tests.yml"}
+}
 ```
 
-The preset ships the reviewed adapter, so customers do not copy its Python
-scripts. Without an approved publisher, the Action rebuilds the map from the exact
-base before planning. That includes a full native enrollment and may cost more
-than a full PR run. Routine savings require reusable evidence: add `publisher`
-and `publisher_capture` contracts from the reviewed enrollment configuration.
-They bind the repository, producer branch, workflow digest, artifact age, native
-profile and capture command identity. See [artifact onboarding](bazel-artifacts.md).
-Do not paste another project's policy or edit hashes merely to bypass rejection.
+Save the example workflow as `.github/workflows/tests.yml`; `maps.workflow`
+must match its path, and `maps.branch` must be the reviewed/protected branch.
+`REVIEWED_ACTION_SHA` is a placeholder for the tested 40-character release commit.
+Automatic enrollment is new in CLI 0.2.0a2; its hosted verification is pending.
+Do not point this configuration at the earlier 0.2.0a1 Action.
+
+The preset ships the reviewed adapter, so customers do not copy scripts or install
+the CLI. A push to the approved branch runs the complete native command and query,
+validates the resulting map, and uploads `smartci-native-map-<attempt>`. The next
+eligible PR retrieves it automatically. The Action derives the publisher's
+repository and workflow digest from the trusted context and base-owned workflow;
+customers do not assemble run IDs, workflow hashes or capture contracts manually.
+
+Only a successful approved-branch workflow can supply a trusted map. The map
+remains revision/profile/capture-bound and expires after seven days. A changed
+Action pin or copied adapter invalidates incompatible capture identity. Missing,
+pending, stale or rejected maps still cause reconstruction or full execution.
+Enrollment requires a passing full native baseline: a failing branch publishes
+no usable map. Protect the publisher branch and review workflow/policy changes.
+
+This version performs a fresh full enrollment on each configured branch push.
+Prefer integrating it into an existing full post-push job. If it adds an extra
+full job, count that cost against PR savings; faster PRs alone do not establish
+lower total compute. A push followed immediately by a PR may race unfinished
+enrollment and therefore rebuild. No claim of warm-cache savings is made.
+
+Omitting `maps` retains the earlier reconstruct-or-full behavior. Advanced existing
+`publisher`/`publisher_capture` contracts remain supported, but cannot be combined
+with `maps`. See [artifact onboarding](bazel-artifacts.md) for that legacy interface.
 
 For an already reviewed custom adapter, the full policy form accepts `capture`,
-`execution`, `fallback`, optional `publisher`/`publisher_capture`, and `files`.
+`execution`, `fallback`, optional `maps` or `publisher`/`publisher_capture`, and `files`.
 It uses the [native Action policy schema](../../schemas/native-action-policy.v1.json).
 Listed adapter files are loaded from the exact PR base into an external control
 directory. `{control}` refers there, `{action}` to the pinned Action, `{repo}` to
@@ -66,8 +94,10 @@ fallback must work without Smart CI or its Python dependencies installed.
 
 ## Trust and failure behavior
 
-- Only ordinary `pull_request` events on disposable GitHub-hosted Linux x64
-  runners are supported, with one invocation per non-matrix job. `pull_request_target` is rejected. Do not expose private
+- Ordinary `pull_request` events and explicitly approved branch `push` enrollment
+  are supported on disposable GitHub-hosted Linux x64 runners, with one invocation
+  per non-matrix job. `pull_request_target`, tags, unrelated pushes and reusable
+  workflow contexts are rejected. Do not expose private
   credentials or persist Git credentials before executing PR code.
 - The source checkout must be the exact clean PR head, with the base commit
   available. Configuration and custom adapter files come from the base, so a PR
@@ -90,7 +120,7 @@ fallback must work without Smart CI or its Python dependencies installed.
   Bazel code is hermetic. Undeclared file/network/runtime dependencies can invalidate
   that model. Do not enable omissions for a profile with such unresolved behavior.
 
-`force-full: 'true'` bypasses map reconstruction/selection and invokes the
+On PRs, `force-full: 'true'` bypasses map reconstruction/selection and invokes the
 independent full native execution path. Inputs `path` and `config` change the
 checkout/config locations. The summary outputs `mode`, `status`, and
 `selected-tests` (Bazel targets, not individual cases). Native reports and plans
@@ -102,18 +132,22 @@ are retained for seven days. Missing/invalid reports are never labelled passed.
    read-only GitHub permissions, a clean head checkout, and protected base-owned
    configuration. Preserve native cache settings; never disable caching to claim
    a Smart CI speedup.
-2. Run a normal source-only PR with an independent unchanged full control on the
+2. First verify the approved branch push: full tests and query pass, the summary
+   reports full enrollment, and `smartci-native-map-<attempt>` contains
+   `enrollment/collection.json`, its bundle and `publication.json`. A failed
+   install can run the independent full command but must not publish a map.
+3. Run a normal source-only PR with an independent unchanged full control on the
    same source/environment. In the Action log, verify the pinned release was
    installed, then inspect map status and full/subset execution. Download
    `smartci-native-<job>-<attempt>` from the workflow artifacts.
-3. Inspect `native-pr/lifecycle.json`, `execution/plan.json`, and
+4. Inspect `native-pr/lifecycle.json`, `execution/plan.json`, and
    `execution/execution.json`. Confirm exact base/head, map admission,
    fallback reasons, selected targets, retained build-only scope and complete
    reconciled native events. Compare failures with the independent control.
-4. Check a real regression and a build/configuration change. The regression
+5. Check a real regression and a build/configuration change. The regression
    must remain red; unsupported changes must run the independent full suite,
    including any new tests. Missing maps must rebuild or run full, not skip.
-5. Measure event-to-result and job duration including checkout, installation,
+6. Measure event-to-result and job duration including checkout, installation,
    map fetch, planning, native execution, validation and artifact upload.
    Include enrollment separately, record runner CPU differences, and retain
    negative results. Fewer selected targets alone is not success.

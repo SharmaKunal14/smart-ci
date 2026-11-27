@@ -2,6 +2,15 @@
 
 Updated: 27 November 2026
 
+In progress: remove the separate manual map-publisher setup from Action onboarding.
+The same pinned Action will run full native enrollment on an explicitly approved
+branch push, derive publisher identity from base-owned configuration/workflow,
+and reuse validated evidence on the next eligible PR. Verify wrong-origin and
+failed-enrollment rejection, then one fresh GitHub enrollment and a paired real
+PR against the unchanged native control. Report enrollment separately and include
+it when discussing aggregate compute; do not claim faster PRs alone repay an
+additional full post-push job. No selector safety changes, models or AWS work.
+
 Verified native Action milestone: [Smart CI PR #31](https://github.com/SharmaKunal14/smart-ci/pull/31)
 and the pinned CLI 0.2.0a1 prerelease deliver the reviewed Bazel lifecycle through
 one Action step. Real Abseil passing PRs measured **897/509 s** native/Action;
