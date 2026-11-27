@@ -5,7 +5,8 @@ Updated: 27 November 2026
 Current direction: retire automatic test generation/repair and make **no more paid
 model calls**. Keep every model campaign disabled and preserve the honest negative
 [generation/repair results](docs/onboarding/generated-test-experiment.md). Prior
-approvals do not authorize another investigation. The next deliverable is the
+approvals do not authorize another investigation. Implemented in
+[Smart CI PR #28](https://github.com/SharmaKunal14/smart-ci/pull/28): the
 minimal [deterministic coverage-gap report](docs/onboarding/coverage-gaps.md): flag
 changed executable lines with no observed execution at the exact revision and
 environment, distinguish missing/stale evidence from measured zero, and ask the
@@ -22,6 +23,19 @@ including full-fallback overhead. Do not substitute an experimental runtime
 subset's speed for production savings. No merges, AWS work or unrelated
 infrastructure. The earlier experiment descriptions below are historical and do
 not override this direction.
+
+Completed GitHub verification: [Textual PR #17](https://github.com/SharmaKunal14/textual/pull/17)
+measured 368 seconds native versus 393 seconds Smart CI; [PR #18](https://github.com/SharmaKunal14/textual/pull/18)
+measured 360 versus 397 seconds. Both retained full fallback: 251 files / 3,467
+case outcomes, zero omissions and zero missed observed full-suite failures. The
+report correctly flags PR #18's changed `_update_rows` line as unexecuted despite
+its green full suite. Discovery/planning costs about 36 seconds; reporting costs
+0.43 seconds. This validates the advisory report, **not selective savings**. The
+[result record](docs/benchmarks/textual-coverage-report-2026-11-27.json) also retains
+the initial missing-receipt adapter error and repeated-run cost. The next product
+gate remains a supported deterministic subset with lower complete GitHub time;
+do not remove unknown-dependency fallback to manufacture that result. No further
+model investigations or test generation are authorized.
 
 Textual [source-read provenance](docs/onboarding/runtime-read-provenance.md) is now
 verified on [PR #14](https://github.com/SharmaKunal14/textual/pull/14),
