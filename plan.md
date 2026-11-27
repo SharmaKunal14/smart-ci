@@ -2,6 +2,29 @@
 
 Updated: 27 November 2026
 
+Verified native Action milestone: [Smart CI PR #31](https://github.com/SharmaKunal14/smart-ci/pull/31)
+and the pinned CLI 0.2.0a1 prerelease deliver the reviewed Bazel lifecycle through
+one Action step. Real Abseil passing PRs measured **897/509 s** native/Action;
+the known compiler regression measured **903/326 s**. Both selected 2/252 test
+targets and retained all 324 build-only targets, with no missed observed native
+failures. All setup, retrieval, planning, validation and uploads are included.
+These are cold localized cases on differing CPUs; earlier warm-cache results
+remain negative. The first bundled preset is Abseil-specific, not universal
+repository compatibility. See [the verified delivery guide](docs/onboarding/github-action.md)
+and [evidence record](docs/benchmarks/native-action-alpha-2026-11-27.json).
+No PRs were merged and no model calls or AWS deployment were made.
+
+Current milestone (explicitly reprioritized): **native build graphs and GitHub Action delivery**.
+Textual remains an unsupported selective profile; it is no longer the acceptance
+repository for this milestone. Ship the existing Bazel lifecycle through the same
+CLI and a pinned composite Action. Verify installation, base-owned configuration,
+authenticated map reuse/reconstruction, native failure propagation and a real PR
+comparison. The first bundled adapter is the reviewed Abseil GCC/C++17 profile,
+not arbitrary Bazel projects. Cold-run savings and warm-cache losses must remain
+separate; the new delivery interface itself does not establish a speed benefit.
+See [the Action delivery guide](docs/onboarding/github-action.md). No model calls,
+merges, AWS work or unrelated features are authorized.
+
 Latest scoped-fallback iteration: [finite import expansion](docs/onboarding/scoped-import-fallback.md)
 records every possible target of a verified inline tuple import and uses the
 existing base/head transitive selection rules. It introduces no scope exemptions.
@@ -35,7 +58,7 @@ operate a separate CLI service. Keep the current priority on supported
 dependency evidence and measured end-to-end GitHub savings before expanding
 Action packaging. Installation convenience is not performance evidence. No
 GitHub App, SaaS service, AWS infrastructure or model calls are part of this
-delivery decision. The Action is a required delivery interface, not yet shipped.
+delivery decision. The pinned alpha Action is shipped for the reviewed native profile above; broader profiles and production rollout remain unproven.
 
 Current direction: retire automatic test generation/repair and make **no more paid
 model calls**. Keep every model campaign disabled and preserve the honest negative

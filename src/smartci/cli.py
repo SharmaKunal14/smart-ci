@@ -6,7 +6,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from . import coverage_gaps
+from . import coverage_gaps, github_action
 from .adapters.results import RunReport
 from .adapters.suite import SuiteConfig, discover, execute, manifest
 from .bazel import commands as bazel_commands
@@ -65,6 +65,7 @@ CONTRACTS.update(
         "bazel-capture": BazelCaptureConfig,
         "bazel-execution": BazelExecutionConfig,
         "bazel-publisher": BazelPublisher,
+        "native-action-policy": github_action.ActionPolicy,
     }
 )
 
@@ -96,6 +97,7 @@ def main() -> int:
     investigation_commands.add_parser(sub)
     ts_commands.add_parser(sub)
     bazel_commands.add_parser(sub)
+    github_action.add_parser(sub)
     gaps = sub.add_parser(
         "coverage-gaps",
         help="report changed-line coverage; never select or generate tests",
@@ -165,6 +167,8 @@ def main() -> int:
         if command == "run":
             adapter.add_argument("--decision", type=Path)
     args = parser.parse_args()
+    if args.command == "github-action":
+        return github_action.command(args)
     if args.command == "coverage-gaps":
         return coverage_command(args)
     if args.command == "bazel":
@@ -369,3 +373,7 @@ def adapter_command(args: argparse.Namespace) -> int:
     except (OSError, ValueError):
         print(json.dumps({"status": "incomplete", "code": "ADAPTER_OR_OUTPUT_ERROR"}))
         return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

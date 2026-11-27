@@ -1,0 +1,494 @@
+{
+  "schema_version": "smartci.native-action-evaluation.v1",
+  "date": "2026-11-27",
+  "repository": "SharmaKunal14/abseil-cpp",
+  "action_commit": "b2160a7e5c3571dc9bcc1ec7fdd34ad886a2e542",
+  "implementation_pr": "https://github.com/SharmaKunal14/smart-ci/pull/31",
+  "release": {
+    "tag": "cli-v0.2.0a1",
+    "wheel": "smartci-0.2.0a1-py3-none-any.whl",
+    "sha256": "b8ae0c3424a4794d3ef6e495bbe8ef461187b57e28f8d74d4acfea26ddf8d98e"
+  },
+  "release_check": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45949086653",
+  "release_check_tests_passed": 1121,
+  "native_profile": {
+    "schema_version": "1",
+    "repository": "SharmaKunal14/abseil-cpp",
+    "bazel_version": "9.1.0",
+    "command_digest": "03239a4a9294eecfa5270d397cb0250824f8930e6dcc42c4fe37955ae0c2ade1",
+    "environment_digest": "e5298946537e8d27609f5e2915f154f7e84072e8cb404ca18d059196fc226c2f",
+    "options_digest": "10df8ca5ba46367b03a887aecaf3e8361c2dd235d783eedf0e813de5ba8d7623",
+    "query_mode": "unconfigured-deps-all",
+    "change_model": "reviewed-declared-cpp-inputs-v1"
+  },
+  "map": {
+    "run_id": 45764627612,
+    "artifact_id": 15091334618,
+    "anchor_revision": "622fd1c2829655d595ffeca8656382ff305a5ddb",
+    "manifest_digest": "51ff2469ab7671530a93b24379faa07176dc9ea102a0f50b188915f8ce6ce640",
+    "rebuilt_in_pr": false,
+    "prior_enrollment_seconds": 661,
+    "prior_enrollment_cost_not_in_pr_savings": true
+  },
+  "cases": [
+    {
+      "case": "passing",
+      "arms": {
+        "native": {
+          "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45949727498",
+          "run_id": 45949727498,
+          "event": "pull_request",
+          "head": "fdeb7e837cf0e8766880618312fc3bc8feed9e70",
+          "created_at": "2026-11-27T06:06:18Z",
+          "completed_at": "2026-11-27T06:21:15Z",
+          "conclusion": "success",
+          "workflow_seconds": 897.0,
+          "job_seconds": 895.0,
+          "command_seconds": 883.007231435,
+          "exit_code": 0,
+          "runner_cpu": "AMD EPYC 9V74 80-Core Processor",
+          "visible_cpus": "4",
+          "native_test_targets_with_results": 252,
+          "build_target_configurations": 576,
+          "failed_build_targets": [],
+          "failed_tests": {},
+          "native_actions_executed": 2988,
+          "runner_policy_restored": true,
+          "artifacts_sha256": {
+            "independent-native-1/native-control/native.bep.json": "3d772ddbd918ae0d73aeb228c9f17d7f96294a7e390b6a45feaf14c90e78767b",
+            "independent-native-1/native-control/execution.json": "9ff511e430e6e4b8563e06ef4b8f207e19b0cdf0d76bca87cf0119997726e904",
+            "run.json": "c62ba2deb48e0bb25944fa8cc04651a0873ba50e9f4b595027fc36792ce8e3ad",
+            "jobs.json": "c8f682619fe272b2a08faaf94f68ba1cdbef2c80b0b0b2279f242e7a34c59542",
+            "independent-native-1/runner-policy/cpu.json": "98c62a06660a1033c081a6cfcd0a887866abb5d4052c867cd7d45525d61bde86"
+          },
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "seconds": 1.0
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "conclusion": "success",
+              "seconds": 2.0
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "conclusion": "success",
+              "seconds": 1.0
+            },
+            {
+              "name": "Bound unused system crash processing on this disposable runner",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Bound the separate Apport crash-report hook",
+              "conclusion": "success",
+              "seconds": 1.0
+            },
+            {
+              "name": "Run the independent complete native suite",
+              "conclusion": "success",
+              "seconds": 883.0
+            },
+            {
+              "name": "Restore the Apport hook on the disposable runner",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Restore disposable runner policy",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Publish native execution and map lifecycle evidence",
+              "conclusion": "success",
+              "seconds": 2.0
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "seconds": 1.0
+            }
+          ],
+          "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/28"
+        },
+        "smart": {
+          "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45949727018",
+          "run_id": 45949727018,
+          "event": "pull_request",
+          "head": "fdeb7e837cf0e8766880618312fc3bc8feed9e70",
+          "created_at": "2026-11-27T06:06:17Z",
+          "completed_at": "2026-11-27T06:14:46Z",
+          "conclusion": "success",
+          "workflow_seconds": 509.0,
+          "job_seconds": 506.0,
+          "command_seconds": 484.82733278899997,
+          "exit_code": 0,
+          "runner_cpu": "AMD EPYC 7763 64-Core Processor",
+          "visible_cpus": "4",
+          "native_test_targets_with_results": 2,
+          "build_target_configurations": 326,
+          "failed_build_targets": [],
+          "failed_tests": {},
+          "native_actions_executed": 1092,
+          "runner_policy_restored": true,
+          "artifacts_sha256": {
+            "smartci-native-test-1/native-pr/execution/capture/native.bep.json": "f64bee293a0071da36f67541aedd12cc5d95e5c93f1e2c1e5b70c3b1c70781ab",
+            "smartci-native-test-1/native-pr/execution/execution.json": "367c34c107e2ef2a18071de3e9ca53f463af764ef19ba9a0624e2f0436256f61",
+            "run.json": "f79748e17f11c7e914cca9f90e5f37e8caae96d2336ec23da18566578142c14e",
+            "jobs.json": "365bc7ccd8036f67c14b1cbdb5007d5831898a6901c901ebccb4f8845e3246ca",
+            "action-runner-1/cpu.json": "eda047d6a2a8a735ae06c3c4b5fe8cf2f09af8a2646057a1a5bcab415d0b6401"
+          },
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "seconds": 1.0
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "conclusion": "success",
+              "seconds": 3.0
+            },
+            {
+              "name": "Bound unused system crash processing on this disposable runner",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Bound the separate Apport crash-report hook",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Plan and execute through the released Smart CI Action",
+              "conclusion": "success",
+              "seconds": 498.0
+            },
+            {
+              "name": "Restore the Apport hook on the disposable runner",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Restore disposable runner policy",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Publish native execution and map lifecycle evidence",
+              "conclusion": "success",
+              "seconds": 1.0
+            },
+            {
+              "name": "Post Plan and execute through the released Smart CI Action",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "seconds": 0.0
+            }
+          ],
+          "mode": "subset",
+          "fallback": [],
+          "selected": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "omitted_count": 250,
+          "retained_build_only_targets": 324,
+          "planning_seconds": 0.6570641719999983,
+          "map": {
+            "map": "retrieved",
+            "rebuild": null
+          },
+          "source_comparison": {
+            "base": "6712b3604d2f45b604ae6557bdff78cc83d22d43",
+            "head": "fdeb7e837cf0e8766880618312fc3bc8feed9e70"
+          },
+          "delivery_phase_seconds": {
+            "stage": 0.252555,
+            "install": 5.832835,
+            "map_retrieval_validation": 3.403456,
+            "lifecycle_and_planning": 2.081554,
+            "before_native_total": 11.5704
+          },
+          "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/29"
+        }
+      },
+      "eligible_test_targets": 252,
+      "missed_observed_failures": [],
+      "failure_sets_equal": true,
+      "retained_native_build_scope_verified": true,
+      "seconds_saved": 388.0,
+      "percent_saved": 43.25529542920847,
+      "individual_test_case_counts": "not measured; counts here are native Bazel targets",
+      "timing_boundary": "GitHub run.created_at through terminal run.updated_at, including queue/setup/execution/cleanup/upload; not the original PR creation time for a synchronized rerun"
+    },
+    {
+      "case": "regression",
+      "arms": {
+        "native": {
+          "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45951340615",
+          "run_id": 45951340615,
+          "event": "pull_request",
+          "head": "1e83166d70a8ac0d99f60f743bf13f07a3cacb5c",
+          "created_at": "2026-11-27T06:21:37Z",
+          "completed_at": "2026-11-27T06:36:40Z",
+          "conclusion": "failure",
+          "workflow_seconds": 903.0,
+          "job_seconds": 899.0,
+          "command_seconds": 888.381187324,
+          "exit_code": 1,
+          "runner_cpu": "AMD EPYC 9V74 80-Core Processor",
+          "visible_cpus": "4",
+          "native_test_targets_with_results": 250,
+          "build_target_configurations": 576,
+          "failed_build_targets": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "failed_tests": {},
+          "native_actions_executed": 2982,
+          "runner_policy_restored": true,
+          "artifacts_sha256": {
+            "independent-native-1/native-control/native.bep.json": "01bc2b19dcf09716772b68f3ccd6f56610501901835f9c0d3c727d3196afb2a8",
+            "independent-native-1/native-control/execution.json": "f858300e89c73e99287d94ce2e7bccef80c013b56e6b1842aa44080b81d0655f",
+            "run.json": "ba030619a1f1ef5d7add4dd72c78a0c25ade759cfe4e3102f1d7e4eb6aac435b",
+            "jobs.json": "fd2f8b63617c3a923669f79ca7322113d9eec54e1e1c15b545024f7290642f8a",
+            "independent-native-1/runner-policy/cpu.json": "98c62a06660a1033c081a6cfcd0a887866abb5d4052c867cd7d45525d61bde86"
+          },
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "conclusion": "success",
+              "seconds": 4.0
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Bound unused system crash processing on this disposable runner",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Bound the separate Apport crash-report hook",
+              "conclusion": "success",
+              "seconds": 1.0
+            },
+            {
+              "name": "Run the independent complete native suite",
+              "conclusion": "failure",
+              "seconds": 888.0
+            },
+            {
+              "name": "Restore the Apport hook on the disposable runner",
+              "conclusion": "success",
+              "seconds": 1.0
+            },
+            {
+              "name": "Restore disposable runner policy",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Publish native execution and map lifecycle evidence",
+              "conclusion": "success",
+              "seconds": 1.0
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "conclusion": "success",
+              "seconds": 1.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "seconds": 0.0
+            }
+          ],
+          "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/31"
+        },
+        "smart": {
+          "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45950973426",
+          "run_id": 45950973426,
+          "event": "pull_request",
+          "head": "1e83166d70a8ac0d99f60f743bf13f07a3cacb5c",
+          "created_at": "2026-11-27T06:18:09Z",
+          "completed_at": "2026-11-27T06:23:35Z",
+          "conclusion": "failure",
+          "workflow_seconds": 326.0,
+          "job_seconds": 322.0,
+          "command_seconds": 287.39092953200003,
+          "exit_code": 1,
+          "runner_cpu": "Intel(R) Xeon(R) 6975P-C",
+          "visible_cpus": "4",
+          "native_test_targets_with_results": 0,
+          "build_target_configurations": 326,
+          "failed_build_targets": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "failed_tests": {},
+          "native_actions_executed": 1086,
+          "runner_policy_restored": true,
+          "artifacts_sha256": {
+            "smartci-native-test-1/native-pr/execution/capture/native.bep.json": "704e9c512bc6c319d0a296a420181f1f751faafdb5649ea201fb5e4ff7e7b088",
+            "smartci-native-test-1/native-pr/execution/execution.json": "9c7e3586207712925b620bf3c50a5b17ef3c09fee5c9075ff1b6ce79256c8fed",
+            "run.json": "b10b6a052ce8423a7568a2f94b16e030b6676620599083f4e42fde8e036cd0ed",
+            "jobs.json": "ab1e270ef6c362b0a6f29105038a90b1290188a9a1649202efd75496fac12d78",
+            "action-runner-1/cpu.json": "c52152516043af950817d9a6418d9768113006132756117a407d89a24b7a91cf"
+          },
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "seconds": 3.0
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "conclusion": "success",
+              "seconds": 5.0
+            },
+            {
+              "name": "Bound unused system crash processing on this disposable runner",
+              "conclusion": "success",
+              "seconds": 1.0
+            },
+            {
+              "name": "Bound the separate Apport crash-report hook",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Plan and execute through the released Smart CI Action",
+              "conclusion": "failure",
+              "seconds": 307.0
+            },
+            {
+              "name": "Restore the Apport hook on the disposable runner",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Restore disposable runner policy",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Publish native execution and map lifecycle evidence",
+              "conclusion": "success",
+              "seconds": 1.0
+            },
+            {
+              "name": "Post Plan and execute through the released Smart CI Action",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "conclusion": "success",
+              "seconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "seconds": 0.0
+            }
+          ],
+          "mode": "subset",
+          "fallback": [],
+          "selected": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "omitted_count": 250,
+          "retained_build_only_targets": 324,
+          "planning_seconds": 0.4110740050000459,
+          "map": {
+            "map": "retrieved",
+            "rebuild": null
+          },
+          "source_comparison": {
+            "base": "5b6d60aa8d8c53139a45944f0957a4966d2425cb",
+            "head": "1e83166d70a8ac0d99f60f743bf13f07a3cacb5c"
+          },
+          "delivery_phase_seconds": {
+            "stage": 1.480866,
+            "install": 6.565386,
+            "map_retrieval_validation": 7.452797,
+            "lifecycle_and_planning": 1.364157,
+            "before_native_total": 16.863206
+          },
+          "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/30"
+        }
+      },
+      "eligible_test_targets": 252,
+      "missed_observed_failures": [],
+      "failure_sets_equal": true,
+      "retained_native_build_scope_verified": true,
+      "seconds_saved": 577.0,
+      "percent_saved": 63.89811738648948,
+      "individual_test_case_counts": "not measured; counts here are native Bazel targets",
+      "timing_boundary": "GitHub run.created_at through terminal run.updated_at, including queue/setup/execution/cleanup/upload; not the original PR creation time for a synchronized rerun"
+    }
+  ],
+  "setup_failures": {
+    "cause": "Unquoted colon in comparison workflow names; corrected on base and both heads rebased together before native execution.",
+    "run_ids": [
+      45949505848,
+      45949505827,
+      45949505765,
+      45949504631,
+      45949504597,
+      45949504592
+    ],
+    "runner_jobs_started": 0
+  },
+  "limits": [
+    "One historical localized fix and its reverse compiler regression, not a representative average.",
+    "Both pairs had different runner CPU models despite the same four-CPU Ubuntu label and pinned native image.",
+    "Public cold profile without upstream private cache; earlier valid warm-cache pairs were slower with Smart CI (198/209 and 289/307 seconds).",
+    "Counts are Bazel targets/configurations, not individual test cases.",
+    "A passing pair has no failures for estimating recall; the regression pair demonstrates only two known compiler failures.",
+    "Declared C++ inputs are a reviewed contract, not a proof of arbitrary runtime hermeticity.",
+    "GitHub workflow creation through terminal completion includes queue/setup/planning/native execution/validation/upload/cleanup; analysis of downloaded evidence is post-run verification.",
+    "Artifacts retained seven days; the record preserves source/run identities and evidence hashes."
+  ],
+  "model_calls": 0,
+  "aws_deployments": 0,
+  "merges": 0
+}

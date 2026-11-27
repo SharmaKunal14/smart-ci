@@ -1,0 +1,275 @@
+{
+  "$defs": {
+    "CaptureCommand": {
+      "additionalProperties": false,
+      "properties": {
+        "argv": {
+          "items": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Argv",
+          "type": "array"
+        },
+        "timeout_seconds": {
+          "maximum": 1800,
+          "minimum": 1,
+          "title": "Timeout Seconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "argv",
+        "timeout_seconds"
+      ],
+      "title": "CaptureCommand",
+      "type": "object"
+    },
+    "CaptureConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "profile": {
+          "$ref": "#/$defs/Profile"
+        },
+        "native": {
+          "$ref": "#/$defs/CaptureCommand"
+        },
+        "query": {
+          "$ref": "#/$defs/CaptureCommand"
+        }
+      },
+      "required": [
+        "schema_version",
+        "profile",
+        "native",
+        "query"
+      ],
+      "title": "CaptureConfig",
+      "type": "object"
+    },
+    "ExecutionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "profile": {
+          "$ref": "#/$defs/Profile"
+        },
+        "full": {
+          "$ref": "#/$defs/CaptureCommand"
+        },
+        "subset": {
+          "$ref": "#/$defs/CaptureCommand"
+        },
+        "subset_options_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Subset Options Digest",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "profile",
+        "full",
+        "subset",
+        "subset_options_digest"
+      ],
+      "title": "ExecutionConfig",
+      "type": "object"
+    },
+    "Profile": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,199}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "bazel_version": {
+          "maxLength": 32,
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "title": "Bazel Version",
+          "type": "string"
+        },
+        "command_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Command Digest",
+          "type": "string"
+        },
+        "options_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Options Digest",
+          "type": "string"
+        },
+        "environment_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Environment Digest",
+          "type": "string"
+        },
+        "query_mode": {
+          "const": "unconfigured-deps-all",
+          "title": "Query Mode",
+          "type": "string"
+        },
+        "change_model": {
+          "const": "reviewed-declared-cpp-inputs-v1",
+          "title": "Change Model",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "repository",
+        "bazel_version",
+        "command_digest",
+        "options_digest",
+        "environment_digest",
+        "query_mode",
+        "change_model"
+      ],
+      "title": "Profile",
+      "type": "object"
+    },
+    "Publisher": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "default": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "repository": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9_][A-Za-z0-9_.-]{0,99}$",
+          "title": "Repository",
+          "type": "string"
+        },
+        "branch": {
+          "pattern": "^[A-Za-z0-9_][A-Za-z0-9_./-]{0,199}$",
+          "title": "Branch",
+          "type": "string"
+        },
+        "workflow": {
+          "pattern": "^\\.github/workflows/[A-Za-z0-9_-]+\\.ya?ml$",
+          "title": "Workflow",
+          "type": "string"
+        },
+        "workflow_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Workflow Digest",
+          "type": "string"
+        },
+        "event": {
+          "default": "push",
+          "enum": [
+            "push",
+            "workflow_dispatch"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "artifact_prefix": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Artifact Prefix",
+          "type": "string"
+        },
+        "max_age_seconds": {
+          "default": 604800,
+          "maximum": 604800,
+          "minimum": 1,
+          "title": "Max Age Seconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "repository",
+        "branch",
+        "workflow",
+        "workflow_digest",
+        "artifact_prefix"
+      ],
+      "title": "Publisher",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Files",
+      "type": "array"
+    },
+    "capture": {
+      "$ref": "#/$defs/CaptureConfig"
+    },
+    "execution": {
+      "$ref": "#/$defs/ExecutionConfig"
+    },
+    "fallback": {
+      "$ref": "#/$defs/CaptureCommand"
+    },
+    "publisher": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Publisher"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "publisher_capture": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CaptureConfig"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "must_run": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10000,
+      "title": "Must Run",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "files",
+    "capture",
+    "execution",
+    "fallback"
+  ],
+  "title": "ActionPolicy",
+  "type": "object"
+}

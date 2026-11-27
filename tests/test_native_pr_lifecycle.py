@@ -1,20 +1,12 @@
-import importlib.util
 import json
-from pathlib import Path
 
 import pytest
 from test_bazel_bundle import capture  # noqa: F401
 from test_bazel_execution import execution_case  # noqa: F401
 
+from smartci.bazel import lifecycle as module
 from smartci.bazel.bundle import canonical
 from smartci.bazel.collection import CaptureConfig
-
-ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location(
-    "native_pr", ROOT / "examples/abseil/run_pr.py"
-)
-module = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(module)
 
 
 @pytest.mark.parametrize("cache", ["hit", "missing", "incompatible", "failed-rebuild"])

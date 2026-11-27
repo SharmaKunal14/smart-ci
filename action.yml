@@ -1,0 +1,83 @@
+name: Smart CI native tests
+description: Deterministic Bazel test selection using a pinned reusable Smart CI CLI
+inputs:
+  path:
+    description: Clean PR head checkout, relative to GITHUB_WORKSPACE
+    default: '.'
+  config:
+    description: Repository configuration read from the PR base revision
+    default: '.smartci/native.json'
+  token:
+    description: Read-only token used only to retrieve approved map evidence
+    default: ${{ github.token }}
+  force-full:
+    description: Run the independent full command without rebuilding or selecting
+    default: 'false'
+outputs:
+  mode:
+    description: full, subset, or unknown on infrastructure failure
+    value: ${{ steps.summary.outputs.mode }}
+  status:
+    description: Native execution status
+    value: ${{ steps.summary.outputs.status }}
+  selected-tests:
+    description: Planned Bazel target count, not individual test cases
+    value: ${{ steps.summary.outputs.selected-tests }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+      continue-on-error: true
+      with:
+        python-version: '3.14'
+    - name: Read reviewed base configuration and verify PR context
+      id: context
+      shell: bash
+      env:
+        ACTION_ROOT: ${{ github.action_path }}
+        SOURCE_PATH: ${{ inputs.path }}
+        CONFIG_PATH: ${{ inputs.config }}
+      run: python3 -I "$ACTION_ROOT/action/bootstrap.py" stage
+    - name: Install the pinned CLI release
+      id: install
+      continue-on-error: true
+      shell: bash
+      env:
+        ACTION_ROOT: ${{ github.action_path }}
+      run: python3 -I "$ACTION_ROOT/action/bootstrap.py" install
+    - name: Retrieve authenticated native dependency evidence
+      id: prepare
+      if: steps.install.outcome == 'success'
+      continue-on-error: true
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        CLI_PYTHON: ${{ steps.install.outputs.python }}
+        ACTION_STATE: ${{ steps.context.outputs.state }}
+      run: '"$CLI_PYTHON" -I -m smartci.cli github-action prepare --state "$ACTION_STATE"'
+    - name: Execute native selection or independent full fallback
+      shell: bash
+      env:
+        ACTION_ROOT: ${{ github.action_path }}
+        CLI_READY: ${{ steps.install.outcome == 'success' && steps.prepare.outcome == 'success' }}
+        FORCE_FULL: ${{ inputs.force-full }}
+      run: python3 -I "$ACTION_ROOT/action/bootstrap.py" execute
+    - name: Summarize execution
+      id: summary
+      if: always() && steps.context.outcome == 'success'
+      shell: bash
+      env:
+        ACTION_ROOT: ${{ github.action_path }}
+      run: python3 -I "$ACTION_ROOT/action/bootstrap.py" summary
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      if: always() && steps.context.outcome == 'success'
+      with:
+        name: smartci-native-${{ github.job }}-${{ github.run_attempt }}
+        path: |
+          ${{ steps.context.outputs.state }}/native-pr
+          ${{ steps.context.outputs.state }}/installation-fallback
+          ${{ steps.context.outputs.state }}/fallback.json
+          ${{ steps.context.outputs.state }}/map/fetch.json
+          ${{ steps.context.outputs.state }}/fetch-error.json
+        retention-days: 7
+        if-no-files-found: warn
