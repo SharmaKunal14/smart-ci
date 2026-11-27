@@ -1,0 +1,2439 @@
+{
+  "schema_version": "smartci.matched-github-benchmark.v1",
+  "campaign": "native-action-matched",
+  "report_date_sydney": "2026-11-28",
+  "predeclaration": "https://github.com/SharmaKunal14/smart-ci/blob/0b16cf4/docs/benchmarks/native-action-matched-campaign.md",
+  "implementation_pr": "https://github.com/SharmaKunal14/smart-ci/pull/34",
+  "action_commit": "e780aeb00eb5b81c35b062c65734067c03279754",
+  "cli_release": "cli-v0.2.0a2",
+  "cli_sha256": "a3940b1281c4af1b51850cbf5825ef3d570c2c5dbf19681af9bc529ac2e6d9d3",
+  "scope": "One unchanged passing source refactor, four order-balanced same-VM pairs, warm native disk cache and reset filesystem memory caches. No claim about all repositories or failure recall.",
+  "seed": {
+    "revision": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+    "run_id": 46000242013,
+    "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/46000242013",
+    "receipt": {
+      "bytes": 858057215,
+      "files": 7564,
+      "schema_version": "1",
+      "tree_digest": "34939fc050fd75dbbeed1a477d1f0beb11bb04654757ccc8209864f8196fe025"
+    },
+    "identity": {
+      "key": "smartci-native-v1-4b3a73d04b03e502be99cb35835b472dfa85b814-e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6-e780aeb00eb5b81c35b062c65734067c03279754",
+      "profile_sha256": "e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6",
+      "revision": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+      "schema_version": "1",
+      "tool_revision": "e780aeb00eb5b81c35b062c65734067c03279754"
+    },
+    "manifest_digest": "84ab87afd2dbbdc0ebdd02a43b5dfe441d3e36010c4d1718b5927466154cf553",
+    "workflow_seconds": 692.0,
+    "runner_seconds": 689.0,
+    "native_seconds": 644.312851872,
+    "query_seconds": 8.527897497000026,
+    "runner_cpu": "Intel(R) Xeon(R) 6975P-C",
+    "visible_cpus": "4",
+    "native_test_targets": 252,
+    "build_only_targets": 324,
+    "cache": {
+      "id": 11202450055,
+      "ref": "refs/heads/codex/action-matched-base",
+      "key": "smartci-native-v1-4b3a73d04b03e502be99cb35835b472dfa85b814-e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6-e780aeb00eb5b81c35b062c65734067c03279754",
+      "version": "21104d45a637519b20c640f9bb169051a0f2a2b9c9b6185358ed29e1f2689c62",
+      "last_accessed_at": "2026-11-27T12:49:18.513477Z",
+      "created_at": "2026-11-27T12:49:18.513477Z",
+      "size_in_bytes": 112970857
+    },
+    "artifacts": [
+      {
+        "id": 15199245227,
+        "node_id": "MDg6QXJ0aWZhY3QxNTE5OTI0NTIyNw==",
+        "name": "smartci-native-map-1",
+        "size_in_bytes": 353728,
+        "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199245227",
+        "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199245227/zip",
+        "expired": false,
+        "digest": "sha256:8888af315d10553831b636d5274d3cc55c8633dbe2a5e11bfb1973c89cb7b9f8",
+        "created_at": "2026-11-27T12:49:09Z",
+        "updated_at": "2026-11-27T12:49:09Z",
+        "expires_at": "2026-12-04T12:49:08Z",
+        "workflow_run": {
+          "id": 46000242013,
+          "repository_id": 1467690834,
+          "head_repository_id": 1467690834,
+          "head_branch": "codex/action-matched-base",
+          "head_sha": "4b3a73d04b03e502be99cb35835b472dfa85b814"
+        }
+      },
+      {
+        "id": 15199190404,
+        "node_id": "MDg6QXJ0aWZhY3QxNTE5OTE5MDQwNA==",
+        "name": "smartci-native-collect-1",
+        "size_in_bytes": 1754100,
+        "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199190404",
+        "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199190404/zip",
+        "expired": false,
+        "digest": "sha256:527fcdfbf539684db2c3bcd083dc0b83564f47139fcb572b2a4879042d8f7eec",
+        "created_at": "2026-11-27T12:49:10Z",
+        "updated_at": "2026-11-27T12:49:10Z",
+        "expires_at": "2026-12-04T12:49:10Z",
+        "workflow_run": {
+          "id": 46000242013,
+          "repository_id": 1467690834,
+          "head_repository_id": 1467690834,
+          "head_branch": "codex/action-matched-base",
+          "head_sha": "4b3a73d04b03e502be99cb35835b472dfa85b814"
+        }
+      },
+      {
+        "id": 15198163096,
+        "node_id": "MDg6QXJ0aWZhY3QxNTE5ODE2MzA5Ng==",
+        "name": "native-cache-receipt-1",
+        "size_in_bytes": 565,
+        "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15198163096",
+        "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15198163096/zip",
+        "expired": false,
+        "digest": "sha256:babe7979732069a659547bb07df6ff1f1cc2560737b10e2a52e3b7963e671885",
+        "created_at": "2026-11-27T12:49:19Z",
+        "updated_at": "2026-11-27T12:49:19Z",
+        "expires_at": "2026-12-04T12:49:18Z",
+        "workflow_run": {
+          "id": 46000242013,
+          "repository_id": 1467690834,
+          "head_repository_id": 1467690834,
+          "head_branch": "codex/action-matched-base",
+          "head_sha": "4b3a73d04b03e502be99cb35835b472dfa85b814"
+        }
+      },
+      {
+        "id": 15197869026,
+        "node_id": "MDg6QXJ0aWZhY3QxNTE5Nzg2OTAyNg==",
+        "name": "matched-seed-cost-1",
+        "size_in_bytes": 6973,
+        "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15197869026",
+        "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15197869026/zip",
+        "expired": false,
+        "digest": "sha256:0bf5674ef01d7b7a0d87453e8c5b4324e283e0353f31029e7602387024a8ee12",
+        "created_at": "2026-11-27T12:49:20Z",
+        "updated_at": "2026-11-27T12:49:20Z",
+        "expires_at": "2026-12-04T12:49:19Z",
+        "workflow_run": {
+          "id": 46000242013,
+          "repository_id": 1467690834,
+          "head_repository_id": 1467690834,
+          "head_branch": "codex/action-matched-base",
+          "head_sha": "4b3a73d04b03e502be99cb35835b472dfa85b814"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "name": "Set up job",
+        "seconds": 3.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+        "seconds": 7.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+        "seconds": 1.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Prepare one isolated cache directory and exact key",
+        "seconds": 0.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Bound unused system crash processing on this disposable runner",
+        "seconds": 0.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Bound the separate Apport crash-report hook",
+        "seconds": 0.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Enroll using the published Action and native cached profile",
+        "seconds": 667.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Bound and fingerprint cache contents before publication",
+        "seconds": 1.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Require unused cache storage before saving this experiment",
+        "seconds": 3.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Save only the bounded reviewed base cache",
+        "seconds": 3.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Publish independent cache receipt",
+        "seconds": 1.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Restore the Apport hook on the disposable runner",
+        "seconds": 0.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Restore disposable runner policy",
+        "seconds": 0.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Publish seed runner and storage evidence",
+        "seconds": 1.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Enroll using the published Action and native cached profile",
+        "seconds": 0.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+        "seconds": 0.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+        "seconds": 0.0,
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "seconds": 0.0,
+        "conclusion": "success"
+      }
+    ]
+  },
+  "pairs": [
+    {
+      "pair": 1,
+      "valid_matched_pair": true,
+      "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/40",
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/46002042899",
+      "run_id": 46002042899,
+      "base": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+      "head": "77812711d4c052489b8bbd03eba7a50882f7b491",
+      "first": "full",
+      "runner_cpu": "Intel(R) Xeon(R) 6975P-C",
+      "visible_cpus": "4",
+      "same_vm_boot_hash": "520a8b3b24aeb2281290a72d66ad14e3cfb7cc3780c26b4dff655267a2fdba9d",
+      "image": "gcr.io/google.com/absl-177019/linux_hybrid-latest@sha256:baa99e65a3cc837bab8e5246f1870d25c76d0adf2b1d598ee5a3ec77fd2e19bd",
+      "joint_pr_to_result_seconds": 264.0,
+      "workflow_seconds": 261.0,
+      "joint_runner_seconds": 257.0,
+      "shared_runner_seconds": 158.02315934400002,
+      "shared_pr_seconds": 165.02315934400002,
+      "image_preload_seconds": 136.0,
+      "unallocated_smart_action_acquisition_upper_bound_seconds": 3.0,
+      "paired_arm_seconds_saved": -2.8556507439999947,
+      "saving_after_conservative_acquisition_bound_seconds": -5.855650743999995,
+      "arms": {
+        "full": {
+          "native_exit": 0,
+          "command_seconds": 32.951258026000005,
+          "native_bazel_elapsed_seconds": 29.92,
+          "native_command_outside_bazel_seconds": 3.0312580260000033,
+          "test_targets_with_outcomes": 252,
+          "build_target_configurations": 576,
+          "failed_build_targets": [],
+          "failed_tests": {},
+          "local_native_actions": 8,
+          "disk_cache_hits": 1655,
+          "cached_test_runs": 363,
+          "uncached_test_runs": 2,
+          "uncached_test_targets": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "native_runners": [
+            {
+              "name": "total",
+              "count": 2988
+            },
+            {
+              "name": "disk cache hit",
+              "count": 1655,
+              "execKind": "Remote"
+            },
+            {
+              "name": "internal",
+              "count": 1328
+            },
+            {
+              "name": "processwrapper-sandbox",
+              "count": 8,
+              "execKind": "Local"
+            }
+          ],
+          "bazel_timing": {
+            "cpuTimeInMs": "47900",
+            "wallTimeInMs": "28862",
+            "analysisPhaseTimeInMs": "6259",
+            "executionPhaseTimeInMs": "24430",
+            "actionsExecutionStartInMs": "4403",
+            "criticalPathTime": "15.923371426s"
+          },
+          "native_artifacts_sha256": {
+            "native.bep.json": "11e5160b9ee6156fed96577c6e9aca3a8bd9b97a1d06e4c6c902f49089a63750",
+            "execution.json": "eb69a23e9754deb0853f9dffd3fbada75c4d242c9cc0f2d0d495a2464d296fe6"
+          },
+          "interval": {
+            "end": {
+              "boot_hash": "520a8b3b24aeb2281290a72d66ad14e3cfb7cc3780c26b4dff655267a2fdba9d",
+              "monotonic_ns": 420732139045,
+              "outcome": "success",
+              "utc": "2026-11-27T12:54:03.121505+00:00"
+            },
+            "seconds": 48.060594956,
+            "start": {
+              "boot_hash": "520a8b3b24aeb2281290a72d66ad14e3cfb7cc3780c26b4dff655267a2fdba9d",
+              "monotonic_ns": 372671544089,
+              "utc": "2026-11-27T12:53:15.060909+00:00"
+            }
+          },
+          "arm_seconds": 48.060594956
+        },
+        "smart": {
+          "native_exit": 0,
+          "command_seconds": 28.152645466000024,
+          "native_bazel_elapsed_seconds": 25.648,
+          "native_command_outside_bazel_seconds": 2.5046454660000244,
+          "test_targets_with_outcomes": 2,
+          "build_target_configurations": 326,
+          "failed_build_targets": [],
+          "failed_tests": {},
+          "local_native_actions": 8,
+          "disk_cache_hits": 781,
+          "cached_test_runs": 0,
+          "uncached_test_runs": 2,
+          "uncached_test_targets": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "native_runners": [
+            {
+              "name": "total",
+              "count": 1092
+            },
+            {
+              "name": "disk cache hit",
+              "count": 781,
+              "execKind": "Remote"
+            },
+            {
+              "name": "internal",
+              "count": 303
+            },
+            {
+              "name": "processwrapper-sandbox",
+              "count": 8,
+              "execKind": "Local"
+            }
+          ],
+          "bazel_timing": {
+            "cpuTimeInMs": "33130",
+            "wallTimeInMs": "24584",
+            "analysisPhaseTimeInMs": "4546",
+            "executionPhaseTimeInMs": "20318",
+            "actionsExecutionStartInMs": "4240",
+            "criticalPathTime": "14.420513604s"
+          },
+          "native_artifacts_sha256": {
+            "native-pr/execution/capture/native.bep.json": "5b5b190bdd3e0cf1e9d94a32f74f4f169184d8b109a863c4a9f77d35107c9a04",
+            "native-pr/execution/execution.json": "b6bbc6e3a222c72ccfa453d4b9ab06ccce0149b82f219df8374cf4c2f8822792"
+          },
+          "mode": "subset",
+          "fallback": [],
+          "selected": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "omitted_count": 250,
+          "retained_build_only_targets": 324,
+          "planning_seconds": 0.39119176399998423,
+          "map": {
+            "map": "retrieved",
+            "rebuild": null
+          },
+          "fetch": {
+            "archive_digest": "8888af315d10553831b636d5274d3cc55c8633dbe2a5e11bfb1973c89cb7b9f8",
+            "artifact_id": 15199245227,
+            "config_digest": "c04d4b2b650f488c78b767d8c858ae37b0f8cb3c0e1be4b742985436de19a732",
+            "manifest_digest": "84ab87afd2dbbdc0ebdd02a43b5dfe441d3e36010c4d1718b5927466154cf553",
+            "map_revision": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+            "publisher_digest": "5c668b8b4cb7a182e555cdc3867650702c25406670f585479919b0f7fa71ff94",
+            "repository": "SharmaKunal14/abseil-cpp",
+            "revision": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+            "run_attempt": 1,
+            "run_id": 46000242013,
+            "schema_version": "smartci.bazel-fetch.v1",
+            "status": "ready"
+          },
+          "plan_sha256": "fdb93c1d07584056f5e4f69dd29c974cabea963c51213b2f7ff68abd8d52de45",
+          "interval": {
+            "end": {
+              "boot_hash": "520a8b3b24aeb2281290a72d66ad14e3cfb7cc3780c26b4dff655267a2fdba9d",
+              "monotonic_ns": 471685539755,
+              "outcome": "success",
+              "utc": "2026-11-27T12:54:54.074906+00:00"
+            },
+            "seconds": 50.9162457,
+            "start": {
+              "boot_hash": "520a8b3b24aeb2281290a72d66ad14e3cfb7cc3780c26b4dff655267a2fdba9d",
+              "monotonic_ns": 420769294055,
+              "utc": "2026-11-27T12:54:03.158660+00:00"
+            }
+          },
+          "arm_seconds": 50.9162457,
+          "action_steps": {
+            "__actions_setup-python": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 0.533
+            },
+            "context": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 1.607
+            },
+            "install": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 6.03
+            },
+            "prepare": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 4.131
+            },
+            "execute": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 29.594
+            },
+            "summary": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 0.065
+            },
+            "__actions_upload-artifact": {
+              "outcome": "skipped",
+              "conclusion": "skipped",
+              "seconds": 0.0
+            },
+            "__actions_upload-artifact_2": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 1.724
+            }
+          },
+          "action_pre_execution_seconds": 12.301
+        }
+      },
+      "single_arm_accounting_not_observed_pr_latency": {
+        "full_seconds": 213.0837543,
+        "smart_seconds": 215.939405044
+      },
+      "observed_full_failures": 0,
+      "missed_observed_failures": [],
+      "failure_sets_equal": true,
+      "retained_native_build_scope_verified": true,
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success",
+          "seconds": 3.0
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 5.0
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Load only the base-owned measurement helper and declared order",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Discover the approved cache seed for the exact PR base",
+          "conclusion": "success",
+          "seconds": 3.0
+        },
+        {
+          "name": "Download the reviewed seed receipt independently of cache bytes",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Validate base, tool and profile identity before cache lookup",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Bound unused system crash processing on this disposable runner",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Bound the separate Apport crash-report hook",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Load the identical compiler image before either measured arm",
+          "conclusion": "success",
+          "seconds": 136.0
+        },
+        {
+          "name": "Begin full_first measured interval",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Independently restore base cache for full_first",
+          "conclusion": "success",
+          "seconds": 4.0
+        },
+        {
+          "name": "Verify independent cache contents for full_first",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Match memory-cache state before full_first",
+          "conclusion": "success",
+          "seconds": 8.0
+        },
+        {
+          "name": "Execute unchanged full native suite for full_first",
+          "conclusion": "success",
+          "seconds": 33.0
+        },
+        {
+          "name": "Publish full native audit for full_first",
+          "conclusion": "success",
+          "seconds": 2.0
+        },
+        {
+          "name": "End full_first interval and isolate its used cache",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Begin smart_only measured interval",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Independently restore base cache for smart_only",
+          "conclusion": "success",
+          "seconds": 4.0
+        },
+        {
+          "name": "Verify independent cache contents for smart_only",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Match memory-cache state before smart_only",
+          "conclusion": "success",
+          "seconds": 3.0
+        },
+        {
+          "name": "Execute the unchanged published Smart CI Action",
+          "conclusion": "success",
+          "seconds": 44.0
+        },
+        {
+          "name": "Preserve independent cold full fallback on failed cache admission",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "End smart_only interval and isolate its used cache",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Begin full_second measured interval",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Independently restore base cache for full_second",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Verify independent cache contents for full_second",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Match memory-cache state before full_second",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Execute unchanged full native suite for full_second",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Publish full native audit for full_second",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "End full_second interval and isolate its used cache",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Restore the Apport hook on the disposable runner",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Restore disposable runner policy",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Require matched evidence and propagate either native failure",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Publish complete comparison and common setup evidence",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Post Execute the unchanged published Smart CI Action",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success",
+          "seconds": 0.0
+        }
+      ],
+      "artifact_metadata": [
+        {
+          "id": 15198657257,
+          "node_id": "MDg6QXJ0aWZhY3QxNTE5ODY1NzI1Nw==",
+          "name": "matched-native-full-1",
+          "size_in_bytes": 141943,
+          "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15198657257",
+          "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15198657257/zip",
+          "expired": false,
+          "digest": "sha256:e02607a153dc7b1df315eae8773e82571ba88214228ec2f9d135024c912975f5",
+          "created_at": "2026-11-27T12:54:02Z",
+          "updated_at": "2026-11-27T12:54:02Z",
+          "expires_at": "2026-12-04T12:54:01Z",
+          "workflow_run": {
+            "id": 46002042899,
+            "repository_id": 1467690834,
+            "head_repository_id": 1467690834,
+            "head_branch": "codex/action-matched-full-1",
+            "head_sha": "77812711d4c052489b8bbd03eba7a50882f7b491"
+          }
+        },
+        {
+          "id": 15198547955,
+          "node_id": "MDg6QXJ0aWZhY3QxNTE5ODU0Nzk1NQ==",
+          "name": "smartci-native-compare-1",
+          "size_in_bytes": 99939,
+          "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15198547955",
+          "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15198547955/zip",
+          "expired": false,
+          "digest": "sha256:d827a4df4de5be0b78b9d8b05e6fc34610a44f848c40be8259a8098038cea117",
+          "created_at": "2026-11-27T12:54:53Z",
+          "updated_at": "2026-11-27T12:54:53Z",
+          "expires_at": "2026-12-04T12:54:52Z",
+          "workflow_run": {
+            "id": 46002042899,
+            "repository_id": 1467690834,
+            "head_repository_id": 1467690834,
+            "head_branch": "codex/action-matched-full-1",
+            "head_sha": "77812711d4c052489b8bbd03eba7a50882f7b491"
+          }
+        },
+        {
+          "id": 15198158909,
+          "node_id": "MDg6QXJ0aWZhY3QxNTE5ODE1ODkwOQ==",
+          "name": "matched-comparison-1",
+          "size_in_bytes": 14095,
+          "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15198158909",
+          "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15198158909/zip",
+          "expired": false,
+          "digest": "sha256:01d8d7be540f2cfbbd50b09b67552b67e1b4407a87a2085956af81eac1b93a92",
+          "created_at": "2026-11-27T12:54:55Z",
+          "updated_at": "2026-11-27T12:54:55Z",
+          "expires_at": "2026-12-04T12:54:54Z",
+          "workflow_run": {
+            "id": 46002042899,
+            "repository_id": 1467690834,
+            "head_repository_id": 1467690834,
+            "head_branch": "codex/action-matched-full-1",
+            "head_sha": "77812711d4c052489b8bbd03eba7a50882f7b491"
+          }
+        }
+      ],
+      "metadata_sha256": {
+        "run.json": "f71c1f4d3a6a51a293adc9e25e9bb7847e8785568d67f69d23814733019ff7ae",
+        "jobs.json": "f555490121886008af53db699f0196258e2ea615df81f1a31a787cf13c0e89d8",
+        "pr.json": "41aa0f2905b92ddd275dddce272390d9721496cca93d67b16002d1d685439817",
+        "artifacts/matched-comparison-1/matched-evidence/comparison.json": "c3dc3c0fa51fe4f0300dc1b4611e6b4874d224d4cd35412c5c0f15a7060de88c",
+        "artifacts/matched-comparison-1/matched-evidence/context.json": "63ae95d58077592c71790e2c0b12c1abeeff93743cf0c0255d4059e0dbff8396",
+        "artifacts/matched-comparison-1/common-image.json": "91409f2c4e5d0ebeb04d2763296aceff38753f62b9930626b5dbaa06e84a3b1c",
+        "artifacts/matched-comparison-1/matched-evidence/full/cache-verified.json": "af9aea118ab773a95b0a7e121377b2cd47e9529169d0fd78ffec5a9afc5ded0b",
+        "artifacts/matched-comparison-1/matched-evidence/smart/cache-verified.json": "af9aea118ab773a95b0a7e121377b2cd47e9529169d0fd78ffec5a9afc5ded0b",
+        "artifacts/matched-comparison-1/matched-evidence/full/native-preparation.json": "28c7b17ca5579d1322591acd2cedd0834e37c6e4373a5ea816050c2f6f8e0149",
+        "artifacts/matched-comparison-1/matched-evidence/smart/native-preparation.json": "28c7b17ca5579d1322591acd2cedd0834e37c6e4373a5ea816050c2f6f8e0149",
+        "workflow.log": "a54f9bd7b4d68d02de4305afcc665dfb848ad78d7dc8508dafb724cfcc21d4a2"
+      },
+      "limitations": [
+        "Same-VM experiment, not two independently observed production PR latencies.",
+        "Shared setup includes some Smart-only Action acquisition; its unallocated cost is bounded by the complete job setup step.",
+        "Passing case has no failures from which to estimate recall.",
+        "Order balance and page-cache reset do not eliminate all temporal host noise.",
+        "Native disk cache warm; filesystem memory caches reset before each main invocation, unlike a normal cache restore that may leave pages warm."
+      ],
+      "posthoc_reset_cost_sensitivity": {
+        "reset_step_seconds": {
+          "full": 8.0,
+          "smart": 3.0
+        },
+        "paired_saving_minus_reset_cost_seconds": -7.855650743999995,
+        "limitation": "Subtracts coarse step cost only, not memory-state effects; not an observed no-reset production run."
+      }
+    },
+    {
+      "pair": 2,
+      "valid_matched_pair": true,
+      "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/41",
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/46002744991",
+      "run_id": 46002744991,
+      "base": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+      "head": "77812711d4c052489b8bbd03eba7a50882f7b491",
+      "first": "smart",
+      "runner_cpu": "Intel(R) Xeon(R) 6975P-C",
+      "visible_cpus": "4",
+      "same_vm_boot_hash": "ed760948e3498a031a65adfbf047795423a87edd5475bc153e4fedeb2f2be2e0",
+      "image": "gcr.io/google.com/absl-177019/linux_hybrid-latest@sha256:baa99e65a3cc837bab8e5246f1870d25c76d0adf2b1d598ee5a3ec77fd2e19bd",
+      "joint_pr_to_result_seconds": 263.0,
+      "workflow_seconds": 258.0,
+      "joint_runner_seconds": 256.0,
+      "shared_runner_seconds": 158.309251359,
+      "shared_pr_seconds": 165.309251359,
+      "image_preload_seconds": 141.0,
+      "unallocated_smart_action_acquisition_upper_bound_seconds": 3.0,
+      "paired_arm_seconds_saved": -16.964898153,
+      "saving_after_conservative_acquisition_bound_seconds": -19.964898153,
+      "arms": {
+        "full": {
+          "native_exit": 0,
+          "command_seconds": 34.22177923099997,
+          "native_bazel_elapsed_seconds": 31.471,
+          "native_command_outside_bazel_seconds": 2.750779230999971,
+          "test_targets_with_outcomes": 252,
+          "build_target_configurations": 576,
+          "failed_build_targets": [],
+          "failed_tests": {},
+          "local_native_actions": 8,
+          "disk_cache_hits": 1655,
+          "cached_test_runs": 363,
+          "uncached_test_runs": 2,
+          "uncached_test_targets": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "native_runners": [
+            {
+              "name": "total",
+              "count": 2988
+            },
+            {
+              "name": "disk cache hit",
+              "count": 1655,
+              "execKind": "Remote"
+            },
+            {
+              "name": "internal",
+              "count": 1328
+            },
+            {
+              "name": "processwrapper-sandbox",
+              "count": 8,
+              "execKind": "Local"
+            }
+          ],
+          "bazel_timing": {
+            "cpuTimeInMs": "48990",
+            "wallTimeInMs": "30286",
+            "analysisPhaseTimeInMs": "5955",
+            "executionPhaseTimeInMs": "26097",
+            "actionsExecutionStartInMs": "4156",
+            "criticalPathTime": "16.052739429s"
+          },
+          "native_artifacts_sha256": {
+            "native.bep.json": "254d053026625ba2f29909401766c82faf6c2145ba28bbe08b9fa6b2e16d1556",
+            "execution.json": "724052829745625748339c4d098fdc4d5ab30295e38abc23ee2164eafaeb1f20"
+          },
+          "interval": {
+            "end": {
+              "boot_hash": "ed760948e3498a031a65adfbf047795423a87edd5475bc153e4fedeb2f2be2e0",
+              "monotonic_ns": 538830678572,
+              "outcome": "success",
+              "utc": "2026-11-27T13:00:05.934280+00:00"
+            },
+            "seconds": 40.362925244,
+            "start": {
+              "boot_hash": "ed760948e3498a031a65adfbf047795423a87edd5475bc153e4fedeb2f2be2e0",
+              "monotonic_ns": 498467753328,
+              "utc": "2026-11-27T12:59:25.571356+00:00"
+            }
+          },
+          "arm_seconds": 40.362925244
+        },
+        "smart": {
+          "native_exit": 0,
+          "command_seconds": 31.18385404600002,
+          "native_bazel_elapsed_seconds": 28.031,
+          "native_command_outside_bazel_seconds": 3.152854046000023,
+          "test_targets_with_outcomes": 2,
+          "build_target_configurations": 326,
+          "failed_build_targets": [],
+          "failed_tests": {},
+          "local_native_actions": 8,
+          "disk_cache_hits": 781,
+          "cached_test_runs": 0,
+          "uncached_test_runs": 2,
+          "uncached_test_targets": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "native_runners": [
+            {
+              "name": "total",
+              "count": 1092
+            },
+            {
+              "name": "disk cache hit",
+              "count": 781,
+              "execKind": "Remote"
+            },
+            {
+              "name": "internal",
+              "count": 303
+            },
+            {
+              "name": "processwrapper-sandbox",
+              "count": 8,
+              "execKind": "Local"
+            }
+          ],
+          "bazel_timing": {
+            "cpuTimeInMs": "35320",
+            "wallTimeInMs": "26865",
+            "analysisPhaseTimeInMs": "4815",
+            "executionPhaseTimeInMs": "22496",
+            "actionsExecutionStartInMs": "4338",
+            "criticalPathTime": "16.728222248s"
+          },
+          "native_artifacts_sha256": {
+            "native-pr/execution/capture/native.bep.json": "ce96506d6e623fb886a334982c3e6b0fc67af9b6a979f5b5ab2cac99019b0ff4",
+            "native-pr/execution/execution.json": "a7fb97ddaab308516ea1d88f6e72804e6ea6dd1e48141fe4dff0cd636356e7dd"
+          },
+          "mode": "subset",
+          "fallback": [],
+          "selected": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "omitted_count": 250,
+          "retained_build_only_targets": 324,
+          "planning_seconds": 0.45149166900000637,
+          "map": {
+            "map": "retrieved",
+            "rebuild": null
+          },
+          "fetch": {
+            "archive_digest": "8888af315d10553831b636d5274d3cc55c8633dbe2a5e11bfb1973c89cb7b9f8",
+            "artifact_id": 15199245227,
+            "config_digest": "c04d4b2b650f488c78b767d8c858ae37b0f8cb3c0e1be4b742985436de19a732",
+            "manifest_digest": "84ab87afd2dbbdc0ebdd02a43b5dfe441d3e36010c4d1718b5927466154cf553",
+            "map_revision": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+            "publisher_digest": "5c668b8b4cb7a182e555cdc3867650702c25406670f585479919b0f7fa71ff94",
+            "repository": "SharmaKunal14/abseil-cpp",
+            "revision": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+            "run_attempt": 1,
+            "run_id": 46000242013,
+            "schema_version": "smartci.bazel-fetch.v1",
+            "status": "ready"
+          },
+          "plan_sha256": "fdb93c1d07584056f5e4f69dd29c974cabea963c51213b2f7ff68abd8d52de45",
+          "interval": {
+            "end": {
+              "boot_hash": "ed760948e3498a031a65adfbf047795423a87edd5475bc153e4fedeb2f2be2e0",
+              "monotonic_ns": 498427763126,
+              "outcome": "success",
+              "utc": "2026-11-27T12:59:25.531365+00:00"
+            },
+            "seconds": 57.327823397,
+            "start": {
+              "boot_hash": "ed760948e3498a031a65adfbf047795423a87edd5475bc153e4fedeb2f2be2e0",
+              "monotonic_ns": 441099939729,
+              "utc": "2026-11-27T12:58:28.203541+00:00"
+            }
+          },
+          "arm_seconds": 57.327823397,
+          "action_steps": {
+            "__actions_setup-python": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 0.686
+            },
+            "context": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 1.64
+            },
+            "install": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 5.915
+            },
+            "prepare": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 3.327
+            },
+            "execute": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 32.783
+            },
+            "summary": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 0.069
+            },
+            "__actions_upload-artifact": {
+              "outcome": "skipped",
+              "conclusion": "skipped",
+              "seconds": 0.0
+            },
+            "__actions_upload-artifact_2": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 0.893
+            }
+          },
+          "action_pre_execution_seconds": 11.568
+        }
+      },
+      "single_arm_accounting_not_observed_pr_latency": {
+        "full_seconds": 205.672176603,
+        "smart_seconds": 222.637074756
+      },
+      "observed_full_failures": 0,
+      "missed_observed_failures": [],
+      "failure_sets_equal": true,
+      "retained_native_build_scope_verified": true,
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success",
+          "seconds": 3.0
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 4.0
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Load only the base-owned measurement helper and declared order",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Discover the approved cache seed for the exact PR base",
+          "conclusion": "success",
+          "seconds": 4.0
+        },
+        {
+          "name": "Download the reviewed seed receipt independently of cache bytes",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Validate base, tool and profile identity before cache lookup",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Bound unused system crash processing on this disposable runner",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Bound the separate Apport crash-report hook",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Load the identical compiler image before either measured arm",
+          "conclusion": "success",
+          "seconds": 141.0
+        },
+        {
+          "name": "Begin full_first measured interval",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Independently restore base cache for full_first",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Verify independent cache contents for full_first",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Match memory-cache state before full_first",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Execute unchanged full native suite for full_first",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Publish full native audit for full_first",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "End full_first interval and isolate its used cache",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Begin smart_only measured interval",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Independently restore base cache for smart_only",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Verify independent cache contents for smart_only",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Match memory-cache state before smart_only",
+          "conclusion": "success",
+          "seconds": 10.0
+        },
+        {
+          "name": "Execute the unchanged published Smart CI Action",
+          "conclusion": "success",
+          "seconds": 45.0
+        },
+        {
+          "name": "Preserve independent cold full fallback on failed cache admission",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "End smart_only interval and isolate its used cache",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Begin full_second measured interval",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Independently restore base cache for full_second",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Verify independent cache contents for full_second",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Match memory-cache state before full_second",
+          "conclusion": "success",
+          "seconds": 3.0
+        },
+        {
+          "name": "Execute unchanged full native suite for full_second",
+          "conclusion": "success",
+          "seconds": 34.0
+        },
+        {
+          "name": "Publish full native audit for full_second",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "End full_second interval and isolate its used cache",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Restore the Apport hook on the disposable runner",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Restore disposable runner policy",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Require matched evidence and propagate either native failure",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Publish complete comparison and common setup evidence",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Post Execute the unchanged published Smart CI Action",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success",
+          "seconds": 0.0
+        }
+      ],
+      "artifact_metadata": [
+        {
+          "id": 15199337011,
+          "node_id": "MDg6QXJ0aWZhY3QxNTE5OTMzNzAxMQ==",
+          "name": "matched-comparison-1",
+          "size_in_bytes": 14096,
+          "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199337011",
+          "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199337011/zip",
+          "expired": false,
+          "digest": "sha256:693f5401e183c2453eba06d11a9a352f3a7539f199aa339f6963588063625dfe",
+          "created_at": "2026-11-27T13:00:06Z",
+          "updated_at": "2026-11-27T13:00:06Z",
+          "expires_at": "2026-12-04T13:00:06Z",
+          "workflow_run": {
+            "id": 46002744991,
+            "repository_id": 1467690834,
+            "head_repository_id": 1467690834,
+            "head_branch": "codex/action-matched-smart-2",
+            "head_sha": "77812711d4c052489b8bbd03eba7a50882f7b491"
+          }
+        },
+        {
+          "id": 15199192379,
+          "node_id": "MDg6QXJ0aWZhY3QxNTE5OTE5MjM3OQ==",
+          "name": "matched-native-full-1",
+          "size_in_bytes": 141682,
+          "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199192379",
+          "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199192379/zip",
+          "expired": false,
+          "digest": "sha256:e2e899f1d6f3860002a2a7c524c94694b560e3a7dfd82fc2f4925a3f46fddc55",
+          "created_at": "2026-11-27T13:00:05Z",
+          "updated_at": "2026-11-27T13:00:05Z",
+          "expires_at": "2026-12-04T13:00:05Z",
+          "workflow_run": {
+            "id": 46002744991,
+            "repository_id": 1467690834,
+            "head_repository_id": 1467690834,
+            "head_branch": "codex/action-matched-smart-2",
+            "head_sha": "77812711d4c052489b8bbd03eba7a50882f7b491"
+          }
+        },
+        {
+          "id": 15198933110,
+          "node_id": "MDg6QXJ0aWZhY3QxNTE5ODkzMzExMA==",
+          "name": "smartci-native-compare-1",
+          "size_in_bytes": 100513,
+          "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15198933110",
+          "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15198933110/zip",
+          "expired": false,
+          "digest": "sha256:c3136fe551a261677cc3775b7c8b5c031fc4d2142ba8ac2ae83761de4e212f52",
+          "created_at": "2026-11-27T12:59:25Z",
+          "updated_at": "2026-11-27T12:59:25Z",
+          "expires_at": "2026-12-04T12:59:24Z",
+          "workflow_run": {
+            "id": 46002744991,
+            "repository_id": 1467690834,
+            "head_repository_id": 1467690834,
+            "head_branch": "codex/action-matched-smart-2",
+            "head_sha": "77812711d4c052489b8bbd03eba7a50882f7b491"
+          }
+        }
+      ],
+      "metadata_sha256": {
+        "run.json": "a605cacd2cd9667c600871b0c5d12c6feb236a2b86213deb0a6d8f1f09f53797",
+        "jobs.json": "ce201c6b5d0b71e577f4035ee30b9dcac7ad74d3f1fcb77e3be6ed3dfb448837",
+        "pr.json": "ed45002904684b6f5749b35b4e2bb4dbd0f850051b722d9f180a90e144d528fc",
+        "artifacts/matched-comparison-1/matched-evidence/comparison.json": "0f9faad236594e5cdb3587d5c3edf2d295f0df97953abee5ce4745d36870edb7",
+        "artifacts/matched-comparison-1/matched-evidence/context.json": "7b80d2146c8d19eaf932ff5223a60374762bc393c4970ea4931596442f28ea25",
+        "artifacts/matched-comparison-1/common-image.json": "19ae86d238f27ea7c055bcad1f4ab326e262082aeef6d8fed9fc55807e6307d4",
+        "artifacts/matched-comparison-1/matched-evidence/full/cache-verified.json": "af9aea118ab773a95b0a7e121377b2cd47e9529169d0fd78ffec5a9afc5ded0b",
+        "artifacts/matched-comparison-1/matched-evidence/smart/cache-verified.json": "af9aea118ab773a95b0a7e121377b2cd47e9529169d0fd78ffec5a9afc5ded0b",
+        "artifacts/matched-comparison-1/matched-evidence/full/native-preparation.json": "28c7b17ca5579d1322591acd2cedd0834e37c6e4373a5ea816050c2f6f8e0149",
+        "artifacts/matched-comparison-1/matched-evidence/smart/native-preparation.json": "28c7b17ca5579d1322591acd2cedd0834e37c6e4373a5ea816050c2f6f8e0149",
+        "workflow.log": "009d05034b2e01ebde0fd853195f513e94e82deb701a638349345cf573514c29"
+      },
+      "limitations": [
+        "Same-VM experiment, not two independently observed production PR latencies.",
+        "Shared setup includes some Smart-only Action acquisition; its unallocated cost is bounded by the complete job setup step.",
+        "Passing case has no failures from which to estimate recall.",
+        "Order balance and page-cache reset do not eliminate all temporal host noise.",
+        "Native disk cache warm; filesystem memory caches reset before each main invocation, unlike a normal cache restore that may leave pages warm."
+      ],
+      "posthoc_reset_cost_sensitivity": {
+        "reset_step_seconds": {
+          "smart": 10.0,
+          "full": 3.0
+        },
+        "paired_saving_minus_reset_cost_seconds": -9.964898153,
+        "limitation": "Subtracts coarse step cost only, not memory-state effects; not an observed no-reset production run."
+      }
+    },
+    {
+      "pair": 3,
+      "valid_matched_pair": true,
+      "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/42",
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/46003462420",
+      "run_id": 46003462420,
+      "base": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+      "head": "77812711d4c052489b8bbd03eba7a50882f7b491",
+      "first": "smart",
+      "runner_cpu": "Intel(R) Xeon(R) 6975P-C",
+      "visible_cpus": "4",
+      "same_vm_boot_hash": "b3e8b3e17e5e546985ad3a8cf52214ba68a30543e436b069eb3c5c46d8c1f44e",
+      "image": "gcr.io/google.com/absl-177019/linux_hybrid-latest@sha256:baa99e65a3cc837bab8e5246f1870d25c76d0adf2b1d598ee5a3ec77fd2e19bd",
+      "joint_pr_to_result_seconds": 267.0,
+      "workflow_seconds": 264.0,
+      "joint_runner_seconds": 261.0,
+      "shared_runner_seconds": 157.73208576500002,
+      "shared_pr_seconds": 163.73208576500002,
+      "image_preload_seconds": 137.0,
+      "unallocated_smart_action_acquisition_upper_bound_seconds": 4.0,
+      "paired_arm_seconds_saved": -18.490427609,
+      "saving_after_conservative_acquisition_bound_seconds": -22.490427609,
+      "arms": {
+        "full": {
+          "native_exit": 0,
+          "command_seconds": 32.70925171399995,
+          "native_bazel_elapsed_seconds": 29.853,
+          "native_command_outside_bazel_seconds": 2.8562517139999457,
+          "test_targets_with_outcomes": 252,
+          "build_target_configurations": 576,
+          "failed_build_targets": [],
+          "failed_tests": {},
+          "local_native_actions": 8,
+          "disk_cache_hits": 1655,
+          "cached_test_runs": 363,
+          "uncached_test_runs": 2,
+          "uncached_test_targets": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "native_runners": [
+            {
+              "name": "total",
+              "count": 2988
+            },
+            {
+              "name": "disk cache hit",
+              "count": 1655,
+              "execKind": "Remote"
+            },
+            {
+              "name": "internal",
+              "count": 1328
+            },
+            {
+              "name": "processwrapper-sandbox",
+              "count": 8,
+              "execKind": "Local"
+            }
+          ],
+          "bazel_timing": {
+            "cpuTimeInMs": "47640",
+            "wallTimeInMs": "28784",
+            "analysisPhaseTimeInMs": "5792",
+            "executionPhaseTimeInMs": "24293",
+            "actionsExecutionStartInMs": "4465",
+            "criticalPathTime": "16.427289706s"
+          },
+          "native_artifacts_sha256": {
+            "native.bep.json": "6aa33a4f53f914340c52ab5d2d039b97dda6ccc11369df8bf16b869ed481f2f4",
+            "execution.json": "676169ac8e979afc30fc929008d06e7aeecdc1aa0684043cb41e44e5f55c62c5"
+          },
+          "interval": {
+            "end": {
+              "boot_hash": "b3e8b3e17e5e546985ad3a8cf52214ba68a30543e436b069eb3c5c46d8c1f44e",
+              "monotonic_ns": 518153429307,
+              "outcome": "success",
+              "utc": "2026-11-27T13:05:22.259876+00:00"
+            },
+            "seconds": 42.388743313,
+            "start": {
+              "boot_hash": "b3e8b3e17e5e546985ad3a8cf52214ba68a30543e436b069eb3c5c46d8c1f44e",
+              "monotonic_ns": 475764685994,
+              "utc": "2026-11-27T13:04:39.871132+00:00"
+            }
+          },
+          "arm_seconds": 42.388743313
+        },
+        "smart": {
+          "native_exit": 0,
+          "command_seconds": 30.630423554000004,
+          "native_bazel_elapsed_seconds": 27.627,
+          "native_command_outside_bazel_seconds": 3.0034235540000047,
+          "test_targets_with_outcomes": 2,
+          "build_target_configurations": 326,
+          "failed_build_targets": [],
+          "failed_tests": {},
+          "local_native_actions": 8,
+          "disk_cache_hits": 781,
+          "cached_test_runs": 0,
+          "uncached_test_runs": 2,
+          "uncached_test_targets": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "native_runners": [
+            {
+              "name": "total",
+              "count": 1092
+            },
+            {
+              "name": "disk cache hit",
+              "count": 781,
+              "execKind": "Remote"
+            },
+            {
+              "name": "internal",
+              "count": 303
+            },
+            {
+              "name": "processwrapper-sandbox",
+              "count": 8,
+              "execKind": "Local"
+            }
+          ],
+          "bazel_timing": {
+            "cpuTimeInMs": "33740",
+            "wallTimeInMs": "26568",
+            "analysisPhaseTimeInMs": "4732",
+            "executionPhaseTimeInMs": "21491",
+            "actionsExecutionStartInMs": "5052",
+            "criticalPathTime": "15.462527350s"
+          },
+          "native_artifacts_sha256": {
+            "native-pr/execution/capture/native.bep.json": "152bacf0b3f744e9c14042a6541670cc588133891f9bec9cbc4d8165c893f9ab",
+            "native-pr/execution/execution.json": "05a139a0ae01e71e98601205cf18efccbb35817e899164895310676a5342059f"
+          },
+          "mode": "subset",
+          "fallback": [],
+          "selected": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "omitted_count": 250,
+          "retained_build_only_targets": 324,
+          "planning_seconds": 0.4117065099999877,
+          "map": {
+            "map": "retrieved",
+            "rebuild": null
+          },
+          "fetch": {
+            "archive_digest": "8888af315d10553831b636d5274d3cc55c8633dbe2a5e11bfb1973c89cb7b9f8",
+            "artifact_id": 15199245227,
+            "config_digest": "c04d4b2b650f488c78b767d8c858ae37b0f8cb3c0e1be4b742985436de19a732",
+            "manifest_digest": "84ab87afd2dbbdc0ebdd02a43b5dfe441d3e36010c4d1718b5927466154cf553",
+            "map_revision": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+            "publisher_digest": "5c668b8b4cb7a182e555cdc3867650702c25406670f585479919b0f7fa71ff94",
+            "repository": "SharmaKunal14/abseil-cpp",
+            "revision": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+            "run_attempt": 1,
+            "run_id": 46000242013,
+            "schema_version": "smartci.bazel-fetch.v1",
+            "status": "ready"
+          },
+          "plan_sha256": "fdb93c1d07584056f5e4f69dd29c974cabea963c51213b2f7ff68abd8d52de45",
+          "interval": {
+            "end": {
+              "boot_hash": "b3e8b3e17e5e546985ad3a8cf52214ba68a30543e436b069eb3c5c46d8c1f44e",
+              "monotonic_ns": 475727492460,
+              "outcome": "success",
+              "utc": "2026-11-27T13:04:39.833939+00:00"
+            },
+            "seconds": 60.879170922,
+            "start": {
+              "boot_hash": "b3e8b3e17e5e546985ad3a8cf52214ba68a30543e436b069eb3c5c46d8c1f44e",
+              "monotonic_ns": 414848321538,
+              "utc": "2026-11-27T13:03:38.954768+00:00"
+            }
+          },
+          "arm_seconds": 60.879170922,
+          "action_steps": {
+            "__actions_setup-python": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 0.734
+            },
+            "context": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 2.151
+            },
+            "install": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 6.314
+            },
+            "prepare": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 4.239
+            },
+            "execute": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 32.163
+            },
+            "summary": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 0.066
+            },
+            "__actions_upload-artifact": {
+              "outcome": "skipped",
+              "conclusion": "skipped",
+              "seconds": 0.0
+            },
+            "__actions_upload-artifact_2": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 1.742
+            }
+          },
+          "action_pre_execution_seconds": 13.437999999999999
+        }
+      },
+      "single_arm_accounting_not_observed_pr_latency": {
+        "full_seconds": 206.12082907799999,
+        "smart_seconds": 224.611256687
+      },
+      "observed_full_failures": 0,
+      "missed_observed_failures": [],
+      "failure_sets_equal": true,
+      "retained_native_build_scope_verified": true,
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success",
+          "seconds": 4.0
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 3.0
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Load only the base-owned measurement helper and declared order",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Discover the approved cache seed for the exact PR base",
+          "conclusion": "success",
+          "seconds": 3.0
+        },
+        {
+          "name": "Download the reviewed seed receipt independently of cache bytes",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Validate base, tool and profile identity before cache lookup",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Bound unused system crash processing on this disposable runner",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Bound the separate Apport crash-report hook",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Load the identical compiler image before either measured arm",
+          "conclusion": "success",
+          "seconds": 137.0
+        },
+        {
+          "name": "Begin full_first measured interval",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Independently restore base cache for full_first",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Verify independent cache contents for full_first",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Match memory-cache state before full_first",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Execute unchanged full native suite for full_first",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Publish full native audit for full_first",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "End full_first interval and isolate its used cache",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Begin smart_only measured interval",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Independently restore base cache for smart_only",
+          "conclusion": "success",
+          "seconds": 4.0
+        },
+        {
+          "name": "Verify independent cache contents for smart_only",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Match memory-cache state before smart_only",
+          "conclusion": "success",
+          "seconds": 9.0
+        },
+        {
+          "name": "Execute the unchanged published Smart CI Action",
+          "conclusion": "success",
+          "seconds": 47.0
+        },
+        {
+          "name": "Preserve independent cold full fallback on failed cache admission",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "End smart_only interval and isolate its used cache",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Begin full_second measured interval",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Independently restore base cache for full_second",
+          "conclusion": "success",
+          "seconds": 4.0
+        },
+        {
+          "name": "Verify independent cache contents for full_second",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Match memory-cache state before full_second",
+          "conclusion": "success",
+          "seconds": 3.0
+        },
+        {
+          "name": "Execute unchanged full native suite for full_second",
+          "conclusion": "success",
+          "seconds": 33.0
+        },
+        {
+          "name": "Publish full native audit for full_second",
+          "conclusion": "success",
+          "seconds": 2.0
+        },
+        {
+          "name": "End full_second interval and isolate its used cache",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Restore the Apport hook on the disposable runner",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Restore disposable runner policy",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Require matched evidence and propagate either native failure",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Publish complete comparison and common setup evidence",
+          "conclusion": "success",
+          "seconds": 2.0
+        },
+        {
+          "name": "Post Execute the unchanged published Smart CI Action",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success",
+          "seconds": 0.0
+        }
+      ],
+      "artifact_metadata": [
+        {
+          "id": 15199601769,
+          "node_id": "MDg6QXJ0aWZhY3QxNTE5OTYwMTc2OQ==",
+          "name": "smartci-native-compare-1",
+          "size_in_bytes": 100524,
+          "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199601769",
+          "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199601769/zip",
+          "expired": false,
+          "digest": "sha256:cfb537411730973302744781bf78b7a9b66be940cc9678cb2fe48eba24539359",
+          "created_at": "2026-11-27T13:04:39Z",
+          "updated_at": "2026-11-27T13:04:39Z",
+          "expires_at": "2026-12-04T13:04:38Z",
+          "workflow_run": {
+            "id": 46003462420,
+            "repository_id": 1467690834,
+            "head_repository_id": 1467690834,
+            "head_branch": "codex/action-matched-smart-3",
+            "head_sha": "77812711d4c052489b8bbd03eba7a50882f7b491"
+          }
+        },
+        {
+          "id": 15199148723,
+          "node_id": "MDg6QXJ0aWZhY3QxNTE5OTE0ODcyMw==",
+          "name": "matched-native-full-1",
+          "size_in_bytes": 142143,
+          "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199148723",
+          "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199148723/zip",
+          "expired": false,
+          "digest": "sha256:c45bc5b7ac4d54e29ae227a60955cb9ee2305af7e87c18c0e9cb8aa45b596718",
+          "created_at": "2026-11-27T13:05:22Z",
+          "updated_at": "2026-11-27T13:05:22Z",
+          "expires_at": "2026-12-04T13:05:20Z",
+          "workflow_run": {
+            "id": 46003462420,
+            "repository_id": 1467690834,
+            "head_repository_id": 1467690834,
+            "head_branch": "codex/action-matched-smart-3",
+            "head_sha": "77812711d4c052489b8bbd03eba7a50882f7b491"
+          }
+        },
+        {
+          "id": 15198909143,
+          "node_id": "MDg6QXJ0aWZhY3QxNTE5ODkwOTE0Mw==",
+          "name": "matched-comparison-1",
+          "size_in_bytes": 14095,
+          "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15198909143",
+          "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15198909143/zip",
+          "expired": false,
+          "digest": "sha256:cdecb44fb5092ee91afe37be19a683fef778f648c0da88d936c1567137cd54cb",
+          "created_at": "2026-11-27T13:05:24Z",
+          "updated_at": "2026-11-27T13:05:24Z",
+          "expires_at": "2026-12-04T13:05:22Z",
+          "workflow_run": {
+            "id": 46003462420,
+            "repository_id": 1467690834,
+            "head_repository_id": 1467690834,
+            "head_branch": "codex/action-matched-smart-3",
+            "head_sha": "77812711d4c052489b8bbd03eba7a50882f7b491"
+          }
+        }
+      ],
+      "metadata_sha256": {
+        "run.json": "5b7f7cf3901688ceca2d9c821b23e245c9fe953b259aa4d4223181922a686051",
+        "jobs.json": "953c5cf6d84aab069e51cd653952d37f23b96bfb151e0628c2784e855ae59ef4",
+        "pr.json": "df8d13f16294b56b878378c7ea01935e1245a1395b6b3ec95d41a43dd52056e5",
+        "artifacts/matched-comparison-1/matched-evidence/comparison.json": "d3b50c18fa51dcb9b8f67f919bd52ed06f391987aba8f27d9af9d006b678071a",
+        "artifacts/matched-comparison-1/matched-evidence/context.json": "135e302d357e347bce447c3daa62e6ea07a6c48a742b5c82c426f8bd7ad8b34c",
+        "artifacts/matched-comparison-1/common-image.json": "419560b82a2de5deca8422323e23f19547e3523749ab2a91e7e5c97c68240d16",
+        "artifacts/matched-comparison-1/matched-evidence/full/cache-verified.json": "af9aea118ab773a95b0a7e121377b2cd47e9529169d0fd78ffec5a9afc5ded0b",
+        "artifacts/matched-comparison-1/matched-evidence/smart/cache-verified.json": "af9aea118ab773a95b0a7e121377b2cd47e9529169d0fd78ffec5a9afc5ded0b",
+        "artifacts/matched-comparison-1/matched-evidence/full/native-preparation.json": "28c7b17ca5579d1322591acd2cedd0834e37c6e4373a5ea816050c2f6f8e0149",
+        "artifacts/matched-comparison-1/matched-evidence/smart/native-preparation.json": "28c7b17ca5579d1322591acd2cedd0834e37c6e4373a5ea816050c2f6f8e0149",
+        "workflow.log": "901fcdd7b4323c7c0ac7cf2ed6c1a5dac7001988f4423a22d16abcb0ed15f252"
+      },
+      "limitations": [
+        "Same-VM experiment, not two independently observed production PR latencies.",
+        "Shared setup includes some Smart-only Action acquisition; its unallocated cost is bounded by the complete job setup step.",
+        "Passing case has no failures from which to estimate recall.",
+        "Order balance and page-cache reset do not eliminate all temporal host noise.",
+        "Native disk cache warm; filesystem memory caches reset before each main invocation, unlike a normal cache restore that may leave pages warm."
+      ],
+      "posthoc_reset_cost_sensitivity": {
+        "reset_step_seconds": {
+          "smart": 9.0,
+          "full": 3.0
+        },
+        "paired_saving_minus_reset_cost_seconds": -12.490427609000001,
+        "limitation": "Subtracts coarse step cost only, not memory-state effects; not an observed no-reset production run."
+      }
+    },
+    {
+      "pair": 4,
+      "valid_matched_pair": true,
+      "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/43",
+      "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/46004198460",
+      "run_id": 46004198460,
+      "base": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+      "head": "77812711d4c052489b8bbd03eba7a50882f7b491",
+      "first": "full",
+      "runner_cpu": "AMD EPYC 7763 64-Core Processor",
+      "visible_cpus": "4",
+      "same_vm_boot_hash": "500ee3e33e58e5aab38316377674907841197bd350f5e4a7e1a4edb94d13d47e",
+      "image": "gcr.io/google.com/absl-177019/linux_hybrid-latest@sha256:baa99e65a3cc837bab8e5246f1870d25c76d0adf2b1d598ee5a3ec77fd2e19bd",
+      "joint_pr_to_result_seconds": 404.0,
+      "workflow_seconds": 400.0,
+      "joint_runner_seconds": 398.0,
+      "shared_runner_seconds": 264.042189855,
+      "shared_pr_seconds": 270.042189855,
+      "image_preload_seconds": 250.0,
+      "unallocated_smart_action_acquisition_upper_bound_seconds": 2.0,
+      "paired_arm_seconds_saved": 1.0325713169999915,
+      "saving_after_conservative_acquisition_bound_seconds": -0.9674286830000085,
+      "arms": {
+        "full": {
+          "native_exit": 0,
+          "command_seconds": 56.026038656000026,
+          "native_bazel_elapsed_seconds": 50.337,
+          "native_command_outside_bazel_seconds": 5.689038656000022,
+          "test_targets_with_outcomes": 252,
+          "build_target_configurations": 576,
+          "failed_build_targets": [],
+          "failed_tests": {},
+          "local_native_actions": 8,
+          "disk_cache_hits": 1655,
+          "cached_test_runs": 363,
+          "uncached_test_runs": 2,
+          "uncached_test_targets": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "native_runners": [
+            {
+              "name": "total",
+              "count": 2988
+            },
+            {
+              "name": "disk cache hit",
+              "count": 1655,
+              "execKind": "Remote"
+            },
+            {
+              "name": "internal",
+              "count": 1328
+            },
+            {
+              "name": "processwrapper-sandbox",
+              "count": 8,
+              "execKind": "Local"
+            }
+          ],
+          "bazel_timing": {
+            "cpuTimeInMs": "78040",
+            "wallTimeInMs": "48285",
+            "analysisPhaseTimeInMs": "9435",
+            "executionPhaseTimeInMs": "40920",
+            "actionsExecutionStartInMs": "7318",
+            "criticalPathTime": "23.795203216s"
+          },
+          "native_artifacts_sha256": {
+            "native.bep.json": "5eba42b07b981190912cd8896405f63276aa89a4bfa06c6fd4942ed7d58ce847",
+            "execution.json": "39c45e540fa481cdf67b075437101605e3f4961cd2519be1594ff1ee930880ad"
+          },
+          "interval": {
+            "end": {
+              "boot_hash": "500ee3e33e58e5aab38316377674907841197bd350f5e4a7e1a4edb94d13d47e",
+              "monotonic_ns": 369597668471,
+              "outcome": "success",
+              "utc": "2026-11-27T13:11:36.807286+00:00"
+            },
+            "seconds": 67.495190731,
+            "start": {
+              "boot_hash": "500ee3e33e58e5aab38316377674907841197bd350f5e4a7e1a4edb94d13d47e",
+              "monotonic_ns": 302102477740,
+              "utc": "2026-11-27T13:10:29.312096+00:00"
+            }
+          },
+          "arm_seconds": 67.495190731
+        },
+        "smart": {
+          "native_exit": 0,
+          "command_seconds": 46.14514195200002,
+          "native_bazel_elapsed_seconds": 41.163,
+          "native_command_outside_bazel_seconds": 4.9821419520000205,
+          "test_targets_with_outcomes": 2,
+          "build_target_configurations": 326,
+          "failed_build_targets": [],
+          "failed_tests": {},
+          "local_native_actions": 8,
+          "disk_cache_hits": 781,
+          "cached_test_runs": 0,
+          "uncached_test_runs": 2,
+          "uncached_test_targets": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "native_runners": [
+            {
+              "name": "total",
+              "count": 1092
+            },
+            {
+              "name": "disk cache hit",
+              "count": 781,
+              "execKind": "Remote"
+            },
+            {
+              "name": "internal",
+              "count": 303
+            },
+            {
+              "name": "processwrapper-sandbox",
+              "count": 8,
+              "execKind": "Local"
+            }
+          ],
+          "bazel_timing": {
+            "cpuTimeInMs": "51720",
+            "wallTimeInMs": "39234",
+            "analysisPhaseTimeInMs": "7158",
+            "executionPhaseTimeInMs": "31946",
+            "actionsExecutionStartInMs": "7245",
+            "criticalPathTime": "23.708474916s"
+          },
+          "native_artifacts_sha256": {
+            "native-pr/execution/capture/native.bep.json": "a837d28bdc7dd8a50346b97ed36a977dbd0a7d081b405558753a64df4ca4c914",
+            "native-pr/execution/execution.json": "e8986b925e155fdc53c8cee06a57163313ef7fe347885eb67668478ead379868"
+          },
+          "mode": "subset",
+          "fallback": [],
+          "selected": [
+            "//absl/container:linked_hash_map_test",
+            "//absl/container:linked_hash_set_test"
+          ],
+          "omitted_count": 250,
+          "retained_build_only_targets": 324,
+          "planning_seconds": 0.6417558520000171,
+          "map": {
+            "map": "retrieved",
+            "rebuild": null
+          },
+          "fetch": {
+            "archive_digest": "8888af315d10553831b636d5274d3cc55c8633dbe2a5e11bfb1973c89cb7b9f8",
+            "artifact_id": 15199245227,
+            "config_digest": "c04d4b2b650f488c78b767d8c858ae37b0f8cb3c0e1be4b742985436de19a732",
+            "manifest_digest": "84ab87afd2dbbdc0ebdd02a43b5dfe441d3e36010c4d1718b5927466154cf553",
+            "map_revision": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+            "publisher_digest": "5c668b8b4cb7a182e555cdc3867650702c25406670f585479919b0f7fa71ff94",
+            "repository": "SharmaKunal14/abseil-cpp",
+            "revision": "4b3a73d04b03e502be99cb35835b472dfa85b814",
+            "run_attempt": 1,
+            "run_id": 46000242013,
+            "schema_version": "smartci.bazel-fetch.v1",
+            "status": "ready"
+          },
+          "plan_sha256": "fdb93c1d07584056f5e4f69dd29c974cabea963c51213b2f7ff68abd8d52de45",
+          "interval": {
+            "end": {
+              "boot_hash": "500ee3e33e58e5aab38316377674907841197bd350f5e4a7e1a4edb94d13d47e",
+              "monotonic_ns": 436112941725,
+              "outcome": "success",
+              "utc": "2026-11-27T13:12:43.322560+00:00"
+            },
+            "seconds": 66.462619414,
+            "start": {
+              "boot_hash": "500ee3e33e58e5aab38316377674907841197bd350f5e4a7e1a4edb94d13d47e",
+              "monotonic_ns": 369650322311,
+              "utc": "2026-11-27T13:11:36.859940+00:00"
+            }
+          },
+          "arm_seconds": 66.462619414,
+          "action_steps": {
+            "__actions_setup-python": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 0.416
+            },
+            "context": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 0.404
+            },
+            "install": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 5.882
+            },
+            "prepare": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 3.928
+            },
+            "execute": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 48.482
+            },
+            "summary": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 0.09
+            },
+            "__actions_upload-artifact": {
+              "outcome": "skipped",
+              "conclusion": "skipped",
+              "seconds": 0.0
+            },
+            "__actions_upload-artifact_2": {
+              "outcome": "success",
+              "conclusion": "success",
+              "seconds": 1.131
+            }
+          },
+          "action_pre_execution_seconds": 10.629999999999999
+        }
+      },
+      "single_arm_accounting_not_observed_pr_latency": {
+        "full_seconds": 337.537380586,
+        "smart_seconds": 336.504809269
+      },
+      "observed_full_failures": 0,
+      "missed_observed_failures": [],
+      "failure_sets_equal": true,
+      "retained_native_build_scope_verified": true,
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success",
+          "seconds": 2.0
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 2.0
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Load only the base-owned measurement helper and declared order",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Discover the approved cache seed for the exact PR base",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Download the reviewed seed receipt independently of cache bytes",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Validate base, tool and profile identity before cache lookup",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Bound unused system crash processing on this disposable runner",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Bound the separate Apport crash-report hook",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Load the identical compiler image before either measured arm",
+          "conclusion": "success",
+          "seconds": 250.0
+        },
+        {
+          "name": "Begin full_first measured interval",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Independently restore base cache for full_first",
+          "conclusion": "success",
+          "seconds": 3.0
+        },
+        {
+          "name": "Verify independent cache contents for full_first",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Match memory-cache state before full_first",
+          "conclusion": "success",
+          "seconds": 6.0
+        },
+        {
+          "name": "Execute unchanged full native suite for full_first",
+          "conclusion": "success",
+          "seconds": 56.0
+        },
+        {
+          "name": "Publish full native audit for full_first",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "End full_first interval and isolate its used cache",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Begin smart_only measured interval",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Independently restore base cache for smart_only",
+          "conclusion": "success",
+          "seconds": 3.0
+        },
+        {
+          "name": "Verify independent cache contents for smart_only",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Match memory-cache state before smart_only",
+          "conclusion": "success",
+          "seconds": 2.0
+        },
+        {
+          "name": "Execute the unchanged published Smart CI Action",
+          "conclusion": "success",
+          "seconds": 61.0
+        },
+        {
+          "name": "Preserve independent cold full fallback on failed cache admission",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "End smart_only interval and isolate its used cache",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Begin full_second measured interval",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Independently restore base cache for full_second",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Verify independent cache contents for full_second",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Match memory-cache state before full_second",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Execute unchanged full native suite for full_second",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Publish full native audit for full_second",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "End full_second interval and isolate its used cache",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Restore the Apport hook on the disposable runner",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Restore disposable runner policy",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Require matched evidence and propagate either native failure",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Publish complete comparison and common setup evidence",
+          "conclusion": "success",
+          "seconds": 2.0
+        },
+        {
+          "name": "Post Execute the unchanged published Smart CI Action",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success",
+          "seconds": 0.0
+        }
+      ],
+      "artifact_metadata": [
+        {
+          "id": 15200776498,
+          "node_id": "MDg6QXJ0aWZhY3QxNTIwMDc3NjQ5OA==",
+          "name": "matched-comparison-1",
+          "size_in_bytes": 13973,
+          "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15200776498",
+          "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15200776498/zip",
+          "expired": false,
+          "digest": "sha256:651a065f36d6c324ed4a26b65a1014078cd4ba6c96871145b89e3aea9ceea7be",
+          "created_at": "2026-11-27T13:12:44Z",
+          "updated_at": "2026-11-27T13:12:44Z",
+          "expires_at": "2026-12-04T13:12:44Z",
+          "workflow_run": {
+            "id": 46004198460,
+            "repository_id": 1467690834,
+            "head_repository_id": 1467690834,
+            "head_branch": "codex/action-matched-full-4",
+            "head_sha": "77812711d4c052489b8bbd03eba7a50882f7b491"
+          }
+        },
+        {
+          "id": 15200666596,
+          "node_id": "MDg6QXJ0aWZhY3QxNTIwMDY2NjU5Ng==",
+          "name": "smartci-native-compare-1",
+          "size_in_bytes": 102260,
+          "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15200666596",
+          "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15200666596/zip",
+          "expired": false,
+          "digest": "sha256:f4c66b249f0f4f0fcd17fb26f8e79e123aa9f88c58037a679c772362b33ad959",
+          "created_at": "2026-11-27T13:12:43Z",
+          "updated_at": "2026-11-27T13:12:43Z",
+          "expires_at": "2026-12-04T13:12:42Z",
+          "workflow_run": {
+            "id": 46004198460,
+            "repository_id": 1467690834,
+            "head_repository_id": 1467690834,
+            "head_branch": "codex/action-matched-full-4",
+            "head_sha": "77812711d4c052489b8bbd03eba7a50882f7b491"
+          }
+        },
+        {
+          "id": 15199204632,
+          "node_id": "MDg6QXJ0aWZhY3QxNTE5OTIwNDYzMg==",
+          "name": "matched-native-full-1",
+          "size_in_bytes": 144521,
+          "url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199204632",
+          "archive_download_url": "https://api.github.com/repos/SharmaKunal14/abseil-cpp/actions/artifacts/15199204632/zip",
+          "expired": false,
+          "digest": "sha256:5919745df63fe4adcf7610a49add72720b6bbb5eefe481b971070243a4463e51",
+          "created_at": "2026-11-27T13:11:36Z",
+          "updated_at": "2026-11-27T13:11:36Z",
+          "expires_at": "2026-12-04T13:11:35Z",
+          "workflow_run": {
+            "id": 46004198460,
+            "repository_id": 1467690834,
+            "head_repository_id": 1467690834,
+            "head_branch": "codex/action-matched-full-4",
+            "head_sha": "77812711d4c052489b8bbd03eba7a50882f7b491"
+          }
+        }
+      ],
+      "metadata_sha256": {
+        "run.json": "4b41c70110a41654ab20eccb5b7a89e1769eebaadcc7350606b3b4da64ffdb3f",
+        "jobs.json": "3150758b6802ffc06752ff050b8d587f67233e4c314c90394eae3b845a2cdb2e",
+        "pr.json": "6eb611d355241182d4b7e67c6dc364417ed2acde577acc65d3f73181150c070d",
+        "artifacts/matched-comparison-1/matched-evidence/comparison.json": "82f9cd4f413c450445ec6e8792cc92e9bf896c5086c74f91374a3a3975606a8c",
+        "artifacts/matched-comparison-1/matched-evidence/context.json": "099bd6b2e422c00190c198564365b8598dd5f85244745d593b4c67a2ff5be1c1",
+        "artifacts/matched-comparison-1/common-image.json": "f691718161480932c0fb3799f0458f9e5ba84ae963c3b7d62c758a0cab3b6552",
+        "artifacts/matched-comparison-1/matched-evidence/full/cache-verified.json": "af9aea118ab773a95b0a7e121377b2cd47e9529169d0fd78ffec5a9afc5ded0b",
+        "artifacts/matched-comparison-1/matched-evidence/smart/cache-verified.json": "af9aea118ab773a95b0a7e121377b2cd47e9529169d0fd78ffec5a9afc5ded0b",
+        "artifacts/matched-comparison-1/matched-evidence/full/native-preparation.json": "28c7b17ca5579d1322591acd2cedd0834e37c6e4373a5ea816050c2f6f8e0149",
+        "artifacts/matched-comparison-1/matched-evidence/smart/native-preparation.json": "28c7b17ca5579d1322591acd2cedd0834e37c6e4373a5ea816050c2f6f8e0149",
+        "workflow.log": "8c5b64e238502e7749cdbcf6fb14626511f75bdf6a00ee7b4ef788aebd3c6351"
+      },
+      "limitations": [
+        "Same-VM experiment, not two independently observed production PR latencies.",
+        "Shared setup includes some Smart-only Action acquisition; its unallocated cost is bounded by the complete job setup step.",
+        "Passing case has no failures from which to estimate recall.",
+        "Order balance and page-cache reset do not eliminate all temporal host noise.",
+        "Native disk cache warm; filesystem memory caches reset before each main invocation, unlike a normal cache restore that may leave pages warm."
+      ],
+      "posthoc_reset_cost_sensitivity": {
+        "reset_step_seconds": {
+          "full": 6.0,
+          "smart": 2.0
+        },
+        "paired_saving_minus_reset_cost_seconds": -2.9674286830000085,
+        "limitation": "Subtracts coarse step cost only, not memory-state effects; not an observed no-reset production run."
+      }
+    }
+  ],
+  "summary": {
+    "criterion_met": false,
+    "faster_pairs": 1,
+    "valid_pairs": 4,
+    "paired_saving_seconds": {
+      "median": -9.910274448499997,
+      "min": -18.490427609,
+      "max": 1.0325713169999915,
+      "sum": -37.278405189000004
+    },
+    "order_groups_saving_seconds": {
+      "full": {
+        "median": -0.9115397135000016,
+        "min": -2.8556507439999947,
+        "max": 1.0325713169999915,
+        "sum": -1.8230794270000032
+      },
+      "smart": {
+        "median": -17.727662881,
+        "min": -18.490427609,
+        "max": -16.964898153,
+        "sum": -35.455325762
+      }
+    },
+    "arm_seconds": {
+      "full": {
+        "median": 45.224669134500004,
+        "min": 40.362925244,
+        "max": 67.495190731,
+        "sum": 198.30745424399998
+      },
+      "smart": {
+        "median": 59.1034971595,
+        "min": 50.9162457,
+        "max": 66.462619414,
+        "sum": 235.585859433
+      }
+    },
+    "native_command_saving_seconds": {
+      "median": 3.918268872499965,
+      "min": 2.0788281599999436,
+      "max": 9.880896704000008,
+      "sum": 19.796262608999882
+    },
+    "smart_pre_execution_seconds": {
+      "median": 11.9345,
+      "min": 10.629999999999999,
+      "max": 13.437999999999999,
+      "sum": 47.937
+    },
+    "smart_selection_seconds": {
+      "median": 0.43159908949999704,
+      "min": 0.39119176399998423,
+      "max": 0.6417558520000171,
+      "sum": 1.8961457949999954
+    },
+    "joint_pr_seconds": {
+      "median": 265.5,
+      "min": 263.0,
+      "max": 404.0,
+      "sum": 1198.0
+    },
+    "joint_runner_seconds": 1172.0,
+    "seed_runner_seconds": 689.0,
+    "benchmark_runner_seconds": 1861.0,
+    "initial_harness_verification_runner_seconds": 168.0,
+    "benchmark_plus_initial_verification_runner_seconds": 2029.0,
+    "full_control_failure_observations": 0,
+    "missed_observed_failures": 0,
+    "recall": null,
+    "fallback_pairs": 0,
+    "invalid_or_retried_pairs": 0,
+    "artifact_bytes": 3145150,
+    "nominal_cache_restore_payload_bytes": 903766856,
+    "nominal_map_restore_payload_bytes": 1414912,
+    "posthoc_median_saving_minus_reset_cost_seconds": -8.910274448499997
+  },
+  "initial_harness_verification": {
+    "run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/46000196502",
+    "sha": "c8fcdaa5f85a9d9dda1a389c4218e616742bcaaf",
+    "conclusion": "success",
+    "runner_seconds": 168.0,
+    "tests_passed": 1179
+  },
+  "limitations": [
+    "Arm timings are observed on GitHub; adding shared setup yields accounting estimates, not two independently observed standalone PR latencies.",
+    "Smart-only Action acquisition/post-action cleanup lies outside the arm timer and cannot improve its negative comparison.",
+    "Disk caches were warm but filesystem memory caches reset; this differs from an ordinary restore leaving pages warm.",
+    "A common image was pulled once before both arms; its full cost is charged once per joint job.",
+    "Four repetitions of one passing refactor are not a representative change distribution; no observed failures means recall cannot be estimated.",
+    "Fresh seed includes shared native cache creation and Smart-only enrollment; without a matched native-only seed their incremental costs cannot be separated exactly.",
+    "Base did not evolve; lifecycle amortization and refresh costs are unmeasured.",
+    "Runner-seconds and payload bytes are not a dollar billing measurement."
+  ],
+  "cache_cleanup": {
+    "at_utc": "2026-11-27T13:13:51.005626+00:00",
+    "deleted_cache_id": 11202450055,
+    "deleted_cache_key": "smartci-native-v1-4b3a73d04b03e502be99cb35835b472dfa85b814-e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6-e780aeb00eb5b81c35b062c65734067c03279754",
+    "before": {
+      "total_count": 1,
+      "actions_caches": [
+        {
+          "id": 11202450055,
+          "ref": "refs/heads/codex/action-matched-base",
+          "key": "smartci-native-v1-4b3a73d04b03e502be99cb35835b472dfa85b814-e8ddc3c3cc1c751aacab38d62b3e5e20a31a9e46bee40ae7c52249b7fa79bee6-e780aeb00eb5b81c35b062c65734067c03279754",
+          "version": "21104d45a637519b20c640f9bb169051a0f2a2b9c9b6185358ed29e1f2689c62",
+          "last_accessed_at": "2026-11-27T13:11:37.080024Z",
+          "created_at": "2026-11-27T12:49:18.513477Z",
+          "size_in_bytes": 112970857
+        }
+      ]
+    },
+    "after": {
+      "total_count": 0,
+      "actions_caches": []
+    },
+    "usage_before": {
+      "full_name": "SharmaKunal14/abseil-cpp",
+      "active_caches_size_in_bytes": 112970857,
+      "active_caches_count": 1
+    },
+    "usage_after": {
+      "full_name": "SharmaKunal14/abseil-cpp",
+      "active_caches_size_in_bytes": 112970857,
+      "active_caches_count": 1
+    },
+    "confirmed_usage_after_propagation": {
+      "full_name": "SharmaKunal14/abseil-cpp",
+      "active_caches_size_in_bytes": 0,
+      "active_caches_count": 0
+    }
+  }
+}

@@ -268,7 +268,24 @@ or benefit when native caching already avoids the same work. Keep the earlier
 warm-cache losses visible when deciding whether to adopt this profile.
 
 
-### Current warm-cache evaluation
+### Current controlled warm-cache evaluation
+
+The [same-VM comparison](../benchmarks/native-action-matched-2026-11-28.md)
+used four real PRs, order-balanced full/Action execution and independent identical
+base cache restores. Full/Smart arm times were **48.1/50.9, 40.4/57.3, 42.4/60.9
+and 67.5/66.5 seconds**. Smart CI lost three comparisons and gained 1.0 second in
+one; median paired slowdown was **9.9 seconds**. That small gain is below the
+unallocated acquisition-cost bound. Both approaches reran the same two uncached
+targets and eight local actions. There is no demonstrated reliable speed benefit
+for this warm profile; the performance gate failed.
+
+These are observed arm intervals within joint jobs, not independently measured
+standalone PR lifecycles. The report includes shared setup, actual whole joint PR
+and runner times, enrollment, storage and order/memory-cache limitations. Native
+disk caches were warm; filesystem memory caches were reset equally. No safety
+rules or product release changed. Existing native caching should be preserved.
+
+### Earlier separate-job warm-cache evaluation
 
 The same published Action and CLI were tested with independent restores of a
 working base-only native build/test cache. Three real PR pairs measured

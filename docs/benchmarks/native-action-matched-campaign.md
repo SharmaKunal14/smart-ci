@@ -60,6 +60,11 @@ single-arm cost can add the same measured common cost to each arm, but must be
 labeled accounting, not two independently observed production PR latencies.
 The two-arm joint job is an experiment and intentionally runs both approaches.
 Do not infer lifecycle amortization across evolving base commits from it.
+GitHub acquires referenced Action code during initial job setup, outside arm
+timers. Some of that acquisition is Smart-only. Report it explicitly; where the
+logs cannot attribute it exactly, bound unallocated extra acquisition by the
+whole job-setup duration. A positive arm-time difference smaller than that bound
+is not enough to establish a complete delivery-cost advantage.
 
 A consistent incremental benefit requires positive median saving and at least
 three of four valid pairs faster, with gains in both order groups. Four samples
