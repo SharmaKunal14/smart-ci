@@ -5,14 +5,13 @@ credential-free runner; a capture is not a sandbox or publisher authentication.
 """
 
 import json
-import os
-import signal
 import subprocess
-import time
 from pathlib import Path
 from typing import Annotated, Literal
 
 from pydantic import Field, StringConstraints, field_validator
+
+from smartci.native_process import run_argv
 
 from .bundle import (
     LIMITS,
@@ -66,46 +65,11 @@ def read_config(path: Path) -> CaptureConfig:
 
 
 def run_command(command: CaptureCommand, repo: Path, capture: Path) -> int:
-    """No shell, inherited credentials, retries or unbounded captured output."""
-    if os.name != "posix":
-        raise QueryError("isolated process-group execution requires POSIX")
     arguments = [
         value.replace("{repo}", str(repo)).replace("{capture}", str(capture))
         for value in command.argv
     ]
-    environment = {
-        key: os.environ[key]
-        for key in ("PATH", "HOME", "LANG", "TMPDIR")
-        if key in os.environ
-    }
-    # This environment filter is not filesystem isolation. Use a disposable
-    # runner with no persisted credentials or private user configuration.
-    started = time.monotonic()
-    with subprocess.Popen(
-        arguments,
-        cwd=repo,
-        env=environment,
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        start_new_session=True,
-    ) as process:
-        try:
-            while True:
-                remaining = command.timeout_seconds - (time.monotonic() - started)
-                if remaining <= 0:
-                    return 124
-                try:
-                    return process.wait(timeout=min(15, remaining))
-                except subprocess.TimeoutExpired:
-                    print("Native command is still running...", flush=True)
-        finally:
-            # Kill the group even if its leader exited while a child was alive.
-            try:
-                os.killpg(process.pid, signal.SIGKILL)
-            except ProcessLookupError:
-                pass
-            process.wait(timeout=10)
+    return run_argv(arguments, repo, command.timeout_seconds)
 
 
 def reusable_bundle(

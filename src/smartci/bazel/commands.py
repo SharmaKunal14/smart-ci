@@ -35,6 +35,17 @@ def add_parser(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None
         "bazel", help="validated native Bazel evidence and planning"
     )
     commands = parent.add_subparsers(dest="bazel_command", required=True)
+    lifecycle = commands.add_parser(
+        "run-pr",
+        help="reuse or reconstruct a native map, then execute the exact PR head",
+    )
+    for name in ("repo", "fetched", "capture-config", "execution-config", "output"):
+        lifecycle.add_argument("--" + name, type=Path, required=True)
+    lifecycle.add_argument("--base", required=True)
+    lifecycle.add_argument("--head", required=True)
+    lifecycle.add_argument("--publisher-capture", type=Path)
+    lifecycle.add_argument("--must-run", action="append", default=[])
+    lifecycle.add_argument("--force-full", action="store_true")
     execution = commands.add_parser(
         "execute", help="derive and execute a native PR plan from trusted evidence"
     )
@@ -220,6 +231,38 @@ def plan_command(args: argparse.Namespace) -> int:
 
 
 def command(args: argparse.Namespace) -> int:
+    if args.bazel_command == "run-pr":
+        from .lifecycle import run
+
+        try:
+            report = run(
+                args.repo.resolve(),
+                args.base,
+                args.head,
+                args.fetched.resolve(),
+                args.capture_config.resolve(),
+                args.execution_config.resolve(),
+                args.output.resolve(),
+                args.publisher_capture.resolve() if args.publisher_capture else None,
+                must_run=tuple(args.must_run),
+                force_full=args.force_full,
+            )
+        except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError):
+            print(json.dumps({"status": "error", "code": "INVALID_NATIVE_PR_INPUT"}))
+            return 2
+        print(
+            json.dumps(
+                {key: report[key] for key in ("status", "mode", "exit_code", "error")}
+            )
+        )
+        code = report["exit_code"]
+        return (
+            code
+            if type(code) is int and 0 < code <= 255
+            else 0
+            if report["status"] == "passed"
+            else 1
+        )
     if args.bazel_command == "execute":
         try:
             output = args.output.resolve()
