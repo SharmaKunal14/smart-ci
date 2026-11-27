@@ -19,6 +19,20 @@ from .collector import implementation_digest
 from .models import Snapshot
 
 
+def bounded_import_warnings(*snapshots: Snapshot) -> list[str]:
+    """Expose the entire candidate set, including targets removed in the PR."""
+    scopes: dict[tuple[str, str, int], set[str]] = {}
+    for snapshot in snapshots:
+        for fact in snapshot.provenance.imports:
+            if fact.resolution == "bounded_local":
+                key = (snapshot.graph.commit, fact.path, fact.line)
+                scopes.setdefault(key, set()).add(fact.module)
+    return [
+        f"BOUNDED_IMPORT:{commit}:{path}:{line}:" + ",".join(sorted(targets))
+        for (commit, path, line), targets in sorted(scopes.items())
+    ]
+
+
 def required_full_from_head(
     root: Path, base_commit: str, head: Snapshot, policy: SelectionPolicy
 ) -> Report | None:
@@ -49,6 +63,7 @@ def required_full_from_head(
     }
     result.warnings = [
         "BASE_DISCOVERY_SKIPPED:HEAD_REQUIRES_FULL",
+        *bounded_import_warnings(head),
         *sorted(
             f"COLLECTION_GAP:{g.code}:{g.path or 'environment'}:{g.line}"
             for g in head.provenance.gaps
@@ -121,6 +136,7 @@ def plan(root: Path, base: Snapshot, head: Snapshot, policy: SelectionPolicy) ->
             result = fallback("INVALID_GIT_COMPARISON", head.inventory)
     result.comparison = {"base": base.graph.commit, "head": head.graph.commit}
     result.evidence.update({"base_snapshot": base.digest, "head_snapshot": head.digest})
+    result.warnings.extend(bounded_import_warnings(base, head))
     result.warnings.extend(
         sorted(
             {

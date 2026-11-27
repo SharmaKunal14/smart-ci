@@ -200,6 +200,7 @@
         "kind": {
           "enum": [
             "import",
+            "bounded_import",
             "package_init",
             "fixture",
             "resource"
@@ -468,6 +469,7 @@
         "resolution": {
           "enum": [
             "local",
+            "bounded_local",
             "stdlib",
             "distribution",
             "optional_absent",
