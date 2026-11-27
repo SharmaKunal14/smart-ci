@@ -1,0 +1,283 @@
+{
+  "schema_version": "smartci.native-action-enrollment-evaluation.v1",
+  "action_commit": "e780aeb00eb5b81c35b062c65734067c03279754",
+  "cli_release": "cli-v0.2.0a2",
+  "wheel_sha256": "a3940b1281c4af1b51850cbf5825ef3d570c2c5dbf19681af9bc529ac2e6d9d3",
+  "safety_run": "https://github.com/SharmaKunal14/smart-ci/actions/runs/45956316159",
+  "hosted_tests_passed": 1153,
+  "scenario": "Existing hinted-node insertion method: name result before returning its iterator. Behavior-preserving refactor; existing tests unchanged.",
+  "enrollment": {
+    "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45956839926",
+    "run_id": 45956839926,
+    "head": "182a1c5b29fe32daf2549e0507866f7bb9ae3ebc",
+    "workflow_seconds": 671.0,
+    "job_seconds": 668.0,
+    "native_command_seconds": 637.788659532,
+    "native_test_targets": 252,
+    "build_only_targets": 324,
+    "manifest_digest": "9e8314503b6d0eecd2e9c1b3b66481e45b33f500a1081463f6a4052cc044eb58",
+    "capture_config_digest": "60c270c5bb6798817cac1d6c88a303e0468c937a22939b0a2f1a3995cd8e3def",
+    "runner_cpu": "Intel(R) Xeon(R) 6975P-C",
+    "visible_cpus": "4",
+    "artifact_prefix": "smartci-native-map",
+    "artifact_attempt": 1,
+    "model_calls": 0,
+    "source_configuration": ".smartci/native.json; profile + approved map branch/workflow, no hand-supplied publisher/capture digests",
+    "query_command_seconds": 8.731918938000035,
+    "publisher_workflow_digest": "0be100b162d8332df3d0a3b72c4726ef8ef27c3b82c870a874044c7fb78372f5",
+    "artifacts_sha256": {
+      "demo-output/action-auto-enrollment/run.json": "e9a623ae98c62f591ab155247c2f8fdbceb25a263a5bee37626105409520e6d5",
+      "demo-output/action-auto-enrollment/jobs.json": "2d0625d01434eb88d02800a259e6d08f44c68dccf9d3dade7783331320cc41ea",
+      "demo-output/action-auto-enrollment/artifacts/smartci-native-map-1/enrollment/collection.json": "88fff20c2dc5e0240c583ee01392b96f47bdb6ba29db36d54d801b3285465a01"
+    }
+  },
+  "comparison": {
+    "case": "auto",
+    "arms": {
+      "native": {
+        "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45956992612",
+        "run_id": 45956992612,
+        "event": "pull_request",
+        "head": "cccc702e657422a0dad864752bb103a2b188a782",
+        "created_at": "2026-11-27T07:13:35Z",
+        "completed_at": "2026-11-27T07:29:58Z",
+        "conclusion": "success",
+        "workflow_seconds": 983.0,
+        "job_seconds": 980.0,
+        "command_seconds": 968.975178822,
+        "exit_code": 0,
+        "runner_cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+        "visible_cpus": "4",
+        "native_test_targets_with_results": 252,
+        "build_target_configurations": 576,
+        "failed_build_targets": [],
+        "failed_tests": {},
+        "native_actions_executed": 2988,
+        "runner_policy_restored": true,
+        "artifacts_sha256": {
+          "artifacts/independent-native-1/native-control/native.bep.json": "4486f59a7a3e86f334fab43f60879bf91088e8a4abd2893b865ce69ff6e15c34",
+          "artifacts/independent-native-1/native-control/execution.json": "5b95c46cbd1f7537d0205643dec76e7f2f286eb62f1b9f20b85c401d513449e2",
+          "run.json": "36bd7aeff16e56e3e6a0965ae1bab6896460845fb314e8ded32b374de4d4dbd4",
+          "jobs.json": "35b81eea214fc7bdb16401d7d856db2fd2ef7fa82232f265b3cb6881d7e4e8fa",
+          "artifacts/independent-native-1/runner-policy/cpu.json": "0b9e580d732fdcf1959faae008e4d0d7ff5c47a032dad454b5c5642206d666e7"
+        },
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "seconds": 0.0
+          },
+          {
+            "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+            "conclusion": "success",
+            "seconds": 3.0
+          },
+          {
+            "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+            "conclusion": "success",
+            "seconds": 2.0
+          },
+          {
+            "name": "Bound unused system crash processing on this disposable runner",
+            "conclusion": "success",
+            "seconds": 0.0
+          },
+          {
+            "name": "Bound the separate Apport crash-report hook",
+            "conclusion": "success",
+            "seconds": 0.0
+          },
+          {
+            "name": "Run the independent complete native suite",
+            "conclusion": "success",
+            "seconds": 969.0
+          },
+          {
+            "name": "Restore the Apport hook on the disposable runner",
+            "conclusion": "success",
+            "seconds": 0.0
+          },
+          {
+            "name": "Restore disposable runner policy",
+            "conclusion": "success",
+            "seconds": 0.0
+          },
+          {
+            "name": "Publish native execution and map lifecycle evidence",
+            "conclusion": "success",
+            "seconds": 2.0
+          },
+          {
+            "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+            "conclusion": "success",
+            "seconds": 0.0
+          },
+          {
+            "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+            "conclusion": "success",
+            "seconds": 0.0
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "seconds": 0.0
+          }
+        ],
+        "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/32",
+        "pr_created_at": "2026-11-27T07:13:32Z",
+        "pr_creation_to_result_seconds": 986.0
+      },
+      "smart": {
+        "run": "https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45958435002",
+        "run_id": 45958435002,
+        "event": "pull_request",
+        "head": "cccc702e657422a0dad864752bb103a2b188a782",
+        "created_at": "2026-11-27T07:26:10Z",
+        "completed_at": "2026-11-27T07:31:28Z",
+        "conclusion": "success",
+        "workflow_seconds": 318.0,
+        "job_seconds": 314.0,
+        "command_seconds": 285.43246308500005,
+        "exit_code": 0,
+        "runner_cpu": "Intel(R) Xeon(R) 6975P-C",
+        "visible_cpus": "4",
+        "native_test_targets_with_results": 2,
+        "build_target_configurations": 326,
+        "failed_build_targets": [],
+        "failed_tests": {},
+        "native_actions_executed": 1092,
+        "runner_policy_restored": true,
+        "artifacts_sha256": {
+          "artifacts/smartci-native-test-1/native-pr/execution/capture/native.bep.json": "7b6a7ea14ebefbf9e34426496e1df860eef1f738ad53185f8e8db0083a4fc8a3",
+          "artifacts/smartci-native-test-1/native-pr/execution/execution.json": "fc63a82556273e73822249a490eb08db887bcc6b80064f207b1279592e9d8d11",
+          "run.json": "05ae8129d4d8c8f9f61df315dcdddcc90ac2c095f1c8a9783fdc28a744a8909d",
+          "jobs.json": "acaeef2a5efa1cd50c21b74e92528386f54a51abf3cd1c77b4539e7784ecb26c",
+          "artifacts/action-runner-1/cpu.json": "c52152516043af950817d9a6418d9768113006132756117a407d89a24b7a91cf"
+        },
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success",
+            "seconds": 2.0
+          },
+          {
+            "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+            "conclusion": "success",
+            "seconds": 5.0
+          },
+          {
+            "name": "Bound unused system crash processing on this disposable runner",
+            "conclusion": "success",
+            "seconds": 1.0
+          },
+          {
+            "name": "Bound the separate Apport crash-report hook",
+            "conclusion": "success",
+            "seconds": 0.0
+          },
+          {
+            "name": "Plan and execute through the released Smart CI Action",
+            "conclusion": "success",
+            "seconds": 300.0
+          },
+          {
+            "name": "Restore the Apport hook on the disposable runner",
+            "conclusion": "success",
+            "seconds": 1.0
+          },
+          {
+            "name": "Restore disposable runner policy",
+            "conclusion": "success",
+            "seconds": 0.0
+          },
+          {
+            "name": "Publish native execution and map lifecycle evidence",
+            "conclusion": "success",
+            "seconds": 1.0
+          },
+          {
+            "name": "Post Plan and execute through the released Smart CI Action",
+            "conclusion": "success",
+            "seconds": 0.0
+          },
+          {
+            "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+            "conclusion": "success",
+            "seconds": 0.0
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success",
+            "seconds": 0.0
+          }
+        ],
+        "mode": "subset",
+        "fallback": [],
+        "selected": [
+          "//absl/container:linked_hash_map_test",
+          "//absl/container:linked_hash_set_test"
+        ],
+        "omitted_count": 250,
+        "retained_build_only_targets": 324,
+        "planning_seconds": 0.4045463489999861,
+        "map": {
+          "map": "retrieved",
+          "rebuild": null
+        },
+        "source_comparison": {
+          "base": "182a1c5b29fe32daf2549e0507866f7bb9ae3ebc",
+          "head": "cccc702e657422a0dad864752bb103a2b188a782"
+        },
+        "delivery_phase_seconds": {
+          "stage": 0.794506,
+          "install": 5.83636,
+          "map_retrieval_validation": 4.930149,
+          "lifecycle_and_planning": 1.337978,
+          "before_native_total": 12.898993
+        },
+        "pr": "https://github.com/SharmaKunal14/abseil-cpp/pull/33",
+        "pr_created_at": "2026-11-27T07:26:06Z",
+        "pr_creation_to_result_seconds": 322.0,
+        "fetch_receipt": {
+          "archive_digest": "566cec4385ca1b63fb7b46721a2e4f3b627278c23376d02c4c553b95d98960a1",
+          "artifact_id": 15179747085,
+          "config_digest": "60c270c5bb6798817cac1d6c88a303e0468c937a22939b0a2f1a3995cd8e3def",
+          "manifest_digest": "9e8314503b6d0eecd2e9c1b3b66481e45b33f500a1081463f6a4052cc044eb58",
+          "map_revision": "182a1c5b29fe32daf2549e0507866f7bb9ae3ebc",
+          "publisher_digest": "b6e7369c447e3e0cd394649c401875627512f74ef08d650d5b350c57b71eafee",
+          "repository": "SharmaKunal14/abseil-cpp",
+          "revision": "182a1c5b29fe32daf2549e0507866f7bb9ae3ebc",
+          "run_attempt": 1,
+          "run_id": 45956839926,
+          "schema_version": "smartci.bazel-fetch.v1",
+          "status": "ready"
+        }
+      }
+    },
+    "eligible_test_targets": 252,
+    "missed_observed_failures": [],
+    "failure_sets_equal": true,
+    "retained_native_build_scope_verified": true,
+    "seconds_saved": 665.0,
+    "percent_saved": 67.65005086469989,
+    "individual_test_case_counts": "not measured; counts here are native Bazel targets",
+    "timing_boundary": "PR creation to terminal GitHub workflow.updated_at; also retain run-created and job boundaries. First attempts, identical head/base and native profile.",
+    "pr_seconds_saved": 664.0,
+    "pr_percent_saved": 67.34279918864097
+  },
+  "additional_enrollment_accounting": {
+    "basis": "Only if this full enrollment is an additional job, rather than replacing an existing full push job",
+    "enrollment_plus_one_smart_job_seconds": 982.0,
+    "one_native_job_seconds": 980.0,
+    "net_runner_seconds_saved_for_one_pr": -2.0,
+    "arithmetic_break_even_prs_sharing_one_map": 2,
+    "limit": "Break-even is arithmetic using this one pair, not an observed multi-PR campaign. Each configured branch push currently performs fresh full enrollment."
+  },
+  "limitations": [
+    "One localized cold-profile pair; differing runner CPUs confound exact causal attribution.",
+    "Passing case has no failures to estimate regression-detection recall; earlier alpha regression evidence remains separate.",
+    "Prior warm-cache comparisons were slower with Smart CI; no new warm-cache claim.",
+    "Abseil GCC/C++17 preset only, not arbitrary Bazel or polyglot support.",
+    "No merges, AWS deployments or model calls."
+  ]
+}

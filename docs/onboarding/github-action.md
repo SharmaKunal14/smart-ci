@@ -40,7 +40,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       # Preserve the existing native toolchain/environment preparation here.
-      - uses: SharmaKunal14/smart-ci@REVIEWED_ACTION_SHA
+      - uses: SharmaKunal14/smart-ci@e780aeb00eb5b81c35b062c65734067c03279754
 ```
 
 For the bundled profile, `.smartci/native.json` starts as:
@@ -55,9 +55,10 @@ For the bundled profile, `.smartci/native.json` starts as:
 
 Save the example workflow as `.github/workflows/tests.yml`; `maps.workflow`
 must match its path, and `maps.branch` must be the reviewed/protected branch.
-`REVIEWED_ACTION_SHA` is a placeholder for the tested 40-character release commit.
-Automatic enrollment is new in CLI 0.2.0a2; its hosted verification is pending.
-Do not point this configuration at the earlier 0.2.0a1 Action.
+The sample pins the tested 0.2.0a2 Action commit. Its
+[hosted safety gate](https://github.com/SharmaKunal14/smart-ci/actions/runs/45956316159)
+passed all 1,153 tests, linting, typing, build and wheel-digest verification.
+Do not point automatic-map configuration at the earlier 0.2.0a1 Action.
 
 The preset ships the reviewed adapter, so customers do not copy scripts or install
 the CLI. A push to the approved branch runs the complete native command and query,
@@ -76,8 +77,11 @@ no usable map. Protect the publisher branch and review workflow/policy changes.
 This version performs a fresh full enrollment on each configured branch push.
 Prefer integrating it into an existing full post-push job. If it adds an extra
 full job, count that cost against PR savings; faster PRs alone do not establish
-lower total compute. A push followed immediately by a PR may race unfinished
-enrollment and therefore rebuild. No claim of warm-cache savings is made.
+lower total compute. For N PRs sharing a map, compare `additional enrollment +
+sum(Smart PR time)` with `sum(native PR time)`, using job duration for runner
+compute. Do not charge the whole pre-existing full push job as a new cost, or
+hide an additional full job when no such baseline job existed. A push followed
+immediately by a PR may race unfinished enrollment and therefore rebuild. No claim of warm-cache savings is made.
 
 Omitting `maps` retains the earlier reconstruct-or-full behavior. Advanced existing
 `publisher`/`publisher_capture` contracts remain supported, but cannot be combined
@@ -262,3 +266,80 @@ profile through the Action, and this cold passing case was faster end to end.
 It does not establish universal compatibility, a production recall guarantee,
 or benefit when native caching already avoids the same work. Keep the earlier
 warm-cache losses visible when deciding whether to adopt this profile.
+
+
+### Automatic enrollment and next-PR reuse (CLI 0.2.0a2)
+
+[Smart CI PR #32](https://github.com/SharmaKunal14/smart-ci/pull/32) adds automatic
+map enrollment to the same Action. The pilot configuration is now eight lines:
+profile plus the approved map branch/workflow. No manually assembled publisher,
+workflow hash, run ID or capture command contract is supplied by the consumer.
+The example above uses the tested Action commit
+`e780aeb00eb5b81c35b062c65734067c03279754` and checksum-pinned CLI 0.2.0a2.
+
+[Enrollment run 45956839926](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45956839926)
+on base `182a1c5b29fe32daf2549e0507866f7bb9ae3ebc` passed all 252 native test
+targets, retained 324 build-only targets and published a validated map. Its total
+workflow time was 671 seconds (668 runner-job seconds): 637.79 seconds in the
+native full command and 8.73 seconds in the dependency query. This was a fresh
+capture, not reuse of the earlier experiment's manually configured publisher.
+
+The next eligible source-only [Smart CI PR #33](https://github.com/SharmaKunal14/abseil-cpp/pull/33)
+and [full-control PR #32](https://github.com/SharmaKunal14/abseil-cpp/pull/32)
+share head `cccc702e657422a0dad864752bb103a2b188a782`. The change names the hinted
+node insertion result before returning its iterator. It is a behavior-preserving
+refactor; test sources, native command/flags, cache behavior and environment profile
+are unchanged. These are first attempts on real PR creation events.
+
+| GitHub measurement | Unchanged native full | Smart CI Action |
+| --- | ---: | ---: |
+| PR creation to completed result | 986 s | 322 s |
+| Workflow creation to completion | 983 s | 318 s |
+| Runner job duration | 980 s | 314 s |
+| Native command | 968.98 s | 285.43 s |
+| Test targets actually passed | 252 | 2 |
+| Build target/configuration pairs | 576 | 326 |
+| Required build-only targets retained | 324 | 324 |
+| Native actions executed | 2,988 | 1,092 |
+
+[Full run 45956992612](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45956992612)
+and [Action run 45958435002](https://github.com/SharmaKunal14/abseil-cpp/actions/runs/45958435002)
+both passed. Smart CI authenticated the map from the fresh enrollment run, used
+no reconstruction or fallback, and selected the existing `linked_hash_map_test`
+and `linked_hash_set_test` targets. Strict reconciliation verified complete native
+events, exact options/patterns, matching selected outcomes and every required
+build configuration. There were no observed full-suite failures to miss; this
+passing case cannot estimate failure-detection recall. The earlier alpha's known
+compiler-regression comparison above remains separate evidence.
+
+Observed PR feedback improved by **664 seconds (67.3%)**. Before native execution,
+Action staging took 0.79 seconds, release installation 5.84, authenticated map
+retrieval/validation 4.93, and lifecycle/planning 1.34: **12.90 seconds total**.
+The selector-only timing is not the total Smart CI overhead. Setup, downloads,
+validation, upload and cleanup remain included in the completed GitHub timings.
+
+**No net compute saving was observed for one additional enrollment plus one PR.**
+Their combined runner time was 668 + 314 = **982 seconds**, versus **980 seconds**
+for one native PR. Faster feedback is real in this pair, but total runner usage
+is effectively unchanged when enrollment is extra. Two identical-saving PRs
+sharing one enrollment would cross the arithmetic break-even point; that is a
+calculation, not an observed multi-PR campaign. Each approved branch push currently
+performs fresh enrollment. If it replaces an existing full push job, only the
+additional work is incremental; that alternative was not measured here.
+
+The full runner was an Intel Xeon Platinum 8370C; enrollment and the selected
+runner used Intel Xeon 6975P-C hosts. All exposed four CPUs. Reduced native action
+count establishes less work, but hardware differences confound the exact causal
+percentage. This is one cold localized case, not a representative enterprise
+average, arbitrary-repository support or a warm-cache improvement. Prior warm
+results remain negative. All PRs remain unmerged; no AWS work or model calls.
+
+The [machine-readable enrollment and comparison record](../benchmarks/native-action-enrollment-2026-11-27.json)
+contains exact revisions, map provenance, artifact hashes, step durations, selected
+scope and the separate enrollment accounting. To verify the product flow, inspect
+`smartci-native-map-1` on enrollment, then `map/fetch.json`,
+`native-pr/lifecycle.json`, `native-pr/execution/plan.json` and `execution.json`
+in PR #33's `smartci-native-test-1` artifact. The fetched run and manifest must
+match enrollment; the lifecycle must say `retrieved` with no rebuild. Uploaded
+artifacts are retained for seven days; the committed result record
+preserves the measurement and provenance.
