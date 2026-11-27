@@ -157,6 +157,24 @@ def test_deletion_has_no_head_coverage_claim(source):
     assert result["findings"][0]["zero_hit_lines"] == []
 
 
+def test_changed_lines_use_literal_filenames(source):
+    root, _, _ = source
+    for name in ("[x].py", "x.py"):
+        (root / "src" / name).write_text("a = 1\nb = 2\nc = 3\n")
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "literal paths")
+    base = git(root, "rev-parse", "HEAD")
+    (root / "src/[x].py").write_text("a = 1\nb = 4\nc = 3\n")
+    (root / "src/x.py").write_text("a = 1\nb = 2\nc = 5\n")
+    git(root, "commit", "-qam", "separate changes")
+    head = git(root, "rev-parse", "HEAD")
+    findings = inspect((root, base, head), None, None)["findings"]
+    assert {item["path"]: item["changed_head_lines"] for item in findings} == {
+        "src/[x].py": [2],
+        "src/x.py": [3],
+    }
+
+
 def test_new_source_is_reported_as_missing_when_not_measured(source):
     root, _, previous = source
     (root / "src/new.py").write_text("answer = 42\n")

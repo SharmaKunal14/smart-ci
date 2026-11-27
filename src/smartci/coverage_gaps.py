@@ -86,6 +86,7 @@ def changed_lines(repo: Path, base: str, head: str, path: str) -> list[int]:
     raw = git(
         repo,
         "--no-replace-objects",
+        "--literal-pathspecs",
         "diff",
         "--no-ext-diff",
         "--no-textconv",
