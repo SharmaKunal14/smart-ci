@@ -2,6 +2,12 @@
 
 Updated: 27 November 2026
 
+Current scoped-fallback work: [finite import expansion](docs/onboarding/scoped-import-fallback.md)
+records every possible target of a verified inline tuple import and uses the
+existing base/head transitive selection rules. It introduces no scope exemptions.
+Textual's remaining 13 gaps do not meet this contract; retain full execution and
+rerun the same GitHub PR comparisons without changing native source/tests.
+
 Latest CI-efficiency iteration: [Smart CI PR #29](https://github.com/SharmaKunal14/smart-ci/pull/29)
 fixes a false hyphenated-module rejection and skips redundant base discovery
 when a validated incomplete head already requires full tests. It preserves all

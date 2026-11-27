@@ -3,7 +3,7 @@
 import ast
 
 
-def _bindings(tree: ast.Module, name: str) -> list[ast.AST]:
+def binding_sites(tree: ast.Module, name: str) -> list[ast.AST]:
     """Overapproximate bindings, including scopes the hook may not use."""
     found: list[ast.AST] = []
     for node in ast.walk(tree):
@@ -53,11 +53,11 @@ def _without_docstring(body: list[ast.stmt]) -> list[ast.stmt]:
 
 
 def _plain_exception(tree: ast.Module, name: str, uses: set[int]) -> bool:
-    if _bindings(tree, "AttributeError"):
+    if binding_sites(tree, "AttributeError"):
         return False
     if name == "AttributeError":
         return True
-    definitions = _bindings(tree, name)
+    definitions = binding_sites(tree, name)
     if len(definitions) != 1:
         return False
     definition = definitions[0]

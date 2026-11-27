@@ -7,6 +7,7 @@ from pathlib import PurePosixPath
 from smartci.selection import digest
 
 from .attribute_hooks import rejecting_attribute_hook
+from .finite_imports import finite_import_targets
 from .models import Edge, Environment, Gap, ImportFact, PythonConfig
 
 PROCESS_APIS = {
@@ -258,16 +259,26 @@ class Analysis:
         for path, tree in sorted(self.trees.items()):
             ImportVisitor(self, path).visit(tree)
 
-    def resolve(self, path: str, name: str, line: int, optional: bool = False) -> None:
+    def resolve(
+        self,
+        path: str,
+        name: str,
+        line: int,
+        optional: bool = False,
+        *,
+        bounded: bool = False,
+    ) -> None:
         top = name.split(".")[0]
         resolution = "unresolved"
         if name in self.modules or name in self.namespaces:
-            resolution = "local"
+            resolution = "bounded_local" if bounded else "local"
             parts = name.split(".")
             for count in range(1, len(parts) + 1):
                 target = self.modules.get(".".join(parts[:count]))
                 if target is not None:
-                    self.edge(path, target, "import", line)
+                    self.edge(
+                        path, target, "bounded_import" if bounded else "import", line
+                    )
         elif top in {n.split(".")[0] for n in self.modules}:
             self.gap("UNRESOLVED_LOCAL_IMPORT", path, line)
         elif top in self.environment.stdlib:
@@ -490,7 +501,21 @@ class ImportVisitor(ast.NodeVisitor):
             if module is not None:
                 self.analysis.resolve(self.path, module, node.lineno, self.optional)
             else:
-                self.analysis.gap("DYNAMIC_IMPORT", self.path, node.lineno)
+                targets = (
+                    finite_import_targets(
+                        node, self.analysis.trees[self.path], self.analysis.modules
+                    )
+                    if call == "importlib.import_module"
+                    and "importlib" in self.analysis.environment.stdlib
+                    else ()
+                )
+                if targets:
+                    for target in targets:
+                        self.analysis.resolve(
+                            self.path, target, node.lineno, bounded=True
+                        )
+                else:
+                    self.analysis.gap("DYNAMIC_IMPORT", self.path, node.lineno)
         elif call in {
             "exec",
             "eval",

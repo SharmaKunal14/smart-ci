@@ -51,7 +51,7 @@ class Edge(BaseModel):
     model_config = ConfigDict(strict=True, extra="forbid")
     source: str
     target: str
-    kind: Literal["import", "package_init", "fixture", "resource"]
+    kind: Literal["import", "bounded_import", "package_init", "fixture", "resource"]
     line: int = Field(default=0, ge=0)
 
 
@@ -62,6 +62,7 @@ class ImportFact(BaseModel):
     module: str = Field(max_length=512)
     resolution: Literal[
         "local",
+        "bounded_local",
         "stdlib",
         "distribution",
         "optional_absent",
