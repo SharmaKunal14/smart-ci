@@ -1,10 +1,18 @@
 # Smart CI
 
-The current milestone is a [GitHub Action backed by the reusable CLI](docs/onboarding/github-action.md), starting with reviewed native Bazel profiles. The pinned alpha passed real GitHub comparisons: 897/509 seconds native/Action for a localized fix, selecting 2/252 Bazel test targets while retaining all 324 build-only targets. This is a cold-profile result, not universal repository compatibility or warm-cache benefit. Model campaigns remain disabled.
+The current milestone is a [GitHub Action backed by the reusable CLI](docs/onboarding/github-action.md), starting with reviewed native Bazel profiles. Model campaigns remain disabled.
+
+The latest [three-pair GitHub warm-cache evaluation](docs/benchmarks/native-action-warm-2026-11-27.md)
+measured **313/389, 329/223 and 312/226 seconds** native/Action. Two pairs were
+faster, but different CPUs and container setup dominated the differences. Both
+arms reran the same two test targets and eight local native actions; no
+attributable warm-cache benefit or lifecycle ROI is established. The bounded
+first gate is complete; broader scenarios and base-refresh evaluation remain
+deferred. Earlier cold-run savings below are separate evidence.
 
 Automatic enrollment is now included: one approved-branch full run publishes a
-validated map; the next eligible PR reuses it through the same Action. The latest
-real pair measured **986/322 seconds** native/Action from PR creation to result,
+validated map; the next eligible PR reuses it through the same Action. The earlier
+cold-profile pair measured **986/322 seconds** native/Action from PR creation to result,
 with 2/252 targets executed. Including the extra enrollment job, total runner
 usage was **982/980 seconds** Smart/native: faster PR feedback, no one-cycle compute
 saving. See [the exact setup, evidence and limitations](docs/onboarding/github-action.md#automatic-enrollment-and-next-pr-reuse-cli-020a2).

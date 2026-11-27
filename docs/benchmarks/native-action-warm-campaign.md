@@ -97,3 +97,11 @@ operating range here, with the same Action and no selector exemptions.
 Service-level cache permissions follow [GitHub's cache-mode documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#cache-mode).
 The existing cap remains below the [documented included cache storage](https://docs.github.com/en/actions/reference/limits).
 The disk cache includes native build/test reuse; see [Bazel cache diagnostics](https://docs.bazel.build/versions/main/remote-execution-caching-debug.html).
+
+## Recorded outcome
+
+The first gate finished with all six first-attempt PRs passing and verified native
+cache hits. The numeric latency screen passed, but CPU and common-setup variation
+leave an attributable useful operating range inconclusive. No broader cases or
+base refreshes were started. See [all attempts and accounting](native-action-warm-2026-11-27.md);
+the original predeclaration above remains intact. The experiment cache was removed.

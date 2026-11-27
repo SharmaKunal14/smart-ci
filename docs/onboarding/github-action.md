@@ -268,6 +268,18 @@ or benefit when native caching already avoids the same work. Keep the earlier
 warm-cache losses visible when deciding whether to adopt this profile.
 
 
+### Current warm-cache evaluation
+
+The same published Action and CLI were tested with independent restores of a
+working base-only native build/test cache. Three real PR pairs measured
+**313/389, 329/223 and 312/226 seconds** native/Action. All passed; both approaches
+performed the same two uncached test runs and eight local actions. Different CPU
+models and container setup dominate the faster results. This is mixed observed
+latency, not an established causal warm-cache speedup or measured lifecycle ROI.
+See [all attempts, enrollment costs and verification](../benchmarks/native-action-warm-2026-11-27.md).
+The cached trial uses the existing full policy interface; the short bundled
+preset below remains the uncached profile. No selector or release was changed.
+
 ### Automatic enrollment and next-PR reuse (CLI 0.2.0a2)
 
 [Smart CI PR #32](https://github.com/SharmaKunal14/smart-ci/pull/32) adds automatic
