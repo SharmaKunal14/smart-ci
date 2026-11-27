@@ -10,7 +10,7 @@ from smartci.adapters.runners import AdapterError, Runner
 from smartci.cli import main
 from smartci.discovery.collector import collect, environment_gaps
 from smartci.discovery.models import Environment, PythonConfig, Snapshot
-from smartci.discovery.planning import plan
+from smartci.discovery.planning import plan, required_full_from_head
 from smartci.discovery.python_graph import Analysis
 from smartci.selection import SelectionPolicy, digest
 
@@ -84,6 +84,17 @@ def test_child_script_without_import_edge_requires_full_plan(repository):
     assert report.execution == "full"
     assert report.fallback == ["INCOMPLETE_EVIDENCE"]
     assert set(report.selected) == {unit.id for unit in head.inventory.tests}
+    policy = SelectionPolicy(
+        schema_version="1", repository=config().repository, mode="selective"
+    )
+    early = required_full_from_head(repository, base.graph.commit, head, policy)
+    assert early == required_full_from_head(repository, base.graph.commit, head, policy)
+    assert early.execution == "full" and early.selected == report.selected
+    assert early.fallback == report.fallback
+    assert early.comparison == report.comparison
+    assert early.omitted == {}
+    assert "base_graph" not in early.evidence and "base_snapshot" not in early.evidence
+    assert "BASE_DISCOVERY_SKIPPED:HEAD_REQUIRES_FULL" in early.warnings
 
 
 def git(root, *args):
@@ -295,7 +306,8 @@ def test_unsafe_collector_configuration(root):
 
 
 def test_native_configuration_fixtures_parameterization_and_repeatability(repository):
-    first, runner, units = collect(repository, config())
+    timings = {}
+    first, runner, units = collect(repository, config(), timings=timings)
     assert first.graph.complete, first.provenance.gaps
     assert len(units) == 3
     assert first.provenance.native_case_count == 4
@@ -305,6 +317,22 @@ def test_native_configuration_fixtures_parameterization_and_repeatability(reposi
     assert all("out_of_scope" not in case for case in runner.native_results)
     second, _, _ = collect(repository, config())
     assert first.model_dump() == second.model_dump()
+    assert set(timings) == {
+        "read_and_probe_inputs",
+        "environment",
+        "native_collection",
+        "native_collection_repeat",
+        "dependency_analysis",
+        "verify_unchanged_inputs",
+        "build_snapshot",
+    }
+    assert all(value >= 0 for value in timings.values())
+    policy = SelectionPolicy(
+        schema_version="1", repository=config().repository, mode="selective"
+    )
+    assert (
+        required_full_from_head(repository, first.graph.commit, first, policy) is None
+    )
     assert first.provenance.edges
     assert all(
         e.source in first.provenance.sources and e.target in first.provenance.sources
@@ -319,6 +347,62 @@ def test_native_configuration_fixtures_parameterization_and_repeatability(reposi
         timeout=30,
     )
     assert native.returncode == 0
+
+
+def test_head_shortcut_rejects_invalid_provenance(repository, monkeypatch):
+    snapshot, _, _ = collect(repository, config())
+    policy = SelectionPolicy(
+        schema_version="1", repository=config().repository, mode="selective"
+    )
+    with pytest.raises(ValueError, match="repository mismatch"):
+        required_full_from_head(
+            repository,
+            snapshot.graph.commit,
+            snapshot,
+            policy.model_copy(update={"repository": "other/repo"}),
+        )
+    with monkeypatch.context() as patch:
+        patch.setattr(
+            "smartci.discovery.planning.implementation_digest", lambda: "0" * 64
+        )
+        with pytest.raises(ValueError, match="collector version"):
+            required_full_from_head(repository, snapshot.graph.commit, snapshot, policy)
+    (repository / "app/auth.py").write_text("def allowed(): return False\n")
+    with pytest.raises(ValueError, match="stale or dirty"):
+        required_full_from_head(repository, snapshot.graph.commit, snapshot, policy)
+
+
+@pytest.mark.parametrize("incomplete", [False, True])
+def test_textual_harness_skips_base_only_for_required_full_head(
+    repository, tmp_path, monkeypatch, incomplete
+):
+    from test_textual_benchmark import benchmark
+
+    if incomplete:
+        (repository / "app/opaque.py").write_text("def run(source): exec(source)\n")
+        commit(repository)
+    snapshot, runner, units = collect(
+        repository, config().model_copy(update={"repository": "SharmaKunal14/textual"})
+    )
+    calls = []
+
+    def recorded_collect(*args, **kwargs):
+        calls.append("collect")
+        return snapshot, runner, units
+
+    monkeypatch.setattr("smartci.discovery.collector.collect", recorded_collect)
+    output = tmp_path / "planning"
+    output.mkdir()
+    benchmark.create_plan(
+        repository, snapshot.graph.commit, snapshot.graph.commit, output, sys.executable
+    )
+    assert len(calls) == (1 if incomplete else 2)
+    assert (output / "base-compatibility.json").exists() is not incomplete
+    assert git(repository, "rev-parse", "HEAD") == snapshot.graph.commit
+    result = json.loads((output / "selection.json").read_text())
+    if incomplete:
+        assert result["execution"] == "full" and result["omitted"] == {}
+        assert json.loads((output / "targets.json").read_text()) is None
 
 
 def test_automatic_direct_transitive_and_new_import_planning(repository):
