@@ -2,6 +2,20 @@
 
 Updated: 27 November 2026
 
+Latest evaluation: the published Action/CLI completed one fresh cache/map seed
+and three real warm native-cache PR pairs without changing selection rules or
+tests. Native/Smart CI PR times were **313/389, 329/223 and 312/226 seconds**;
+median paired saving was 86 seconds, with one 76-second loss. All six runs reused
+the trusted base cache and reran the same two targets/eight local native actions.
+Different CPUs and common container setup dominate the positive differences, so
+attributable warm benefit and lifecycle amortization remain unproven. The numeric
+latency screen passed; the useful-operating-range decision remains inconclusive.
+The seven benchmark jobs used 2,540 runner-seconds including the 788-second seed.
+See [all runs, costs and verification](docs/benchmarks/native-action-warm-2026-11-27.md).
+Broader change cases, evolving-base refreshes and a second repository remain
+deferred after this bounded first gate; they are not marked complete. Cache
+cleanup is verified. No merges, model calls, AWS work or paid setting increases.
+
 Verified automatic enrollment: [Smart CI PR #32](https://github.com/SharmaKunal14/smart-ci/pull/32)
 and CLI 0.2.0a2 put initial full native capture and next-PR selection behind the
 same Action. A fresh GitHub enrollment passed (252 test targets / 324 build-only;
