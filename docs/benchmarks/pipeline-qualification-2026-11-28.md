@@ -76,3 +76,42 @@ jobs, maximum 20 minutes each; one active native job at a time; no unbounded
 retries. The 120-minute sum is a timeout ceiling, not an expected cost. One cache
 is capped at 2 GiB/100,000 files and deleted after consumers finish. Artifacts
 expire after seven days. No paid runner/storage-limit increases or model calls.
+
+## Qualification result and paired protocol
+
+[Native qualification](https://github.com/SharmaKunal14/httpcomponents-client/actions/runs/46118291884)
+passed at isolated base `e2a3100cb62a4f9db45ea7dcb9c536178a69a0aa`.
+Native Maven took 231.700 s; effective-model capture added 2.634 s; the complete
+runner job took 253 s. There were 325 native XML reports with 3,183 testcase
+outcomes: 3,165 passed and 18 native skips, no failures/errors. The source remained
+clean. Enrollment published 182,217,417 raw cache bytes (150,944,345 compressed).
+This is baseline/enrollment evidence, not Smart CI savings.
+
+The reviewed experimental Maven profile is documented in [the Action guide](../maven-action.md).
+It retains all POM aggregators and requires the enrolled native base-tree digest;
+later native base changes require renewed review. This restriction must be counted
+as a lifecycle limitation. It does not claim universal automatic Maven onboarding.
+
+The first PR makes a behavior-preserving REST URI cleanup: calculate the final
+base-path index once before reading/removing the empty trailing segment. Native
+tests stay unchanged. Repeat that same PR at most three times, alternating order
+full/Smart/full, after inspecting the first attempt. The regression PR restores
+the historical double-slash bug in implementation only; existing regression tests
+remain. The final POM-comment change exercises global configuration fallback.
+Any failed setup consumes an attempt and is retained, not silently replaced.
+
+Each paired job has the same physical runner, JDKs, source revision and native
+flags. Each arm starts from a fresh clone and independently restores the exact
+qualified Maven repository cache, verified by its tree digest. Native build output
+is never transferred between arms. Maven wrapper cache is removed between arms;
+Docker images/layers are cleared with no active containers, matching the native
+ephemeral runner's uncached container setup. Docker pulls remain timed native work.
+This is **warm Maven dependencies, cold wrapper/container state**, not a warm test
+result cache. Filesystem page cache is reset before each arm and that reset is timed.
+
+Arm intervals include checkout preparation, cache transfer/validation, reset,
+Action setup/CLI installation (Smart only), metadata/planning, native execution,
+the arm's evidence upload and report accounting. Shared JDK/tool setup, queue,
+joint upload and cleanup remain in the complete paired PR/job timing and are
+reported separately. The joint job is not measured standalone full-vs-Smart PR
+latency; do not relabel a computed allocation as an observed standalone run.
