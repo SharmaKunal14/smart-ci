@@ -6,7 +6,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from . import coverage_gaps, github_action
+from . import coverage_gaps, github_action, maven
 from .adapters.results import RunReport
 from .adapters.suite import SuiteConfig, discover, execute, manifest
 from .bazel import commands as bazel_commands
@@ -98,6 +98,7 @@ def main() -> int:
     ts_commands.add_parser(sub)
     bazel_commands.add_parser(sub)
     github_action.add_parser(sub)
+    maven.add_parser(sub)
     gaps = sub.add_parser(
         "coverage-gaps",
         help="report changed-line coverage; never select or generate tests",
@@ -169,6 +170,8 @@ def main() -> int:
     args = parser.parse_args()
     if args.command == "github-action":
         return github_action.command(args)
+    if args.command == "maven":
+        return maven.command(args)
     if args.command == "coverage-gaps":
         return coverage_command(args)
     if args.command == "bazel":

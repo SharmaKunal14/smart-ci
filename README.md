@@ -1,8 +1,20 @@
 # Smart CI
 
-The current milestone is a [GitHub Action backed by the reusable CLI](docs/onboarding/github-action.md), starting with reviewed native Bazel profiles. Model campaigns remain disabled.
+The current milestone is a GitHub Action backed by the reusable CLI, with
+[reviewed Bazel profiles](docs/onboarding/github-action.md) and an
+[experimental Maven reactor profile](docs/maven-action.md). Model campaigns remain disabled.
 
-The latest [controlled same-VM GitHub comparison](docs/benchmarks/native-action-matched-2026-11-28.md)
+The new [real HttpClient PR experiment](docs/benchmarks/httpclient-maven-2026-11-28.md)
+avoided uncached native modules: 1,331 instead of 3,165 executed cases. Full/Smart
+cache-to-upload intervals were **267/75 s** for maintenance and **228/67 s** for a
+historical regression, with the same failure detected. Configuration fallback ran
+everything and took **234/240 s**. These intervals include installation/planning,
+but exclude shared setup and benchmark preparation/cleanup; complete joint PR
+times are reported separately. Two setup errors consumed the repetition budget,
+so this is a promising narrow operating range, not proven repeatable production
+savings. Native-input review, base refresh and lifecycle costs remain limitations.
+
+The earlier [controlled same-VM GitHub comparison](docs/benchmarks/native-action-matched-2026-11-28.md)
 found **no reliable benefit on the warm Abseil profile**. Full/Smart arm times
 were **48.1/50.9, 40.4/57.3, 42.4/60.9 and 67.5/66.5 seconds**: three losses,
 one small gain, and a **9.9-second median paired slowdown**. Both approaches
