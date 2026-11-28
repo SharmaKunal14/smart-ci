@@ -70,8 +70,15 @@ jobs:
         id: order
         env:
           ATTEMPT: ${{ github.run_attempt }}
+          HEAD_BRANCH: ${{ github.head_ref }}
         run: |
-          if (( ATTEMPT % 2 )); then echo 'first=full' >> "$GITHUB_OUTPUT"; else echo 'first=smart' >> "$GITHUB_OUTPUT"; fi
+          if [[ "$HEAD_BRANCH" == 'codex/httpclient-regression' ]]; then
+            echo 'first=smart' >> "$GITHUB_OUTPUT"
+          elif (( ATTEMPT % 2 )); then
+            echo 'first=full' >> "$GITHUB_OUTPUT"
+          else
+            echo 'first=smart' >> "$GITHUB_OUTPUT"
+          fi
       - name: Prepare full (full first)
         id: prepare_full_full
         if: always() && steps.order.outputs.first == 'full'

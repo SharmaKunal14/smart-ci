@@ -2,7 +2,22 @@
 
 Updated: 28 November 2026
 
-Latest controlled evaluation: four real PRs ran full control and the unchanged
+Latest bounded follow-up: the [HttpClient Maven experiment](docs/benchmarks/httpclient-maven-2026-11-28.md)
+implemented a CLI-backed Action that avoids uncached reactor modules while
+preserving native commands and global fallback. Real maintenance/regression PRs
+executed 1,331 instead of 3,165 cases and caught the same historical failure.
+Full/Smart cache-to-upload intervals were 267/75 s and 228/67 s, including the
+Action and planning; POM fallback ran all cases and took 234/240 s. These exclude
+shared setup and benchmark preparation/cleanup; the report includes complete
+joint PR/job time, all five attempts and 1,846 runner-seconds of native experiment
+cost. Two setup failures left only one valid passing pair: the repeatability gate
+is not met. The reviewed-input contract is conditional, native base changes
+require renewed review, and standalone PR latency/lifecycle ROI remain unproven.
+The five-attempt cap is exhausted; the pilot workflow is disabled and its cache
+removed. No broader campaign is started. This identifies a candidate operating
+range where work is actually avoided; it does not overturn the Abseil result.
+
+Previous controlled Abseil evaluation: four real PRs ran full control and the unchanged
 published Action sequentially on the same VM, with independent identical native
 cache restores and balanced order. Full/Smart arm intervals were **48.1/50.9,
 40.4/57.3, 42.4/60.9 and 67.5/66.5 seconds**. Three losses and one small gain give
@@ -12,7 +27,7 @@ cached/analysis work, while Action setup cost exceeded native savings. Whole
 joint PR times were 264/263/267/404 seconds, not standalone product latencies.
 The five benchmark jobs including the fresh seed consumed 1,861 runner-seconds.
 Read [all GitHub evidence, controls, costs and limits](docs/benchmarks/native-action-matched-2026-11-28.md).
-No useful warm-cache operating range or lifecycle amortization is established.
+No useful warm-cache operating range or lifecycle amortization is established for Abseil.
 Broader cases, base-refresh trials and a second repository remain deferred; this
 negative result must not be replaced with a more favorable workload. Safety
 rules, native semantics and the published Action/CLI are unchanged. Cache cleanup

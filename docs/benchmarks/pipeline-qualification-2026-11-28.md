@@ -133,3 +133,10 @@ observed containers and charges that cleanup to its owning arm. It still refuses
 to continue if any container persists. No active container is forcibly erased to
 manufacture independence. Three attempts remain: one passing pair, one regression,
 one configuration fallback. The initial repeatability target is not satisfied.
+
+After inspecting the first valid passing pair, the remaining regression is
+predeclared **Smart first**, reversing the passing pair's order without changing
+the CLI, native tests, source defect, cache seed or environment. The configuration
+fallback remains full first. This checks a different scenario in the opposite
+order; it does not replace missing passing-case repetitions. Preparation and
+container settling are benchmark-only work and must be broken out explicitly.

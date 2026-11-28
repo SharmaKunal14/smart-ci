@@ -75,3 +75,9 @@ The evaluation must keep native cache inputs independent, include CLI installati
 and fresh model collection in timings, preserve all attempts and known negative
 Abseil results, and distinguish a jointly measured two-arm PR from standalone
 developer feedback latency.
+
+The [completed GitHub experiment](benchmarks/httpclient-maven-2026-11-28.md)
+observed substantial uncached native-work reductions on two localized scenarios,
+with matching failure detection and correct POM fallback. It did not meet its
+repeatability gate or establish standalone PR latency and lifecycle ROI. Use that
+report's controls and limitations when assessing this experimental profile.
