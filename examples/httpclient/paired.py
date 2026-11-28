@@ -149,11 +149,44 @@ def outcomes(repo):
     return cases, files
 
 
+def settle_containers(record):
+    """Wait for native cleanup; never erase an active service to force parity."""
+    started = time.monotonic()
+    observations = []
+    while True:
+        active = subprocess.check_output(
+            ["docker", "ps", "--format", "{{json .}}"], text=True, timeout=20
+        ).splitlines()
+        elapsed = time.monotonic() - started
+        observations.append(
+            {"seconds": elapsed, "containers": [json.loads(row) for row in active]}
+        )
+        if not active or elapsed >= 45:
+            write(
+                record / "container-cleanup.json",
+                {
+                    "seconds": elapsed,
+                    "settled": not active,
+                    "observations": observations,
+                },
+            )
+            if active:
+                raise ValueError(
+                    "native containers remain active after bounded cleanup wait"
+                )
+            return
+        print(
+            "Waiting for native container cleanup before ending this arm...", flush=True
+        )
+        time.sleep(min(5, 45 - elapsed))
+
+
 def finish(temp, workspace, arm):
     record = temp / "comparison" / arm
     cases, files = outcomes(workspace / arm)
     write(record / "cases.json", cases)
     write(record / "reports.json", files)
+    settle_containers(record)
     write(
         record / "docker-after.json",
         {

@@ -124,3 +124,12 @@ and adding a system-Python bootstrap import check fixes the cause. Within the
 original five-job cap, four attempts remain: two passing comparisons with reverse
 order, one regression and one configuration fallback. Three valid passing
 repetitions will therefore not be claimed.
+
+Attempt 2, [run 46121221251](https://github.com/SharmaKunal14/httpcomponents-client/actions/runs/46121221251),
+passed the full native arm but refused to prepare the candidate while a native
+container remained active. There is no candidate performance result. The
+measurement helper now waits at most 45 seconds for native cleanup, records the
+observed containers and charges that cleanup to its owning arm. It still refuses
+to continue if any container persists. No active container is forcibly erased to
+manufacture independence. Three attempts remain: one passing pair, one regression,
+one configuration fallback. The initial repeatability target is not satisfied.
