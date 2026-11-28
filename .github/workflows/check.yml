@@ -35,6 +35,10 @@ jobs:
           echo "SMARTCI_TS7_NODE=$(command -v node)" >> "$GITHUB_ENV"
       - name: Verify safety, formatting and types
         run: make check
+      - name: Verify standard-library bootstrap on runner system Python
+        run: |
+          /usr/bin/python3 -I -c "import runpy; runpy.run_path('action/maven_bootstrap.py', run_name='bootstrap_import_check')"
+          /usr/bin/python3 examples/httpclient/paired.py --help
       - name: Build distributable
         run: |
           uv build

@@ -5,6 +5,8 @@ prove the absence of arbitrary filesystem/network dependencies. Until that
 contract is reviewed, the independent native command remains mandatory.
 """
 
+from __future__ import annotations
+
 import argparse
 import hashlib
 import os

@@ -115,3 +115,12 @@ the arm's evidence upload and report accounting. Shared JDK/tool setup, queue,
 joint upload and cleanup remain in the complete paired PR/job timing and are
 reported separately. The joint job is not measured standalone full-vs-Smart PR
 latency; do not relabel a computed allocation as an observed standalone run.
+
+Attempt 1, [run 46120604265](https://github.com/SharmaKunal14/httpcomponents-client/actions/runs/46120604265),
+failed in setup: the system Python evaluated an unsupported generic argparse
+annotation while importing the new helper. Neither native arm ran. The whole
+run took 26 s and the job 23 s. Retain it in total costs. Postponing annotations
+and adding a system-Python bootstrap import check fixes the cause. Within the
+original five-job cap, four attempts remain: two passing comparisons with reverse
+order, one regression and one configuration fallback. Three valid passing
+repetitions will therefore not be claimed.
